@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第八章第四节 常微分方程的拉氏变换解法</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+/* ===== 解法流程图 (HTML 版, 公式由 MathJax 渲染) ===== */
+.flow-head { font-weight:700; color:#263238; font-size:1.05em; margin:4px 0 12px; }
+.flow-head .fh-note { color:#78909c; font-weight:400; }
+.flow-step { position:relative; border:1.6px solid #cfd8dc; border-left:9px solid #90a4ae;
+  border-radius:11px; background:rgba(120,144,156,.07); padding:11px 18px 12px; margin-bottom:30px;
+  transition:border-color .2s, background .2s; }
+.flow-step:last-child { margin-bottom:2px; }
+.flow-step.done { border-color:#9e9e9e; }
+.flow-step.act { border:3px solid #1976d2; border-left-width:9px; background:rgba(25,118,210,.10);
+  box-shadow:0 0 0 3px rgba(25,118,210,.07); }
+.fs-tag { font-weight:700; font-size:1.12em; margin-bottom:5px; }
+.fs-tex { font-size:1.02em; color:#37474f; line-height:1.7; }
+.fs-tex mjx-container { margin:2px 0 !important; }
+.fs-arrow { position:absolute; left:50%; transform:translateX(-50%); bottom:-25px;
+  font-size:1.15em; line-height:1; color:#b0bec5; }
+.fs-arrow.blue { color:#1976d2; }
+
+/* ===== 知识结构树 (HTML 版, 公式由 MathJax 渲染) ===== */
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container { font-size: .9em; }
+.kg-col.long .kg-leaf mjx-container { font-size: .82em; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 图注 (HTML + MathJax) ===== */
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:nowrap;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第八章 第4节 常微分方程的拉氏变换解法</h1>
+    <p>基本思想与步骤 &middot; 一阶与二阶初值问题 &middot; 积分方程与微分方程组 &middot; 传递函数与工程应用</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握用拉氏变换解常微分方程初值问题的<b>基本思想与三步走</b>: 微分方程 (含初值条件) $\xrightarrow{\mathscr{L}}$ $s$ 域的<b>代数方程</b> $\rightarrow$ 解出象函数 $Y(s)$ $\xrightarrow{\mathscr{L}^{-1}}$ 原方程的解 $y(t)$;
+2. 理解这套解法<b>为什么有效</b>: 微分性质 $\mathscr{L}[y']=sY(s)-y(0)$、$\mathscr{L}[y'']=s^2Y(s)-sy(0)-y'(0)$ 在取变换的瞬间就把初值条件"吸收"进代数方程, 因而不必"先求通解、再定常数";
+3. 会解<b>一阶与二阶常系数线性方程</b>的初值问题 (例 4.1、例 4.2), 并会用部分分式把 $Y(s)$ 拆开、逐项取逆变换;
+4. 掌握用拉氏变换解<b>积分方程</b> (借助卷积定理) 和<b>微分方程组</b> (化为代数方程组后消元) 的方法 (例 4.3、例 4.4);
+5. 了解工程中的拓展: <b>传递函数</b> $H(s)=\frac{Y(s)}{X(s)}$、<b>冲激响应</b> $h(t)=\mathscr{L}^{-1}[H(s)]$、用<b>卷积</b>表示零状态响应, 以及 RLC 电路的建模与求解.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-8d" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-8d" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-8d" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-8d" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-8d" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-8d" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、解法的基本思想与步骤</label>
+    <label class="tab-btn" for="tab2" id="label2">二、一阶与二阶常微分方程初值问题</label>
+    <label class="tab-btn" for="tab3" id="label3">三、积分方程与微分方程组</label>
+    <label class="tab-btn" for="tab4" id="label4">四、工程应用与拓展</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 基本思想与步骤 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 思想: 把微分方程"搬"到 $s$ 域</div>
+
+<div class="box-key">
+<div class="title">一句话概括: 用变换把"难运算"变成"易运算"</div>
+求解常微分方程初值问题, 传统做法是先求通解、再用初值条件定出任意常数, 步骤繁琐. 拉氏变换换了一条思路: <b>先把整个方程连同初值条件一起"搬"到 $s$ 域</b>, 在那里微分方程变成<b>代数方程</b>, 用熟悉的移项、通分、因式分解求出象函数 $Y(s)$, 最后再"搬"回来. 流程图如下.
+<div class="box-formula">$$\text{微分方程 (含初值条件)}\ \xrightarrow{\ \mathscr{L}\ }\ \text{象函数的代数方程}\ \xrightarrow{\ \text{解出}\ }\ Y(s)\ \xrightarrow{\ \mathscr{L}^{-1}\ }\ y(t).$$</div>
+也就是说, 时间 $t$ 里的"求导"与"解方程", 被换成了复参变量 $s$ 里的"乘 $s$"与"做代数".
+</div>
+
+<div class="box-result">
+<div class="res-label">三步走</div>
+<span style="color:#c62828"><b>第一步 · 取拉氏变换.</b></span> 设 $\mathscr{L}[y(t)]=Y(s)$, 对方程两端取拉氏变换, 用<b>微分性质</b>把 $y',y'',\dots$ 换成 $sY(s)-y(0)$、$s^2Y(s)-sy(0)-y'(0)$ 等, 初值条件在<b>这一步自动代入</b>;<br><br>
+<span style="color:#c62828"><b>第二步 · 解代数方程.</b></span> 得到的方程里只剩 $s$ 与 $Y(s)$, 是纯代数运算: 移项、合并、通分, 解出象函数 $Y(s)$;<br><br>
+<span style="color:#c62828"><b>第三步 · 取拉氏逆变换.</b></span> 把 $Y(s)$ 拆成简单的分式 (部分分式或查表), 再逐项求 $\mathscr{L}^{-1}$, 就得到原方程的解 $y(t)$.
+</div>
+
+<div class="chart-container">
+<h3>交互: 时域 &rarr; $s$ 域 &rarr; 时域 的解法流程 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">图中用四个方框画出解法的完整流程: <b>① 时域 · 原问题</b> (带初值的微分方程) &rarr; <b>② 拉氏变换 · 微分性质</b> (求导变乘 $s$, 初值自动代入) &rarr; <b>③ $s$ 域 · 代数方程</b> (移项、通分、因式分解) &rarr; <b>④ 时域 · 逆变换</b> (部分分式加查表). 拖动滑块或点击"播放"逐步走一遍: 当前步骤高亮显示, 右侧输出框给出该步的公式与说明 —— 体会"从时域出发、绕行 $s$ 域、再回到时域"的完整回路.</div>
+<div class="flow-head">解法流程: 时域 &rarr; <i>s</i> 域 &rarr; 时域 <span class="fh-note">(高亮框为当前步骤)</span></div>
+<div id="cvFlow" class="flow-box"></div>
+<div class="control-panel">
+<div class="row">
+<label>当前步骤:</label>
+<input type="range" id="flowStage" min="0" max="3" step="1" value="0">
+<span class="val-badge" id="flowStageV">1/4</span>
+<button class="control-btn" id="btnFlowPlay">▶ 播放流程</button>
+</div>
+<div class="readout" id="flowReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">为什么有效: 微分性质"自动吸收"了初值条件</div>
+拉氏变换之所以能一步带走初值条件, 靠的正是<b>微分性质</b>:
+<div class="box-formula">$$\mathscr{L}[y'(t)]=sY(s)-y(0),$$</div>
+<div class="box-formula">$$\mathscr{L}[y''(t)]=s^2Y(s)-sy(0)-y'(0).$$</div>
+可见每求一次导, 就在 $s$ 上"乘一次 $s$", 同时"减去"一个初值. 一般地, 对 $n$ 阶导数有
+<div class="box-formula">$$\mathscr{L}\big[y^{(n)}(t)\big]=s^nY(s)-s^{n-1}y(0)-s^{n-2}y'(0)-\cdots-y^{(n-1)}(0).$$</div>
+<b>这就是它与"先求通解、再定常数"最本质的区别:</b> 通解里那些待定常数要最后才靠初值确定; 而拉氏变换在<b>取变换的那一瞬间</b>就把初值条件"灌"进了代数方程, 全程都在 $s$ 域里做代数, 不必回到时域反复折腾.
+<br><br>
+此外, 由于积分下限取 $0^-$, 变换只看 $t\ge0$ 上的行为, 天然吻合"从 $t=0$ 起步、由初值决定去向"的物理图像 —— 这也正是初值问题特别适合用拉氏变换的原因.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 一阶与二阶初值问题 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 二阶常系数方程: 例 4.1</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.1</div>
+求方程 $y''+2y'-3y=\mathrm{e}^{-t}$ 满足初值条件 $y|_{t=0}=0$, $y'|_{t=0}=1$ 的解.
+<input type="checkbox" id="c8s4a1" class="answer-toggle">
+<label for="c8s4a1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+记 $\mathscr{L}[y(t)]=Y(s)$. 方程两端取拉氏变换, 并用微分性质代入初始条件:
+<div class="box-formula">$$\big[s^2Y(s)-sy(0)-y'(0)\big]+2\big[sY(s)-y(0)\big]-3Y(s)=\dfrac{1}{s+1}.$$</div>
+代入 $y(0)=0,\ y'(0)=1$, 得
+<div class="box-formula">$$(s^2+2s-3)Y(s)-1=\dfrac{1}{s+1},$$</div>
+解出象函数
+<div class="box-formula">$$Y(s)=\dfrac{s+2}{(s+1)(s^2+2s-3)}=\dfrac{s+2}{(s+1)(s-1)(s+3)}.$$</div>
+把它做部分分式分解:
+<div class="box-formula">$$Y(s)=-\dfrac{1}{4}\dfrac{1}{s+1}+\dfrac{3}{8}\dfrac{1}{s-1}-\dfrac{1}{8}\dfrac{1}{s+3},$$</div>
+逐项取逆变换, 得原方程的解
+<div class="box-formula">$$y(t)=\mathscr{L}^{-1}[Y(s)]=-\dfrac{1}{4}\mathrm{e}^{-t}+\dfrac{3}{8}\mathrm{e}^{t}-\dfrac{1}{8}\mathrm{e}^{-3t}.$$</div>
+可以看到: 整个求解过程<b>没有再出现"通解 + 待定常数"</b>, 初值条件已经在第一步被消化掉了.
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.2 一阶方程的一般解法: 例 4.2</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.2</div>
+求解微分方程初值问题
+<div class="box-formula">$$\begin{cases}ax'(t)+bx(t)=f(t),&amp;t&gt;0,\\ x(0)=c,\end{cases}$$</div>
+其中 $a,b,c$ 为常数, $f(t)$ 为已知函数.
+<input type="checkbox" id="c8s4a2" class="answer-toggle">
+<label for="c8s4a2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+记
+<div class="box-formula">$$\mathscr{L}[x(t)]=X(s),\qquad \mathscr{L}[f(t)]=F(s).$$</div>
+对方程两端取拉氏变换, 并代入初值条件 $x(0)=c$:
+<div class="box-formula">$$a\big[sX(s)-c\big]+bX(s)=F(s),$$</div>
+即
+<div class="box-formula">$$(as+b)X(s)=F(s)+ac,$$</div>
+解得
+<div class="box-formula">$$X(s)=\dfrac{F(s)+ac}{as+b}=c\dfrac{1}{s+\dfrac{b}{a}}+\dfrac{1}{a}\dfrac{1}{s+\dfrac{b}{a}}F(s).$$</div>
+由于
+<div class="box-formula">$$\mathscr{L}^{-1}\left[\dfrac{1}{s+\dfrac{b}{a}}\right]=\mathrm{e}^{-\frac{b}{a}t},$$</div>
+故由<b>卷积定理</b>, 上式的逆变换为
+<div class="box-formula">$$x(t)=c\,\mathrm{e}^{-\frac{b}{a}t}+\dfrac{1}{a}\int_0^t f(\tau)\mathrm{e}^{-\frac{b}{a}(t-\tau)}\mathrm{d}\tau.$$</div>
+结果的第一项 $c\,\mathrm{e}^{-\frac{b}{a}t}$ 来自初值 $x(0)=c$, 是"零输入响应"; 第二项是外力 $f(t)$ 的贡献, 写成<b>卷积</b>形式 $\frac{1}{a}\Big[\mathrm{e}^{-\frac{b}{a}t}*f(t)\Big]$ —— 这与后面 4.1 的"零状态响应"思想完全一致.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 例 4.1 的解曲线与初值 $y'(0)$ <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">蓝实线是例 4.1 的解 $y(t)$; 拖动滑块改变初值条件中的斜率 $v=y'(0)$ (始终保持 $y(0)=0$). 灰虚线是原始题目 $v=1$ 时的参照解. 由图可见: 由于方程含 $\mathrm{e}^{t}$ 型解, 初值 $y'(0)$ 的不同会让曲线整体"上抬"或"下压" —— 但<b>零点 $y(0)=0$ 始终不动</b>, 这正是"初值条件只决定常数、不改变解的结构"的直观体现. 右侧输出框给出此时的象函数分解与解的表达式.</div>
+<canvas id="cvOde2" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>初始斜率 $v=y'(0)$:</label>
+<input type="range" id="odeV" min="-1" max="2" step="0.05" value="1">
+<span class="val-badge" id="odeVV">1.00</span>
+</div>
+<div class="readout" id="odeReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 积分方程与微分方程组 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 积分方程: 例 4.3</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.3</div>
+求解积分方程
+<div class="box-formula">$$f(t)=at+\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau\qquad(a\neq0).$$</div>
+<input type="checkbox" id="c8s4a3" class="answer-toggle">
+<label for="c8s4a3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+注意积分项恰是两个函数 $f(t)$ 与 $\sin t$ 的<b>卷积</b>, 原方程即
+<div class="box-formula">$$f(t)=at+f(t)*\sin t.$$</div>
+记 $\mathscr{L}[f(t)]=F(s)$. 对上式两边取拉氏变换, 并用卷积定理 $\mathscr{L}[f(t)*\sin t]=F(s)\cdot\frac{1}{s^2+1}$:
+<div class="box-formula">$$F(s)=\dfrac{a}{s^2}+\dfrac{1}{s^2+1}F(s).$$</div>
+这是一个关于 $F(s)$ 的<b>代数方程</b>! 移项整理:
+<div class="box-formula">$$F(s)\left(1-\dfrac{1}{s^2+1}\right)=\dfrac{a}{s^2}\ \Longrightarrow\ F(s)=\dfrac{a(s^2+1)}{s^4}=a\left(\dfrac{1}{s^2}+\dfrac{1}{s^4}\right),$$</div>
+取逆变换 (注意 $\mathscr{L}^{-1}\left[\frac{1}{s^4}\right]=\frac{t^3}{3!}=\frac{t^3}{6}$), 得原方程的解
+<div class="box-formula">$$f(t)=a\left(t+\dfrac{1}{6}t^3\right).$$</div>
+<b>要点:</b> 含卷积核的积分方程, 用拉氏变换后直接变成"解一个代数方程", 比逐步迭代或直接积分简单得多.
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.2 微分方程组: 例 4.4</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.4</div>
+求微分方程组
+<div class="box-formula">$$\begin{cases}y''-x''+x'-y=\mathrm{e}^{t}-2,\\ 2y''-x''-2y'+x=-t,\end{cases}$$</div>
+满足初值条件 $y(0)=y'(0)=0,\ x(0)=x'(0)=0$ 的解.
+<input type="checkbox" id="c8s4a4" class="answer-toggle">
+<label for="c8s4a4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+令 $\mathscr{L}[x(t)]=X(s)$、$\mathscr{L}[y(t)]=Y(s)$. 对两个方程两端分别取拉氏变换, 并应用零初值条件:
+<div class="box-formula">$$\begin{cases}s^2Y(s)-s^2X(s)+sX(s)-Y(s)=\dfrac{1}{s-1}-\dfrac{2}{s},\\ 2s^2Y(s)-s^2X(s)-2sY(s)+X(s)=-\dfrac{1}{s^2}.\end{cases}$$</div>
+上面两个式子整理后, 就是关于 $X(s),Y(s)$ 的<b>线性代数方程组</b> (右端第一式的常数项已按 $\mathscr{L}[2]=\frac{2}{s}$、$\mathscr{L}[\mathrm{e}^{t}]=\frac{1}{s-1}$ 算出). 消元解得
+<div class="box-formula">$$\begin{cases}X(s)=\dfrac{2s-1}{s^2(s-1)^2}=-\dfrac{1}{s^2}+\dfrac{1}{(s-1)^2},\\ Y(s)=\dfrac{1}{s(s-1)^2}=\dfrac{1}{s}-\dfrac{1}{s-1}+\dfrac{1}{(s-1)^2}.\end{cases}$$</div>
+逐项取逆变换 (注意 $\mathscr{L}^{-1}\left[\frac{1}{(s-1)^2}\right]=t\mathrm{e}^{t}$), 得
+<div class="box-formula">$$x(t)=\mathscr{L}^{-1}[X(s)]=-t+t\mathrm{e}^{t},$$</div>
+<div class="box-formula">$$y(t)=\mathscr{L}^{-1}[Y(s)]=1-\mathrm{e}^{t}+t\mathrm{e}^{t}.$$</div>
+<b>要点:</b> 方程组经拉氏变换后变成"两个未知数的线性代数方程组", 用消元法解出 $X(s),Y(s)$ 即可 —— 微分方程的"联立"变成了代数的"联立", 难度大幅下降.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 例 4.4 解的相图 (微分方程组的轨迹) <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">把例 4.4 的解 $x(t)、y(t)$ 看成平面上的参数曲线 $(x(t),y(t))$, 就得到系统的<b>相图轨迹</b>. 浅灰曲线是 $t\in[0,1.2]$ 的完整轨迹 (终态参考), 红色曲线是到当前时刻 $t$ 为止画出的部分, 蓝点为 $t$ 处的状态点, 绿点为初值点 $(x(0),y(0))=(0,0)$. 拖动滑块或点击"播放"改变 $t$: 可以看到状态从原点出发、沿一条上升的曲线向外演化, 右侧输出框同步给出 $x(t)、y(t)$ 的数值.</div>
+<canvas id="cvPhase" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>时刻 $t$:</label>
+<input type="range" id="phaseT" min="0" max="1.2" step="0.02" value="0.5">
+<span class="val-badge" id="phaseTV">0.50</span>
+<button class="control-btn" id="btnPhasePlay">▶ 播放轨迹</button>
+</div>
+<div class="readout" id="phaseReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 工程应用与拓展 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 传递函数与冲激响应</div>
+
+<div class="box-key">
+<div class="title">传递函数: 把"系统"压缩成一个 $s$ 域分式</div>
+对线性常系数系统, 输入 $x(t)$ 与输出 $y(t)$ 满足一个常微分方程. 在<b>零初值</b>条件下取拉氏变换, 得
+<div class="box-formula">$$Y(s)=H(s)X(s),\qquad H(s)=\dfrac{Y(s)}{X(s)}.$$</div>
+$H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, 从"解方程"简化成"做乘法": $H(s)$ 只由系统自身 (方程左端的结构) 决定, 与具体输入无关.
+</div>
+
+<div class="box-result">
+<div class="res-label">冲激响应与卷积</div>
+<span style="color:#c62828"><b>(1) 冲激响应.</b></span> 取输入为单位冲激 $x(t)=\delta(t)$, 则 $X(s)=1$, 于是 $Y(s)=H(s)$, 故
+<div class="box-formula">$$h(t)=\mathscr{L}^{-1}[H(s)],$$</div>
+称 $h(t)$ 为系统的<b>冲激响应</b> (脉冲响应) —— 它记录了系统对一记"敲击"的全部反应.<br><br>
+<span style="color:#c62828"><b>(2) 零状态响应.</b></span> 对任意输入 $x(t)$, 由 $Y(s)=H(s)X(s)$ 取逆变换, 并用卷积定理
+<div class="box-formula">$$y(t)=h(t)*x(t)=\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau.$$</div>
+这就是<b>杜阿梅尔原理</b>的数学形式: 把连续输入看成无数"冲激"的叠加, 输出便是这些冲激响应的叠加. 例 4.2 的解之所以写成卷积, 正是这个道理.
+</div>
+
+<div class="box-key">
+<div class="title">电路建模: RLC 串联回路</div>
+设串联 RLC 电路中电容上的电荷为 $q(t)$, 输入电压为 $u(t)$, 由基尔霍夫电压定律列出方程
+<div class="box-formula">$$Lq''(t)+Rq'(t)+\dfrac{1}{C}q(t)=u(t).$$</div>
+在零初值下取拉氏变换:
+<div class="box-formula">$$\Big(Ls^2+Rs+\dfrac{1}{C}\Big)Q(s)=U(s)\ \Longrightarrow\ H(s)=\dfrac{Q(s)}{U(s)}=\dfrac{1}{Ls^2+Rs+\dfrac{1}{C}}.$$</div>
+电感 $L$ 变成 $Ls$、电阻 $R$ 保持 $R$、电容 $C$ 变成 $\frac{1}{Cs}$ —— 微分方程立刻化为熟悉的"复阻抗"代数网络. 解出 $Q(s)$ 再取逆变换, 就得到暂态过程 $q(t)$. 若改取电容电压 $y=\frac{q}{C}$ 为输出, 则 $H(s)=\frac{1}{LCs^2+RCs+1}$.
+</div>
+
+<div class="sec-title">4.2 两道自编练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.1 (自编)</div>
+一阶系统 $y'(t)+y(t)=x(t)$, 零初值 $y(0)=0$. 求它的传递函数与冲激响应, 并求输入为单位阶跃 $x(t)=u(t)$ 时的零状态响应.
+<input type="checkbox" id="c8s4e1" class="answer-toggle">
+<label for="c8s4e1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+零初值下取拉氏变换: $(s+1)Y(s)=X(s)$, 故传递函数
+<div class="box-formula">$$H(s)=\dfrac{Y(s)}{X(s)}=\dfrac{1}{s+1},\qquad h(t)=\mathscr{L}^{-1}\left[\dfrac{1}{s+1}\right]=\mathrm{e}^{-t}\quad(t\ge0).$$</div>
+单位阶跃输入 $X(s)=\frac{1}{s}$, 于是
+<div class="box-formula">$$Y(s)=\dfrac{1}{s(s+1)}=\dfrac{1}{s}-\dfrac{1}{s+1}\ \Longrightarrow\ y(t)=1-\mathrm{e}^{-t}\quad(t\ge0).$$</div>
+用卷积校验: $y(t)=\displaystyle\int_0^t \mathrm{e}^{-\tau}\cdot1\,\mathrm{d}\tau=1-\mathrm{e}^{-t}$, 完全一致.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.2 (自编)</div>
+二阶系统 $y''(t)+3y'(t)+2y(t)=x(t)$, 零初值. 求传递函数, 并求 $x(t)=u(t)$ 时的零状态响应.
+<input type="checkbox" id="c8s4e2" class="answer-toggle">
+<label for="c8s4e2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+零初值下取拉氏变换: $(s^2+3s+2)Y(s)=X(s)$, 故
+<div class="box-formula">$$H(s)=\dfrac{1}{s^2+3s+2}=\dfrac{1}{(s+1)(s+2)}=\dfrac{1}{s+1}-\dfrac{1}{s+2},$$</div>
+冲激响应
+<div class="box-formula">$$h(t)=\mathrm{e}^{-t}-\mathrm{e}^{-2t}\quad(t\ge0).$$</div>
+单位阶跃时 $Y(s)=\frac{1}{s(s+1)(s+2)}=\frac{1}{2}\cdot\frac{1}{s}-\frac{1}{s+1}+\frac{1}{2}\cdot\frac{1}{s+2}$, 取逆变换得
+<div class="box-formula">$$y(t)=\dfrac{1}{2}-\mathrm{e}^{-t}+\dfrac{1}{2}\mathrm{e}^{-2t}\quad(t\ge0).$$</div>
+校验: $y(0)=\frac{1}{2}-1+\frac{1}{2}=0$, $y'(0)=1-1=0$, 且 $t\to+\infty$ 时 $y\to\frac{1}{2}=H(0)$, 与终值定理一致.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 一阶 / 二阶系统的阶跃响应 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc"><b>左图</b>是一阶系统 $\tau y'(t)+y(t)=x(t)$ 在单位阶跃输入下的响应 $y(t)=1-\mathrm{e}^{-t/\tau}$: 滑块改变<b>时间常数</b> $\tau$, $\tau$ 越大上升越慢("惯性"越强). <b>右图</b>是标准二阶系统 $y''+2\zeta\omega_n y'+\omega_n^2 y=\omega_n^2 x$ (取 $\omega_n=2$) 的阶跃响应: 滑块改变<b>阻尼比</b> $\zeta$ —— $\zeta$ 很小会明显振荡超调, $\zeta\approx0.707$ 接近最佳, $\zeta\ge1$ 则不再超调而单调爬升. 右侧输出框给出当前参数与超调量估计.</div>
+<div class="fig-caps">
+<div class="fc" id="cvSystemCap"></div>
+</div>
+<canvas id="cvSystem" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>一阶时间常数 $\tau$:</label>
+<input type="range" id="sysTau" min="0.1" max="2" step="0.05" value="0.8">
+<span class="val-badge" id="sysTauV">0.80</span>
+</div>
+<div class="row">
+<label>二阶阻尼比 $\zeta$:</label>
+<input type="range" id="sysZeta" min="0.05" max="1.5" step="0.05" value="0.4">
+<span class="val-badge" id="sysZetaV">0.40</span>
+</div>
+<div class="readout" id="sysReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>基本思想与步骤</b> → <b>一阶 / 二阶初值问题</b> → <b>积分方程与微分方程组</b> → <b>工程应用与拓展</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>问题类型</th><th>时域形式</th><th>变换后 ($s$ 域)</th><th>解法与结果形式</th></tr>
+<tr>
+<td>二阶微分方程<br>初值问题</td>
+<td>$y''+2y'-3y=\mathrm{e}^{-t}$,<br>$y(0)=0,\ y'(0)=1$</td>
+<td>$(s^2+2s-3)Y(s)=\frac{1}{s+1}+1$</td>
+<td>解出 $Y(s)$ 后部分分式再逆变换:<br>$y(t)=-\frac{1}{4}\mathrm{e}^{-t}+\frac{3}{8}\mathrm{e}^{t}-\frac{1}{8}\mathrm{e}^{-3t}$</td>
+</tr>
+<tr>
+<td>一阶微分方程<br>初值问题 (一般)</td>
+<td>$ax'(t)+bx(t)=f(t)$,<br>$x(0)=c$</td>
+<td>$(as+b)X(s)=F(s)+ac$</td>
+<td>初值项 + 卷积项:<br>$x(t)=c\,\mathrm{e}^{-\frac{b}{a}t}+\frac{1}{a}\displaystyle\int_0^t f(\tau)\mathrm{e}^{-\frac{b}{a}(t-\tau)}\mathrm{d}\tau$</td>
+</tr>
+<tr>
+<td>积分方程<br>(含卷积核)</td>
+<td>$f(t)=at+\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$</td>
+<td>$F(s)=\frac{a}{s^2}+\frac{1}{s^2+1}F(s)$</td>
+<td>解代数方程得 $F(s)=a\left(\frac{1}{s^2}+\frac{1}{s^4}\right)$,<br>逆变换 $f(t)=a\left(t+\frac{1}{6}t^3\right)$</td>
+</tr>
+<tr>
+<td>微分方程组<br>(含初值)</td>
+<td>$y''-x''+x'-y=\mathrm{e}^{t}-2$;<br>$2y''-x''-2y'+x=-t$</td>
+<td>联立代数方程组:<br>$s^2Y-s^2X+sX-Y=\frac{1}{s-1}-\frac{2}{s}$;<br>$2s^2Y-s^2X-2sY+X=-\frac{1}{s^2}$</td>
+<td>消元解 $X(s),Y(s)$ 再逆变换:<br>$x(t)=-t+t\mathrm{e}^{t}$;<br>$y(t)=1-\mathrm{e}^{t}+t\mathrm{e}^{t}$</td>
+</tr>
+</table>
+
+<div class="box-result">
+<div class="res-label">一句话记牢</div>
+常微分方程 (连同初值条件) 经拉氏变换后化为 $s$ 域的<b>代数方程</b>, 解出象函数再取逆变换即得解; 微分性质 $\mathscr{L}[y'']=s^2Y(s)-sy(0)-y'(0)$ 让初值条件在取变换时被自动吸收; 积分方程靠<b>卷积定理</b>化为代数方程, 微分方程组化为代数方程组消元; 工程中则把系统压缩为<b>传递函数</b> $H(s)=\frac{Y(s)}{X(s)}$, 冲激响应 $h(t)=\mathscr{L}^{-1}[H(s)]$, 零状态响应为卷积 $y(t)=h(t)*x(t)$.
+</div>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 用拉氏变换解常微分方程初值问题的基本思想是?</div>
+<label class="quiz-opt">A. 先求通解, 再用初值条件定常数</label>
+<label class="quiz-opt" data-ok="1">B. 把微分方程 (含初值) 化为象函数的代数方程, 解出 $Y(s)$ 再取逆变换</label>
+<label class="quiz-opt">C. 直接把微分方程两边对 $t$ 积分</label>
+<label class="quiz-opt">D. 用幂级数逐项求系数</label>
+<div class="quiz-explain"><b>解析:</b> 拉氏变换解法的三步是: 取拉氏变换化为 $s$ 域代数方程 → 解出象函数 $Y(s)$ → 取逆变换得 $y(t)$. 它与"先求通解再定常数"是完全不同的思路.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 设 $\mathscr{L}[y(t)]=Y(s)$, 则 $\mathscr{L}[y'']$ 等于?</div>
+<label class="quiz-opt">A. $s^2Y(s)$</label>
+<label class="quiz-opt">B. $s^2Y(s)-y(0)$</label>
+<label class="quiz-opt" data-ok="1">C. $s^2Y(s)-sy(0)-y'(0)$</label>
+<label class="quiz-opt">D. $s^2Y(s)+sy(0)+y'(0)$</label>
+<div class="quiz-explain"><b>解析:</b> 由微分性质 $\mathscr{L}[y'']=s^2Y(s)-sy(0)-y'(0)$, 正是这些初值项让初值条件被自动带入代数方程.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 例 4.1 中, 象函数 $Y(s)$ 的表达式是?</div>
+<label class="quiz-opt">A. $\frac{s+2}{(s+1)(s^2+2s-3)}$ 的最简式 $\frac{s+2}{(s+1)(s-1)(s+3)}$</label>
+<label class="quiz-opt">B. $\frac{1}{s^2+2s-3}$</label>
+<label class="quiz-opt" data-ok="1">C. $-\frac{1}{4}\frac{1}{s+1}+\frac{3}{8}\frac{1}{s-1}-\frac{1}{8}\frac{1}{s+3}$</label>
+<label class="quiz-opt">D. $\frac{1}{s+1}$</label>
+<div class="quiz-explain"><b>解析:</b> 先得 $Y(s)=\frac{s+2}{(s+1)(s-1)(s+3)}$, 部分分式分解后即 C. 注意 A 与 C 描述的是同一函数的不同形式, 选项中 C 已是可直接逆变换的部分分式形式.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 例 4.1 的解 $y(t)$ 是?</div>
+<label class="quiz-opt">A. $\frac{1}{4}\mathrm{e}^{-t}-\frac{3}{8}\mathrm{e}^{t}+\frac{1}{8}\mathrm{e}^{-3t}$</label>
+<label class="quiz-opt" data-ok="1">B. $-\frac{1}{4}\mathrm{e}^{-t}+\frac{3}{8}\mathrm{e}^{t}-\frac{1}{8}\mathrm{e}^{-3t}$</label>
+<label class="quiz-opt">C. $\mathrm{e}^{-t}+\mathrm{e}^{t}-\mathrm{e}^{-3t}$</label>
+<label class="quiz-opt">D. $\frac{3}{8}\mathrm{e}^{t}$</label>
+<div class="quiz-explain"><b>解析:</b> 对 $Y(s)=-\frac{1}{4}\frac{1}{s+1}+\frac{3}{8}\frac{1}{s-1}-\frac{1}{8}\frac{1}{s+3}$ 逐项取逆变换, 得 $y(t)=-\frac{1}{4}\mathrm{e}^{-t}+\frac{3}{8}\mathrm{e}^{t}-\frac{1}{8}\mathrm{e}^{-3t}$, 满足 $y(0)=0,\ y'(0)=1$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 初值条件 $y(0),\ y'(0)$ 在整个求解过程中于哪一步被用到?</div>
+<label class="quiz-opt">A. 最后一步, 用来验证结果</label>
+<label class="quiz-opt" data-ok="1">B. 取拉氏变换、应用微分性质的那一步就自动代入</label>
+<label class="quiz-opt">C. 只在求部分分式时用到</label>
+<label class="quiz-opt">D. 完全不需要用到</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[y'']=s^2Y(s)-sy(0)-y'(0)$ 等微分性质, 取变换的同时就把初值写进了代数方程, 因此无需"先求通解再定常数".</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 求解积分方程 $f(t)=at+\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 化为代数方程, 关键是?</div>
+<label class="quiz-opt">A. 对积分项直接分部积分</label>
+<label class="quiz-opt" data-ok="1">B. 认出积分是卷积 $f(t)*\sin t$, 用卷积定理 $\mathscr{L}[f*\sin t]=F(s)\cdot\frac{1}{s^2+1}$</label>
+<label class="quiz-opt">C. 把 $\sin(t-\tau)$ 展成泰勒级数</label>
+<label class="quiz-opt">D. 两边同时对 $t$ 求导</label>
+<div class="quiz-explain"><b>解析:</b> 积分项形如 $\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 正是卷积 $(f*\sin t)(t)$, 用卷积定理即可把含未知函数的积分化为 $F(s)$ 的代数项.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 例 4.3 的解 $f(t)$ 是?</div>
+<label class="quiz-opt">A. $a\sin t$</label>
+<label class="quiz-opt">B. $at$</label>
+<label class="quiz-opt" data-ok="1">C. $a\left(t+\frac{1}{6}t^3\right)$</label>
+<label class="quiz-opt">D. $a\left(1+\frac{1}{6}t^3\right)$</label>
+<div class="quiz-explain"><b>解析:</b> 解得 $F(s)=a\left(\frac{1}{s^2}+\frac{1}{s^4}\right)$, 取逆变换 (注意 $\mathscr{L}^{-1}\left[\frac{1}{s^4}\right]=\frac{t^3}{6}$) 得 $f(t)=a\left(t+\frac{1}{6}t^3\right)$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 传递函数 $H(s)$ 的定义是?</div>
+<label class="quiz-opt">A. $H(s)=X(s)Y(s)$</label>
+<label class="quiz-opt">B. $H(s)=\frac{X(s)}{Y(s)}$</label>
+<label class="quiz-opt" data-ok="1">C. $H(s)=\frac{Y(s)}{X(s)}$ (零初值下)</label>
+<label class="quiz-opt">D. $H(s)=Y(s)-X(s)$</label>
+<div class="quiz-explain"><b>解析:</b> 在零初值条件下, 输入输出的拉氏变换满足 $Y(s)=H(s)X(s)$, 故传递函数为 $H(s)=\frac{Y(s)}{X(s)}$, 只与系统自身有关, 与输入无关.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 系统的冲激响应 $h(t)$ 与传递函数 $H(s)$ 的关系是?</div>
+<label class="quiz-opt">A. $h(t)=H(s)$</label>
+<label class="quiz-opt" data-ok="1">B. $h(t)=\mathscr{L}^{-1}[H(s)]$</label>
+<label class="quiz-opt">C. $h(t)=\mathscr{L}[H(s)]$</label>
+<label class="quiz-opt">D. $h(t)=\frac{\mathrm{d}}{\mathrm{d}t}H(s)$</label>
+<div class="quiz-explain"><b>解析:</b> 取输入为单位冲激 $x(t)=\delta(t)$, 则 $X(s)=1$, 故 $Y(s)=H(s)$, 即冲激响应 $h(t)=\mathscr{L}^{-1}[H(s)]$ 就是传递函数的逆变换.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 用卷积表示系统的零状态响应, 正确的是?</div>
+<label class="quiz-opt">A. $y(t)=h(t)+x(t)$</label>
+<label class="quiz-opt" data-ok="1">B. $y(t)=h(t)*x(t)=\displaystyle\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$</label>
+<label class="quiz-opt">C. $y(t)=h(t)x(t)$ (普通乘积)</label>
+<label class="quiz-opt">D. $y(t)=\displaystyle\int_0^t h(\tau)\mathrm{d}\tau$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $Y(s)=H(s)X(s)$ 取逆变换, 用卷积定理得 $y(t)=h(t)*x(t)=\displaystyle\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$. 这就是杜阿梅尔原理: 输出是无数冲激响应的叠加.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位用"叠加"驯服方程的工程师—数学家</h3>
+<div class="hero-sub">他没有留下皇帝与星辰的传奇, 却留下了一条被无数教材引用的"原理": 把复杂的作用拆成无数简单的瞬间作用, 再一件一件地叠加起来. 这条原理, 正是拉氏变换解法的物理内核.</div>
+<div class="hero-quote">
+在求解"介质温度随时间变化的固体内部热传导"时, 杜阿梅尔遇到了一类棘手的非齐次问题: 外界的驱动随时间连续变化, 直接求解十分困难. 他的办法是: <b>把连续变化的驱动看成一系列瞬时"脉冲"的叠加, 先算清单个脉冲引起的响应, 再把它们叠加起来.</b><br>
+这一朴素而强大的思想, 今天被称为<b>杜阿梅尔原理</b> —— 而在数学上, 它就写成一条卷积: <em>$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$, 也正是 $s$ 域里 $Y(s)=H(s)F(s)$ 的时域面目.</em>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 杜阿梅尔: 用"叠加"驯服方程的人</div>
+
+<div class="person-card">
+<div class="p-av">杜</div>
+<div class="p-main">
+<div class="p-name">让-马里·康斯坦·杜阿梅尔 (Jean-Marie Constant Duhamel, 1797—1872)</div>
+<div class="p-meta">法国数学家 · 物理学家 · 工程师教育家 · 巴黎综合理工学院与理学院教授 · 中央工艺学校创办者之一 · "杜阿梅尔原理"的冠名者</div>
+<p>他出生于法国北部一个普通家庭, 靠着出色的数学天赋考入<b>巴黎综合理工学院</b>, 毕业后留校任教, 此后数十年间同时在巴黎的大学与工程学校讲授数学与力学. 他不是那种只写纯粹理论的学者, 而是一手握着解析工具、一手握着工程问题的人.</p>
+<p>本节所讲的<b>杜阿梅尔原理</b>, 正是他从<b>热传导</b>与<b>数学物理</b>的工程问题里"逼"出来的思想. 这段故事告诉我们: <b>把连续的作用拆成无数瞬时作用的叠加, 就能让最难的方程变得可算.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从巴黎综合理工学院到工程师的课堂</h5>
+<p>杜阿梅尔 1797 年生于法国, 青年时代进入<b>巴黎综合理工学院</b> (École Polytechnique) 学习 —— 那是 19 世纪法国科学精英的摇篮, 拉普拉斯、拉格朗日、柯西都曾在此执教或讲学. 他毕业后长期在巴黎任教, 先后在综合理工学院与巴黎理学院讲授<b>数学分析与力学</b>.</p>
+<p>与许多同代数学家不同, 杜阿梅尔极其看重"把数学用到实际中去". 1829 年, 他是法国<b>中央工艺学校</b> (École Centrale des Arts et Manufactures) 的创办者之一, 并负责其教学规划 —— 这所学校的目标, 就是培养"既懂理论、又能上手"的工程师. <b>他一生站在数学与工程的接缝处.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>杜阿梅尔原理: 把非齐次问题化为冲激响应的叠加</h5>
+<p>1833 年, 杜阿梅尔在研究"<b>浸在温度随时间变化的介质中的固体内部的热传导</b>"时, 碰到了一类典型的非齐次问题: 驱动 (这里就是介质温度) 随时间连续变化, 无法直接用"分离变量 + 简单叠加"处理.</p>
+<p>他给出的解法极其漂亮: <b>把连续变化的驱动看成一系列瞬时"脉冲"的叠加; 先求出单个瞬时脉冲引起的响应 $h$, 再把所有脉冲的响应叠加 (积分) 起来.</b> 用公式写出来就是
+<div class="box-formula">$$y(t)=\int_0^t h(t-\tau)f(\tau)\,\mathrm{d}\tau,$$</div>
+其中 $f$ 是驱动, $h$ 是系统对单位瞬时作用的响应. 这正是今天所说的<b>杜阿梅尔原理</b> (Duhamel's principle).</p>
+<p>用线性算子 $L$ 来说: 若 $h$ 满足 $L[h]=\delta(t)$、$f$ 是输入, 则 $L[y]=f$ 在零初值下的解就是上面的卷积. <b>它把"解一个带任意右端的方程", 变成了"解一个最简单右端 ($\delta$) 的方程, 再做叠加"</b> —— 这就是"线性"给我们的最大红利.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>它为什么正是拉氏变换解法的物理内核</h5>
+<p>本节的整套解法, 就是在给杜阿梅尔原理做"代数翻译". 对上式取拉氏变换, 由<b>卷积定理</b>立刻得到
+<div class="box-formula">$$Y(s)=H(s)F(s),\qquad H(s)=\dfrac{Y(s)}{X(s)}.$$</div>
+—— 时域里"绕来绕去"的卷积, 在 $s$ 域里变成了一次<b>普通乘法</b>; 而那个 $H(s)$ 就是系统的<b>传递函数</b>, $h(t)=\mathscr{L}^{-1}[H(s)]$ 就是<b>冲激响应</b>.</p>
+<p>换句话说: 拉氏变换解非齐次方程之所以高效, 是因为它自动实现了"<b>先分解、再叠加</b>"这一步; 你在 $s$ 域里做的那次除法, 就是把杜阿梅尔原理悄悄地跑了一遍. <b>物理直觉 (叠加) 与数学技巧 (变换) 在这里合二为一.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>在数学物理上的贡献: 热、声、弹性的解题大师</h5>
+<p>杜阿梅尔的名字出现在多门数学物理课程里. 他在<b>热传导理论</b>上发展了处理"随时间变化的边界条件"的整套方法 (即后来的"杜阿梅尔公式"); 在<b>声学与振动</b>上, 他研究弦、杆与膜的振动; 在<b>弹性力学</b>里, 他参与了关于弹性体平衡与运动一般方程的工作.</p>
+<p>他的工作风格是典型的 19 世纪法国学派: <b>从物理问题出发, 提炼出一般的数学方法, 再让方法反过来服务更多的物理与工程问题.</b> 他不追求华丽的新概念, 而追求"能把问题真正算出来"的可靠性 —— 这正是工程数学最需要的气质.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>19 世纪法国: "分析—物理—工程"结合的传统</h5>
+<p>杜阿梅尔所处的时代, 是法国科学与工程教育最辉煌的年代之一. <b>傅里叶</b>用热传导问题催生了傅里叶级数与变换, <b>柯西</b>建立了复变函数与微分方程的严格基础, <b>泊松</b>把数学方法系统地用到物理, 而杜阿梅尔则把这些工具<b>带进了工程师的教室</b>.</p>
+<p>这条"<b>分析 — 物理 — 工程</b>"三位一体的传统告诉我们: 数学不是象牙塔里的游戏, 它是在解决真实世界问题的过程中长出来的. 今天我们学的拉氏变换、传递函数、卷积, 恰恰是这条传统留给现代工程最实用的遗产. <b>越是贴近真实问题的数学, 越有长久的生命力.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说杜阿梅尔提出这一原理时, 用的并不是什么高深的定理, 而是一个近乎"匠人式"的直觉: <b>再复杂的连续作用, 也不过是无数个"一瞬间的推动"累积起来的; 只要算得出"推一下"的反应, 就能拼出"连续推"的结果.</b> 当时这只是处理热传导边值问题的一个技巧, 谁也没想到它会在两百年后成为控制系统、信号处理里"卷积与冲激响应"这一整套语言的源头. 更耐人寻味的是, 杜阿梅尔本人极其重视教学与工程教育 —— 他参与了工程师学校的创办, 把"先分解、再叠加"的朴素思想讲给一届又一届未来的工程师听. 历史证明, 一个朴素而正确的直觉, 只要被反复使用、被严格证明, 就能长成一座学科的地基.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 杜阿梅尔原理的通俗表述</div>
+在杜阿梅尔那里, 复杂并不可怕, 可怕的是不肯把它"拆开". 他的原理可以用一句大白话说尽:
+<br>
+"<em>把一记'敲击'的反应弄清楚, 那么任何连续的作用, 都不过是无数记敲击的叠加.</em>"
+<br>
+写成数学就是那条卷积, 写成 $s$ 域就是那次乘法:
+<br>
+"<em>$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau\ \Longleftrightarrow\ Y(s)=H(s)F(s).$</em>"
+<span class="iv-sig">—— 这种"把整体拆成局部、把局部叠成整体"的思想, 正是本节从例 4.2 的卷积解、到传递函数 $H(s)$ 与冲激响应 $h(t)$ 一路贯穿的数学底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">分解与叠加</div>
+<h4>把"整体"拆成"局部"的和</h4>
+<p>杜阿梅尔原理的全部秘密只有两个字: 拆与叠. 一个任意复杂的连续输入, 被拆成无数瞬间的"脉冲"; 每个脉冲的响应已知, 叠加起来就是总响应.</p>
+<p>面对复杂问题时, 先问"能不能拆成我熟悉的简单件的组合", 往往比硬碰硬更有效.</p>
+<div class="pc-math">$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$: 卷积 = 叠加</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">变换与不变</div>
+<h4>换一个域, 让"缠绕"变"相乘"</h4>
+<p>时域里的卷积是一种"缠绕"式的复杂运算; 到了 $s$ 域, 它却变成最平凡的乘法. 变的只是表示方式, 不变的是问题本身.</p>
+<p>数据科学里的傅里叶变换、对数变换、坐标变换, 都是同一个思路: 找那个让难运算变简单运算的"域".</p>
+<div class="pc-math">$\mathscr{L}[f*g]=F(s)G(s)$: 卷积 $\to$ 乘法</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">因果与记忆</div>
+<h4>系统如何"记住"自己的过去</h4>
+<p>冲激响应 $h(t)$ 记录了系统受到一记"敲击"后的全部反应. 因为系统是因果的 ($h(t)=0,\ t&lt;0$), 卷积的积分上限只到 $t$ —— 未来的输入不能影响现在的输出.</p>
+<p>"记忆"这个看似抽象的概念, 在数学里被一个函数 $h(t)$ 精确地刻画了出来.</p>
+<div class="pc-math">$h(t)=\mathscr{L}^{-1}[H(s)]$: 冲激响应即"记忆核"</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>从"此刻的变化"到"一路的轨迹"</h4>
+<p>微分方程描述的是局部: 它说"在每一瞬间, 变化率是多少". 而它的解却是整体: 是一条从初值出发、贯穿整个时间轴的曲线.</p>
+<p>把局部规则"积"成整体图景, 是微积分最深刻的一课 —— 拉氏变换正是完成这一"由点到线"的桥梁之一.</p>
+<div class="pc-math">$\text{微分 (局部变化率)}\ \longleftrightarrow\ \text{积分 (整体轨迹)}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">抽象与具体</div>
+<h4>抓住不变, 抛掉无关</h4>
+<p>传递函数 $H(s)$ 把系统的本质压成一个小分式, 它与输入无关, 只由系统自身的结构决定. 这样, 我们就能"一眼看穿"系统在任意输入下的行为.</p>
+<p>好的抽象不是丢掉信息, 而是丢掉"不重要的", 留下"决定性的".</p>
+<div class="pc-math">$H(s)=\frac{Y(s)}{X(s)}$: 与输入无关的系统"指纹"</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">基础与应用</div>
+<h4>原理越基础, 用得越广</h4>
+<p>杜阿梅尔当年为一个热传导边值问题想出的"叠加"技巧, 今天成了电路暂态、自动控制、信号处理、航天器姿态动力学的通用语言.</p>
+<p>他从未想过自己的原理会被装进火箭与卫星的控制回路里 —— 这正是基础数学"厚积薄发"的力量.</p>
+<div class="pc-math">叠加原理 $\longrightarrow$ 卷积 $\longrightarrow$ 传递函数 $\longrightarrow$ 工程系统</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 《九章算术》方程术与"正负术" —— 世界最早的消元算法</div>
+中国传统数学最鲜明的特色, 是<b>把问题化为方程组、再用固定程序 (算法) 一步步解出来</b>. 这与拉氏变换"把微分方程化为代数方程组再求解"的思想, 神韵相通.
+<br><br>
+最典型的代表是《<b>九章算术</b>》第八章"<b>方程</b>". 这一章的题目全部归结为<b>线性方程组</b>: 古人用算筹把各式的系数按行列摆成一个"方程" (相当于今天的系数矩阵), 然后用"<b>遍乘直除</b>"的固定程序逐次消元 —— 这实质上就是今天所说的<b>高斯消元法</b>, 而它的记载比欧洲早了约一千五百年! 为了让消元过程"畅通无阻", 书中又提出了"<b>正负术</b>", 给出了正负数相加、相减的整套法则, 这才让"不够减"时也能照样运算.
+<br><br>
+这里的思想与本节何其相似: <b>把千变万化的实际问题统一整理成"方程组", 再把"解方程组"变成一套可复现的算法.</b> 拉氏变换所做的, 不过是把"微分 — 积分"这些复杂运算, 也整理成"代数方程组"这种算法友好的形式而已.
+<br><br>
+南宋数学家<b>秦九韶</b>在《数书九章》中提出了"<b>大衍求一术</b>" —— 用来求解一次同余方程组的算法 (即后世的"中国剩余定理"算法). 它以"求一" (逐步化归到最简单情形) 为纲, 用固定步骤处理复杂同余问题, 讲究"<b>以术御繁</b>". 从"方程术"的消元, 到"大衍求一术"的化归, 中国古人一直在做同一件事: <b>把问题变成算法, 让算法战胜繁琐.</b>
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从《工程控制论》到大国重器的控制回路</div>
+<ul>
+<li><b>钱学森与《工程控制论》(1954).</b> 1954 年, 钱学森出版《<b>工程控制论</b>》, 第一次系统地把控制理论提升为一门面向工程的<b>技术科学</b>, 奠定了现代工程控制的学科框架. 这部著作与他的《工程控制论》一起, 把"用微分方程建模、用拉氏变换与传递函数分析"这套方法, 写进了全世界工程师的教科书.</li>
+<li><b>长征系列火箭的姿态控制.</b> 运载火箭在飞行中要不断修正姿态, 其姿态动力学由刚体与弹性耦合的微分方程组描述; 工程上用<b>传递函数</b>刻画执行机构与敏感器的动态, 再设计校正回路保证稳定裕度. 长征系列火箭的高可靠发射, 背后是这套 $s$ 域方法在日夜运转.</li>
+<li><b>北斗卫星的轨道与姿态动力学.</b> 卫星在轨长期运行, 需要进行<b>轨道保持</b>与<b>姿态稳定</b>控制: 由轨道动力学方程与姿态运动方程出发, 用传递函数做频域设计, 保证系统在各种扰动下依然稳定可靠. 北斗全球组网的长期稳定运行, 正是这些方程被解好、被控稳的结果.</li>
+<li><b>载人航天交会对接与 C919 飞控.</b> 交会对接要求两个航天器的相对运动被精确控制, 其相对运动模型是一组微分方程; C919 的飞行控制系统同样以动力学方程与传递函数为基础做控制器设计. <b>把方程解准、把回路控稳</b>, 是这些大国重器共同的数学底色.</li>
+<li><b>中国学者的接力.</b> 从把控制理论引入国内、编写教材的前辈, 到在控制论与系统科学上作出重要贡献的学者, 如<b>关肇直</b>、<b>宋健</b>等, 一代代中国科学工作者都在做同一件事: <b>把基础数学工具牢牢握在自己手里, 用到国家最需要的地方.</b></li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"方程"解开, 才能把"重器"控稳</div>
+一条"把复杂作用拆成简单叠加"的原理, 从杜阿梅尔的热传导方程出发, 两百年后成了电路分析、自动控制与航天器姿态设计的数学底座. 从《九章算术》"方程术"的消元求解, 到秦九韶"大衍求一术"的算法化归, 再到钱学森《工程控制论》与今天的火箭、卫星、大飞机 —— 中国人始终在同一个数学精神上前行: <b>把问题化为方程, 把方程交给算法, 把算法用到强国需要之处.</b>
+<br><br>
+这件事的价值在于: <b>越是基础的方程与变换, 越能撑起国家最需要的地方.</b> 一节课上的拉氏变换, 可以只是一道逆变换题, 也可以是一枚火箭姿态回路的数学地基 —— 区别在于我们是否愿意把基础打牢、把工具握在自己手里.
+<br><br>
+可以说: <b>把"初值条件"和"卷积"看懂了, 才能把微分方程化开, 也才能把大国重器算得准、控得稳、飞得远.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"把一记'敲击'的反应弄清楚, 任何连续的作用都不过是无数记敲击的叠加."<span class="q-src">—— 杜阿梅尔原理 (通俗表述)</span></div>
+<div class="quote-item">"遍乘直除, 消元求解."<span class="q-src">—— 《九章算术·方程术》(世界最早的线性方程组消元算法)</span></div>
+<div class="quote-item">"大衍求一, 以术御繁."<span class="q-src">—— 秦九韶《数书九章》(同余方程组的算法)</span></div>
+<div class="quote-item">"工程控制论, 是把控制理论应用到工程实际中的一门技术科学."<span class="q-src">—— 钱学森《工程控制论》(1954)</span></div>
+<div class="quote-item">"核心技术是买不来的, 关键要靠自己."<span class="q-src">—— 大国工程实践中的深切体会</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 杜阿梅尔在研究"浸在温度随时间变化的介质中的固体内部的热传导"时, 为了处理连续变化的驱动, 想出了一个近乎匠人式的办法 —— 把连续作用拆成无数瞬时脉冲, 先算清单个脉冲的响应, 再叠加起来. 这就是今天所说的杜阿梅尔原理, 也就是本节例 4.2 里那个卷积解、以及传递函数 $H(s)$ 与冲激响应 $h(t)$ 的物理内核. <b>一个朴素的直觉, 撑起了一整套工程语言.</b><br>
+<b>一个道理:</b> 从"微分方程难解"到"$s$ 域代数方程易解", 从时域的卷积"缠绕"到 $s$ 域的乘法"直白", 我们看到的是一条朴素而深刻的策略: <b>换一个域、拆开复杂、再叠加简单, 难题就变成易题.</b> 而微分性质 $\mathscr{L}[y'']=s^2Y(s)-sy(0)-y'(0)$ 又告诉我们: 初值条件在取变换的瞬间就被自动吸收 —— <b>找准方法, 条件自然会替你出力.</b><br>
+<b>一份责任:</b> 从《九章算术》"方程术"的程序化消元、秦九韶"大衍求一术"的化归, 到杜阿梅尔的叠加原理与拉氏变换解法; 从钱学森《工程控制论》的开创, 到长征火箭的姿态控制、北斗卫星的轨道与姿态动力学、载人航天交会对接与 C919 飞控系统 —— 同一种"把问题化为方程、把方程交给算法"的精神, 贯通古今中外. 今天我国在控制理论、航天工程与高端装备上不断走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习常微分方程的拉氏变换解法, 既是在为后续的逆变换与工程分析打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第八章第四节 常微分方程的拉氏变换解法 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=mjFixHL(html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 时域 → s 域 → 时域 解法流程 =================
+module('cvFlow',function(cv){
+  var stage=0, NS=4;
+  var steps=[
+    {tag:'① 时域 · 原问题',
+     col:'#455a64',
+     lines:['y″ + 2y′ − 3y = e⁻ᵗ','y(0) = 0,  y′(0) = 1'],
+     tex:'$y\'\'+2y\'-3y=\\mathrm{e}^{-t},\\quad y(0)=0,\\ y\'(0)=1$',
+     note:'带初值的微分方程: 按传统做法要先求通解、再用初值条件定出任意常数, 步骤繁琐.'},
+    {tag:'② 拉氏变换 · 微分性质',
+     col:'#1976d2',
+     lines:['𝓛[y″] = s²Y − sy(0) − y′(0)','𝓛[y′] = sY − y(0)'],
+     tex:'$\\mathscr{L}[y\'\']=s^2Y(s)-sy(0)-y\'(0),\\quad \\mathscr{L}[y\']=sY(s)-y(0)$',
+     note:'求导 → "乘 s 再减去初值": 初值条件在取变换的瞬间被自动带入方程.'},
+    {tag:'③ s 域 · 代数方程',
+     col:'#e65100',
+     lines:['(s² + 2s − 3)Y = 1/(s+1) + 1','Y(s) = (s+2) / [(s+1)(s−1)(s+3)]'],
+     tex:'$(s^2+2s-3)Y(s)=\\frac{1}{s+1}+1,\\quad Y(s)=\\frac{s+2}{(s+1)(s-1)(s+3)}$',
+     note:'只剩 s 与 Y(s): 移项、通分、因式分解, 全是代数运算.'},
+    {tag:'④ 时域 · 逆变换',
+     col:'#2e7d32',
+     lines:['y(t) = 𝓛⁻¹[Y(s)]','y(t) = −1/4 e⁻ᵗ + 3/8 eᵗ − 1/8 e⁻³ᵗ'],
+     tex:'$y(t)=\\mathscr{L}^{-1}[Y(s)]=-\\frac{1}{4}\\mathrm{e}^{-t}+\\frac{3}{8}\\mathrm{e}^{t}-\\frac{1}{8}\\mathrm{e}^{-3t}$',
+     note:'部分分式分解后逐项查表取逆变换, 得原方程的解 y(t).'}
+  ];
+  function draw(){
+    cv.innerHTML='';
+    for(var i=0;i<NS;i++){
+      var stp=steps[i];
+      var step=document.createElement('div');
+      step.className='flow-step '+(i===stage?'act':(i<stage?'done':''));
+      step.style.borderLeftColor=stp.col;
+      if(i===stage) step.style.borderColor=stp.col;
+      var tg=document.createElement('div');
+      tg.className='fs-tag'; tg.style.color=stp.col; tg.textContent=stp.tag;
+      var tx=document.createElement('div');
+      tx.className='fs-tex'; tx.textContent=stp.tex;
+      step.appendChild(tg); step.appendChild(tx);
+      if(i<NS-1){
+        var ar=document.createElement('div');
+        ar.className='fs-arrow'+((i<stage)?' blue':'');
+        ar.textContent='\u2193';
+        step.appendChild(ar);
+      }
+      cv.appendChild(step);
+    }
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+    var st=steps[stage];
+    setRO('flowReadout',
+      '<b>'+st.tag+'</b><br>'+
+      '本步公式: '+hl(st.tex)+'<br>'+
+      '说明: '+st.note+'<br>'+
+      hl2('核心: 微分性质 $\\mathscr{L}[y\'\']=s^2Y(s)-sy(0)-y\'(0)$ 在取变换时自动吸收初值条件, 全程只做代数')+'.');
+  }
+  bindSlider('flowStage',function(v){ stage=Math.max(0,Math.min(NS-1,Math.round(v))); badge('flowStageV',(stage+1)+'/4'); draw(); });
+  badge('flowStageV','1/4');
+  var pb=document.getElementById('btnFlowPlay');
+  if(pb) pb.addEventListener('click',function(){
+    stage=0; badge('flowStageV','1/4'); setSlider('flowStage',0); draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%34===0 && stage<NS-1){ stage++; badge('flowStageV',(stage+1)+'/4'); setSlider('flowStage',stage); draw(); }
+      return stage<NS-1; });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 2: 例 4.1 的解曲线与初值 y'(0) =================
+module('cvOde2',function(cv){
+  var V=1, TM=1.6;
+  function yOf(t,v){ return -0.25*Math.exp(-t)+(1+2*v)/8*Math.exp(t)+(1-2*v)/8*Math.exp(-3*t); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=50,R=18,TOP=40,BOT=34;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,0,TM,-1.8,3.4);
+    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'t','y');
+    // 参照解 v=1 (灰虚线)
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var ya=yOf(tt,1), pa=m.px(tt), pb=m.py(ya);
+      if(first){ ctx.moveTo(pa,pb); first=false; } else ctx.lineTo(pa,pb);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // 当前解 (蓝实线)
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath(); first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var yb=yOf(tt,V), pbx=m.px(tt), pby=m.py(yb);
+      if(first){ ctx.moveTo(pbx,pby); first=false; } else ctx.lineTo(pbx,pby);
+    }
+    ctx.stroke();
+    dot(ctx,m.px(0),m.py(0),4.5,'#c62828','#fff');
+    dot(ctx,m.px(1),m.py(yOf(1,V)),5,'#2e7d32','#fff');
+    ctx.restore();
+    tlabel(ctx,L,24,'例 4.1 的解 y(t) (蓝实线), 初值斜率 v=y′(0); 灰虚线为 v=1 的参照解','#263238','bold 12.5px Segoe UI');
+    var B=(1+2*V)/8, Cc=(1-2*V)/8;
+    var Bs=(B>=0?'+':'-')+'\\dfrac{'+fmt(Math.abs(B),3)+'}{s-1}';
+    var Cs=(Cc>=0?'+':'-')+'\\dfrac{'+fmt(Math.abs(Cc),3)+'}{s+3}';
+    var Bt=(B>=0?'+':'')+fmt(B,3)+'\\mathrm{e}^{t}';
+    var Ct=(Cc>=0?'+':'')+fmt(Cc,3)+'\\mathrm{e}^{-3t}';
+    setRO('odeReadout',
+      '初值 $y(0)=0,\\ y\'(0)='+fmt(V,2)+'$ 时: '+hl('$Y(s)=-\\frac{1}{4}\\frac{1}{s+1}'+Bs+Cs+'$')+'<br>'+
+      '逆变换得 '+hl2('$y(t)=-\\frac{1}{4}\\mathrm{e}^{-t}'+Bt+Ct+'$')+'.<br>'+
+      '$t=1$ 处 $y(1)='+fmt(yOf(1,V),3)+'$; 无论 $v$ 取何值, 恒有 $y(0)=0$ —— 初值条件只调整常数, 不改变解的结构.');
+  }
+  bindSlider('odeV',function(v){ V=v; badge('odeVV',fmt(v,2)); draw(); });
+  badge('odeVV',fmt(V,2));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 例 4.4 解的相图 =================
+module('cvPhase',function(cv){
+  var T=0.5, TMAX=1.2;
+  function xOf(t){ return -t+t*Math.exp(t); }
+  function yOf(t){ return 1-Math.exp(t)+t*Math.exp(t); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=54,R=22,TOP=40,BOT=34;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,-0.3,3.0,-0.4,1.9);
+    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'x','y');
+    // 完整轨迹 (灰, 参照)
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=2; ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TMAX+1e-9;tt+=0.005){
+      var px=m.px(xOf(tt)), py=m.py(yOf(tt));
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 当前轨迹 (红)
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3; ctx.beginPath(); first=true;
+    for(tt=0;tt<=T+1e-9;tt+=0.005){
+      var px2=m.px(xOf(tt)), py2=m.py(yOf(tt));
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    var cx=m.px(xOf(T)), cy=m.py(yOf(T));
+    ctx.setLineDash([5,4]); ctx.strokeStyle='#1565c0'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,m.py(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(m.px(0),cy); ctx.stroke();
+    ctx.setLineDash([]);
+    dot(ctx,m.px(0),m.py(0),4.5,'#2e7d32','#fff');
+    dot(ctx,cx,cy,5.5,'#1565c0','#fff');
+    ctx.restore();
+    tlabel(ctx,L,24,'例 4.4 解的相图: (x(t), y(t)) 的轨迹 (红), 蓝点为当前 t','#263238','bold 12.5px Segoe UI');
+    setRO('phaseReadout',
+      '在 $t='+fmt(T,2)+'$ 处: 状态点为 '+hl('$(x,y)=('+fmt(xOf(T),3)+',\\ '+fmt(yOf(T),3)+')$')+'<br>'+
+      '通解形式: '+hl2('$x(t)=-t+t\\mathrm{e}^{t},\\qquad y(t)=1-\\mathrm{e}^{t}+t\\mathrm{e}^{t}$')+'<br>'+
+      '初值点 $(x(0),y(0))=(0,0)$ (绿点): 无论 $t$ 取多大, 轨迹都从这里出发 —— 这正是"零初值条件"在相图上的体现.');
+  }
+  bindSlider('phaseT',function(v){ T=v; badge('phaseTV',fmt(v,2)); draw(); });
+  badge('phaseTV',fmt(T,2));
+  var pb=document.getElementById('btnPhasePlay');
+  if(pb) pb.addEventListener('click',function(){
+    T=0; badge('phaseTV',fmt(0,2)); setSlider('phaseT',0); draw();
+    animLoop(function(){ T+=0.012;
+      if(T>=TMAX){ T=TMAX; badge('phaseTV',fmt(T,2)); setSlider('phaseT',T); draw(); return false; }
+      badge('phaseTV',fmt(T,2)); setSlider('phaseT',T); draw(); return true; });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 4: 一阶 / 二阶系统的阶跃响应 =================
+module('cvSystem',function(cv){
+  var TAU=0.8, ZETA=0.4, WN=2.0, TM=6;
+  function step1(t){ return 1-Math.exp(-t/TAU); }
+  function sim2(){
+    var dt=0.002, y=0, yd=0, n=Math.round(TM/dt), out=new Array(n+1);
+    for(var i=0;i<=n;i++){
+      out[i]=y;
+      var ydd=WN*WN*(1-y)-2*ZETA*WN*yd;
+      yd+=ydd*dt; y+=yd*dt;
+    }
+    return out;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-64;
+    // ---- 左: 一阶系统阶跃响应 ----
+    ctx.save(); ctx.translate(12,34);
+    var m1=mapperEq(halfW,H,0,TM,-0.06,1.12);
+    grid(ctx,halfW,H,m1,1); axStepSys(ctx,halfW,H,m1);
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.8; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(1)); ctx.lineTo(m1.px(TM),m1.py(1)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var y1=step1(tt), px=m1.px(tt), py=m1.py(y1);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    setCap('cvSystemCap','一阶: $1-\\mathrm{e}^{-t/\\tau}$,  $\\tau='+fmt(TAU,2)+'$');
+    // ---- 右: 二阶系统阶跃响应 ----
+    var out=sim2(), sx=halfW+24;
+    ctx.save(); ctx.translate(sx,34);
+    var m2=mapperEq(halfW,H,0,TM,-0.06,1.9);
+    grid(ctx,halfW,H,m2,1); axStepSys(ctx,halfW,H,m2);
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.8; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(m2.px(0),m2.py(1)); ctx.lineTo(m2.px(TM),m2.py(1)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.8; ctx.beginPath(); first=true;
+    var dt=0.002;
+    for(var i=0;i<out.length;i+=5){
+      var px2=m2.px(i*dt), py2=m2.py(out[i]);
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,sx,22,'二阶: ζ='+fmt(ZETA,2)+',  ωₙ='+fmt(WN,1),'#37474f','bold 12.5px Segoe UI');
+    var os=0;
+    if(ZETA<1) os=Math.exp(-Math.PI*ZETA/Math.sqrt(1-ZETA*ZETA))*100;
+    setRO('sysReadout',
+      '一阶系统 $\\tau y\'+y=x$: 阶跃响应 '+hl('$y(t)=1-\\mathrm{e}^{-t/\\tau}$')+', 时间常数 $\\tau='+fmt(TAU,2)+'$ (上升快慢由 $\\tau$ 决定, 终值恒为 $1$).<br>'+
+      '二阶系统 $y\'\'+2\\zeta\\omega_n y\'+\\omega_n^2 y=\\omega_n^2 x$: 阻尼比 $\\zeta='+fmt(ZETA,2)+'$'+
+      (ZETA<1?', 系统<b>欠阻尼</b>, 会出现振荡与超调, 超调量约 ':'')+(ZETA<1?hl(fmt(os,1)+'%'):'')+
+      (ZETA>=1?', 系统<b>不超调</b> (临界/过阻尼), 响应单调趋于终值 ':'')+
+      (ZETA<1?'.':'.')+'<br>'+
+      hl2('传递函数 $H(s)=\\frac{\\omega_n^2}{s^2+2\\zeta\\omega_n s+\\omega_n^2}$; 阶跃响应即 $\\mathscr{L}^{-1}[H(s)/s]$')+'. 阻尼比越小振荡越强, 阻尼比越大越平缓.');
+  }
+  function axStepSys(ctx,w,h,m){
+    var x0=m.px(0), y0=m.py(0);
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(w,y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0,0); ctx.lineTo(x0,h); ctx.stroke();
+    ctx.font='italic 13px Georgia'; ctx.fillStyle='#546e7a';
+    if(y0-8>0) ctx.fillText('t', w-14, y0-8);
+    if(x0+6<w) ctx.fillText('y', x0+6, 14);
+    ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.85)';
+    for(var x=1;x<=6;x++){
+      ctx.beginPath(); ctx.moveTo(m.px(x),y0-4); ctx.lineTo(m.px(x),y0+4);
+      ctx.strokeStyle='#546e7a'; ctx.stroke();
+      ctx.fillText(String(x),m.px(x)-4,y0+16);
+    }
+  }
+  bindSlider('sysTau',function(v){ TAU=v; badge('sysTauV',fmt(v,2)); draw(); });
+  bindSlider('sysZeta',function(v){ ZETA=v; badge('sysZetaV',fmt(v,2)); draw(); });
+  badge('sysTauV',fmt(TAU,2)); badge('sysZetaV',fmt(ZETA,2));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'基本思想与步骤', c:'#1976d2', leaves:[
+      '微分方程 (含初值) 是一种"难运算"',
+      '$\\mathscr{L}$ 把它从时域搬进 $s$ 域',
+      '化为象函数的代数方程',
+      '解代数方程得 $Y(s)$',
+      '$\\mathscr{L}^{-1}$ 逆变换得 $y(t)$',
+      '微分性质自动吸收初值条件']},
+    {t:'一阶 / 二阶初值问题', c:'#e65100', leaves:[
+      '例4.1: $y\'\'+2y\'-3y=\\mathrm{e}^{-t}$',
+      '$Y(s)=\\frac{s+2}{(s+1)(s-1)(s+3)}$',
+      '$y(t)=-\\frac{1}{4}\\mathrm{e}^{-t}+\\frac{3}{8}\\mathrm{e}^{t}-\\frac{1}{8}\\mathrm{e}^{-3t}$',
+      '例4.2: $ax\'+bx=f(t),\\ x(0)=c$',
+      '$X(s)=\\frac{F(s)+ac}{as+b}$',
+      '$x=c\\mathrm{e}^{-\\frac{b}{a}t}$\n$+\\ \\frac{1}{a}\\int_0^t\\mathrm{e}^{-\\frac{b}{a}(t-\\tau)}f(\\tau)\\,\\mathrm{d}\\tau$']},
+    {t:'积分方程与微分方程组', c:'#c62828', leaves:[
+      '例4.3: $f(t)=at+f(t)*\\sin t$ (卷积)',
+      '$F(s)=\\frac{a}{s^2}+\\frac{F(s)}{s^2+1}$',
+      '$F(s)=a\\left(\\frac{1}{s^2}+\\frac{1}{s^4}\\right)$',
+      '$f(t)=a\\left(t+\\frac{t^3}{6}\\right)$',
+      '例4.4: 方程组 → 代数方程组',
+      '$x=-t+t\\mathrm{e}^{t},\\,y=1-\\mathrm{e}^{t}+t\\mathrm{e}^{t}$']},
+    {t:'工程应用与拓展', c:'#2e7d32', leaves:[
+      '传递函数 $H(s)=\\frac{Y(s)}{X(s)}$',
+      '冲激响应 $h(t)=\\mathscr{L}^{-1}[H(s)]$',
+      '零状态响应 $Y(s)=H(s)X(s)$',
+      '卷积: $y(t)=h(t)*x(t)$',
+      'RLC 电路: $Ls^2+Rs+\\frac{1}{C}=H^{-1}$',
+      '一阶 / 二阶系统的阶跃响应']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第八章第四节 · 常微分方程的拉氏变换解法';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=cd.leaves[j];
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 基本思想与步骤 → 一阶/二阶初值问题 → 积分方程与微分方程组 → 工程应用; 一句话: <b>微分方程 (含初值) 经 $\\mathscr{L}$ 化为 $s$ 域代数方程, 解出 $Y(s)$ 再取 $\\mathscr{L}^{-1}$ 得 $y(t)$; 微分性质 $\\mathscr{L}[y\'\']=s^2Y(s)-sy(0)-y\'(0)$ 自动吸收初值; 积分方程靠卷积定理化代数方程, 微分方程组化为代数方程组消元; 工程上 $H(s)=\\frac{Y(s)}{X(s)}$, $h(t)=\\mathscr{L}^{-1}[H(s)]$, 零状态响应 $y(t)=h(t)*x(t)$</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'拉氏变换用"换一个域"的办法, 把难解的微分方程变成了好解的代数方程. 你觉得这种"换域"的思路, 值得我们在别的地方也照搬吗?',
+     hints:['代价与收益: 多学了一套变换、多了正反两次换算, 但换来的是"解方程"变成"做除法".',
+            '换域的要点, 是找到那个让"难运算"变成"易运算"的对应关系 (微分 ↔ 乘 s, 卷积 ↔ 相乘).',
+            '类似的例子: 对数把乘法变加法, 傅氏变换把卷积变相乘, 频域里看滤波器比时域清楚得多.',
+            '可迁移的态度: 遇到难啃的问题, 先别急着硬算, 先问"有没有更合适的表示方式".']},
+    {q:'杜阿梅尔原理说"任何连续作用都不过是无数瞬时作用的叠加". 为什么这种"叠加"思想能成为工程系统的通用语言?',
+     hints:['前提是"线性": 线性系统的响应可以叠加, 这是整条链条能成立的根基.',
+            '把复杂输入拆成简单件 (冲激/阶跃), 先算单件响应, 再叠加 —— 这就是卷积 $y(t)=\\int_0^t h(t-\\tau)f(\\tau)d\\tau$.',
+            '到了 s 域, 叠加变成乘法 $Y(s)=H(s)X(s)$, 于是"设计控制器"变成了"调整一个分式", 工程上极其好用.',
+            '可迁移的态度: 能拆开的复杂问题, 就不算真正的复杂问题; 关键是找到那组"基本件".']},
+    {q:'《九章算术》的"方程术"用遍乘直除消元求解线性方程组, 与今天的线性代数消元是同一种东西. 你如何理解这种跨越两千年的传承?',
+     hints:['《九章算术》"方程"章用算筹布列系数、按固定程序消元, 本质上就是高斯消元法的雏形, 比欧洲早约一千五百年.',
+            '"正负术"给出了正负数的加减法则, 解决了消元中"不够减"的困难 —— 让算法能"一路走到底".',
+            '拉氏变换所做的是同一件事的连续版本: 把微分方程整理成代数方程组, 再交给消元法.',
+            '可迁移的态度: 算法化的思想没有时代之分; 谁把"把问题变成算法"这件事做得更彻底, 谁就能走得更远.']},
+    {q:'从杜阿梅尔原理到传递函数、再到火箭与卫星的控制回路 —— "基础原理"是怎样一步步变成"工程能力"的?',
+     hints:['第一步: 从具体问题 (热传导边值问题) 里提炼出一般的数学方法 (叠加/卷积).',
+            '第二步: 用变换把方法"代数化", 得到便于计算与设计的传递函数 $H(s)$、冲激响应 $h(t)$.',
+            '第三步: 工程师把 $H(s)$ 当作系统的"指纹", 用来做稳定性分析与控制器设计 —— 数学就此变成能力.',
+            '可迁移的态度: 基础研究的价值往往不是立刻兑现的; 把基础打牢, 才可能在关键时刻"接得住"工程需求.']},
+    {q:'长征火箭的姿态控制、北斗卫星的轨道与姿态动力学、载人航天交会对接、C919 飞控, 处处都是微分方程. 这对你学习本门课有什么启发?',
+     hints:['这些系统的运动都被微分方程 (组) 精确描述, 而拉氏变换与传递函数是分析与设计它们的基本工具.',
+            '钱学森《工程控制论》(1954) 把控制理论系统化为面向工程的技术科学, 后继学者 (如关肇直、宋健等) 继续接力.',
+            '抽象的一节课, 落在工程上就是"能不能把回路控稳、把方程解准"的硬指标.',
+            '可迁移的态度: 把今天的公式学扎实, 就是在为将来"把大国重器算得准、控得稳"积累底气.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='sz8Ans'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

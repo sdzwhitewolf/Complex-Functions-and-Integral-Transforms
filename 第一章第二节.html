@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章第二节 复变函数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container { font-size: .9em; }
+.kg-col.long .kg-leaf mjx-container { font-size: .82em; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:nowrap;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.84em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+
+/* ---------- 第二节新增组件 ---------- */
+.def-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:14px; margin:16px 0; }
+.def-card {
+    background:#fff; border-radius:12px; padding:16px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #1976d2; font-size:.93em;
+}
+.def-card .dc-t { font-weight:800; color:#0d47a1; margin-bottom:8px; font-size:1.0em; }
+.def-card p { margin:6px 0; }
+.cond-list { counter-reset:cd; list-style:none; padding-left:0; margin:10px 0; }
+.cond-list > li {
+    counter-increment:cd; position:relative; padding:8px 6px 8px 42px; margin:8px 0;
+    background:rgba(255,255,255,.72); border-radius:8px; font-size:.94em;
+}
+.cond-list > li::before {
+    content:counter(cd); position:absolute; left:10px; top:8px;
+    width:24px; height:24px; border-radius:50%;
+    background:linear-gradient(135deg,#1976d2,#42a5f5); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.8em; font-weight:800;
+}
+.vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0; }
+.vs-card {
+    border-radius:12px; padding:16px 20px; font-size:.92em;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+.vs-card.single { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-left:5px solid #2e7d32; }
+.vs-card.multi  { background:linear-gradient(135deg,#fce4ec,#f8bbd0); border-left:5px solid #c2185b; }
+.vs-card .vs-t { font-weight:800; margin-bottom:8px; font-size:1.0em; }
+.vs-card.single .vs-t { color:#1b5e20; }
+.vs-card.multi .vs-t { color:#880e4f; }
+@media (max-width: 720px) { .vs-grid { grid-template-columns:1fr; } }
+.proof-steps { margin:12px 0; padding-left:0; list-style:none; }
+.proof-steps li {
+    padding:10px 16px 10px 18px; margin:8px 0; border-radius:8px;
+    background:rgba(255,255,255,.78); border-left:3px solid #5c6bc0; font-size:.92em;
+}
+.proof-steps li b.step-tag { color:#283593; margin-right:6px; }
+.counter-ex {
+    background:linear-gradient(135deg,#fff1f2,#ffe4e6);
+    border:1px solid #fda4af; border-left:5px solid #e11d48;
+    border-radius:12px; padding:16px 22px; margin:16px 0; font-size:.93em;
+}
+.counter-ex .ce-t { font-weight:800; color:#9f1239; margin-bottom:8px; }
+.curve-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:.84em; color:#455a64; margin:8px 0 12px; }
+.curve-legend span { display:inline-flex; align-items:center; gap:6px; }
+.curve-legend i { width:22px; height:4px; border-radius:2px; display:inline-block; }
+.map-arrow-note {
+    background:#f0f9ff; border:1px dashed #38bdf8; border-radius:10px;
+    padding:12px 18px; margin:12px 0; font-size:.9em; color:#0c4a6e;
+}
+</style>
+
+<body>
+
+<div class="header">
+    <h1>第一章 第2节 复变函数</h1>
+    <p>区域与曲线 &middot; 映射与极限 &middot; 连续与直观</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握复平面上邻域、内点、开集、区域、边界、闭域、有界域等基本概念;
+2. 掌握连续曲线、光滑曲线、简单曲线、简单闭曲线以及单连通域与多连通域的概念;
+3. 理解复变函数的定义, 掌握复变函数与一对二元实变函数的对应关系;
+4. 理解复变函数极限的 $\varepsilon$-$\delta$ 定义, 掌握极限的两种计算方法与"路径无关性";
+5. 理解复变函数连续性的定义与运算法则, 了解有理函数的连续性;
+6. 借助可拖拽交互, 直观感受邻域、区域、映射与极限的几何意义.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-2" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-2" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-2" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-2" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-2" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-2" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、区域与曲线</label>
+    <label class="tab-btn" for="tab2" id="label2">二、复变函数的概念</label>
+    <label class="tab-btn" for="tab3" id="label3">三、复变函数的极限</label>
+    <label class="tab-btn" for="tab4" id="label4">四、复变函数的连续性</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 区域与曲线 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 邻域与去心邻域</div>
+
+<div class="box-think">
+<div class="think-label">思考: 为什么要先讲"区域"?</div>
+实变函数中我们熟悉区间 $(a,b)$、$[a,b]$. 到了复平面, 一维的区间要换成二维的"<b>区域</b>".
+后面所有重要概念 —— 解析、积分、级数、留数 —— 都要求函数"在某个区域内"讨论. 因此先把"区域"这个词的精确含义钉死, 是整门课的地基.
+</div>
+
+<div class="box-key">
+<div class="title">定义 (邻域与去心邻域)</div>
+设 $z_0$ 是复平面上一点, $\delta$ 为任意一个正数, 称点集
+<div class="box-formula">$$N_\delta(z_0) = \{\, z : |z - z_0| < \delta \,\}$$</div>
+为 $z_0$ 的一个 <b>$\delta$ 邻域</b>; 称点集
+<div class="box-formula">$$\mathring{N}_\delta(z_0) = \{\, z : 0 < |z - z_0| < \delta \,\}$$</div>
+为 $z_0$ 的一个 <b>去心 $\delta$ 邻域</b>.
+</div>
+
+<div class="info-box">
+<strong>几何直观:</strong> 邻域 $N_\delta(z_0)$ 就是以 $z_0$ 为圆心、$\delta$ 为半径的<b>开圆盘</b>(不含圆周);
+去心邻域 $\mathring{N}_\delta(z_0)$ 则是这个开圆盘<b>挖掉圆心</b>$z_0$ 之后剩下的部分.
+"去心"二字看似小事, 却决定了极限定义的成败 —— 因为讨论 $\lim\limits_{z\to z_0} f(z)$ 时, 函数在 $z_0$ 这一点本身的值是否有定义、等于多少, 都与极限无关.
+</div>
+
+<div class="chart-container">
+<h3>邻域与去心邻域 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动 <b>圆心 $z_0$</b> 移动位置, 拖动滑块改变半径 $\delta$. 勾选开关可切换"去心"与"实心"两种显示.</div>
+<canvas id="cvNbd" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半径 $\delta$:</label>
+<input type="range" id="nbdSlider" min="0.2" max="2.4" step="0.05" value="1.2">
+<span class="val-badge" id="nbdVal">1.20</span>
+</div>
+<div class="row">
+<button class="control-btn" id="btnNbdPunc">切换去心/实心</button>
+<button class="control-btn" id="btnNbdReset">重置</button>
+</div>
+<div class="readout" id="nbdReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">1.2 内点、开集</div>
+
+<div class="box-key">
+<div class="title">定义 (内点与开集)</div>
+设 $G$ 为一平面点集, $z_0 \in G$. 如果存在 $z_0$ 的<b>一个邻域</b> $N_\delta(z_0)$, 使得 $N_\delta(z_0) \subset G$, 则称 $z_0$ 为 $G$ 的<b>内点</b>.
+<br>如果 $G$ 中<b>每一点</b>都是它的内点, 则称 $G$ 为<b>开集</b>.
+</div>
+
+<div class="info-box">
+<strong>要点辨析:</strong> 内点的关键在于"<b>存在</b>一个邻域完全包含在 $G$ 里面" —— 只要圆盘有一点点越出 $G$, 该点就不是内点.
+因此圆周上的点 $|z|=1$ 不是开圆盘 $\{|z|<1\}$ 的内点, 但它是闭圆盘 $\{|z|\le 1\}$ 的内点吗? 也不是 —— 因为以它为中心的任何小圆盘都会有一部分落在外面.
+</div>
+
+<div class="chart-container">
+<h3>内点判定实验台 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动红点 $P$ 在图中移动, 观察它相对于集合 $G = \{\,|z| < 1\,\} \cup \{\,|z - 2.2 - 0.6\mathrm{i}| < 0.8\,\}$ 的地位: 内点 (绿) / 边界点 (橙) / 外点 (灰).</div>
+<canvas id="cvInterior" data-h="400"></canvas>
+<div class="control-panel">
+<div class="readout" id="intReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">1.3 区域、边界与闭区域</div>
+
+<div class="box-key">
+<div class="title">定义 (区域)</div>
+如果平面点集 $D$ 满足以下两个条件:
+<ol class="cond-list">
+<li>$D$ 是一个<b>开集</b>;</li>
+<li>$D$ 是<b>连通的</b> —— 即 $D$ 中任何两点都可以用一条完全属于 $D$ 的<b>折线</b>连结起来.</li>
+</ol>
+则称 $D$ 为一个<b>区域</b>.
+<div class="box-formula">$$\text{区域} \;=\; \text{连通的开集}$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">定义 (边界点、边界、闭区域)</div>
+设 $D$ 是复平面内的一个区域. 如果点 $P$ <b>不属于</b> $D$, 但在 $P$ 的任意小的邻域内<b>总有 $D$ 中的点</b>, 这样的 $P$ 称为 $D$ 的<b>边界点</b>.
+<br>$D$ 的所有边界点组成 $D$ 的<b>边界</b>. 区域 $D$ 与它的边界一起构成<b>闭区域</b> (闭域), 记作 $\overline{D} = D \cup \partial D$.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">注意</div>
+区域的边界可能是由<b>几条曲线</b>和<b>一些孤立的点</b>共同组成的, 不一定是一条光滑曲线.
+例如圆环域 $\{1 < |z| < 2\}$ 的边界是<b>两个圆</b>; 而区域 $\{0 < |z| < 1\}$ 的边界除了单位圆周, 还要加上<b>孤立点 $z=0$</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定义 (有界域与无界域)</div>
+如果存在正数 $M$, 使得对于一切 $D$ 中的点 $z$, 都有
+<div class="box-formula">$$|z| \le M$$</div>
+则称 $D$ 为<b>有界域</b>, 否则称为<b>无界域</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1</div>
+判断下列区域是否有界?
+<div class="box-formula">$$\text{(1) 圆环域 } r < |z - z_0| < 2r; \quad \text{(2) 上半平面 } \operatorname{Im} z > 0;$$
+$$\text{(3) 角形域 } 0 < \arg z < \frac{\pi}{4}; \quad \text{(4) 带形域 } a < \operatorname{Im} z < b \ (a < b).$$</div>
+<input type="checkbox" id="ansEx1" class="answer-toggle">
+<label for="ansEx1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+(1) 对一切 $z \in \{\, r < |z - z_0| < 2r \,\}$ 有 $|z| \le |z - z_0| + |z_0| < 2r + |z_0|$, 取 $M = 2r + |z_0|$ 即可罩住, 故<b>有界</b>.
+<br>(2) 上半平面中可取 $z = \mathrm{i}M$ ($M$ 任意大), $|z| = M$ 可超过任何给定的 $M_0$, 故<b>无界</b>.
+<br>(3) 角形域 $\{\, 0 < \arg z < \frac{\pi}{4} \,\}$ 是张角为 $\frac{\pi}{4}$ 的无限楔形区域, 沿角平分线方向可以走得任意远, 故<b>无界</b>.
+<br>(4) 带形域中可取 $z = M + \mathrm{i}\,\frac{a+b}{2}$ ($M$ 任意大), 故<b>无界</b>.
+<br><b>结论: (1) 有界; (2)(3)(4) 无界.</b>
+<br><span style="color:#6a1b9a">可见"有界"要求区域能被某个圆盘 $|z| \le M$ 整个罩住; 只要沿某个方向能无限延伸, 就是无界.</span>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>四类典型区域总览 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">点击按钮切换圆环域 / 上半平面 / 角形域 / 带形域, 图中高亮显示该区域及其边界, 并同步给出有界性与连通性的判断.</div>
+<canvas id="cvRegion" data-h="430"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnReg1">圆环域</button>
+<button class="control-btn" id="btnReg2">上半平面</button>
+<button class="control-btn" id="btnReg3">角形域</button>
+<button class="control-btn" id="btnReg4">带形域</button>
+</div>
+<div class="readout" id="regReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">1.4 平面曲线</div>
+
+<div class="box-key">
+<div class="title">定义 (连续曲线的复数表示式)</div>
+如果 $x(t)$ 和 $y(t)$ 是两个连续的实变函数, 则方程组
+<div class="box-formula">$$x = x(t), \qquad y = y(t) \qquad (\alpha \le t \le \beta)$$</div>
+代表一条平面曲线. 令 $z(t) = x(t) + \mathrm{i}y(t)$, 则称之为平面曲线的<b>复数表示式</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2</div>
+写出单位圆周 $|z| = 1$ 与抛物线 $y = x^2$ $(0 \le x \le 1)$ 的复数表示式.
+<input type="checkbox" id="ansEx2" class="answer-toggle">
+<label for="ansEx2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1) 单位圆周</b> $|z| = 1$: 取 $x = \cos t$, $y = \sin t$, $0 \le t \le 2\pi$, 则
+$$z(t) = \cos t + \mathrm{i}\sin t = \mathrm{e}^{\mathrm{i}t}, \qquad 0 \le t \le 2\pi.$$
+<br><b>(2) 抛物线</b> $y = x^2$ $(0 \le x \le 1)$: 直接令 $t = x$ 作参数, 则 $y = t^2$, 故
+$$z(t) = t + \mathrm{i}\,t^2, \qquad 0 \le t \le 1.$$
+<br><span style="color:#6a1b9a">参数 $t$ 可以理解为"时间", 而 $z(t)$ 是动点在不同时刻的位置 —— 曲线就是动点运动的轨迹. 反过来, 同一条曲线的复数表示式并不唯一, 参数选得不同, 写法就不同.</span>
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">定义 (光滑曲线与按段光滑曲线)</div>
+如果在区间 $[\alpha, \beta]$ 上, $z(t)$ 的实部 $x(t)$ 和虚部 $y(t)$ 都有<b>连续的导数</b>, 而且
+<div class="box-formula">$$[x'(t)]^2 + [y'(t)]^2 \ne 0 \qquad (\text{即 } z'(t) \ne 0)$$</div>
+则称曲线 $z = z(t)$ <b>光滑</b>.
+<br>由几段依次相接的光滑曲线所组成的曲线称为<b>按段光滑曲线</b>.
+</div>
+
+<div class="info-box">
+<strong>为什么要求 $z'(t) \ne 0$?</strong> 因为 $z'(t)$ 是曲线的切向量. 若在某点 $z'(t)=0$, 该点处切线方向消失, 曲线可能出现尖点或静止, 不再是"光滑"的. 例如 $z(t) = t^3 + \mathrm{i}t^3$ 在 $t=0$ 处 $z'(0)=0$, 曲线在该点有一个尖角, 因此不光滑.
+</div>
+
+<div class="box-key">
+<div class="title">定义 (简单曲线与简单闭曲线)</div>
+设 $C:\ z = z(t)$ ($\alpha \le t \le \beta$) 为一条连续曲线, $z(\alpha)$ 与 $z(\beta)$ 分别为 $C$ 的起点与终点.
+<br>对于满足 $\alpha < t_1 < \beta$, $\alpha < t_2 < \beta$ 的 $t_1$ 和 $t_2$, 当 $t_1 \ne t_2$ 而有 $z(t_1) = z(t_2)$ 时, 点 $z(t_1)$ 称为曲线 $C$ 的<b>重点</b>.
+<br><b>没有重点</b>的曲线 $C$ 称为<b>简单曲线</b> (或 Jordan 曲线).
+<br>如果简单曲线的起点与终点重合, 即 $z(\alpha) = z(\beta)$, 则称曲线 $C$ 为<b>简单闭曲线</b>.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">注意</div>
+"简单"的含义就是"<b>自身不相交, 不重复经过同一点</b>". 理解时可记为: 简单曲线是"一笔画且不回头"的曲线; 简单闭曲线则是"一笔画、不回头、且首尾相接围成一圈"的曲线.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3</div>
+判断下列曲线是否为简单曲线? 是否为闭曲线?
+<div class="box-formula">$$\text{(1) } z = \mathrm{e}^{\mathrm{i}t} \ (0 \le t \le 3\pi); \qquad \text{(2) } z = t + \mathrm{i}t^2 \ (0 \le t \le 2);$$
+$$\text{(3) } z = \cos t + \mathrm{i}\sin t \ (0 \le t \le 4\pi); \qquad \text{(4) } z = a\cos t + \mathrm{i}\,b\sin t \ (0 \le t \le 2\pi,\ a, b > 0,\ a \ne b).$$</div>
+<input type="checkbox" id="ansEx3" class="answer-toggle">
+<label for="ansEx3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> $z = \mathrm{e}^{\mathrm{i}t}$ $(0 \le t \le 3\pi)$: 动点沿单位圆绕了 $1\frac{1}{2}$ 圈. 当 $t_2 = t_1 + 2\pi$ ($0 < t_1 \le \pi$) 时 $z(t_1) = z(t_2)$, 出现<b>重点</b>, 故<b>不简单</b>; 又起点 $z(0) = 1 \ne z(3\pi) = -1$, 首尾不重合, 故<b>不闭</b>. <b>结论: 不简单, 不闭.</b>
+<br><b>(2)</b> $z = t + \mathrm{i}t^2$ $(0 \le t \le 2)$: 即抛物线 $y = x^2$ 的一段. 若 $z(t_1) = z(t_2)$, 则实部相等给出 $t_1 = t_2$, 无重点, 故<b>简单</b>; 又 $z(0) = 0 \ne z(2) = 2 + 4\mathrm{i}$, 故<b>不闭</b>. <b>结论: 简单, 不闭.</b>
+<br><b>(3)</b> $z = \cos t + \mathrm{i}\sin t = \mathrm{e}^{\mathrm{i}t}$ $(0 \le t \le 4\pi)$: 动点沿单位圆绕了 $2$ 圈, 当 $t_2 = t_1 + 2\pi$ 时 $z(t_1) = z(t_2)$, 有重点, 故<b>不简单</b>; 但 $z(0) = z(4\pi) = 1$, 首尾重合, 故<b>闭</b>. <b>结论: 不简单, 闭.</b>
+<br><b>(4)</b> $z = a\cos t + \mathrm{i}\,b\sin t$ $(0 \le t \le 2\pi)$: 即椭圆 $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$. 若 $z(t_1) = z(t_2)$, 由实部 $a\cos t_1 = a\cos t_2$ 与虚部 $b\sin t_1 = b\sin t_2$, 在 $[0, 2\pi]$ 内只能 $t_1 = t_2$ (一个周期内椭圆上每点只经过一次), 无重点, 故<b>简单</b>; 且 $z(0) = z(2\pi) = a$, 首尾重合, 故<b>闭</b>. <b>结论: 简单, 闭 —— 是一条简单闭曲线.</b>
+<br><span style="color:#6a1b9a">判断口诀: 先看有没有"重点"(自交), 再看首尾是否重合. 注意 (1) 与 (3) 的对比: 同是圆周, 转的圈数不同, "简单"与"闭"的结论组合就不同.</span>
+</div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">简单闭曲线的性质 (Jordan 曲线定理)</div>
+任意一条简单闭曲线 $C$ 将复平面唯一地分成<b>三个互不相交的点集</b>: 曲线 $C$ 的<b>内部</b>、$C$ 的<b>外部</b>, 以及 $C$ 本身 (边界).
+<br>这个看似"显然"的事实, 严格证明却相当困难 —— 它是拓扑学的重要起点.
+</div>
+
+<div class="chart-container">
+<h3>曲线性质判别器 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">点击按钮切换不同曲线, 图中标出所有<b>重点</b>(自交点, 红点), 并自动给出"是否简单""是否闭"的判断与理由.</div>
+<canvas id="cvCurve" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnCur1">圆周</button>
+<button class="control-btn" id="btnCur2">弧段</button>
+<button class="control-btn" id="btnCur3">8 字形</button>
+<button class="control-btn" id="btnCur4">自交曲线</button>
+</div>
+<div class="readout" id="curReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">1.5 单连通域与多连通域</div>
+
+<div class="box-key">
+<div class="title">定义 (单连通域与多连通域)</div>
+复平面上的一个区域 $B$, 如果在其中<b>任作一条简单闭曲线</b>, 而曲线的<b>内部总属于 $B$</b>, 就称为<b>单连通域</b>.
+<br>一个区域如果不是单连通域, 就称为<b>多连通域</b>.
+</div>
+
+<div class="vs-grid">
+<div class="vs-card single">
+<div class="vs-t">单连通域 (单连域)</div>
+区域内<b>没有"洞"</b>. 其中的任何一条简单闭曲线围成的内部都完全留在区域内.
+<br><b>直观判据:</b> 在区域内任意画一个圈, 圈里圈外都在区域里, 收缩成一个点也不会碰到区域外.
+<br><b>例子:</b> 圆盘 $\{|z|<1\}$、上半平面、任何凸区域.
+</div>
+<div class="vs-card multi">
+<div class="vs-t">多连通域 (多连域)</div>
+区域内<b>有"洞"</b> (或者被割开). 存在一条简单闭曲线, 它围住的内部有一部分不在区域内.
+<br><b>直观判据:</b> 有些圈把"洞"圈了进去, 于是圈内的某些点落在区域外.
+<br><b>例子:</b> 圆环域 $\{1<|z|<2\}$ (一个洞, 二连域).
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 4</div>
+指明下列不等式所确定的区域: 是有界的还是无界的? 是单连通的还是多连通的?
+<div class="box-formula">$$\text{(1) } \operatorname{Re}(z) > 1; \qquad \text{(2) } \frac{\pi}{4} < \arg z < \frac{\pi}{3}; \qquad \text{(3) } x^2 + y^2 > 1.$$</div>
+<input type="checkbox" id="ansEx4" class="answer-toggle">
+<label for="ansEx4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> 令 $z = x + \mathrm{i}y$, $\operatorname{Re}(z) > 1$ 即 $x > 1$ —— 直线 $x = 1$ 右侧的<b>半平面</b>. 它可以无限延伸, 故<b>无界</b>; 其中任何简单闭曲线的内部仍在该半平面内 (没有"洞"), 故<b>单连通</b>. <b>结论: 无界的单连通域.</b>
+<br><b>(2)</b> $\frac{\pi}{4} < \arg z < \frac{\pi}{3}$ 是以原点为顶点、张角为 $\frac{\pi}{3} - \frac{\pi}{4} = \frac{\pi}{12}$ 的<b>角形域</b>. 它沿射线方向无限延伸, 故<b>无界</b>; 且无洞, 故<b>单连通</b>. <b>结论: 无界的单连通域.</b>
+<br><b>(3)</b> $x^2 + y^2 > 1$ 即 $|z| > 1$ —— <b>单位圆的外部</b>. 它可以无限延伸, 故<b>无界</b>; 但在区域内任作圆周 $|z| = 2$ (它整个落在区域内), 其内部却含有单位圆盘 $\{|z| \le 1\}$ 这一部分不属于区域的点 —— 相当于圈住了 $z = 0$ 处的一个"洞", 故<b>多连通</b>. <b>结论: 无界的多连通域.</b>
+<br><span style="color:#6a1b9a">注意本题与例 1 的对比: $\{|z|>1\}$ 虽然是"圆的外部", 却不是单连通的 —— "外部区域"围着圆盘这个洞. 有界性与单连通性是两个独立的性质.</span>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>单连通 vs 多连通 判定器 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动图中的<b>简单闭曲线</b>(可拖动圆环), 观察它围住的内部有多少点落在区域之外. 内部全在区域内 → 单连通; 内部含有区域外的点 → 该圈"抓住了一个洞", 说明是多连通.</div>
+<canvas id="cvConn" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnConn1">圆盘 (单连)</button>
+<button class="control-btn" id="btnConn2">圆环 (多连)</button>
+<button class="control-btn" id="btnConn3">双洞区域</button>
+</div>
+<div class="readout" id="connReadout"></div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<b>"有界"与"单连通"是两个互不相关的性质, 不要混淆.</b>
+<ul style="margin:8px 0 0 18px">
+<li>圆盘 $\{|z|<1\}$: 有界 <b>且</b> 单连通;</li>
+<li>圆环 $\{1<|z|<2\}$: 有界 <b>但</b> 多连通;</li>
+<li>上半平面: 无界 <b>但</b> 单连通;</li>
+<li>带形域 $\{1<\operatorname{Im}z<3\}$: 无界 <b>且</b> 单连通;</li>
+<li>$\{0<|z|<1\}$: 有界 <b>但</b> 多连通 (被挖去一个点, 相当于一个"点洞").</li>
+</ul>
+</div>
+
+</div>
+<!-- ============ Tab 2: 复变函数的概念 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 复变函数的定义</div>
+
+<div class="box-key">
+<div class="title">定义 (复变函数)</div>
+设 $G$ 是复平面上的一个集合, 对于 $G$ 中的每一个 $z$, 按照一个确定的法则, 有一个或多个复数 $w$ 的值与之对应, 则称 $w$ 为定义在 $G$ 上复变数 $z$ 的<b>复变函数</b>, 记作
+<div class="box-formula">$$w = f(z), \qquad z \in G.$$</div>
+</div>
+
+<div class="vs-grid">
+<div class="vs-card single">
+<div class="vs-t">单值函数</div>
+对于 $G$ 中的每个 $z$, 有且<b>仅有唯一一个</b> $w$ 与之对应, 则称函数 $w = f(z)$ 是<b>单值的</b>.
+<br><b>例:</b> $w = z^2$, $w = \mathrm{e}^z$, $w = \frac{1}{z}$.
+</div>
+<div class="vs-card multi">
+<div class="vs-t">多值函数</div>
+对于 $G$ 中的每个 $z$, 有<b>两个或两个以上</b> $w$ 与之对应, 则称函数 $w = f(z)$ 是<b>多值的</b>.
+<br><b>例:</b> $w = \sqrt{z}$ (两个值), $w = \sqrt[3]{z}$ (三个值), $w = \operatorname{Arg} z$ (无穷多值).
+</div>
+</div>
+
+<div class="info-box">
+<strong>术语:</strong> 集合 $G$ 称为 $f(z)$ 的<b>定义集合</b>; 与 $G$ 中所有 $z$ 对应的一切 $w$ 值所成的集合 $G^*$ 称为<b>函数值集合</b>.
+<br>后面重点研究的是<b>单值函数</b>; 对多值函数 (如根式、对数), 我们将通过"分出单值分支"的办法来处理.
+</div>
+
+<div class="sec-title">2.2 复变函数与两个二元实变函数</div>
+
+<div class="box-key">
+<div class="title">核心对应关系</div>
+给定自变量 $z = x + \mathrm{i}y$ 的值, 相当于给定两个实数 $x,\ y$. 而复变函数 $w = f(z)$ 也确定两个实数 $u,\ v$, 从而
+<div class="box-formula">$$w = f(z) = u(x,y) + \mathrm{i}\,v(x,y).$$</div>
+于是复变函数 $w$ 与自变量 $z$ 之间的关系, 相当于两个关系式:
+<div class="box-formula">$$u = u(x, y), \qquad v = v(x, y).$$</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">重要结论</div>
+<b>一个复变函数 $w = f(z)$ 对应于一对二元实变函数 $u(x,y)$、$v(x,y)$.</b>
+反过来, 给出一对二元实变函数 $u(x,y)$、$v(x,y)$, 就确定了一个复变函数 $f(z) = u(x,y) + \mathrm{i}v(x,y)$.
+<br>这个"降维"对应是整门课把复变问题转化为实变问题的<b>总开关</b> —— 极限、连续、导数、积分都会用到它.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5</div>
+设 $w = z^2$, 求它所对应的两个二元实变函数.
+<input type="checkbox" id="ansEx5" class="answer-toggle">
+<label for="ansEx5" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+令 $z = x + \mathrm{i}y$, $w = u + \mathrm{i}v$, 则
+$$w = z^2 = (x + \mathrm{i}y)^2 = x^2 + 2xy\,\mathrm{i} + (\mathrm{i}y)^2 = (x^2 - y^2) + 2xy\,\mathrm{i}.$$
+于是函数 $w = z^2$ 对应于两个二元实变函数
+<div class="box-formula">$$u(x,y) = x^2 - y^2, \qquad v(x,y) = 2xy.$$</div>
+<br><span style="color:#6a1b9a">这对函数在后续章节会反复出现: $u = x^2 - y^2$ 的"鞍形等值线"与 $v = 2xy$ 的"双曲等值线"正交, 这正是第二章"解析函数实虚部调和"的第一个例证.</span>
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.3 复变函数的映射 (几何) 定义</div>
+
+<div class="box-key">
+<div class="title">定义 (映射)</div>
+函数 $w = f(z)$ 在几何上可看作把 $z$ 平面上的一个点集 $G$ 变到 $w$ 平面上的一个点集 $G^*$ 的<b>映射</b>.
+<br>如果 $G$ 中的点 $z_0$ 被映射 $w = f(z)$ 映射成 $G^*$ 中的点 $w_0$, 则 $w_0$ 称为 $z_0$ 的<b>像</b> (映像), 而 $z_0$ 称为 $w_0$ 的<b>原像</b>.
+</div>
+
+<div class="map-arrow-note">
+<b>两个平面:</b> 复变函数的研究需要同时看两个复平面 —— 左边 $z$ 平面 (自变量所在), 右边 $w$ 平面 (函数值所在). 函数 $f$ 就是在这两个平面之间建立对应的一台"复印机"或"变形器".
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 6</div>
+说明映射 $w = z^2$ 把 $z$ 平面上与正实轴交角为 $\theta$ 的角形域映射成什么区域.
+<input type="checkbox" id="ansEx6" class="answer-toggle">
+<label for="ansEx6" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $z = r \mathrm{e}^{\mathrm{i}\varphi}$, 则 $w = z^2 = r^2 \mathrm{e}^{\mathrm{i}2\varphi}$, 于是
+<div class="box-formula">$$\operatorname{Arg} w = \operatorname{Arg} z^2 = 2\operatorname{Arg} z.$$</div>
+即经过映射后, 每一点的辐角都<b>加倍</b> (模 $r$ 变为 $r^2$, 但模的缩放不影响区域形状).
+<br>因此, $z$ 平面上与正实轴交角为 $\theta$ 的角形域 $\{\,0 < \arg z < \theta\,\}$, 被映射成 $w$ 平面上与正实轴交角为 $2\theta$ 的<b>角形域</b> $\{\,0 < \arg w < 2\theta\,\}$ —— 张角<b>扩大了一倍</b>.
+<br>特别地, 取 $\theta = \frac{\pi}{4}$, 则像为张角 $\frac{\pi}{2}$ 的角形域; 取 $\theta = \frac{\pi}{2}$ (上半平面), 则像为<b>整个平面挖去正实轴</b> (辐角被拉满一圈).
+<br><span style="color:#6a1b9a">一般地, $w = z^n$ 把张角为 $\theta_0$ 的角形域映射成张角为 $n\theta_0$ 的角形域 —— 角在原点处被放大 $n$ 倍, 这正是 $z=0$ 处"保角性"失效的原因.</span>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>映射动画实验台 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图为 $z$ 平面, 右图为 $w$ 平面. 拖动<b>滑块改变映射幂次 $n$</b> ($w = z^n$), 观察左图中的网格、射线与圆如何被"扭"到右图; 拖动 <b>$z$ 平面的红点</b>可看它的像点位置.</div>
+<canvas id="cvMap" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>映射 $w=z^n$, $n$ =</label>
+<input type="range" id="mapSlider" min="1" max="4" step="1" value="2">
+<span class="val-badge" id="mapVal">2</span>
+</div>
+<div class="row">
+<label>辐角 $\theta$ =</label>
+<input type="range" id="mapTheta" min="0" max="90" step="1" value="30">
+<span class="val-badge" id="mapThetaVal">30°</span>
+</div>
+<div class="readout" id="mapReadout"></div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">拓展: 为什么"映射"的观点如此重要?</div>
+把复变函数看成映射, 是复分析区别于实分析的根本视角. 实变函数 $y=f(x)$ 的图象画在二维平面上; 而复变函数需要两个复平面 (共四维实坐标), 无法直接画出图象, 只能画<b>原像集 → 像集</b>的对应关系.
+<br>正是这个几何观点, 孕育了后来的<b>共形映射</b>理论 (第六章): 解析函数在导数不为零处保持角度不变, 于是可以把复杂的区域"扳"成简单的标准区域 (如圆盘、上半平面), 从而把困难区域上的问题转化为标准区域上的问题.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<b>"函数值集合 $G^*$" 与 "定义集合 $G$" 不要混为一谈.</b> $z$ 平面的点属于 $G$, $w$ 平面的点属于 $G^*$, 二者通常不在同一个平面里.
+求"像集"时, 应把 $z$ 的取值范围代入 $f$ 后解出 $w$ 的对应范围, 而不能直接拿 $z$ 的范围当作 $w$ 的范围.
+</div>
+
+</div>
+
+<!-- ============ Tab 3: 复变函数的极限 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 极限的定义</div>
+
+<div class="box-think">
+<div class="think-label">思考: 复变函数的极限比实变函数"苛刻"在哪里?</div>
+实轴上 $x \to x_0$ 只有<b>两个方向</b> (左、右). 而在复平面上, $z \to z_0$ 有<b>无穷多个方向</b> —— 可以沿任何一条曲线接近.
+<br>这就要求 $f(z)$ 沿<b>所有可能的路径</b>都趋于同一个数. 条件变强了, 但也因此, "证明极限不存在"变得容易多了: <b>只要找到两条路径给出不同的结果即可</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定义 (极限的 $\varepsilon$-$\delta$ 语言)</div>
+设函数 $w = f(z)$ 在 $0 < |z - z_0| < \rho$ 内有定义. 如果存在一个确定的数 $A$, 对于任意给定的 $\varepsilon > 0$, 相应地必有一个正数 $\delta$ ($\delta < \rho$), 使得当
+<div class="box-formula">$$0 < |z - z_0| < \delta$$</div>
+时, 有
+<div class="box-formula">$$|f(z) - A| < \varepsilon,$$</div>
+那么称 $A$ 为 $f(z)$ 当 $z$ 趋向 $z_0$ 时的<b>极限</b>, 记作
+<div class="box-formula">$$\lim\limits_{z \to z_0} f(z) = A \qquad \text{或} \qquad f(z) \to A \quad (z \to z_0).$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">几何意义</div>
+当 $z$ 进入 $z_0$ 的充分小的<b>去心邻域</b>时, 它的函数值 $f(z)$ 就落入 $A$ 的预先给定的<b>小邻域</b>内.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">关键注释</div>
+<b>$z$ 趋于 $z_0$ 的方式是任意的.</b> 就是说, 无论 $z$ 从什么方向、以何种方式趋向于 $z_0$, $f(z)$ 都要趋向于同一个常数.
+<br>由此得到判定极限不存在的有力工具: <b>若沿两条不同的路径 $z \to z_0$ 时 $f(z)$ 趋于不同的值, 则极限不存在.</b>
+</div>
+
+<div class="chart-container">
+<h3>$\varepsilon$-$\delta$ 极限定义演示 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动滑块调节 $\varepsilon$, 图中自动画出 $A$ 的 $\varepsilon$ 邻域 (蓝色圆盘); 系统同时给出<b>能满足条件的最大 $\delta$</b> (橙色圆盘). 观察: $\varepsilon$ 越小, 允许的 $\delta$ 也越小.</div>
+<canvas id="cvEpsDelta" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>$\varepsilon$ =</label>
+<input type="range" id="epsSlider" min="1" max="40" step="1" value="20">
+<span class="val-badge" id="epsVal">0.20</span>
+</div>
+<div class="readout" id="epsReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">3.2 极限的计算: 两个基本定理</div>
+
+<div class="box-key">
+<div class="title">定理一 (极限与实部虚部的关系)</div>
+设函数 $f(z) = u(x,y) + \mathrm{i}\,v(x,y)$, $z_0 = x_0 + \mathrm{i}y_0$, $A = a + \mathrm{i}b$, 则
+<div class="box-formula">$$\lim\limits_{z \to z_0} f(z) = A$$</div>
+的充要条件是
+<div class="box-formula">$$\lim\limits_{\substack{x \to x_0 \\ y \to y_0}} u(x,y) = a, \qquad \lim\limits_{\substack{x \to x_0 \\ y \to y_0}} v(x,y) = b.$$</div>
+</div>
+
+<div class="info-box">
+<strong>定理一的价值:</strong> 该定理表明, <b>复变函数的极限问题可转化为求两个实变函数的极限问题</b>. 这样就把复变函数的极限"降维"成我们熟悉的二元实函数极限, 大大降低了计算难度.
+</div>
+
+<div class="box-key">
+<div class="title">证明思路</div>
+<ul class="proof-steps">
+<li><b class="step-tag">(1) 必要性</b>由 $\lim\limits_{z\to z_0} f(z) = A$ 知, 对任意 $\varepsilon>0$ 存在 $\delta>0$, 当 $0<|z-z_0|<\delta$ 时 $|f(z)-A|<\varepsilon$.
+注意到 $|u - a| \le |f(z) - A|$ 与 $|v - b| \le |f(z) - A|$, 即可推出 $u \to a$, $v \to b$.</li>
+<li><b class="step-tag">(2) 充分性</b>反过来, 若 $u \to a$ 且 $v \to b$, 则对任意 $\varepsilon>0$ 存在 $\delta_1,\delta_2>0$, 取 $\delta = \min\{\delta_1,\delta_2\}$, 由
+$$|f(z) - A| = |(u-a) + \mathrm{i}(v-b)| \le |u-a| + |v-b| < \varepsilon$$
+即得 $f(z) \to A$. 证毕.</li>
+</ul>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">为什么用 $|u-a| \le |f-A|$?</div>
+因为 $|f - A|^2 = (u-a)^2 + (v-b)^2$, 而 $(u-a)^2 \le |f-A|^2$, 开方即得. 这一步是整个证明的枢纽: <b>整体小蕴含分量小</b> (必要性), 而 <b>分量之和小蕴含整体小</b> (充分性).
+</div>
+
+<div class="box-key">
+<div class="title">定理二 (极限的四则运算)</div>
+如果 $\lim\limits_{z \to z_0} f(z) = A$, $\lim\limits_{z \to z_0} g(z) = B$, 则
+<div class="box-formula">$$\lim\limits_{z\to z_0}\big[\,f(z) \pm g(z)\,\big] = A \pm B; \qquad \lim\limits_{z\to z_0}\big[\,f(z)\,g(z)\,\big] = A\,B;$$
+$$\lim\limits_{z \to z_0} \frac{f(z)}{g(z)} = \frac{A}{B} \qquad (B \ne 0).$$</div>
+</div>
+
+<div class="sec-title">3.3 极限不存在的经典例子</div>
+
+<div class="box-example">
+<div class="ex-label">例 7</div>
+证明函数 $f(z) = \frac{\operatorname{Re}(z)}{|z|}$ 当 $z$ 趋于 $0$ 时的极限不存在.
+<br>
+<input type="checkbox" id="ansEx7" class="answer-toggle">
+<label for="ansEx7" class="answer-btn">显示解法一 (代数形式)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解法一】代数形式 (转化为二元实函数极限)</div>
+令 $z = x + \mathrm{i}y$, 则 $\operatorname{Re}(z) = x$, $|z| = \sqrt{x^2 + y^2}$, 于是
+$$f(z) = \frac{x}{\sqrt{x^2 + y^2}}, \qquad \text{即} \quad u(x,y) = \frac{x}{\sqrt{x^2+y^2}}, \quad v(x,y) = 0.$$
+让 $z$ 沿<b>直线 $y = kx$</b> 趋于原点:
+$$\lim\limits_{\substack{x \to 0 \\ y = kx}} u(x, y) = \lim\limits_{x \to 0} \frac{x}{\sqrt{x^2 + k^2x^2}} = \lim\limits_{x \to 0} \frac{\pm 1}{\sqrt{1 + k^2}} = \pm\frac{1}{\sqrt{1+k^2}}.$$
+结果<b>依赖于斜率 $k$ 的符号与大小</b>: 取 $k = 0$ (沿实轴) 得 $\pm 1$; 取 $k = 1$ 得 $\pm\frac{1}{\sqrt{2}}$. 不同路径给出不同极限, 故 $\lim\limits_{z \to 0} f(z)$ <b>不存在</b>.
+</div>
+</div>
+
+<input type="checkbox" id="ansEx7b" class="answer-toggle">
+<label for="ansEx7b" class="answer-btn">显示解法二 (三角表示式)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解法二】利用复数的三角表示式</div>
+设 $z = r(\cos\theta + \mathrm{i}\sin\theta) = r\mathrm{e}^{\mathrm{i}\theta}$, 则 $\operatorname{Re}(z) = r\cos\theta$, $|z| = r$, 于是
+$$f(z) = \frac{r\cos\theta}{r} = \cos\theta.$$
+$f(z)$ 的值<b>只依赖方向 $\theta$, 与距离 $r$ 无关</b>. 当 $z$ 沿着不同的射线 $\theta = \text{常数}$ 趋于零时, $f(z) \to \cos\theta$ 趋于<b>不同的值</b>:
+<ul style="margin:8px 0 0 18px">
+<li>沿正实轴 $\arg z = 0$: $f(z) \to \cos 0 = 1$;</li>
+<li>沿正虚轴 $\arg z = \frac{\pi}{2}$: $f(z) \to \cos\frac{\pi}{2} = 0$;</li>
+<li>沿负实轴 $\arg z = \pi$: $f(z) \to \cos\pi = -1$.</li>
+</ul>
+极限值随路径而变, 故<b>极限不存在</b>.
+<br><span style="color:#6a1b9a">解法二更简洁, 也更深刻地揭示了本质: $f(z)$ 把整个平面"压"到了区间 $[-1, 1]$ 上, 方向不同的点被压到不同的值.</span>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>路径逼近实验台 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动滑块改变<b>接近原点的方向角 $\theta$</b>, 观察函数值 $f(z)=\frac{\operatorname{Re}(z)}{|z|}=\cos\theta$ 在 $w$ 平面上的落点 (只在实轴区间 $[-1,1]$ 上滑动). 无论距离多近, 只要方向一变, 函数值就变 —— 这就是"沿不同路径得到不同极限"的几何证据.</div>
+<canvas id="cvPath" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>方向角 $\theta$ =</label>
+<input type="range" id="pathSlider" min="0" max="359" step="1" value="0">
+<span class="val-badge" id="pathVal">0°</span>
+</div>
+<div class="row">
+<button class="control-btn" id="btnPathAnim">自动旋转扫描</button>
+<button class="control-btn" id="btnPathReset">重置</button>
+</div>
+<div class="readout" id="pathReadout"></div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">拓展对照: 另一个经典函数 $f(z) = \bar z / z$</div>
+与例 7 同类的还有 $f(z) = \frac{\bar z}{z}$: 设 $z = r\mathrm{e}^{\mathrm{i}\theta}$, 则 $f(z) = \mathrm{e}^{-2\mathrm{i}\theta}$, 同样<b>只依赖方向、不依赖距离</b>, 沿不同射线趋于不同值 (沿正实轴 $\to 1$, 沿正虚轴 $\to -1$), 故在原点处极限也不存在.
+<br>与之对比, $f(z) = z$ 的极限存在 (为 $0$), 因为沿任何方向都有 $f(z) = r\mathrm{e}^{\mathrm{i}\theta} \to 0$.
+<br><b>一般判据:</b> 若 $f(z)$ 能写成 $r^k \cdot g(\theta)$ 的形式, 当 $k > 0$ 时极限存在 (为 $0$); 当 $k = 0$ 时极限存在当且仅当 $g(\theta)$ 与 $\theta$ 无关.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<b>用一条路径算出极限值, 不能证明极限存在!</b>
+<ul style="margin:8px 0 0 18px">
+<li>要<b>证明极限存在</b>: 必须证明沿<b>任意</b>路径都趋于同一个值 (通常用 $\varepsilon$-$\delta$ 或定理一、定理二);</li>
+<li>要<b>证明极限不存在</b>: 只需找出<b>两条</b>路径给出不同结果 (反证法);</li>
+<li>常见的错误是"沿 $y = kx$ 算出一个与 $k$ 无关的值, 就断言极限存在". 沿直线的所有结果一致, 仍可能有沿抛物线、沿螺旋线的结果不同!</li>
+</ul>
+</div>
+
+</div>
+<!-- ============ Tab 4: 复变函数的连续性 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 连续性的定义</div>
+
+<div class="box-key">
+<div class="title">定义 (连续)</div>
+如果
+<div class="box-formula">$$\lim\limits_{z \to z_0} f(z) = f(z_0),$$</div>
+则称 $f(z)$ 在 $z_0$ 处<b>连续</b>.
+<br>若 $f(z)$ 在区域 $D$ 内<b>各点都连续</b>, 那么称 $f(z)$ 在 $D$ 内连续.
+</div>
+
+<div class="info-box">
+<strong>连续的三要素:</strong> 上式实际上同时要求三件事 ——
+<ol style="margin:8px 0 0 18px">
+<li>$f$ 在 $z_0$ 点<b>有定义</b> (即 $f(z_0)$ 存在);</li>
+<li>$\lim\limits_{z\to z_0} f(z)$ <b>存在</b> (且与路径无关);</li>
+<li>两者<b>相等</b>.</li>
+</ol>
+任何一条不满足, 该点就不连续. 这也解释了为什么研究连续性必须"先讲极限".
+</div>
+
+<div class="box-key">
+<div class="title">定理一 (连续与实部虚部的关系)</div>
+$f(z) = u(x,y) + \mathrm{i}v(x,y)$ 在 $z_0 = x_0 + \mathrm{i}y_0$ 处<b>连续</b>的充要条件是:
+$u(x,y)$ 与 $v(x,y)$ 都在 $(x_0, y_0)$ 处<b>连续</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 8</div>
+讨论 $f(z) = \ln(x^2 + y^2) + \mathrm{i}\,(x^2 - y^2)$ (其中 $z = x + \mathrm{i}y$) 在复平面内的连续性.
+<input type="checkbox" id="ansEx8" class="answer-toggle">
+<label for="ansEx8" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$f(z) = u(x,y) + \mathrm{i}\,v(x,y)$, 其中
+$$u(x,y) = \ln(x^2 + y^2), \qquad v(x,y) = x^2 - y^2.$$
+<b>看实部:</b> $x^2 + y^2$ 处处连续且取正值, 对数函数在 $(0, +\infty)$ 上连续, 由复合函数的连续性知 $u = \ln(x^2+y^2)$ 在<b>除原点外</b>处处连续 (在原点处 $x^2+y^2 \to 0^+$, $\ln \to -\infty$, 无定义).
+<br><b>看虚部:</b> $v = x^2 - y^2$ 是多项式, <b>处处连续</b>.
+<br>由定理一, $f(z)$ 在复平面内<b>除原点外处处连续</b>.
+<br><span style="color:#6a1b9a">判断复变函数的连续性, 就是这样"拆成实虚部、逐个检验、再用定理一合起来" —— 与极限的定理一如出一辙.</span>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 9</div>
+证明 $f(z) = \frac{1}{z}$ 在复平面内除原点外处处连续.
+<input type="checkbox" id="ansEx8b" class="answer-toggle">
+<label for="ansEx8b" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $z = x + \mathrm{i}y \ne 0$, 则
+$$\frac{1}{z} = \frac{\bar z}{|z|^2} = \frac{x}{x^2+y^2} - \mathrm{i}\,\frac{y}{x^2+y^2},$$
+即
+$$u = \frac{x}{x^2+y^2}, \qquad v = -\frac{y}{x^2+y^2}.$$
+由于 $x^2 + y^2$ 除原点外处处连续且不为零, 由连续函数的商的连续性知 $u,\ v$ 在除原点外的每一点都连续.
+再由定理一, $f(z) = \frac{1}{z}$ 在复平面内<b>除原点外处处连续</b>.
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">定理二 (连续函数的运算法则)</div>
+<ol class="cond-list">
+<li>在 $z_0$ 连续的两个函数 $f(z)$ 与 $g(z)$ 的<b>和、差、积、商</b> (分母在 $z_0$ 不为零) 在 $z_0$ 处仍连续;</li>
+<li>如果函数 $\zeta = g(z)$ 在 $z_0$ 连续, 函数 $w = f(\zeta)$ 在 $\zeta_0 = g(z_0)$ 连续, 则<b>复合函数</b> $w = f[g(z)]$ 在 $z_0$ 处连续.</li>
+</ol>
+<b>注:</b> 连续函数的四则运算、复合运算都成立.
+</div>
+
+<div class="sec-title">4.2 常见函数的连续性</div>
+
+<div class="box-key">
+<div class="title">有理整函数与有理分式函数</div>
+<b>(1) 有理整函数 (多项式)</b>
+<div class="box-formula">$$P(z) = a_0 + a_1 z + a_2 z^2 + \cdots + a_n z^n$$</div>
+在复平面内<b>处处连续</b>.
+<br><b>(2) 有理分式函数</b>
+<div class="box-formula">$$R(z) = \frac{P(z)}{Q(z)} \qquad (P, Q \text{ 都是多项式})$$</div>
+在复平面内<b>使分母不为零的点</b>处也是连续的.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 10</div>
+讨论 $f(z) = \frac{z^2 - 1}{z^2 + 1}$ 的连续范围.
+<input type="checkbox" id="ansEx9" class="answer-toggle">
+<label for="ansEx9" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+分子 $P(z) = z^2 - 1$ 是多项式, 处处连续.
+<br>分母 $Q(z) = z^2 + 1 = (z - \mathrm{i})(z + \mathrm{i})$, 它在 $z = \pm \mathrm{i}$ 处为零.
+<br>于是由定理二, $f(z)$ 在<b>复平面内除 $z = \pm \mathrm{i}$ 外的所有点</b>连续.
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">函数在曲线上的连续与有界性</div>
+如果函数 $f(z)$ 在曲线 $C$ 上满足: 对 $C$ 上一点 $z_0$,
+<div class="box-formula">$$\lim\limits_{\substack{z \to z_0 \\ z \in C}} f(z) = f(z_0),$$</div>
+则称 $f(z)$ <b>在曲线 $C$ 上 $z_0$ 点连续</b>. 若在 $C$ 上每一点都连续, 就称 $f(z)$ 在曲线 $C$ 上连续.
+<br><b>定理 (曲线上的有界性):</b> 在<b>闭曲线</b>或<b>包括端点在内</b>的曲线上连续的函数, 在曲线上是<b>有界</b>的 —— 即存在正数 $M$, 使得在曲线上有
+<div class="box-formula">$$|f(z)| \le M.$$</div>
+</div>
+
+<div class="info-box">
+<strong>这个定理有什么用?</strong> 它与实变函数中"闭区间上连续函数有界"的结论完全对应: 曲线相当于"定义域", 闭曲线或带端点的曲线相当于"有界闭集", 连续函数在其上不会"跑到无穷".
+它是第三章积分理论的第一块基石 —— 曲线积分 $\displaystyle\int_C f(z)\,\mathrm{d}z$ 的定义就要求 $f$ 在 $C$ 上有界 (否则积分和可能无界).
+</div>
+
+<div class="chart-container">
+<h3>连续性检验器 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">在 $w$ 平面上, 拖动<b>输入点 $z_0$</b> 靠近奇点 (图中红叉, 即分母零点). 当 $z_0$ 逼近奇点时, 图中"连续邻域的信任半径"急剧收缩到零 —— 说明该点不连续.</div>
+<canvas id="cvCont" data-h="430"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数:</label>
+<button class="control-btn" id="btnCont1">$\frac{1}{z}$</button>
+<button class="control-btn" id="btnCont2">$\frac{z^2-1}{z^2+1}$</button>
+<button class="control-btn" id="btnCont3">$z^2$</button>
+</div>
+<div class="readout" id="contReadout"></div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<b>"$f$ 在 $z_0$ 有极限"与"$f$ 在 $z_0$ 连续"不是一回事.</b>
+<ul style="margin:8px 0 0 18px">
+<li>连续 = 极限存在 <b>且</b> 等于该点的函数值;</li>
+<li>函数可以在某点<b>有极限但不连续</b> (可去间断点, 例如 $f(z) = \frac{z^2}{z}$ 在 $z=0$ 处有极限 $0$ 但无定义);</li>
+<li>函数也可以在 $z_0$ 有定义、有极限, 但两者不等 —— 仍不连续;</li>
+<li>注意"$\lim\limits_{z\to z_0} f(z) = f(z_0)$"中的极限过程是 $z \to z_0$, <b>不是</b> $z \to \infty$ 或单侧极限.</li>
+</ul>
+</div>
+
+
+
+</div>
+
+<!-- ============ Tab 5: 本节小结（知识图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识图谱 <span class="tag-pill">动画演示</span></h3>
+<div class="chart-desc">本节主线: 邻域 → 内点/开集 → 区域(连通开集) → 曲线(光滑/简单/闭) → 单连通与多连通 → 复变函数 → 极限 → 连续. 点击按钮分阶段展开.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 分阶段动画展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">本节口诀</div>
+<div class="mn-text">
+邻域开集定区域, 曲线光滑简单分;<br>
+单连多连看有洞, 函数映射像与原;<br>
+极限路径必无关, 实虚两部同趋零;<br>
+连续等于极限存, 且与该点函数同.
+</div>
+</div>
+
+<div class="sec-title">2. 自测 · 小试身手</div>
+
+<div class="quiz-q" data-q="1">
+<div class="q-title">1. 点集 $\{\, z : 0 < |z - 2| < 1 \,\}$ 是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. 有界的单连通域</div>
+<div class="quiz-opt" data-ok="1">B. 有界的多连通域</div>
+<div class="quiz-opt" data-ok="0">C. 无界的单连通域</div>
+<div class="quiz-opt" data-ok="0">D. 无界的多连通域</div>
+<div class="quiz-explain">
+正解 B. 该点集是圆心为 $2$、外半径 $1$ 的圆盘挖去圆心点 $2$ 本身, 即一个"点洞"圆环域. 它被 $|z-2|\le 1$ 罩住, 故有界; 但绕 $z=2$ 作小圆周, 其内部含有点 $z=2$ 不属于该集, 故多连通.
+</div>
+</div>
+
+<div class="quiz-q" data-q="2">
+<div class="q-title">2. 设 $f(z) = \frac{\operatorname{Re}(z)}{|z|}$ ($z\ne 0$), 则 $\lim\limits_{z\to 0} f(z)$ ( )</div>
+<div class="quiz-opt" data-ok="0">A. 等于 $0$</div>
+<div class="quiz-opt" data-ok="0">B. 等于 $1$</div>
+<div class="quiz-opt" data-ok="1">C. 不存在</div>
+<div class="quiz-opt" data-ok="0">D. 等于 $\frac{1}{2}$</div>
+<div class="quiz-explain">
+正解 C. 令 $z = r\mathrm{e}^{\mathrm{i}\theta}$, 则 $f = \cos\theta$, 与 $r$ 无关. 沿 $\theta = 0$ 有 $f \to 1$; 沿 $\theta = \frac{\pi}{2}$ 有 $f \to 0$. 两个方向结果不同, 极限不存在.
+</div>
+</div>
+
+<div class="quiz-q" data-q="3">
+<div class="q-title">3. 关于曲线 $z(t) = t^3 + \mathrm{i}\,t^3$ ($-1 \le t \le 1$), 正确的是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. 是光滑曲线</div>
+<div class="quiz-opt" data-ok="1">B. 不光滑, 因为在 $t=0$ 处 $z'(t)=0$</div>
+<div class="quiz-opt" data-ok="0">C. 不是简单曲线</div>
+<div class="quiz-opt" data-ok="0">D. 是简单闭曲线</div>
+<div class="quiz-explain">
+正解 B. $z'(t) = 3t^2 + \mathrm{i}\,3t^2 = 3t^2(1+\mathrm{i})$, 在 $t=0$ 处 $z'(0)=0$, 违反光滑性条件 $z'(t)\ne 0$. 该曲线是直线 $y=x$ 上的一段, 无重点 (除 $t=0$ 单点), 首尾不重合, 故是简单曲线但不光滑.
+</div>
+</div>
+
+<div class="quiz-q" data-q="4">
+<div class="q-title">4. 若 $f(z)$ 在 $z_0$ 处连续, 则下列<b>不一定</b>成立的是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. $u(x,y)$ 在 $(x_0,y_0)$ 处连续</div>
+<div class="quiz-opt" data-ok="0">B. $v(x,y)$ 在 $(x_0,y_0)$ 处连续</div>
+<div class="quiz-opt" data-ok="0">C. $\lim\limits_{z\to z_0} f(z) = f(z_0)$</div>
+<div class="quiz-opt" data-ok="1">D. $f(z)$ 在 $z_0$ 处可导</div>
+<div class="quiz-explain">
+正解 D. 连续性只要求极限等于函数值, 完全不涉及"可导". 事实上复变函数"连续但不解析"是常见情形 (例如 $f(z)=\bar z$ 处处连续, 但处处不可导). A、B 由定理一成立, C 就是连续的定义.
+</div>
+</div>
+
+<div class="quiz-q" data-q="5">
+<div class="q-title">5. 点集 $\{\, z : |z| > 1 \,\}$ 是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. 有界的单连通域</div>
+<div class="quiz-opt" data-ok="0">B. 有界的多连通域</div>
+<div class="quiz-opt" data-ok="1">C. 无界的多连通域</div>
+<div class="quiz-opt" data-ok="0">D. 无界的单连通域</div>
+<div class="quiz-explain">
+正解 C. 注意在<b>扩充复平面</b>上, $|z|>1$ 是单位圆的外部的内部 (含 $\infty$), 它围住的内部含有单位圆这个"洞", 因此是多连通的; 且它可以无限延伸, 故无界. 若仅在有限复平面上讨论, 它是"开集但通常教材将其视为含无穷远点的区域". 关键把握: 有洞 → 多连通.
+</div>
+</div>
+
+<div class="quiz-q" data-q="6">
+<div class="q-title">6. 点集 $D = \{\, z : \operatorname{Re}(z) &gt; 0 \,\}$ 是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. 有界的单连通域</div>
+<div class="quiz-opt" data-ok="0">B. 有界的多连通域</div>
+<div class="quiz-opt" data-ok="1">C. 无界的单连通域</div>
+<div class="quiz-opt" data-ok="0">D. 无界的多连通域</div>
+<div class="quiz-explain">
+正解 C. 右半平面是开集且连通(任两点可用直线段相连), 无"洞", 故单连通; 但它可无限延伸, 故无界.
+</div>
+</div>
+
+<div class="quiz-q" data-q="7">
+<div class="q-title">7. 关于集合 $G = \{\, z : |z| &lt; 1 \,\} \cup \{\, z : |z - 3| &lt; 1 \,\}$, 正确的是 ( )</div>
+<div class="quiz-opt" data-ok="1">A. 是开集, 但不是区域</div>
+<div class="quiz-opt" data-ok="0">B. 是区域</div>
+<div class="quiz-opt" data-ok="0">C. 是有界闭区域</div>
+<div class="quiz-opt" data-ok="0">D. 不是开集</div>
+<div class="quiz-explain">
+正解 A. $G$ 是两个互不相交的开圆盘之并, 是开集; 但因两部分<b>不连通</b>(无法用完全落在 $G$ 内的折线相连), 所以不是区域. "区域 = 连通的开集".
+</div>
+</div>
+
+<div class="quiz-q" data-q="8">
+<div class="q-title">8. 曲线 $z(t) = t + \mathrm{i}\,t^{2}$ ($0 \le t \le 1$) 是 ( )</div>
+<div class="quiz-opt" data-ok="0">A. 简单闭曲线</div>
+<div class="quiz-opt" data-ok="0">B. 不光滑的简单曲线</div>
+<div class="quiz-opt" data-ok="1">C. 光滑的简单曲线</div>
+<div class="quiz-opt" data-ok="0">D. 不是简单曲线</div>
+<div class="quiz-explain">
+正解 C. $z'(t) = 1 + 2t\mathrm{i} \ne 0$ 在 $[0,1]$ 上恒成立(连续且不为零), 故光滑; 且 $t\mapsto(t,t^2)$ 是抛物线上一段, 无重点、首尾不重合, 故简单.
+</div>
+</div>
+
+<div class="quiz-q" data-q="9">
+<div class="q-title">9. 设 $f(z) = \frac{\bar z}{z}$ ($z \ne 0$), 则 $\lim\limits_{z \to 0} f(z)$ ( )</div>
+<div class="quiz-opt" data-ok="0">A. 等于 $0$</div>
+<div class="quiz-opt" data-ok="0">B. 等于 $1$</div>
+<div class="quiz-opt" data-ok="1">C. 不存在</div>
+<div class="quiz-opt" data-ok="0">D. 等于 $-1$</div>
+<div class="quiz-explain">
+正解 C. 取 $z = r\mathrm{e}^{\mathrm{i}\theta}$, 则 $f = \frac{r\mathrm{e}^{-\mathrm{i}\theta}}{r\mathrm{e}^{\mathrm{i}\theta}} = \mathrm{e}^{-2\mathrm{i}\theta}$, <b>与 $r$ 无关</b>而只依赖辐角. 沿 $\theta = 0$(实轴) 有 $f \to 1$; 沿 $\theta = \frac{\pi}{2}$(虚轴) 有 $f \to \mathrm{e}^{-\mathrm{i}\pi} = -1$. 两方向极限不同, 故 $\lim\limits_{z\to 0} f(z)$ 不存在. 这是"路径不同 ⇒ 无极限"的经典例子.
+</div>
+</div>
+
+<div class="quiz-q" data-q="10">
+<div class="q-title">10. 若 $f(z)$ 在闭曲线 $C$ 上连续, 则 $f(z)$ 在 $C$ 上 ( )</div>
+<div class="quiz-opt" data-ok="1">A. 有界</div>
+<div class="quiz-opt" data-ok="0">B. 必可取到最大值但不能取到最小值</div>
+<div class="quiz-opt" data-ok="0">C. 一定解析</div>
+<div class="quiz-opt" data-ok="0">D. 一定可导</div>
+<div class="quiz-explain">
+正解 A. 连续函数在<b>有界闭集</b>(闭曲线是有界闭集)上必有界, 这是数学分析中的有界性定理在复变函数中的推广(实部、虚部分别用该定理). 连续性只保证有界, 与解析、可导无关.
+</div>
+</div>
+
+<div class="readout" id="quizScore">已完成 0 / 10 题</div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 · 数学与家国 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>思政园地 · 数学与家国</h3>
+<div class="hero-sub">本节主题: 从"区域"到"连续性" —— 局部与整体、逼近与极限、离散与连续中的中国智慧与科学精神</div>
+<div class="hero-quote">
+本节的核心概念 —— <b>区域、连通、映射、极限、连续</b> —— 看似抽象, 却处处体现着<b>"从局部把握整体"</b>与<b>"用无穷逼近有限"</b>的认识论.
+中华民族自古就有"<b>整体观</b>"与"<b>变易观</b>"的思想传统; 现代数学的严谨化, 则是人类理性精神的共同结晶.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家的故事: 从"直觉"到"严格"</div>
+
+<div class="person-card">
+<div class="p-av">柯</div>
+<div class="p-main">
+<div class="p-name">柯西 (Augustin-Louis Cauchy, 1789 — 1857)</div>
+<div class="p-meta">法国数学家 · 复分析的奠基人 · 《分析教程》(1821)</div>
+<p>今天我们用得最顺手的 $\varepsilon$-$\delta$ 极限语言、"连续""导数"的严格定义, 都出自柯西. 在他之前, 欧拉、拉格朗日等大师用好成绩"算"出了大量正确结果, 但"无穷小"究竟是不是零, 谁也说不清.</p>
+<p>柯西第一次把"极限"从一种<b>计算动作</b>提炼为一个<b>逻辑定义</b>: 不是"$z$ 无限接近 $z_0$ 时 $f(z)$ 无限接近 $A$", 而是"<b>对任意 $\varepsilon>0$, 存在 $\delta>0$, 使得……</b>".
+这两个不起眼的量词 "任意" 与 "存在", 把"无限接近"这种直觉性说法, 变成了可以被机械检验的精确陈述.</p>
+</div>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>
+柯西一生写下近 800 篇论文, 产量之大令同代人震惊. 但更值得注意的是他的"较真": 在讨论 $\lim\limits_{z\to z_0} f(z)$ 时, 他<b>刻意</b>把 $z_0$ 点本身排除在邻域之外 (即用去心邻域) —— 因为他意识到, 极限讨论的是"趋近的过程", 与"那一点上到底有没有值、值是多少"无关.
+今天课本里"去心邻域"这个细节, 正是一位数学家在逻辑严密性上不肯将就的结果.
+</div>
+
+<div class="person-card">
+<div class="p-av">魏</div>
+<div class="p-main">
+<div class="p-name">魏尔斯特拉斯 (Karl Weierstrass, 1815 — 1897)</div>
+<div class="p-meta">德国数学家 · "现代分析之父" · 处处连续处处不可导函数的构造者</div>
+<p>如果说柯西搭起了严格化的框架, 魏尔斯特拉斯则把这个框架钉到了最后一道钉子上. 他系统地把 $\varepsilon$-$\delta$ 语言整理成今天课本中的形式, 并证明了"闭区间上连续函数必有界、必取到最值"这类我们现在习以为常的定理.</p>
+<p>本节 4.2 中"在闭曲线或包括端点的曲线上连续的函数必在曲线上有界"这一结论, 正是这个思想在复平面上的对应版本 —— 它也是后面<b>积分存在性</b>的根基.</p>
+</div>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">震撼学界的一击</span>
+1872 年, 魏尔斯特拉斯在柏林科学院宣读了一个构造: 一条<b>处处连续、却处处不可导</b>的曲线.
+在此之前, 几乎所有数学家都凭直觉相信"连续曲线除了个别点外应当都是光滑的" —— 画图时的手感也确实如此.
+这个反例直接击穿了直觉的边界, 让人们认识到: <b>几何直觉必须接受逻辑的检验</b>. 它也解释了本节为什么要如此严苛地定义"光滑曲线" ($z'(t) \ne 0$) —— 若不加这个条件, "连续"与"光滑"会被混为一谈.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">数学家的自白</div>
+"一个数学家若是不能把自己的想法清楚地向他人说明, 那这个想法大概还没有真正成熟."
+<em>—— 柯西式的信条: 精确的表达不是为了炫耀严格, 而是为了让真理可以被传递、被检验、被继承.</em>
+<span class="iv-sig">—— 关于"严谨"为何是一种责任</span>
+</div>
+
+<div class="sec-title">6.2 复变函数中的哲学思想</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<span class="pc-tag">局部与整体</span>
+<h4>从"每个点"到"整个区域"</h4>
+<p>"连续"是一个<b>局部</b>概念 —— 它在每一点上被定义; 而"在区域 $D$ 内连续"却是一个<b>整体</b>陈述. 由局部性质逐点成立, 推广到整体性质处处成立, 这是典型的"<b>由点及面</b>"的认识路径.</p>
+<p>反过来, "有界性" "单连通性"则是彻头彻尾的整体性质 —— 你无法只看一个点就判断它是否成立.</p>
+<div class="pc-math">局部: $\forall z_0\in D,\ \lim\limits_{z\to z_0}f(z)=f(z_0)$<br>整体: $f$ 于 $D$ 上连续</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">逼近与极限</span>
+<h4>用"有限"把握"无限"</h4>
+<p>$\varepsilon$-$\delta$ 语言的精髓, 在于用<b>有限的两个正数</b> ($\varepsilon$ 与 $\delta$) 来描述一个<b>无限逼近</b>的过程. 人类无法真正"走完"无限, 但可以用"对任意的 $\varepsilon$ 都能找到相应的 $\delta$"这种全称命题, 一举把无限过程固化为有限陈述.</p>
+<p>这是数学最富智慧的一步: 不逃避无限, 而是<b>给无限立法</b>.</p>
+<div class="pc-math">$\forall\varepsilon>0,\ \exists\delta>0:$<br>$0<|z-z_0|<\delta$<br>$\Rightarrow\ |f(z)-A|<\varepsilon$</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">对立统一</span>
+<h4>连续与间断互为前提</h4>
+<p>没有"间断", 就无法定义"连续"; 没有"边界", "区域"便无从谈起. 本节中"区域"由开集加上边界共同构成, 这两个互相排斥的对象 (开 vs 闭) 合在一起才给出完整的图景 —— 这正是矛盾双方相互规定的辩证法.</p>
+<p>同样, "单连通"与"多连通"的区分也依赖于"洞"这一否定的存在.</p>
+<div class="pc-math">区域 $D$ (开) + 边界 $\partial D$ = 闭域 $\overline{D}$</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">量变到质变</span>
+<h4>张角翻倍: 从 $w=z$ 到 $w=z^n$</h4>
+<p>$w = z$ 处处保角; 但一旦乘幂次数 $n \ge 2$, 原点处的角放大倍数就变成了 $n$ —— 保角性在此点<b>量变到质变</b>地失效了. 一个点的特殊, 却要求整套理论为之调整 (这正是后来引入"共形映射在临界点需单独讨论"的原因).</p>
+<div class="pc-math">$\arg(z^n) = n\arg z$<br>$\Rightarrow\ \text{角放大 } n \text{ 倍}$</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">普遍联系</span>
+<h4>复变与实变的一一对应</h4>
+<p>$w = f(z)$ 与一对二元实函数 $u(x,y), v(x,y)$ 的对应, 是<b>联系观点</b>的绝佳例证: 两个看似分立的领域, 通过"实部""虚部"这条纽带被牢牢绑在一起. 复变的难题, 可以拆成两个实变难题; 反之, 实变的结果也能拼回复变.</p>
+<div class="pc-math">$f(z) = u(x,y) + \mathrm{i}v(x,y)$<br>$\longleftrightarrow\ (u,\ v)$</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">实践检验</span>
+<h4>反例的力量</h4>
+<p>"沿两条路径得到不同值, 即可断定极限不存在" —— 这把"证明不存在"这样一个<b>否定性命题</b>, 化为了一个可以动手操作的<b>构造性检验</b>.</p>
+<p>数学并不只依靠正面论证前进; 反例是更锋利的武器. 魏尔斯特拉斯那条处处不可导的连续曲线, 就是反例推动学科转向的典范.</p>
+<div class="pc-math">路径 1: $\theta=0 \Rightarrow f\to 1$; 路径 2: $\theta=\tfrac{\pi}{2}\Rightarrow f\to -1$ ⇒ 极限不存在</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维方法论</div>
+
+<table class="value-table">
+<thead>
+<tr><th>思维方法</th><th>本节的体现</th><th>可迁移到哪里</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>从局部到整体</td>
+<td>逐点定义连续 → 区域内处处连续; 由 $u,v$ 的连续性推出 $f$ 的连续性</td>
+<td>控制论、系统科学中的"个体行为决定系统性质"; 组织管理中"每个环节达标才能整体达标"</td>
+</tr>
+<tr>
+<td>降维转化</td>
+<td>定理一: 复变极限 ⟺ 两个二元实变极限; 复变函数 ⟺ 一对二元实函数</td>
+<td>工程中的"解耦"思想: 把复杂系统拆成若干独立子系统分别求解</td>
+</tr>
+<tr>
+<td>反证与构造</td>
+<td>找两条路径值不同 → 证明极限不存在; 构造"8 字形"曲线 → 说明何为不简单</td>
+<td>科学实验中的"对照实验"; 工程中的故障定位 (排除法)</td>
+</tr>
+<tr>
+<td>数形结合</td>
+<td>邻域 = 圆盘; 区域 = 平面上的一块带洞/不带洞的地方; 映射 = 两个平面间的变形</td>
+<td>数据可视化; 物理场的直观理解; 几何建模</td>
+</tr>
+<tr>
+<td>抽象与概括</td>
+<td>从"圆盘"抽象出"邻域", 从"一块地方"抽象出"区域", 从而可讨论任意形状</td>
+<td>算法设计中的"接口抽象"; 面向对象编程的"类与实例"</td>
+</tr>
+<tr>
+<td>严谨与证伪</td>
+<td>光滑曲线必须 $z'(t)\ne 0$; 连续性必须"极限存在且等于函数值"</td>
+<td>软件工程中的"边界条件检查"; 质量管理中的"缺陷定义明确化"</td>
+</tr>
+</tbody>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">本节记忆口诀</div>
+<div class="mn-text">
+邻域圆盘先立基, 内点开集连成区;<br>
+边界一点不可漏, 能罩得住才算"有界".<br>
+曲线光滑切向在, 首尾相接闭如一;<br>
+洞内无点在区域, 单连多连看"孔"起.<br>
+复变函数两实变, 映射如机两侧移;<br>
+任意路径同一值, 极限方存莫大意.<br>
+极限等值才连续, 分母零点须警惕.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话 · 中国智慧与家国情怀</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>整体观: 中国传统思想的"区域意识"</h5>
+<p>《易经》讲"<b>仰以观于天文, 俯以察于地理</b>", 强调从整体格局上把握事物; 中医的"<b>辨证施治</b>"也从不孤立看待某一症状, 而是把它放到整个身体系统中理解.</p>
+<p>这与本节"<b>区域</b>"这一概念的精神内核高度相通: 数学不关心孤立的点, 而关心点与其邻域、与整个区域的关系. 一个点是"内点"还是"边界点", 完全取决于它与周围点的关系 —— <b>事物的性质由它所在的整体决定</b>.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>中国古代的"极限"萌芽</h5>
+<p>《庄子·天下篇》记载惠施之说: "<b>一尺之棰, 日取其半, 万世不竭</b>." 这是对"无穷逼近"最生动的古代表述 —— 每天取走一半, 永远取不完, 却越来越接近"零".</p>
+<p>三国时期刘徽创"<b>割圆术</b>": "割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣." 用内接正多边形去逼近圆, 正是"用有限逼近无限"的思想, 与本节 $\varepsilon$-$\delta$ 的精神一脉相通.</p>
+<div class="pc-math" style="background:#fff7ed;border-left:3px solid #ea580c;border-radius:6px;padding:8px 12px;margin-top:10px;font-size:.9em;color:#7c2d12">
+"割之弥细, 所失弥少" —— 刘徽《九章算术注》
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>华罗庚: 把数学交给人民</h5>
+<p>华罗庚 (1910—1985), 中国现代数学的奠基人之一. 他在解析数论、典型群、矩阵几何等领域作出世界级贡献, 更以"<b>优选法</b>"与"<b>统筹法</b>"把数学送到工厂、农村、工地.</p>
+<p>他有一句广为流传的话: "<b>聪明在于勤奋, 天才在于积累</b>." 他本人只念到初中, 靠自学成长为世界一流数学家 —— 这与本节反复强调的"<b>严谨来自反复锤炼</b>"是同一道理: $\varepsilon$-$\delta$ 的熟练, 不是天赋, 而是千百次推演的结果.</p>
+<p>1985 年, 他在日本做学术报告时倒在了讲台上, 真正做到了"<b>工作到生命的最后一刻</b>".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>陈省身与"拓扑"的中国学派</h5>
+<p>陈省身 (1911—2004) 是 20 世纪最伟大的几何学家之一, 被誉为"<b>微分几何之父</b>". 他提出的"陈类"成为现代数学与理论物理的核心工具. 他到晚年仍致力于推动中国数学走向世界一流, 常说: "<b>我们的目标, 是在中国本土培养出世界一流的数学家</b>."</p>
+<p>而拓扑学研究的是什么? 正是"<b>在连续变形下保持不变的性质</b>" —— 圆盘与正方形在拓扑上无差别, 但圆盘与圆环<b>根本不同</b> (一个单连通, 一个多连通). 本节 1.5 的单/多连通之辨, 就是拓扑学最朴素的开端.</p>
+<div class="pc-math" style="background:#fff7ed;border-left:3px solid #ea580c;border-radius:6px;padding:8px 12px;margin-top:10px;font-size:.9em;color:#7c2d12">
+拓扑学的第一课: 不数长度, 不量角度, 只问"有几个洞"
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>从"区域"到"大国重器": 复分析的现实力量</h5>
+<p>复变函数绝非屠龙之技. 本节建立的"区域"与"连续"概念, 是后续一切应用的基石:</p>
+<p><b>· 流体力学与航空</b>: 机翼绕流用<b>保角映射</b>把复杂翼型化为简单圆形, 是国产大飞机气动设计的基础工具之一;<br>
+<b>· 电磁场与雷达</b>: 静电场、波导场分布用解析函数刻画, 手机天线、相控阵雷达的设计依赖复势理论;<br>
+<b>· 信号与图像</b>: 傅里叶变换 (第七章) 与拉普拉斯变换 (第八章) 的收敛域, 本质上就是复平面上的<b>区域</b>;<br>
+<b>· 自动控制</b>: 控制系统的稳定性判据 (Nyquist 判据) 直接用辐角原理在复平面上"数洞", 与本节单/多连通的思想同源.</p>
+</div>
+
+<div class="sec-title">6.5 课堂思辨</div>
+
+<div class="box-think">
+<div class="think-label">思辨题 1</div>
+本节说"区域 = 连通的开集". 如果把"连通"这一条删掉, 会剩下什么? 这样的点集在数学上还有用吗?
+<br>请结合"引例"思考: 为什么偏偏要求"开"又要求"连通"?
+<br>
+<input type="checkbox" id="sz1" class="answer-toggle">
+<label for="sz1" class="answer-btn">参考思路 (非唯一答案)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【参考思路】</div>
+删掉"连通"后剩下"<b>开集</b>". 开集是拓扑学的基本对象, 当然极其重要.
+<br>但在复分析中, 我们常常需要一个"<b>整体上可以互相走到</b>"的讨论场所 —— 因为在这样的场所里, 函数在一个点的局部行为可以通过路径延续到整个场所, 这正是"<b>解析延拓</b>"与"<b>唯一性定理</b>"的前提.
+<br>若区域不连通 (例如两个相距很远的圆盘), 函数在一个圆盘上的信息无法传递到另一个圆盘, 讨论就割裂了.
+<br>至于"开", 是为了让每一个点都拥有一个完整的邻域, 从而"极限""导数"这些依赖邻域的运算才能顺畅进行.
+</div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">思辨题 2</div>
+"$f(z)$ 在 $z_0$ 处有极限"与"$f(z)$ 在 $z_0$ 处连续"相比, 缺少了什么? 请各举一个例子说明二者的差别, 并思考: 为什么教材要特意强调"<b>去心</b>邻域"?
+<br>
+<input type="checkbox" id="sz2" class="answer-toggle">
+<label for="sz2" class="answer-btn">参考思路 (非唯一答案)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【参考思路】</div>
+连续 = <b>极限存在</b> + <b>该点有定义</b> + <b>两者相等</b>. 有极限只是其中第一项.
+<br><b>例 1 (有极限但不连续)</b>: $f(z) = \frac{z^2}{z}$ 在 $z \ne 0$ 处等于 $z$, 于是 $z\to 0$ 时极限为 $0$; 但 $f(0)$ 无定义, 故不连续. 这是"可去间断点".
+<br><b>例 2 (有定义有极限但不等)</b>: 定义 $f(0)=5$, 而当 $z\ne 0$ 时 $f(z)=z$. 此时 $\lim\limits_{z\to 0} f = 0 \ne 5 = f(0)$, 仍不连续.
+<br><b>为何强调"去心"</b>: 因为极限刻画的是"<b>趋近的过程</b>", 与"目标点本身的状态"无关. 用去心邻域, 就把这个意图写进了定义里. 这也保证了极限概念即使在该点无定义时依然可用 —— 而"连续"恰恰需要两者一致, 于是"极限"成了比"连续"更基本的概念.
+</div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">思辨题 3</div>
+魏尔斯特拉斯构造出"处处连续却处处不可导"的函数后, 数学家们不得不重新审视自己的直觉. 请思考: <b>直觉在数学研究中是财富还是包袱?</b>
+<br>结合本节的"简单曲线""光滑曲线"定义谈谈你的看法.
+<br>
+<input type="checkbox" id="sz3" class="answer-toggle">
+<label for="sz3" class="answer-btn">参考思路 (非唯一答案)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【参考思路】</div>
+直觉<b>两者都是</b>, 关键在如何定位它.
+<br><b>作为财富</b>: 数学发现几乎都始于直觉 —— 柯西、黎曼都先在头脑中"看见"了图形与运动, 才去寻找严格表述. 本节"邻域 = 圆盘""区域 = 平面上的一块地方"这类直观图像, 是理解抽象定义不可缺少的脚手架.
+<br><b>作为包袱</b>: 一旦把直觉当成结论, 就会出错. "连续曲线应当基本光滑"是极其自然的直觉, 却在 1872 年被反例推翻.
+<br><b>本节的启示</b>: 教材之所以把"简单曲线"严格定义为"没有重点", 把"光滑"定义为"$z'(t)\ne 0$", 正是为了<b>把直觉中想说却说不清的东西钉死</b>. 定义之后, 直觉仍可用于猜测方向, 但结论必须回到定义去验证. 也许最恰当的定位是: <b>直觉负责发现, 逻辑负责确认</b>.
+</div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">思辨题 4</div>
+刘徽的"割圆术"(用正多边形逼近圆) 与本节 $\varepsilon$-$\delta$ 极限语言, 一个在公元三世纪的中国, 一个在十九世纪的欧洲. 请思考: <b>二者"相通"在何处? "不同"又在何处?</b> 这种不同说明了什么?
+<br>
+<input type="checkbox" id="sz4" class="answer-toggle">
+<label for="sz4" class="answer-btn">参考思路 (非唯一答案)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【参考思路】</div>
+<b>相通</b>: 二者都在处理"无限逼近" —— 刘徽"割之又割, 以至于不可割"描述的是一个取极限的过程; $\varepsilon$-$\delta$ 描述的也是"要多近有多近". 更重要的是, 二者的<b>实践取向</b>一致: 都是为了得到一个可以放心使用的确定结果 (圆面积 / 极限值).
+<br><b>不同</b>: 刘徽的方法是<b>构造性、算法性</b>的 —— 它给出可计算的近似序列, 结论伴随可操作的误差估计, 可以直接用来算 $\pi$. 而 $\varepsilon$-$\delta$ 是<b>存在性、逻辑性</b>的 —— 它不提供算法, 只保证"这样的 $\delta$ 存在".
+<br><b>说明什么</b>: 这体现了东西方数学传统的不同侧重 —— 中国传统数学长于算法与实用, 希腊—欧洲传统长于公理与演绎. 二者并无高下, 而是<b>互补</b>. 现代数学恰恰是两条路线的汇流: 既要有构造性算法 (数值分析、计算数学), 也要有存在性理论 (实分析、复分析). 今天中国数学的追求, 正是同时在这两条路上走到世界前列.
+</div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">思辨题 5</div>
+本节的"映射"观点要求我们同时想象两个复平面. 请思考: 这种"<b>在两个空间之间建立对应</b>"的思维方式, 在数学之外还有哪些体现? 它对我们的学习与工作有何启发?
+<br>
+<input type="checkbox" id="sz5" class="answer-toggle">
+<label for="sz5" class="answer-btn">参考思路 (非唯一答案)</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【参考思路】</div>
+"映射"的本质是<b>用一个已知的世界去理解一个未知的世界</b>.
+<br><b>数学之外</b>: 地图就是地球到平面的映射; 翻译是一种语言到另一种语言的映射; 经济模型用数学结构映射现实市场; 计算机中的数据结构转换 (如哈希表) 也是一种映射.
+<br><b>学习启发</b>: 遇到陌生概念时, 主动问"它是否能建立与我已知事物的对应". 例如本节把复变函数对应成"一对二元实函数", 立刻就让抽象的 $f(z)$ 变得可计算 —— 这就是寻找"已知识域中的同构物".
+<br><b>工作启发</b>: 跨领域合作之所以有效, 正是因为不同专业之间存在着"映射"关系. 数学家把流体问题翻译成复变问题, 医生把症状翻译成病理机制, 工程师把需求翻译成技术指标 —— 善于建立并利用这些映射的人, 往往能解决别人解决不了的问题.
+<br><b>更高一层的体会</b>: 数学训练的真正价值, 或许不在于记住多少公式, 而在于培养这种"<b>主动寻找结构对应</b>"的思维习惯.
+</div>
+</div>
+</div>
+
+<div class="sec-title">6.6 格言墙 · 与本节同频</div>
+
+<div class="quote-wall">
+<div class="quote-item">
+"割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣."
+<span class="q-src">—— 刘徽《九章算术注》</span>
+</div>
+<div class="quote-item">
+"一尺之棰, 日取其半, 万世不竭."
+<span class="q-src">—— 《庄子·天下篇》</span>
+</div>
+<div class="quote-item">
+"聪明在于勤奋, 天才在于积累."
+<span class="q-src">—— 华罗庚</span>
+</div>
+<div class="quote-item">
+"我们的目标, 是在中国本土培养出世界一流的数学家."
+<span class="q-src">—— 陈省身</span>
+</div>
+<div class="quote-item">
+"在数学中, 我们发现得越多, 就越能体会到它的美与统一."
+<span class="q-src">—— 魏尔斯特拉斯 (意译)</span>
+</div>
+<div class="quote-item">
+"科学的道路上没有平坦的大道, 只有不畏劳苦沿着陡峭山路攀登的人, 才有希望达到光辉的顶点."
+<span class="q-src">—— 马克思《资本论》法文版序言</span>
+</div>
+</div>
+
+<div class="box-result" style="margin-top:22px">
+<div class="res-label">本节思政小结</div>
+<b>一个概念</b> —— "区域": 数学用最朴素的方式告诉我们, 一个对象的意义由它所在的整体决定; 人也一样, 个人的价值总在与他人的联系中才得以实现.<br>
+<b>一份精神</b> —— "严谨": 从柯西的"去心邻域"到魏尔斯特拉斯的反例, 一代代数学家愿意为逻辑的严密性反复较真. 这种"<b>把话说清楚、把理讲透彻</b>"的态度, 是一切学问与事业的共同底色.<br>
+<b>一条道路</b> —— "汇流": 刘徽的割圆术与柯西的 $\varepsilon$-$\delta$, 一条是中国的算法智慧, 一条是欧洲的逻辑传统. 今天的中国数学, 正走在把两条源流汇合、把基础研究与国家需求结合的道路上.<br>
+<b>一份责任</b> —— 学好本节这些看似"抽象而无用"的定义, 正是将来参与解决"卡脖子"难题的起点. <b>数学的每一个严格定义, 都是通往大国重器的一块铺路石.</b>
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 · 第一章第二节 复变函数 &nbsp;|&nbsp; 交互式网页讲义 &nbsp;|&nbsp; 数学定义 · 几何直观 · 交互探索
+</div>
+
+<script>
+
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=mjFixHL(html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+(function(){
+// ================= 模块 1: 邻域与去心邻域 =================
+module('cvNbd',function(cv){
+  var z0=C(0.4,0.3), delta=1.2, punctured=true;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-3.4,3.4,-2.2,2.6);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var ox=m0.px(z0.re), oy=m0.py(z0.im), R=delta*m0.s;
+    // filled disc
+    ctx.beginPath(); ctx.arc(ox,oy,R,0,TAU);
+    ctx.fillStyle = punctured ? 'rgba(25,118,210,0.10)' : 'rgba(25,118,210,0.26)';
+    ctx.fill();
+    // boundary circle
+    ctx.save(); ctx.setLineDash([7,5]); ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.arc(ox,oy,R,0,TAU); ctx.stroke(); ctx.restore();
+    // puncture hole
+    if(punctured){
+      ctx.beginPath(); ctx.arc(ox,oy,Math.max(6,R*0.13),0,TAU);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#e53935'; ctx.lineWidth=2.4; ctx.stroke();
+      tlabel(ctx,ox+Math.max(6,R*0.13)+6,oy+4,'挖去 z₀','#e53935','11px Segoe UI');
+    }
+    // a sample inner point to show membership
+    var ang=-0.9, rr=delta*0.62;
+    var spx=ox+rr*m0.s*Math.cos(ang), spy=oy-rr*m0.s*Math.sin(ang);
+    dot(ctx,spx,spy,4.5,'#2e7d32');
+    tlabel(ctx,spx+7,spy-6,'z','#2e7d32','italic 12px Georgia');
+    // center
+    dot(ctx,ox,oy,6.5,'#e53935','#fff');
+    tlabel(ctx,ox+10,oy-9,'z₀','#e53935');
+    // radius line
+    ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox+R*Math.cos(-0.35),oy+R*Math.sin(-0.35)); ctx.stroke(); ctx.restore();
+    tlabel(ctx,ox+R*0.55*Math.cos(-0.35),oy+R*0.55*Math.sin(-0.35)-6,'δ','#7b1fa2','italic bold 13px Georgia');
+    var setStr = punctured
+      ? '0 &lt; |z − z₀| &lt; δ'
+      : '|z − z₀| &lt; δ';
+    setRO('nbdReadout',
+      '<b>圆心</b> z₀ = '+hl(cstr(z0))+' &nbsp;&nbsp; <b>半径</b> δ = '+hl(fmt(delta))+'<br>'+
+      '<b>当前集合:</b> '+hl2(setStr)+' &nbsp; ('+(punctured?'去心邻域':'邻域 (实心)')+')<br>'+
+      '<b>说明:</b> '+(punctured
+        ? '去心邻域不含圆心 z₀, 因此"函数在 z₀ 是否有值"不影响极限的讨论.'
+        : '邻域包含圆心 z₀ 在内的整个开圆盘.'));
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-3.4,3.4,-2.2,2.6);
+    z0=C(m0.ix(px),m0.iy(py)); draw();
+  });
+  var sl=bindSlider('nbdSlider',function(v){ delta=v; badge('nbdVal',fmt(v)); draw(); });
+  var pb=document.getElementById('btnNbdPunc');
+  if(pb) pb.addEventListener('click',function(){ punctured=!punctured; pb.classList.toggle('active',punctured);
+    pb.textContent = punctured ? '切换去心/实心 (当前: 去心)' : '切换去心/实心 (当前: 实心)'; draw(); });
+  var rb=document.getElementById('btnNbdReset');
+  if(rb) rb.addEventListener('click',function(){ z0=C(0.4,0.3); delta=1.2; setSlider('nbdSlider',1.2); badge('nbdVal','1.20'); draw(); });
+  badge('nbdVal',fmt(delta));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 内点判定实验台 =================
+module('cvInterior',function(cv){
+  var P=C(0.45,0.35);
+  // G = disc(|z|<1) UNION disc(|z-2.2-0.6i|<0.8)
+  var C1={x:0,y:0,r:1}, C2={x:2.2,y:0.6,r:0.8};
+  function inG(x,y){
+    return (Math.hypot(x-C1.x,y-C1.y) < C1.r) || (Math.hypot(x-C2.x,y-C2.y) < C2.r);
+  }
+  function classify(x,y){
+    var d1=Math.hypot(x-C1.x,y-C1.y), d2=Math.hypot(x-C2.x,y-C2.y);
+    var inSet = inG(x,y);
+    // distance to complement boundary (approx): min over the two circles of |d-r|
+    var b1=Math.abs(d1-C1.r), b2=Math.abs(d2-C2.r);
+    var distBoundary = Math.min(b1,b2);
+    if(inSet && distBoundary>0.06) return {k:'interior', d:distBoundary};
+    if(inSet) return {k:'boundary', d:distBoundary};
+    if(!inSet && distBoundary<0.06) return {k:'boundary', d:distBoundary};
+    return {k:'exterior', d:distBoundary};
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-2.0,3.6,-1.6,2.5);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    // G fill
+    ctx.beginPath(); ctx.arc(m0.px(C1.x),m0.py(C1.y),C1.r*m0.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,0.22)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(m0.px(C2.x),m0.py(C2.y),C2.r*m0.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,0.22)'; ctx.fill();
+    // G boundary
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m0.px(C1.x),m0.py(C1.y),C1.r*m0.s,0,TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(m0.px(C2.x),m0.py(C2.y),C2.r*m0.s,0,TAU); ctx.stroke();
+    tlabel(ctx,m0.px(-0.98),m0.py(1.16),'G','#1565c0','italic bold 15px Georgia');
+    // candidate neighbourhood of P
+    var res=classify(P.re,P.im);
+    var rN=res.d*0.95;
+    if(rN>0.03){
+      ctx.save(); ctx.setLineDash([6,5]);
+      ctx.strokeStyle = res.k==='interior' ? 'rgba(46,125,50,.85)' : 'rgba(230,81,0,.85)';
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(m0.px(P.re),m0.py(P.im),rN*m0.s,0,TAU); ctx.stroke(); ctx.restore();
+    }
+    var col = res.k==='interior' ? '#2e7d32' : (res.k==='boundary' ? '#ef6c00' : '#78909c');
+    dot(ctx,m0.px(P.re),m0.py(P.im),7.5,col,'#fff');
+    tlabel(ctx,m0.px(P.re)+11,m0.py(P.im)-10,'P','#263238');
+    var name = res.k==='interior' ? '内点' : (res.k==='boundary' ? '边界点' : '外点');
+    var desc;
+    if(res.k==='interior') desc='存在一个完整落在 G 内的邻域 (绿色虚线圆) ⇒ P 是 G 的内点.';
+    else if(res.k==='boundary') desc='任何邻域都会同时含有 G 内与 G 外的点 ⇒ P 是边界点.';
+    else desc='存在一个邻域完全落在 G 外 ⇒ P 不是内点, 也不是边界点.';
+    setRO('intReadout',
+      '<b>P</b> = '+hl(cstr(P))+' &nbsp;|&nbsp; <b>判定:</b> '+hl2(name)+'<br>'+
+      '<b>到边界的距离</b> ≈ '+hl(fmt(res.d,3))+' &nbsp; (虚线圆半径取 95% 该距离)<br>'+
+      desc+'<br>'+
+      '<b>G 的定义:</b> $|z|&lt;1$ 与 $|z-2.2-0.6\\mathrm{i}|&lt;0.8$ 两个开圆盘的并集. '+
+      '<span style="color:#cfd8dc">注意: 两个圆盘之间的空隙属于 G 的外部, 那里的点是边界点或外点.</span>');
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-2.0,3.6,-1.6,2.5);
+    P=C(m0.ix(px),m0.iy(py)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 3: 四类典型区域总览 =================
+module('cvRegion',function(cv){
+  var which=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-3.6,3.6,-2.4,2.8);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var ox=m0.px(0),oy=m0.py(0);
+    var name='', bounded='', conn='', boundaryTxt='', reason='';
+    if(which===1){
+      // annulus 1<|z|<2
+      ctx.beginPath(); ctx.arc(ox,oy,2*m0.s,0,TAU); ctx.arc(ox,oy,1*m0.s,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.26)'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.arc(ox,oy,2*m0.s,0,TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ox,oy,1*m0.s,0,TAU); ctx.stroke();
+      tlabel(ctx,ox+6,oy+1.5*m0.s,'1<|z|<2','#0d47a1');
+      name='圆环域 1 < |z| < 2';
+      bounded='有界'; conn='多连通';
+      boundaryTxt='两个同心圆 |z|=1 与 |z|=2 (两条曲线)';
+      reason='能被 |z|≤2 罩住 ⇒ 有界; 绕原点作单位小圆周, 内部含点 z=0 (不在集内) ⇒ 多连通.';
+    } else if(which===2){
+      // upper half plane
+      ctx.fillStyle='rgba(25,118,210,0.26)';
+      ctx.fillRect(0,0,w,oy);
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(0,oy); ctx.lineTo(w,oy); ctx.stroke();
+      tlabel(ctx,ox+8,m0.py(1.6),'Im z > 0','#0d47a1');
+      name='上半平面 Im z > 0';
+      bounded='无界'; conn='单连通';
+      boundaryTxt='实轴 Im z = 0 (一条直线)';
+      reason='可取 z=iM 任意大 ⇒ 无界; 其中任意简单闭曲线内部仍在上半平面 ⇒ 单连通.';
+    } else if(which===3){
+      // angular domain arg z < pi/3  -> between 0 and 60 deg, wedge
+      var ang=Math.PI/3, L=Math.max(w,h)/m0.s;
+      ctx.beginPath(); ctx.moveTo(ox,oy);
+      ctx.lineTo(ox+L*m0.s,oy); 
+      ctx.lineTo(ox+L*m0.s*Math.cos(ang),oy-L*m0.s*Math.sin(ang));
+      ctx.closePath();
+      ctx.fillStyle='rgba(25,118,210,0.26)'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox+L*m0.s,oy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox+L*m0.s*Math.cos(ang),oy-L*m0.s*Math.sin(ang)); ctx.stroke();
+      // arc
+      ctx.beginPath(); ctx.arc(ox,oy,0.9*m0.s,-ang,0,false); ctx.strokeStyle='#ef6c00'; ctx.lineWidth=1.8; ctx.stroke();
+      tlabel(ctx,ox+1.5*m0.s*Math.cos(ang/2)-14,oy-1.5*m0.s*Math.sin(ang/2),'arg z < π/3','#0d47a1');
+      name='角形域 arg z < π/3';
+      bounded='无界'; conn='单连通';
+      boundaryTxt='两条射线 arg z = 0 与 arg z = π/3, 以及顶点 z = 0';
+      reason='沿射线可走任意远 ⇒ 无界; 楔形区域无洞 ⇒ 单连通.';
+    } else {
+      // strip 1 < Im z < 3
+      ctx.fillStyle='rgba(25,118,210,0.26)';
+      ctx.fillRect(0,m0.py(3),w,m0.py(1)-m0.py(3));
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(0,m0.py(1)); ctx.lineTo(w,m0.py(1)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,m0.py(3)); ctx.lineTo(w,m0.py(3)); ctx.stroke();
+      tlabel(ctx,ox+8,m0.py(2),'1 < Im z < 3','#0d47a1');
+      name='带形域 1 < Im z < 3';
+      bounded='无界'; conn='单连通';
+      boundaryTxt='两条平行直线 Im z = 1 与 Im z = 3';
+      reason='沿实轴方向可走任意远 ⇒ 无界; 带子无洞 ⇒ 单连通.';
+    }
+    var bCol = bounded==='有界' ? '#2e7d32' : '#c62828';
+    setRO('regReadout',
+      '<b>区域:</b> '+hl(name)+'<br>'+
+      '<b>有界性:</b> <span style="color:'+bCol+'">'+bounded+'</span> &nbsp;&nbsp; <b>连通性:</b> '+hl2(conn)+'<br>'+
+      '<b>边界:</b> '+boundaryTxt+'<br>'+
+      '<b>理由:</b> '+reason);
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){ which=v; draw(); }); }
+  bind('btnReg1',1); bind('btnReg2',2); bind('btnReg3',3); bind('btnReg4',4);
+  return {draw:draw};
+});
+
+// ================= 模块 4: 曲线性质判别器 =================
+module('cvCurve',function(cv){
+  var which=1;
+  function ptsFor(kind){
+    var pts=[];
+    if(kind===1){ // circle
+      for(var t=0;t<=TAU+0.01;t+=TAU/240) pts.push(C(Math.cos(t),Math.sin(t)));
+    } else if(kind===2){ // simple arc (parabola-ish)
+      for(var t=-1.6;t<=1.6001;t+=0.02) pts.push(C(t,0.7*t*t-0.3));
+    } else if(kind===3){ // figure eight (lemniscate-like)
+      for(var t=0;t<=TAU+0.01;t+=TAU/260){
+        var s=Math.sin(t), c=Math.cos(t);
+        pts.push(C(s*1.5, s*c*1.5));
+      }
+    } else { // self-intersecting curve
+      for(var t=0;t<=TAU+0.01;t+=TAU/280){
+        var s2=Math.sin(t), c2=Math.cos(t), s3=Math.sin(2*t);
+        pts.push(C(s2+c2*0.55, s3*0.75));
+      }
+    }
+    return pts;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-2.4,2.4,-1.9,2.1);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var pts=ptsFor(which);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    pts.forEach(function(p,i){ var px=m0.px(p.re),py=m0.py(p.im); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); });
+    ctx.stroke();
+    // start/end
+    var p0=pts[0], pn=pts[pts.length-1];
+    dot(ctx,m0.px(p0.re),m0.py(p0.im),6,'#2e7d32','#fff');
+    tlabel(ctx,m0.px(p0.re)+9,m0.py(p0.im)-8,'起点','#2e7d32','11px Segoe UI');
+    if(which!==1){
+      dot(ctx,m0.px(pn.re),m0.py(pn.im),6,'#7b1fa2','#fff');
+      tlabel(ctx,m0.px(pn.re)+9,m0.py(pn.im)+16,'终点','#7b1fa2','11px Segoe UI');
+    }
+    // detect self-intersections (sample-based)
+    var marks=[];
+    for(var i=0;i<pts.length;i+=2){
+      for(var j=i+6;j<pts.length;j+=2){
+        var a=pts[i],b=pts[j];
+        if(Math.hypot(a.re-b.re,a.im-b.im)<0.045){
+          // avoid the closing-point coincidence for closed curves
+          if(which===1 && (i<8 || j>pts.length-8)) continue;
+          marks.push(a);
+        }
+      }
+    }
+    // dedupe
+    var ded=[];
+    marks.forEach(function(mk){ var dup=false; ded.forEach(function(d){ if(Math.hypot(d.re-mk.re,d.im-mk.im)<0.12) dup=true; }); if(!dup) ded.push(mk); });
+    ded.forEach(function(mk){ dot(ctx,m0.px(mk.re),m0.py(mk.im),7,'#e53935','#fff'); });
+    if(ded.length) tlabel(ctx,m0.px(ded[0].re)+11,m0.py(ded[0].im)-10,'重点','#e53935','11px Segoe UI');
+    var simple, closed, txt;
+    if(which===1){ simple='是'; closed='是'; txt='圆周不自交, 首尾重合 ⇒ 简单闭曲线.'; }
+    else if(which===2){ simple='是'; closed='否'; txt='弧段不自交, 首尾不重合 ⇒ 简单不闭曲线.'; }
+    else if(which===3){ simple='否'; closed='是'; txt='"8"字形在原点交叉, 存在重点; 首尾重合 ⇒ 不简单闭曲线.'; }
+    else { simple='否'; closed='是'; txt='曲线自交, 存在重点; 首尾重合 ⇒ 不简单闭曲线.'; }
+    setRO('curReadout',
+      '<b>当前曲线:</b> '+(which===1?'圆':which===2?'弧段':which===3?'8 字形':'自交曲线')+'' +
+      ' &nbsp;|&nbsp; <b>重点数</b> ≈ '+hl(String(ded.length))+'<br>'+
+      '<b>是否简单曲线:</b> '+hl2(simple)+' &nbsp;&nbsp; <b>是否闭曲线:</b> '+hl2(closed)+'<br>'+
+      txt);
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){ which=v; draw(); }); }
+  bind('btnCur1',1); bind('btnCur2',2); bind('btnCur3',3); bind('btnCur4',4);
+  return {draw:draw};
+});
+
+// ================= 模块 5: 单连通 / 多连通判定器 =================
+module('cvConn',function(cv){
+  var which=2;            // region type
+  var loop=C(0.25,0.15);  // draggable loop center
+  var loopR=0.95;
+  var C1={x:0,y:0,r:1}, C2={x:2.2,y:0.4,r:0.75};
+  function inRegion(x,y){
+    if(which===1){ return Math.hypot(x,y) < 1.35; }
+    if(which===2){ return Math.hypot(x,y) < 1.6 && !(Math.hypot(x,y) < 0.7); }
+    return !(Math.hypot(x-C1.x,y-C1.y)<C1.r) && !(Math.hypot(x-C2.x,y-C2.y)<C2.r) && Math.hypot(x,y)<1.9;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-2.3,3.1,-2.0,2.2);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var ox=m0.px(0),oy=m0.py(0);
+    if(which===1){
+      ctx.beginPath(); ctx.arc(ox,oy,1.35*m0.s,0,TAU);
+      ctx.fillStyle='rgba(25,118,210,0.24)'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4; ctx.stroke();
+    } else if(which===2){
+      ctx.beginPath(); ctx.arc(ox,oy,1.6*m0.s,0,TAU); ctx.arc(ox,oy,0.7*m0.s,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.24)'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.arc(ox,oy,1.6*m0.s,0,TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ox,oy,0.7*m0.s,0,TAU); ctx.stroke();
+      tlabel(ctx,ox+0.34*m0.s,oy-0.5*m0.s,'洞','#c62828','bold 12px Segoe UI');
+    } else {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(ox,oy,1.9*m0.s,0,TAU);
+      ctx.arc(m0.px(C1.x),m0.py(C1.y),C1.r*m0.s,0,TAU,true);
+      ctx.arc(m0.px(C2.x),m0.py(C2.y),C2.r*m0.s,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.24)'; ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.arc(ox,oy,1.9*m0.s,0,TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(m0.px(C1.x),m0.py(C1.y),C1.r*m0.s,0,TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(m0.px(C2.x),m0.py(C2.y),C2.r*m0.s,0,TAU); ctx.stroke();
+      tlabel(ctx,m0.px(-1)*0,0,'','#000');
+    }
+    // sample the draggable loop interior
+    var bad=0, tot=0;
+    for(var a=0;a<18;a++){
+      for(var r=0.12;r<=1;r+=0.22){
+        var th=a/18*TAU, px2=loop.re+loopR*r*Math.cos(th), py2=loop.im+loopR*r*Math.sin(th);
+        tot++;
+        if(!inRegion(px2,py2)) bad++;
+      }
+    }
+    // draw the loop
+    var lx=m0.px(loop.re), ly=m0.py(loop.im), lR=loopR*m0.s;
+    ctx.save();
+    ctx.setLineDash([8,5]);
+    ctx.strokeStyle = bad>0 ? '#e11d48' : '#2e7d32';
+    ctx.lineWidth=2.8;
+    ctx.beginPath(); ctx.arc(lx,ly,lR,0,TAU); ctx.stroke();
+    ctx.restore();
+    dot(ctx,lx,ly,6,bad>0?'#e11d48':'#2e7d32','#fff');
+    tlabel(ctx,lx+9,ly-8,'C','#263238');
+    var verdict = bad>0 ? '该圈抓住了区域外的点 ⇒ 区域可能是多连通' : '该圈内部全在区域内';
+    setRO('connReadout',
+      '<b>区域:</b> '+hl(which===1?'圆盘 (无洞)':which===2?'圆环域 (一个洞)':'双洞区域 (两个洞)')+'<br>'+
+      '<b>拖动闭曲线 C 采样:</b> 圈内共 '+tot+' 个采样点, 其中 <span style="color:#e11d48">'+bad+'</span> 个落在区域外<br>'+
+      '<b>结论:</b> '+hl2(verdict)+'<br>'+
+      '<span style="color:#80deea">判据: 若<b>存在</b>一条简单闭曲线, 其内部不全部属于区域, 则区域是<b>多连通</b>; 若<b>任意</b>这样的曲线内部都属于区域, 则是<b>单连通</b>. '+
+      '把绿色圈拖到"洞"上试试 —— 它会立刻变成红色.</span>');
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-2.3,3.1,-2.0,2.2);
+    loop=C(m0.ix(px),m0.iy(py)); draw();
+  });
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v; loop = v===3 ? C(1.2,0.2) : C(0.25,0.15); draw(); }); }
+  bind('btnConn1',1); bind('btnConn2',2); bind('btnConn3',3);
+  return {draw:draw};
+});
+
+// ================= 模块 6: 映射动画实验台 =================
+module('cvMap',function(cv){
+  var n=2, theta=30, zpt=C(1.15,0.55);
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var half=w/2;
+    var mZ=mapperEq(half,h,-2.0,2.0,-1.9,1.9);
+    var mW=mapperEq(half,h,-2.0,2.0,-1.9,1.9);
+    // panel backgrounds
+    ctx.fillStyle='#fbfdff'; ctx.fillRect(0,0,half,h);
+    ctx.fillStyle='#fffaf5'; ctx.fillRect(half,0,half,h);
+    // divider
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(half,0); ctx.lineTo(half,h); ctx.stroke();
+    // grids (draw grid lines mapped through z^n on right)
+    function gridFor(m,off,mode){
+      ctx.save(); ctx.strokeStyle='rgba(120,144,156,.22)'; ctx.lineWidth=1;
+      var rmax=2.0;
+      for(var r=0.4;r<=rmax;r+=0.4){
+        ctx.beginPath();
+        for(var t=0;t<=TAU+0.01;t+=TAU/90){
+          var zz=C(r*Math.cos(t),r*Math.sin(t)), wv=mapz(zz);
+          var px=off+m.px(wv.re), py=m.py(wv.im);
+          if(t===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.stroke();
+      }
+      for(var k=0;k<12;k++){
+        var a=k/12*TAU;
+        ctx.beginPath();
+        for(var s=0;s<=rmax+0.001;s+=rmax/60){
+          var zz2=C(s*Math.cos(a),s*Math.sin(a)), wv2=mapz(zz2);
+          var px2=off+m.px(wv2.re), py2=m.py(wv2.im);
+          if(s===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function mapz(z){
+      var r=Math.hypot(z.re,z.im), a=Math.atan2(z.im,z.re);
+      var rn=Math.pow(r,n), an=a*n;
+      return C(rn*Math.cos(an), rn*Math.sin(an));
+    }
+    // axes both panels
+    function ax(off,m){ var x0=off+m.px(0), y0=m.py(0);
+      ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(off,y0); ctx.lineTo(off+half,y0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0,0); ctx.lineTo(x0,h); ctx.stroke();
+    }
+    gridFor(mZ,0); gridFor(mW,half);
+    ax(0,mZ); ax(half,mW);
+    // unit circle in z plane
+    ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(123,31,162,.6)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(mZ.px(0),mZ.py(0),1*mZ.s,0,TAU); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(123,31,162,.6)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(half+mW.px(0),mW.py(0),1*mW.s,0,TAU); ctx.stroke(); ctx.restore();
+    // ray at angle theta on z-plane + image
+    var tr=theta*Math.PI/180;
+    var L=2.0;
+    ctx.strokeStyle='#ef6c00'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(mZ.px(0),mZ.py(0));
+    ctx.lineTo(mZ.px(L*Math.cos(tr)),mZ.py(L*Math.sin(tr))); ctx.stroke();
+    ctx.strokeStyle='#e11d48'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(half+mW.px(0),mW.py(0));
+    ctx.lineTo(half+mW.px(L*Math.cos(n*tr)),mW.py(L*Math.sin(n*tr))); ctx.stroke();
+    // point z and image
+    var zw=mapz(zpt);
+    dot(ctx,mZ.px(zpt.re),mZ.py(zpt.im),7.5,'#e53935','#fff');
+    tlabel(ctx,mZ.px(zpt.re)+11,mZ.py(zpt.im)-10,'z','#e53935');
+    dot(ctx,half+mW.px(zw.re),mW.py(zw.im),7.5,'#1565c0','#fff');
+    tlabel(ctx,half+mW.px(zw.re)+11,mW.py(zw.im)-10,'w','#1565c0');
+    // labels
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#0d47a1';
+    ctx.fillText('z 平面 (原像)',12,20);
+    ctx.fillStyle='#b45309'; ctx.fillText('w 平面 (像)',half+12,20);
+    var zr=Math.hypot(zpt.re,zpt.im), za=Math.atan2(zpt.im,zpt.re);
+    setRO('mapReadout',
+      '<b>映射</b> $w = z^{'+n+'}$ &nbsp;&nbsp; <b>原像</b> z = '+hl(cstr(zpt))+
+      ' &nbsp;(模 '+fmt(zr)+', 辐角 '+fmt(deg(za),1)+'°)<br>'+
+      '<b>像</b> w = '+hl(cstr(zw))+
+      ' &nbsp;(模 '+fmt(Math.pow(zr,n))+' = '+fmt(zr)+'<sup>'+n+'</sup>, 辐角 '+fmt(n*deg(za),1)+'° = '+n+' × '+fmt(deg(za),1)+'°)<br>'+
+      '<b>角放大:</b> 橙色射线 (辐角 '+fmt(theta)+'°) 被映射成红色射线 (辐角 '+hl2(fmt(n*theta)+'°')+')'+
+      ' &nbsp;⇒ 张角放大 '+n+' 倍'+
+      (n>1?' &nbsp;<span style="color:#c62828">(原点处保角性失效)</span>':' &nbsp;<span style="color:#2e7d32">(保角)</span>')+'<br>'+
+      '<span style="color:#80deea">拖动右图网格可看到: 圆的像仍是圆, 直线的像仍是直线 (辐角被乘 '+n+' 倍).</span>');
+  }
+  bindSlider('mapSlider',function(v){ n=v; badge('mapVal',String(v)); draw(); });
+  bindSlider('mapTheta',function(v){ theta=v; badge('mapThetaVal',fmt(v)+'°'); draw(); });
+  badge('mapVal',String(n)); badge('mapThetaVal',fmt(theta)+'°');
+  return {draw:draw};
+});
+})();
+
+// ================= 模块 7: ε-δ 极限定义演示 =================
+module('cvEpsDelta',function(cv){
+  var eps=0.20;
+  // use f(z) = z^2, z0 = 1+i (analytic), A = f(z0)
+  var z0=C(1.0,0.6);
+  function fz(z){ return C(z.re*z.re-z.im*z.im, 2*z.re*z.im); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var A=fz(z0);
+    // w-plane view centred at A
+    var m0=mapperEq(w,h,A.re-2.2,A.re+2.2,A.im-1.9,A.im+1.9);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0,'Re w','Im w');
+    var axp=m0.px(A.re), ayp=m0.py(A.im);
+    // eps disc around A  (radius chosen so that |f(Z)-A|<eps)
+    ctx.beginPath(); ctx.arc(axp,ayp,eps*m0.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,0.24)'; ctx.fill();
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4; ctx.stroke();
+    tlabel(ctx,axp+eps*m0.s*0.72,ayp-eps*m0.s*0.72,'|w−A| < ε','#0d47a1','12px Segoe UI');
+    // find max delta numerically: sample z near z0, keep those with |f(z)-A|<eps
+    var bestDelta=0;
+    for(var a=0;a<72;a++){
+      var th=a/72*TAU;
+      // walk outward along this direction, find largest r with condition true
+      var last=0;
+      for(var r=0.01;r<=2.0;r+=0.01){
+        var zz=C(z0.re+r*Math.cos(th), z0.im+r*Math.sin(th));
+        var ww=fz(zz);
+        if(Math.hypot(ww.re-A.re,ww.im-A.im) < eps) last=r; else break;
+      }
+      if(bestDelta===0 || last<bestDelta) bestDelta=last;
+    }
+    if(!isFinite(bestDelta)||bestDelta<=0) bestDelta=0;
+    // delta disc around A on SCREEN is not meaningful; instead show a delta disc around z0 in inset
+    // inset: z-plane near z0
+    var iw=Math.min(w*0.42,300), ih=Math.min(h*0.5,190);
+    var ix0=w-iw-14, iy0=h-ih-14;
+    ctx.save();
+    ctx.fillStyle='rgba(255,255,255,.95)'; ctx.strokeStyle='#b0bec5'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.rect(ix0,iy0,iw,ih); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#37474f'; ctx.font='bold 12px Segoe UI';
+    ctx.fillText('z 平面: |z − z₀| < δ',ix0+10,iy0+18);
+    var mi=mapperEq(iw-28,ih-46,z0.re-1.5,z0.re+1.5,z0.im-1.2,z0.im+1.2);
+    var zx=ix0+14, zy=iy0+30;
+    var zc_x=zx+mi.px(z0.re), zc_y=zy+mi.py(z0.im);
+    ctx.beginPath(); ctx.arc(zc_x,zc_y,bestDelta*mi.s,0,TAU);
+    ctx.fillStyle='rgba(239,108,0,0.26)'; ctx.fill();
+    ctx.strokeStyle='#ef6c00'; ctx.lineWidth=2; ctx.stroke();
+    dot(ctx,zc_x,zc_y,5,'#e53935','#fff');
+    tlabel(ctx,zc_x+8,zc_y-7,'z₀','#e53935','11px Segoe UI');
+    // mark a point on the boundary for reference
+    tlabel(ctx,zx+6,zy+ih-40,'δ ≈ '+fmt(bestDelta,3),'#ef6c00','bold 12px Segoe UI');
+    ctx.restore();
+    // link arrow
+    arrow(ctx,ix0-8,iy0+ih/2,axp-eps*m0.s-6,ayp,'#90a4ae',2,9);
+    setRO('epsReadout',
+      '<b>函数</b> $f(z) = z^2$, &nbsp; $z_0 = '+cstr(z0)+'$, &nbsp; $A = f(z_0) = $'+hl('$'+cstr(A)+'$')+'<br>'+
+      '<b>给定</b> ε = '+hl(fmt(eps))+' &nbsp;⇒ 图中蓝色圆盘就是 A 的 ε 邻域 $|w-A|&lt;\\varepsilon$<br>'+
+      '<b>可取的</b> δ ≈ '+hl(fmt(bestDelta,3))+' &nbsp;(橙色小圆盘)<br>'+
+      '<b>验证:</b> 只要 $z$ 落在橙盘内 (即 $0&lt;|z-z_0|&lt;\\delta$), 其像 $f(z)$ 就必落在蓝盘内 (即 $|f(z)-A|&lt;\\varepsilon$).<br>'+
+      '<span style="color:#80deea">把 ε 调小, 会看到橙盘同步收缩 —— 这正是"$\\forall\\varepsilon\\,\\exists\\delta$"的可视化: 无论要求多精确, 总能找到一个足够小的 δ 来满足它.</span>');
+  }
+  bindSlider('epsSlider',function(v){ eps=v/100; badge('epsVal',fmt(eps)); draw(); });
+  badge('epsVal',fmt(eps));
+  return {draw:draw};
+});
+
+// ================= 模块 8: 路径逼近实验台 =================
+module('cvPath',function(cv){
+  var theta=0, animating=false, stopFn=null;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var half=w/2;
+    ctx.fillStyle='#fbfdff'; ctx.fillRect(0,0,half,h);
+    ctx.fillStyle='#fff7f7'; ctx.fillRect(half,0,half,h);
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(half,0); ctx.lineTo(half,h); ctx.stroke();
+    var mZ=mapperEq(half,h,-1.6,1.6,-1.5,1.5);
+    var mW=mapperEq(half,h,-1.6,1.6,-1.5,1.5);
+    // z-plane axes + unit circle
+    var zx0=mZ.px(0), zy0=mZ.py(0);
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,zy0); ctx.lineTo(half,zy0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(zx0,0); ctx.lineTo(zx0,h); ctx.stroke();
+    // w-plane axes + unit circle
+    var wx0=half+mW.px(0), wy0=mW.py(0);
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(half,wy0); ctx.lineTo(w,wy0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx0,0); ctx.lineTo(wx0,h); ctx.stroke();
+    // unit circles
+    ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(123,31,162,.55)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(zx0,zy0,1*mZ.s,0,TAU); ctx.stroke();
+    ctx.beginPath(); ctx.arc(wx0,wy0,1*mW.s,0,TAU); ctx.stroke(); ctx.restore();
+    // several approach rays in z-plane
+    ctx.save(); ctx.setLineDash([3,4]);
+    for(var k=0;k<8;k++){
+      var a=k/8*TAU;
+      ctx.strokeStyle='rgba(120,144,156,.55)'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(zx0,zy0);
+      ctx.lineTo(zx0+1.5*mZ.s*Math.cos(a),zy0-1.5*mZ.s*Math.sin(a)); ctx.stroke();
+    }
+    ctx.restore();
+    var tr=theta*Math.PI/180;
+    // current approach ray (z-plane)
+    ctx.strokeStyle='#ef6c00'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(zx0,zy0);
+    ctx.lineTo(zx0+1.5*mZ.s*Math.cos(tr),zy0-1.5*mZ.s*Math.sin(tr)); ctx.stroke();
+    // approaching points along ray
+    [0.9,0.6,0.35,0.15].forEach(function(rr,i){
+      var px=zx0+rr*mZ.s*Math.cos(tr), py=zy0-rr*mZ.s*Math.sin(tr);
+      ctx.beginPath(); ctx.arc(px,py,5-i*0.6,0,TAU);
+      ctx.fillStyle='rgba(239,108,0,'+(0.35+i*0.18)+')'; ctx.fill();
+    });
+    dot(ctx,zx0,zy0,5,'#263238','#fff');
+    tlabel(ctx,zx0-26,zy0+18,'z→0','#263238','11px Segoe UI');
+    // f(z) = Re(z)/|z| = cos theta, 实数值, 落在 w 平面实轴 [-1,1] 上
+    var fval=Math.cos(tr);
+    // 高亮 w 平面实轴上的值域区间 [-1,1]
+    ctx.save(); ctx.strokeStyle='rgba(225,29,72,.45)'; ctx.lineWidth=7; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(wx0-1*mW.s,wy0); ctx.lineTo(wx0+1*mW.s,wy0); ctx.stroke(); ctx.restore();
+    tlabel(ctx,wx0-1*mW.s-14,wy0+18,'-1','#b91c1c');
+    tlabel(ctx,wx0+1*mW.s+6,wy0+18,'1','#b91c1c');
+    var fpx=wx0+fval*mW.s, fpy=wy0;
+    dot(ctx,fpx,fpy,8,'#e11d48','#fff');
+    tlabel(ctx,fpx+11,fpy-14,'f(z)','#e11d48');
+    // arrow from origin to it
+    arrow(ctx,wx0,wy0,fpx,fpy,'#e11d48',2,9);
+    // direction marker on z-plane unit circle at angle theta
+    var zx=zx0+Math.cos(tr)*mZ.s, zy=zy0-Math.sin(tr)*mZ.s;
+    dot(ctx,zx,zy,5,'#7b1fa2','#fff');
+    // labels
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#0d47a1';
+    ctx.fillText('z 平面',12,20);
+    ctx.fillStyle='#b91c1c'; ctx.fillText('w 平面: f(z) = Re(z)/|z| = cosθ',half+12,20);
+    var fStr=fmt(fval,3);
+    setRO('pathReadout',
+      '<b>函数</b> $f(z) = \\frac{\\operatorname{Re}(z)}{|z|} = \\cos\\theta$ &nbsp; (只依赖方向 θ, 与距离 r 无关)<br>'+
+      '<b>当前方向</b> θ = '+hl(fmt(theta)+'°')+' &nbsp;⇒&nbsp; <b>f(z)</b> = '+hl(fStr)+' (实数)\n'+
+      '<br><b>对照</b> 沿 θ=0° 有 $f\\to 1$; 沿 θ=90° 有 $f\\to 0$; 沿 θ=180° 有 $f\\to -1$. '+
+      '方向一变, 极限值就变 ⇒ '+hl2('极限不存在')+'<br>'+
+      '<span style="color:#80deea">点击"自动旋转扫描", 可以看到红点在实轴 [-1,1] 上来回滑动 —— 同一个趋近过程, 值随方向改变.</span>');
+  }
+  bindSlider('pathSlider',function(v){ theta=v; badge('pathVal',fmt(v)+'°'); draw(); });
+  badge('pathVal',fmt(theta)+'°');
+  var ab=document.getElementById('btnPathAnim');
+  if(ab) ab.addEventListener('click',function(){
+    if(animating){ animating=false; if(stopFn)stopFn(); ab.classList.remove('active'); ab.textContent='自动旋转扫描'; return; }
+    animating=true; ab.classList.add('active'); ab.textContent='停止扫描';
+    var t=theta;
+    stopFn=animLoop(function(){
+      if(!animating) return false;
+      t=(t+2)%360; theta=t;
+      setSlider('pathSlider',t); badge('pathVal',fmt(t)+'°');
+      draw(); return true;
+    });
+  });
+  var rb=document.getElementById('btnPathReset');
+  if(rb) rb.addEventListener('click',function(){ animating=false; if(stopFn)stopFn(); theta=0;
+    setSlider('pathSlider',0); badge('pathVal','0°');
+    var b2=document.getElementById('btnPathAnim'); if(b2){ b2.classList.remove('active'); b2.textContent='自动旋转扫描'; }
+    draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 9: 连续性检验器 =================
+module('cvCont',function(cv){
+  var which=1;
+  var z0=C(0.75,0.5);
+  function poles(){
+    if(which===1) return [C(0,0)];
+    if(which===2) return [C(0,1),C(0,-1)];
+    return [];
+  }
+  function fval(z){
+    if(which===1){ var d=z.re*z.re+z.im*z.im; if(d<1e-9) return null;
+      return C(z.re/d,-z.im/d); }
+    if(which===2){ 
+      var num=C(z.re*z.re-z.im*z.im-1, 2*z.re*z.im);
+      var den=C(z.re*z.re-z.im*z.im+1, 2*z.re*z.im);
+      var dd=den.re*den.re+den.im*den.im; if(dd<1e-9) return null;
+      return C((num.re*den.re+num.im*den.im)/dd,(num.im*den.re-num.re*den.im)/dd);
+    }
+    return C(z.re*z.re-z.im*z.im, 2*z.re*z.im);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var half=w/2;
+    ctx.fillStyle='#fbfdff'; ctx.fillRect(0,0,half,h);
+    ctx.fillStyle='#f6f7ff'; ctx.fillRect(half,0,half,h);
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(half,0); ctx.lineTo(half,h); ctx.stroke();
+    var mZ=mapperEq(half,h,-1.9,1.9,-1.7,1.7);
+    var mW=mapperEq(half,h,-2.4,2.4,-2.0,2.0);
+    // axes z
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,mZ.py(0)); ctx.lineTo(half,mZ.py(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mZ.px(0),0); ctx.lineTo(mZ.px(0),h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(half,mW.py(0)); ctx.lineTo(w,mW.py(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(half+mW.px(0),0); ctx.lineTo(half+mW.px(0),h); ctx.stroke();
+    // poles on z-plane
+    var ps=poles();
+    ps.forEach(function(p){
+      var px=mZ.px(p.re), py=mZ.py(p.im);
+      ctx.strokeStyle='#d32f2f'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(px-8,py-8); ctx.lineTo(px+8,py+8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px-8,py+8); ctx.lineTo(px+8,py-8); ctx.stroke();
+      tlabel(ctx,px+10,py-10,'奇点','#d32f2f','11px Segoe UI');
+    });
+    // distance to nearest pole
+    var dmin=Infinity;
+    ps.forEach(function(p){ dmin=Math.min(dmin, Math.hypot(z0.re-p.re,z0.im-p.im)); });
+    if(!isFinite(dmin)) dmin=Infinity;
+    // "trust radius" = a fraction of distance to nearest pole
+    var trust = isFinite(dmin) ? dmin*0.6 : 1.4;
+    // show continuum disc around z0
+    ctx.beginPath(); ctx.arc(mZ.px(z0.re),mZ.py(z0.im),trust*mZ.s,0,TAU);
+    ctx.fillStyle = trust>0.12 ? 'rgba(46,125,50,0.20)' : 'rgba(229,57,53,0.22)';
+    ctx.fill();
+    ctx.strokeStyle = trust>0.12 ? '#2e7d32' : '#e53935';
+    ctx.lineWidth=2.2; ctx.stroke();
+    dot(ctx,mZ.px(z0.re),mZ.py(z0.im),7.5, trust>0.12?'#2e7d32':'#e53935','#fff');
+    tlabel(ctx,mZ.px(z0.re)+11,mZ.py(z0.im)-10,'z₀','#263238');
+    // f(z0) on w-plane
+    var fv=fval(z0);
+    if(fv){
+      dot(ctx,half+mW.px(fv.re),mW.py(fv.im),7.5,'#1565c0','#fff');
+      tlabel(ctx,half+mW.px(fv.re)+11,mW.py(fv.im)-10,'f(z₀)','#1565c0');
+      arrow(ctx,half-6,h/2-30,half+6,h/2-30,'#90a4ae',2,9);
+      tlabel(ctx,half-58,h/2-36,'f','#546e7a','italic bold 15px Georgia');
+    }
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#0d47a1';
+    ctx.fillText('z 平面 (定义域)',12,20);
+    ctx.fillStyle='#1565c0'; ctx.fillText('w 平面 (像)',half+12,20);
+    var fname = which===1?'f(z) = 1/z':which===2?'f(z) = (z²−1)/(z²+1)':'f(z) = z²';
+    var verdict, detail;
+    if(!isFinite(dmin) || dmin>0.28){ verdict='连续'; detail='z₀ 到所有奇点的距离足够大, 存在完整落在定义域内的邻域.'; }
+    else if(dmin>1e-9){ verdict='连续 (但已接近奇点)'; detail='z₀ 尚未落在奇点上, 仍有定义域内的邻域, 但"信任半径"很小.'; }
+    else { verdict='不连续 (z₀ 是奇点)'; detail='z₀ 恰为分母零点, 函数在此无定义, 更谈不上连续.'; }
+    setRO('contReadout',
+      '<b>函数</b> '+hl(fname)+' &nbsp;&nbsp; <b>z₀</b> = '+hl(cstr(z0))+'<br>'+
+      '<b>到最近奇点的距离</b> = '+(isFinite(dmin)?hl(fmt(dmin,3)):hl('$\\infty$'))+'<br>'+
+      '<b>连续邻域信任半径</b> ≈ '+(isFinite(dmin)?hl(fmt(trust,3)):'$\\infty$')+' &nbsp; (绿色圆盘)<br>'+
+      '<b>判定:</b> '+hl2(verdict)+' —— '+detail+'<br>'+
+      (fv?'<b>f(z₀)</b> = '+hl(cstr(fv,3)):'<b>f(z₀)</b> 无定义')+'<br>'+
+      '<span style="color:#80deea">拖动左图红点向红色 ✕ 靠近, 绿色圆盘会被挤得越来越小 —— 到了奇点就彻底消失, 这一刻连续性崩塌.</span>');
+    }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var mZ=mapperEq(f.w/2,f.h,-1.9,1.9,-1.7,1.7);
+    z0=C(mZ.ix(px),mZ.iy(py)); draw();
+  });
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v; z0 = v===1?C(0.75,0.5): v===2?C(0.7,0.55): C(0.9,0.5); draw(); }); }
+  bind('btnCont1',1); bind('btnCont2',2); bind('btnCont3',3);
+  return {draw:draw};
+});
+
+// ================= 模块 10: 本节小结知识地图 (结构树) =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;   // 0=仅根 1=+四大板块 2=+全部知识点
+  var cats=[
+    {t:'区域与曲线', c:'#1976d2', leaves:['邻域 $N_\\delta(z_0)$','去心邻域','内点 · 开集','区域 · 边界 · 闭域','光滑 / 简单 / 闭曲线','单连通 / 多连通']},
+    {t:'复变函数的概念', c:'#e65100', leaves:['定义 $w=f(z)$','单值 / 多值','一对二元实函数','映射: 像 / 原像']},
+    {t:'复变函数的极限', c:'#c62828', leaves:['$\\varepsilon$-$\\delta$ 定义','定理一: 降维转化','定理二: 四则运算','路径不同 ⇒ 无极限']},
+    {t:'复变函数的连续性', c:'#2e7d32', leaves:['连续 = 存在且相等','实部虚部都连续','四则 / 复合仍连续','有理函数连续范围','闭曲线上连续 ⇒ 有界']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='复变函数 · 本节知识结构';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=cd.leaves[j];
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  return {draw:draw};
+});
+
+// ================= 小测验交互 =================
+(function(){
+  var qs=[].slice.call(document.querySelectorAll('.quiz-q'));
+  var done=0, right=0;
+  qs.forEach(function(q){
+    var opts=[].slice.call(q.querySelectorAll('.quiz-opt'));
+    var expl=q.querySelector('.quiz-explain');
+    var answered=false;
+    opts.forEach(function(o){
+      o.addEventListener('click',function(){
+        if(answered) return;
+        answered=true; done++;
+        var ok = o.getAttribute('data-ok')==='1';
+        if(ok) right++;
+        opts.forEach(function(oo){
+          if(oo.getAttribute('data-ok')==='1') oo.classList.add('correct');
+        });
+        if(!ok) o.classList.add('wrong');
+        if(expl) expl.style.display='block';
+        setRO('quizScore','已完成 '+done+' / '+qs.length+' 题 &nbsp;|&nbsp; 答对 '+hl(String(right))+' 题'+
+          (done===qs.length ? (right===qs.length?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffab91">建议再复习对应知识点.</span>') : ''));
+      });
+    });
+  });
+  setRO('quizScore','已完成 0 / '+qs.length+' 题');
+})();
+
+})();
+</script>
+</body>
+</html>

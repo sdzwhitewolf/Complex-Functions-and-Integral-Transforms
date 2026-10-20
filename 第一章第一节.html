@@ -1,0 +1,2643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章第一节 复数及其几何表示</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container { font-size: .9em; }
+.kg-col.long .kg-leaf mjx-container { font-size: .82em; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:nowrap;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第一章 第1节 复数及其几何表示</h1>
+    <p>数学定义 &middot; 几何直观 &middot; 交互探索</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握复数的基本概念: 实部、虚部、虚数单位、共轭复数;
+2. 熟练掌握复数的点表示、向量表示、三角表示式与指数表示式;
+3. 理解并熟练进行复数的四则运算、乘幂与开方运算, 掌握 De Moivre 公式;
+4. 借助可拖拽交互, 直观感受复数运算的几何意义: 旋转与伸缩;
+5. 了解复球面与无穷远点, 建立扩充复平面的整体观念.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-1" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-1" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-1" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-1" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-1" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-1" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、复数的概念与表示</label>
+    <label class="tab-btn" for="tab2" id="label2">二、复数的运算与共轭</label>
+    <label class="tab-btn" for="tab3" id="label3">三、乘幂、方根与 De Moivre</label>
+    <label class="tab-btn" for="tab4" id="label4">四、复球面与无穷大</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 复数的概念与几何表示 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 复数的基本概念</div>
+
+<div class="box-think">
+<div class="think-label">思考: 数系为什么要扩张?</div>
+在实数范围内, 方程 $x^2 = -1$ 无解. 历史上, 卡尔达诺在求解三次方程时首次被迫使用"负数的平方根".
+为了使代数运算封闭, 数系从自然数 $\to$ 整数 $\to$ 有理数 $\to$ 实数一路扩张, 现在引入<b>虚数单位</b> $\mathrm{i}$, 数系扩张为<b>复数域</b> $\mathbb{C}$, 在其中任何 $n$ 次多项式方程恰好有 $n$ 个根 (代数基本定理).
+</div>
+
+<div class="box-key">
+<div class="title">定义 (复数)</div>
+对于任意两个实数 $x,\ y$, 称 <b>$z = x + \mathrm{i}y$</b> 为<b>复数</b>, 其中 $\mathrm{i}$ 满足
+<div class="box-formula">$$\mathrm{i}^2 = -1$$</div>
+称为<b>虚数单位</b>. 记
+<div class="box-formula">$$x = \operatorname{Re}(z), \qquad y = \operatorname{Im}(z)$$</div>
+分别称为 $z$ 的<b>实部</b>与<b>虚部</b>.
+</div>
+
+<div class="box-key">
+<div class="title">特殊复数</div>
+<ul>
+<li>当 $y = 0$ 时, $z = x$ 为<b>实数</b>;</li>
+<li>当 $x = 0$ 且 $y \neq 0$ 时, $z = \mathrm{i}y$ 为<b>纯虚数</b>.</li>
+</ul>
+</div>
+
+<div class="box-key">
+<div class="title">定义 (复数相等)</div>
+两个复数 $z_1 = x_1 + \mathrm{i}y_1$ 及 $z_2 = x_2 + \mathrm{i}y_2$ 相等, 当且仅当
+$$x_1 = x_2 \ \text{且}\ y_1 = y_2, \qquad \text{记作}\ z_1 = z_2.$$
+</div>
+
+<div class="box-warning">
+<div class="warn-label">注意</div>
+<ol>
+<li>复数 $z = 0$ 当且仅当其实部与虚部<b>都</b>为 $0$;</li>
+<li><b>两个复数之间一般不能比较大小!</b> 除非这两个复数的虚部都为零 (即都是实数).
+这是因为若强行规定大小关系, 将与运算律矛盾 (例如由 $\mathrm{i} > 0$ 可推出 $-1 = \mathrm{i}^2 > 0$, 矛盾).</li>
+</ol>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1</div>
+实数 $m$ 取何值时, 复数 $z = (m^2 - 3m - 4) + (m^2 - 5m - 6)\mathrm{i}$ 是: (1) 实数; (2) 纯虚数?
+<input type="checkbox" id="ans1" class="answer-toggle">
+<label for="ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+实部 $= m^2 - 3m - 4 = (m-4)(m+1)$, 虚部 $= m^2 - 5m - 6 = (m-6)(m+1)$.<br><br>
+<b>(1)</b> $z$ 为实数 $\iff$ 虚部为零:
+$$m^2 - 5m - 6 = 0 \implies (m-6)(m+1) = 0 \implies m = 6 \ \text{或}\ m = -1.$$
+<b>(2)</b> $z$ 为纯虚数 $\iff$ 实部为零且虚部不为零:
+$$m^2 - 3m - 4 = 0 \implies m = 4 \ \text{或}\ m = -1; \quad \text{又虚部} \neq 0 \implies m \neq -1,$$
+故 $m = 4$.
+</div>
+</div>
+</div>
+
+
+<div class="box-example">
+<div class="ex-label">例 1【交互版】 判断复数的类型</div>
+拖动下方滑块改变 $m$, 观察 $z(m)$ 在复平面上划出的<b>轨迹曲线</b>: 曲线与实轴的交点即为 $z$ 为实数的时刻; 曲线与虚轴的交点 (不在原点) 即为 $z$ 为纯虚数的时刻.
+<div class="chart-container">
+<h3>复数 $z(m)$ 的轨迹 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">蓝色曲线为 $m \in [-2, 8]$ 时 $z(m)$ 的轨迹; 红点为当前位置.</div>
+<canvas id="cvTrace" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>实数 $m$:</label>
+<input type="range" id="mSlider" min="-2" max="8" step="0.05" value="0.5">
+<span class="val-badge" id="mVal">0.50</span>
+</div>
+<div class="readout" id="mReadout"></div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">1.2 复平面: 点表示法与向量表示法</div>
+
+<div class="box-key">
+<div class="title">点表示法 (复平面)</div>
+复数 $z = x + \mathrm{i}y$ 与有序实数对 $(x,\ y)$ 一一对应, 从而与平面上一点 $P(x,y)$ 一一对应:
+$$z = x + \mathrm{i}y \ \longmapsto \ P(x, y)$$
+该平面称为<b>复平面</b>. $x$ 轴称为<b>实轴</b>, $y$ 轴称为<b>虚轴</b>.
+</div>
+
+<div class="box-key">
+<div class="title">向量表示法与模</div>
+复数 $z = x + \mathrm{i}y$ 又可用平面上以原点 $O$ 为起点、以 $P(x,y)$ 为终点的向量 $\overrightarrow{OP}$ 表示.
+向量 $\overrightarrow{OP}$ 的长度称为 $z$ 的<b>模</b> (绝对值), 记作 $|z|$:
+<div class="box-formula">$$|z| = \sqrt{x^2 + y^2}$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">辐角与主值</div>
+当 $z \neq 0$ 时, 以正实轴为始边、以向量 $\overrightarrow{OP}$ 为终边的转角 $\theta$ 的弧度数称为 $z$ 的<b>辐角</b>, 记作 $\operatorname{Arg} z$.
+<div class="box-formula">$$\tan(\operatorname{Arg} z) = \frac{y}{x}$$</div>
+辐角有无穷多个值, 每两个值之间相差 $2\pi$ 的整数倍. 把满足 $-\pi < \theta \le \pi$ 的辐角称为 $\operatorname{Arg} z$ 的<b>主值</b>, 记作 $\arg z$ (或 $\theta_0$), 于是
+$$\operatorname{Arg} z = \arg z + 2k\pi = \theta_0 + 2k\pi, \quad k = 0, \pm 1, \pm 2, \cdots$$
+</div>
+
+<div class="box-warning">
+<div class="warn-label">注意</div>
+$\operatorname{Arg} z$ 是<b>多值的</b>; 而 $\arg z \in (-\pi, \pi]$ 是唯一的. 当 $z = 0$ 时辐角无意义.
+</div>
+
+<div class="chart-container">
+<h3>复平面探索器 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc"><b>拖动红色点 $z$</b>, 实时观察它的四种表示. 勾选开关可同时显示共轭 $\bar{z}$、乘 $\mathrm{i}$ 后的点 $\mathrm{i}z$ (逆时针旋转 $90°$) 与单位圆.</div>
+<canvas id="cvPlane" data-h="460"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnShowConj">显示共轭 $\bar z$</button>
+<button class="control-btn" id="btnShowIz">显示 $\mathrm{i}z$ (旋转 $90^\circ$)</button>
+<button class="control-btn" id="btnShowUnit">显示单位圆</button>
+<button class="control-btn" id="btnResetPlane">重置</button>
+</div>
+<div class="readout" id="planeReadout"></div>
+</div>
+</div>
+
+<div class="info-box">
+<strong>几何观察:</strong>
+共轭 $\bar z$ 与 $z$ 关于<b>实轴对称</b>; 乘以 $\mathrm{i}$ 相当于把向量逆时针<b>旋转 $\pi/2$</b>, 模不变 —— 这正是"虚数单位是旋转算子"的含义.
+</div>
+
+<div class="sec-title">1.3 三角表示式与指数表示式</div>
+
+<div class="box-key">
+<div class="title">三角表示式</div>
+由直角坐标与极坐标的关系式
+$$x = r\cos\theta, \qquad y = r\sin\theta, \qquad r = |z| = \sqrt{x^2+y^2}$$
+复数 $z = x + \mathrm{i}y$ 可表示为<b>三角表示式</b>:
+<div class="box-formula">$$z = r(\cos\theta + \mathrm{i}\sin\theta), \qquad r = |z|,\ \ \theta = \operatorname{Arg} z$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">指数表示式 (Euler 公式)</div>
+由 Euler 公式
+<div class="box-formula">$$\mathrm{e}^{\mathrm{i}\theta} = \cos\theta + \mathrm{i}\sin\theta$$</div>
+复数 $z$ 又可表示为<b>指数表示式</b>:
+<div class="box-formula">$$z = r \mathrm{e}^{\mathrm{i}\theta}$$</div>
+注: 此处 $\theta$ 可取 $\operatorname{Arg} z$ 中任意一个值.
+</div>
+
+<table>
+<tr><th>表示法</th><th>形式</th><th>关键量</th><th>适用场景</th></tr>
+<tr><td>代数式</td><td>$z = x + \mathrm{i}y$</td><td>实部 $x$、虚部 $y$</td><td>加减、共轭、相等判定</td></tr>
+<tr><td>三角式</td><td>$z = r(\cos\theta + \mathrm{i}\sin\theta)$</td><td>模 $r$、辐角 $\theta$</td><td>乘除、乘幂、开方</td></tr>
+<tr><td>指数式</td><td>$z = r \mathrm{e}^{\mathrm{i}\theta}$</td><td>模 $r$、辐角 $\theta$</td><td>乘除、乘幂、开方 (书写简洁)</td></tr>
+</table>
+
+<div class="chart-container">
+<h3>直角坐标 ⇆ 极坐标 互转器 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">在输入框中修改 $x,\ y$ 或 $r,\ \theta$(度), 另一侧实时联动, 图中向量同步移动. 四种表示法一屏尽览.</div>
+<canvas id="cvConvert" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>实部 $x$:</label>
+<input type="number" id="inX" value="1" step="0.1" style="width:90px">
+<label>虚部 $y$:</label>
+<input type="number" id="inY" value="1" step="0.1" style="width:90px">
+</div>
+<div class="row">
+<label>模 $r$:</label>
+<input type="number" id="inR" step="0.01" style="width:90px">
+<label>辐角 $\theta$ (°):</label>
+<input type="number" id="inT" step="0.01" style="width:90px">
+</div>
+<div class="readout" id="convReadout"></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>辐角的多值性 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动滑块改变 $\theta_0$ (主值), 观察无穷多辐角 $\theta_0 + 2k\pi$ 是如何"层叠"出来的 —— 每转一圈 ($2\pi$) 就得到一个新值.</div>
+<canvas id="cvArg" data-h="340"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>主值 $\theta_0$:</label>
+<input type="range" id="argSlider" min="-180" max="180" step="1" value="45">
+<span class="val-badge" id="argVal">45°</span>
+</div>
+<div class="readout" id="argReadout"></div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2</div>
+求复数 $z_1 = -1 - \mathrm{i}$ 与 $z_2 = -1 + 3\mathrm{i}$ 的辐角及其主值.
+<input type="checkbox" id="ans2" class="answer-toggle">
+<label for="ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$z_1 = -1-\mathrm{i}$ 位于第三象限 ($x<0, y<0$), 参考辐角 $\arctan\frac{y}{x} = \arctan 1 = \frac{\pi}{4}$, 第三象限辐角主值
+$$\arg z_1 = -\pi + \frac{\pi}{4} = -\frac{3\pi}{4}, \qquad \operatorname{Arg} z_1 = -\frac{3\pi}{4} + 2k\pi.$$
+$z_2 = -1+3\mathrm{i}$ 位于第二象限 ($x<0, y>0$), 故
+$$\arg z_2 = \pi - \arctan 3, \qquad \operatorname{Arg} z_2 = \pi - \arctan 3 + 2k\pi.$$
+</div>
+</div>
+</div>
+
+
+<div class="box-example">
+<div class="ex-label">例 3</div>
+求复数 $z_1 = -1-\mathrm{i}$ 与 $z_2 = -1+3\mathrm{i}$ 的三角表示式与指数表示式.
+<input type="checkbox" id="ans3" class="answer-toggle">
+<label for="ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+接例 2, $|z_1| = \sqrt{(-1)^2 + (-1)^2} = \sqrt{2}$, $\arg z_1 = -\frac{3\pi}{4}$, 故
+$$z_1 = \sqrt{2}\left(\cos\frac{3\pi}{4} - \mathrm{i}\sin\frac{3\pi}{4}\right) = \sqrt{2}\left(\cos\left(-\frac{3\pi}{4}\right) + \mathrm{i}\sin\left(-\frac{3\pi}{4}\right)\right) = \sqrt{2}\, \mathrm{e}^{-\frac{3\pi}{4}\mathrm{i}}.$$
+$|z_2| = \sqrt{(-1)^2 + 3^2} = \sqrt{10}$, $\arg z_2 = \pi - \arctan 3$, 故
+$$z_2 = \sqrt{10}\big(\cos(\pi - \arctan 3) + \mathrm{i}\sin(\pi - \arctan 3)\big) = \sqrt{10}\, \mathrm{e}^{(\pi - \arctan 3)\mathrm{i}}.$$
+</div>
+</div>
+</div>
+
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<b>不要只用 $\arctan(y/x)$ 求辐角主值!</b> 因为 $\arctan$ 的输出始终落在 $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ 内, 只能覆盖第一、四象限, 无法区分 $z$ 与 $-z$ (二者 $\frac{y}{x}$ 相同). 例如 $z_1 = -1-\mathrm{i}$: $\arctan\frac{-1}{-1} = \arctan 1 = \frac{\pi}{4}$, 但点位于<b>第三象限</b>, 应当用 $\alpha - \pi$, 即
+$$\arg z_1 = \frac{\pi}{4} - \pi = -\frac{3\pi}{4} \quad (\text{而不是 } \tfrac{\pi}{4}).$$
+口诀: <b>"一、四象限反正切, 二象限反正切加 $\pi$, 三象限反正切减 $\pi$"</b>. 最稳妥的做法是<b>永远先画图定位象限</b>.
+
+<p style="margin:14px 0 6px">为便于查找, 下面给出<b>分象限的辐角主值公式</b>. 记<b>参考角</b> $\alpha = \arctan\frac{y}{x} \in \left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$, 则</p>
+
+<div class="box-formula">
+$$\arg z =
+\begin{cases}
+\alpha, & x>0,\ y\ge 0 \quad (\text{第一象限及正实轴}),\\[4pt]
+\alpha + \pi, & x<0,\ y\ge 0 \quad (\text{第二象限}),\\[4pt]
+\alpha - \pi, & x<0,\ y<0 \quad (\text{第三象限及负实轴}),\\[4pt]
+\alpha, & x>0,\ y<0 \quad (\text{第四象限}).
+\end{cases}$$
+</div>
+
+<p style="margin:8px 0 4px">也可用 $k$ 反查 —— 在 $\arctan\frac{y}{x}$ 与 $\arctan\frac{y}{x}+\pi$ 两支中选出<b>落在 $(-\pi,\pi]$ 的那一支</b>作为主值:</p>
+<div class="box-formula">
+$$\arg z = \arctan\frac{y}{x} + 2k\pi \quad \text{或} \quad \left(\arctan\frac{y}{x} + \pi\right) + 2k\pi, \qquad k \in \mathbb{Z}.$$
+</div>
+
+<table class="value-table">
+<thead>
+<tr><th>位置</th><th>$x$ 与 $y$ 的符号</th><th>参考角 $\alpha$</th><th>辐角主值 $\arg z \in (-\pi,\pi]$</th><th>举例</th></tr>
+</thead>
+<tbody>
+<tr><td>正实轴</td><td>$x>0,\ y=0$</td><td>$0$</td><td>$0$</td><td>$\arg 1 = 0$</td></tr>
+<tr><td>第一象限</td><td>$x>0,\ y>0$</td><td>$\arctan\frac{y}{x}$</td><td>$\alpha$</td><td>$\arg(1+\mathrm{i}) = \frac{\pi}{4}$</td></tr>
+<tr><td>正虚轴</td><td>$x=0,\ y>0$</td><td>—</td><td>$\frac{\pi}{2}$</td><td>$\arg \mathrm{i} = \frac{\pi}{2}$</td></tr>
+<tr><td>第二象限</td><td>$x<0,\ y>0$</td><td>$\arctan\frac{y}{x}$</td><td>$\alpha + \pi$</td><td>$\arg(-1+\mathrm{i}) = \frac{3\pi}{4}$</td></tr>
+<tr><td>负实轴</td><td>$x<0,\ y=0$</td><td>—</td><td>$\pi$</td><td>$\arg(-1) = \pi$</td></tr>
+<tr><td>第三象限</td><td>$x<0,\ y<0$</td><td>$\arctan\frac{y}{x}$</td><td>$\alpha - \pi$</td><td>$\arg(-1-\mathrm{i}) = -\frac{3\pi}{4}$</td></tr>
+<tr><td>负虚轴</td><td>$x=0,\ y<0$</td><td>—</td><td>$-\frac{\pi}{2}$</td><td>$\arg(-\mathrm{i}) = -\frac{\pi}{2}$</td></tr>
+<tr><td>第四象限</td><td>$x>0,\ y<0$</td><td>$\arctan\frac{y}{x}$</td><td>$\alpha$</td><td>$\arg(1-\mathrm{i}) = -\frac{\pi}{4}$</td></tr>
+</tbody>
+</table>
+
+<p style="margin:8px 0 0"><b>为什么只有 $x<0$ 要修正?</b> 因为主值区间是 $(-\pi, \pi]$, 而 $\arctan\frac{y}{x}$ 的值域只有 $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$; 当 $x<0$ 时这个区间"不够用", 必须平移 $\pi$ 才能落到第二 / 第三象限. 最后切记核对算出的主值是否确实落在 $(-\pi,\pi]$ 内.</p>
+</div>
+
+</div>
+<!-- ============ Tab 2: 复数的运算与共轭 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 复数的四则运算定义</div>
+
+<div class="box-key">
+<div class="title">定义 (加减法与乘法)</div>
+设有两个复数 $z_1 = a + \mathrm{i}b$, $z_2 = c + \mathrm{i}d$:
+<div class="box-formula">
+$$z_1 \pm z_2 = (a \pm c) + \mathrm{i}(b \pm d)$$
+$$z_1 z_2 = (ac - bd) + \mathrm{i}(ad + bc)$$
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">定义 (商)</div>
+满足 $z_2 \cdot w = z_1$ 的复数 $w$ 称为 $z_1$ 除以 $z_2$ 的商, 记作 $w = \frac{z_1}{z_2}$ ($z_2 \neq 0$). 用代数形式计算:
+<div class="box-formula">
+$$\frac{z_1}{z_2} = \frac{(ac + bd) + \mathrm{i}(bc - ad)}{c^2 + d^2} = \frac{z_1 \bar z_2}{z_2 \bar z_2} = \frac{z_1 \bar z_2}{|z_2|^2}$$
+</div>
+</div>
+
+<div class="info-box">
+<strong>注:</strong> 复数的四则运算满足交换律、结合律和分配律. 复数域 $\mathbb{C}$ 构成数域, 且实数域 $\mathbb{R}$ 是它的子域.
+</div>
+
+<div class="chart-container">
+<h3>加法与减法: 平行四边形法则 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">分别<b>拖动</b>蓝色点 $z_1$ 与绿色点 $z_2$, 观察平行四边形: 对角线给出 $z_1 + z_2$ (红) 与 $z_1 - z_2$ (橙, 即从 $z_2$ 指向 $z_1$ 的向量). 这与平面向量的加减完全一致.</div>
+<canvas id="cvAdd" data-h="430"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnAddReset">重置</button>
+<span style="font-size:.85em;color:#4a148c;">提示: $|z_1 + z_2| \le |z_1| + |z_2|$ (三角不等式), 拖动点验证何时取等号!</span>
+</div>
+<div class="readout" id="addReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2.2 共轭复数</div>
+
+<div class="box-key">
+<div class="title">定义 (共轭复数)</div>
+实部相同而虚部绝对值相等、符号相反的两个复数称为<b>共轭复数</b>. 与 $z = x + \mathrm{i}y$ 共轭的复数记作
+<div class="box-formula">$$\bar z = x - \mathrm{i}y$$</div>
+即 $z$ 与 $\bar z$ 互为共轭复数.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1</div>
+计算共轭复数 $z = 1 + 2\mathrm{i}$ 与 $\bar z = 1 - 2\mathrm{i}$ 的积.
+<input type="checkbox" id="ans4" class="answer-toggle">
+<label for="ans4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$$z \bar z = (1+2\mathrm{i})(1-2\mathrm{i}) = 1^2 - (2\mathrm{i})^2 = 1 + 4 = 5.$$
+一般地 $z\bar z = x^2 + y^2 = |z|^2$ —— 共轭复数之积恒为<b>非负实数</b>, 且等于模的平方. 这正是"分母实数化"的原理.
+</div>
+</div>
+</div>
+
+
+<div class="box-key">
+<div class="title">共轭复数的性质</div>
+<div class="box-formula">
+$$(1)\ \overline{(\bar z)} = z; \qquad (2)\ \overline{z_1 \pm z_2} = \bar z_1 \pm \bar z_2;$$
+$$(3)\ \overline{z_1 z_2} = \bar z_1 \bar z_2; \qquad (4)\ \overline{\left(\frac{z_1}{z_2}\right)} = \frac{\bar z_1}{\bar z_2}\ (z_2 \neq 0)$$
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">注意</div>
+共轭复数的<b>和</b> $z + \bar z = 2x$ 及<b>乘积</b> $z\bar z = x^2 + y^2$ 均为<b>实数</b>; 当虚部不为零时, 共轭复数之差 $z - \bar z = 2y\mathrm{i}$ 为<b>纯虚数</b>.
+</div>
+
+<div class="chart-container">
+<h3>共轭与模: 对称之美 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动点 $z$, 右侧实时验证五条恒等式: $z+\bar z$、$z\bar z$、$z-\bar z$、$|z|^2$ 以及 $\operatorname{Re}(z) = \frac{z+\bar z}{2}$.</div>
+<canvas id="cvConj" data-h="380"></canvas>
+<div class="control-panel">
+<div class="readout" id="conjReadout"></div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2</div>
+用复数的代数形式 $a + \mathrm{i}b$ 表示下列复数:
+(1) $\frac{1}{1+\mathrm{i}}$; &nbsp;&nbsp; (2) $\frac{1+\mathrm{i}}{1-\mathrm{i}}$.
+<input type="checkbox" id="ans5" class="answer-toggle">
+<label for="ans5" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】(分母"实数化": 分子分母同乘分母的共轭)</div>
+<b>(1)</b> $\frac{1}{1+\mathrm{i}} = \frac{1-\mathrm{i}}{(1+\mathrm{i})(1-\mathrm{i})} = \frac{1-\mathrm{i}}{1+1} = \frac{1}{2} - \frac{1}{2}\mathrm{i}.$<br><br>
+<b>(2)</b> $\frac{1+\mathrm{i}}{1-\mathrm{i}} = \frac{(1+\mathrm{i})^2}{(1-\mathrm{i})(1+\mathrm{i})} = \frac{1 + 2\mathrm{i} + \mathrm{i}^2}{2} = \frac{2\mathrm{i}}{2} = \mathrm{i}.$
+<div class="info-box">
+<strong>几何解释 (用指数式看例2(2)):</strong>
+$1+\mathrm{i} = \sqrt2 \mathrm{e}^{\mathrm{i}\pi/4}$, $1-\mathrm{i} = \sqrt2 \mathrm{e}^{-\mathrm{i}\pi/4}$, 相除时模相除、辐角相减: $\frac{\sqrt2}{\sqrt2} \mathrm{e}^{\mathrm{i}(\pi/4 + \pi/4)} = \mathrm{e}^{\mathrm{i}\pi/2} = \mathrm{i}$. ✔
+</div>
+</div>
+</div>
+</div>
+
+
+<div class="sec-title">2.3 复数乘除法的几何意义 (拓展)</div>
+
+<div class="box-key">
+<div class="title">乘法与除法的几何意义</div>
+设 $z_1 = r_1 \mathrm{e}^{\mathrm{i}\theta_1}$, $z_2 = r_2 \mathrm{e}^{\mathrm{i}\theta_2}$, 则
+<div class="box-formula">
+$$z_1 z_2 = r_1 r_2\, \mathrm{e}^{\mathrm{i}(\theta_1 + \theta_2)}, \qquad \frac{z_1}{z_2} = \frac{r_1}{r_2} \mathrm{e}^{\mathrm{i}(\theta_1 - \theta_2)}$$
+</div>
+<ul>
+<li><b>复数相乘 = 模相乘, 辐角相加</b> (先伸缩 $r_2$ 倍, 再旋转 $\theta_2$);</li>
+<li><b>复数相除 = 模相除, 辐角相减</b>.</li>
+</ul>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">多值性注意</div>
+严格地说, $\operatorname{Arg}(z_1 z_2) = \operatorname{Arg} z_1 + \operatorname{Arg} z_2$ 应理解为<b>集合相等</b>: 左边全体值与右边全体值构成的集合相同; 而<b>主值</b>之间 $\arg(z_1 z_2) = \arg z_1 + \arg z_2$ 未必成立 (可能差 $2\pi$).
+<br><b>又</b>: $\operatorname{Arg}z^2 = \operatorname{Arg}z + \operatorname{Arg}z \neq 2\operatorname{Arg}z$ —— 前者是<b>两个辐角集合相加</b>, 后者是把<b>同一个</b>辐角集合整体乘以 $2$, 二者一般并不相等 (例如 $z=\mathrm{i}$ 时, 前者为 $\{\pi+2n\pi\}$, 而后者为 $\{\pi+4n\pi\}$).
+</div>
+
+<div class="chart-container">
+<h3>乘除法的旋转—伸缩实验台 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">用四个滑块设置 $z_1, z_2$ 的模与辐角: 左图画出 $z_1$、$z_2$ 及乘积 $z_1 z_2$ / 商 $z_1/z_2$; 右图对比辐角的合成. 试试预设: "乘以 i"、"乘以共轭"、"单位圆上相乘".</div>
+<canvas id="cvMul" data-h="430"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>$|z_1|$ =</label>
+<input type="range" id="r1s" min="0" max="2.5" step="0.05" value="1.3">
+<span class="val-badge" id="r1v">1.30</span>
+<label style="min-width:60px;">$\theta_1$ =</label>
+<input type="range" id="t1s" min="-180" max="180" step="1" value="30">
+<span class="val-badge" id="t1v">30°</span>
+</div>
+<div class="row">
+<label>$|z_2|$ =</label>
+<input type="range" id="r2s" min="0" max="2.5" step="0.05" value="1.5">
+<span class="val-badge" id="r2v">1.50</span>
+<label style="min-width:60px;">$\theta_2$ =</label>
+<input type="range" id="t2s" min="-180" max="180" step="1" value="60">
+<span class="val-badge" id="t2v">60°</span>
+</div>
+<div class="row">
+<button class="control-btn" id="btnModeMul">显示 $z_1\cdot z_2$</button>
+<button class="control-btn" id="btnModeDiv">显示 $\frac{z_1}{z_2}$</button>
+<button class="control-btn" id="btnPresetI">预设: 乘以 $\mathrm{i}$</button>
+<button class="control-btn" id="btnPresetConj">预设: 乘以共轭 $\bar z_2$</button>
+<button class="control-btn" id="btnPresetUnit">预设: 单位圆上相乘</button>
+</div>
+<div class="readout" id="mulReadout"></div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">拓展: 复数乘法 = 平面相似变换</div>
+固定 $z_2 = r_2 \mathrm{e}^{\mathrm{i}\theta_2}$, 映射 $z \mapsto z_2 z$ 就是把整个复平面<b>以原点为中心放大 $r_2$ 倍、再旋转 $\theta_2$</b> 的相似变换.
+特别地, $z_2 = \mathrm{i}$ 是纯旋转 $90°$; $z_2 = 2\mathrm{i}$ 是放大 $2$ 倍再旋转 $90°$. 这个观点是第六章"共形映射"的种子.
+</div>
+
+</div>
+
+<!-- ============ Tab 3: 乘幂、方根与 De Moivre ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 复数的乘幂</div>
+
+<div class="box-key">
+<div class="title">乘幂与 De Moivre 公式</div>
+$n$ 个相同复数 $z$ 的乘积称为 $z$ 的 $n$ 次幂, 记作 $z^n$. 设 $z = r(\cos\theta + \mathrm{i}\sin\theta)$, 则
+<div class="box-formula">
+$$z^n = r^n\big(\cos n\theta + \mathrm{i}\sin n\theta\big) = r^n \mathrm{e}^{\mathrm{i}n\theta}$$
+</div>
+特别地, 当 $|z| = 1$ 时得到著名的 <b>De Moivre 公式</b>:
+<div class="box-formula">
+$$\big(\cos\theta + \mathrm{i}\sin\theta\big)^n = \cos n\theta + \mathrm{i}\sin n\theta$$
+</div>
+</div>
+
+<div class="info-box">
+<strong>几何意义:</strong> 求 $n$ 次幂 = 模取 $n$ 次幂 + 辐角扩大 $n$ 倍. 若 $|z| = 1$, 则 $z^n$ 永远在单位圆上"跑圈", 每步转过 $\theta$ —— 这就是"单位圆上的等速圆周运动".
+</div>
+
+<div class="chart-container">
+<h3>De Moivre 幂演示器 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">滑块设置辐角 $\theta$ 与幂次 $n$ ($1 \sim 12$): 观察单位圆上 $z \to z^2 \to \cdots \to z^n$ 的跳步轨迹, 以及模为 $\ne 1$ 时向外/向内的螺旋. 播放按钮自动演示 $n$ 从 1 到 12 的动画.</div>
+<canvas id="cvPower" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>辐角 $\theta$:</label>
+<input type="range" id="pwT" min="-180" max="180" step="1" value="40">
+<span class="val-badge" id="pwTv">40°</span>
+<label>模 $r$:</label>
+<input type="range" id="pwR" min="0.3" max="1.3" step="0.01" value="1.0">
+<span class="val-badge" id="pwRv">1.00</span>
+</div>
+<div class="row">
+<label>幂次 $n$:</label>
+<input type="range" id="pwN" min="1" max="12" step="1" value="5">
+<span class="val-badge" id="pwNv">5</span>
+<button class="control-btn" id="pwPlay">▶ 播放动画</button>
+</div>
+<div class="readout" id="pwReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">3.2 复数的方根</div>
+
+<div class="box-key">
+<div class="title">定义 (n 次方根)</div>
+设 $z$ 为已知复数, $n$ 为正整数, 则称满足方程
+<div class="box-formula">$$w^n = z$$</div>
+的所有 $w$ 值为 $z$ 的 $n$ 次方根, 记作 $w = \sqrt[n]{z}$.
+</div>
+
+<div class="box-key">
+<div class="title">方根的推导</div>
+设 $z = r(\cos\theta + \mathrm{i}\sin\theta)$, $w = \rho(\cos\varphi + \mathrm{i}\sin\varphi)$. 由 $w^n = z$ 并比较模与辐角:
+$$\rho^n = r, \qquad n\varphi = \theta + 2k\pi$$
+从而 $\rho = \sqrt[n]{r}$ (算术根), $\varphi = \frac{\theta + 2k\pi}{n}$. 于是
+<div class="box-formula">
+$$\boxed{\ w_k = \sqrt[n]{r}\left(\cos\frac{\theta + 2k\pi}{n} + \mathrm{i}\sin\frac{\theta + 2k\pi}{n}\right), \quad k = 0, 1, 2, \cdots, n-1\ }$$
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">方根的几何意义</div>
+$z \neq 0$ 的 $n$ 个 $n$ 次方根, 在几何上是<b>以原点为中心、$\sqrt[n]{|z|}$ 为半径的圆的内接正 $n$ 边形的 $n$ 个顶点</b>: 它们的模都等于 $\sqrt[n]{|z|}$, 相邻两根的辐角相差 $\frac{2\pi}{n}$.
+</div>
+
+<div class="chart-container">
+<h3>n 次方根可视化 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动红点设置 $z$ (或使用滑块), 调节 $n$: 蓝色顶点即为全部 $n$ 个方根, 恰好构成正 $n$ 边形! 点击任一根 $w_k$, 自动验证 $w_k^n = z$. 预设按钮直达本节例 3、例 4.</div>
+<canvas id="cvRoot" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>方根次数 $n$:</label>
+<input type="range" id="rtN" min="2" max="10" step="1" value="4">
+<span class="val-badge" id="rtNv">4</span>
+<label>$z$ 的辐角 $\theta$:</label>
+<input type="range" id="rtT" min="-180" max="180" step="1" value="45">
+<span class="val-badge" id="rtTv">45°</span>
+<label>$z$ 的模 $r$:</label>
+<input type="range" id="rtR" min="0.2" max="4" step="0.05" value="1.41">
+<span class="val-badge" id="rtRv">1.41</span>
+</div>
+<div class="row">
+<button class="control-btn" id="btnRootSpin">▶ 旋转动画</button>
+<button class="control-btn" id="btnPresetEx3">预设: 例3 $\sqrt[n]{1+\mathrm{i}}$</button>
+<button class="control-btn" id="btnPresetEx4">预设: 例4 $z^4=-1$</button>
+<button class="control-btn" id="btnPresetUnity">预设: 单位根 $z=1$</button>
+</div>
+<div class="readout" id="rtReadout"></div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3</div>
+求 $\sqrt[4]{1+\mathrm{i}}$.
+<input type="checkbox" id="ans6" class="answer-toggle">
+<label for="ans6" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$|1+\mathrm{i}| = \sqrt{1^2+1^2} = \sqrt2$, 又 $1+\mathrm{i}$ 在第一象限且 $\tan\theta = 1$, 故 $\theta = \frac{\pi}{4}$. 于是
+$$1 + \mathrm{i} = \sqrt2\left(\cos\frac{\pi}{4} + \mathrm{i}\sin\frac{\pi}{4}\right),$$
+$$w_k = \sqrt[4]{\sqrt2}\left(\cos\frac{\frac{\pi}{4} + 2k\pi}{4} + \mathrm{i}\sin\frac{\frac{\pi}{4} + 2k\pi}{4}\right) = 2^{\frac18}\left(\cos\frac{\pi + 8k\pi}{16} + \mathrm{i}\sin\frac{\pi + 8k\pi}{16}\right),$$
+取 $k = 0, 1, 2, 3$ 得四个相异的根:
+$$w_0 = 2^{\frac18}\left(\cos\frac{\pi}{16} + \mathrm{i}\sin\frac{\pi}{16}\right),\quad w_1 = 2^{\frac18}\left(\cos\frac{9\pi}{16} + \mathrm{i}\sin\frac{9\pi}{16}\right),$$
+$$w_2 = 2^{\frac18}\left(\cos\frac{17\pi}{16} + \mathrm{i}\sin\frac{17\pi}{16}\right),\quad w_3 = 2^{\frac18}\left(\cos\frac{25\pi}{16} + \mathrm{i}\sin\frac{25\pi}{16}\right).$$
+其中 $2^{1/8} = \sqrt[8]{2} \approx 1.0905$. 四个根恰为以原点为中心、$2^{1/8}$ 为半径的圆的内接正方形的四个顶点. <span class="tag-pill">点上方"预设: 例3"观看</span>
+</div>
+</div>
+</div>
+
+
+<div class="box-example">
+<div class="ex-label">例 4</div>
+求方程 $z^4 + 1 = 0$ 的根.
+<input type="checkbox" id="ans7" class="answer-toggle">
+<label for="ans7" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+所求方程的根就是 $z = \sqrt[4]{-1}$. 因为 $|-1| = 1$, $\arg(-1) = \pi$, 即 $-1 = \cos\pi + \mathrm{i}\sin\pi$, 所以
+$$w_k = \cos\frac{\pi + 2k\pi}{4} + \mathrm{i}\sin\frac{\pi + 2k\pi}{4}, \qquad k = 0, 1, 2, 3,$$
+即
+$$w_0 = \frac{\sqrt2}{2} + \frac{\sqrt2}{2}\mathrm{i},\quad w_1 = -\frac{\sqrt2}{2} + \frac{\sqrt2}{2}\mathrm{i},\quad w_2 = -\frac{\sqrt2}{2} - \frac{\sqrt2}{2}\mathrm{i},\quad w_3 = \frac{\sqrt2}{2} - \frac{\sqrt2}{2}\mathrm{i}.$$
+四根为单位圆的内接正方形顶点. 顺带得到漂亮的因式分解:
+$$z^4 + 1 = \left(z - \tfrac{\sqrt2}{2}(1+\mathrm{i})\right)\left(z + \tfrac{\sqrt2}{2}(1-\mathrm{i})\right)\left(z + \tfrac{\sqrt2}{2}(1+\mathrm{i})\right)\left(z - \tfrac{\sqrt2}{2}(1-\mathrm{i})\right).$$
+</div>
+</div>
+</div>
+
+
+<div class="box-think">
+<div class="think-label">拓展: 单位根与正多边形</div>
+取 $z = 1$, 则 $n$ 次方根 $w_k = \mathrm{e}^{\mathrm{i}\frac{2k\pi}{n}}$ ($k=0,\cdots,n-1$) 称为 <b>n 次单位根</b>, 它们是单位圆的内接正 $n$ 边形顶点, 且
+$$1 + w + w^2 + \cdots + w^{n-1} = 0 \quad (w = \mathrm{e}^{2\pi\mathrm{i}/n} \neq 1)$$
+—— 正 $n$ 边形的"重心"在原点. 高斯正是利用单位根的构造证明了正 17 边形可以尺规作图. 单位根还是 Fourier 变换 (第七章) 的离散基石: $\mathrm{e}^{-2\pi\mathrm{i}k/n}$ 就是 DFT 的"旋转因子".
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见误区</div>
+<ol>
+<li>$\sqrt[n]{z}$ 在复数域中<b>总是 $n$ 个值</b>, 不要把实数中"算术根唯一"的习惯带过来;</li>
+<li>辐角用主值 $\theta_0$ 代入公式即可, 但 $k$ 必须取满 $0, 1, \cdots, n-1$ 共 $n$ 个值, 取更多只会重复;</li>
+<li>开方后模是 $\sqrt[n]{r}$ 而不是 $r^n$; 相邻根辐角差为 $\frac{2\pi}{n}$ 而不是 $\frac{\pi}{n}$.</li>
+</ol>
+</div>
+
+</div>
+<!-- ============ Tab 4: 复球面与无穷大 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 复球面 (Riemann 球面)</div>
+
+<div class="box-key">
+<div class="title">复球面的构造</div>
+取一个在原点 $O$ 与 $z$ 平面<b>相切</b>的球面. 过 $O$ 点作 $z$ 平面的垂线与球面交于 $N$ 点, 称为<b>北极</b> (球极); 与 $O$ 相切的球面上的点 $S$ 称为<b>南极</b>.
+<ul>
+<li>对于平面上的任一点 $z$, 用一条空间直线把它和北极 $N$ 连接起来, 交球面于点 $P$;</li>
+<li>反过来, 对于球面上异于 $N$ 的任一点 $P$, 用直线把它与北极 $N$ 连接, 其延长线交平面于点 $z$.</li>
+</ul>
+这样就建立了<b>除去 $N$ 的球面</b>与<b>复平面</b>之间的一一对应 —— 称为<b>球极投影</b>.
+</div>
+
+<div class="box-key">
+<div class="title">无穷远点与扩充复平面</div>
+如果复数 $z$ 的模 $|z|$ 越来越大, 则对应的点 $P$ 就会越来越接近北极 $N$. 由此引进一个理想"点"与北极 $N$ 对应, 称之为<b>无穷远点</b> $\infty$. 把包含无穷远点在内的复平面称为<b>扩充复平面</b>:
+<div class="box-formula">$$\text{扩充复平面} = \text{复平面} + \{\infty\} \quad \longleftrightarrow \quad \text{复球面}$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">关于无穷远点的运算规定</div>
+$$|\infty| = +\infty; \qquad \infty \pm z = \infty; \qquad \infty \cdot z = \infty\ (z \neq 0); \qquad \frac{z}{\infty} = 0; \qquad \frac{z}{0} = \infty\ (z \neq 0)$$
+而以下运算<b>没有意义</b> (不确定型):
+$$\infty \pm \infty,\qquad 0 \cdot \infty,\qquad \frac{\infty}{\infty},\qquad \frac{0}{0}$$
+</div>
+
+<div class="chart-container">
+<h3>复球面与球极投影 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc"><b>拖动平面上的红点 $z$</b>, 观察球面上的紫点 $P$ 随之移动; 调节视角滑块旋转整个场景. 点击"演示 $z \to \infty$", 看 $P$ 如何滑向北极 $N$ —— 无穷远点从此有了"住所".</div>
+<canvas id="cvSphere" data-h="470"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>观察视角:</label>
+<input type="range" id="spSpin" min="0" max="360" step="1" value="35">
+<span class="val-badge" id="spSpinV">35°</span>
+<button class="control-btn" id="btnInfinity">▶ 演示 $z\to\infty$</button>
+<button class="control-btn" id="btnSphereReset">重置 $z$</button>
+</div>
+<div class="readout" id="spReadout"></div>
+</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">拓展: 为什么复球面重要?</div>
+<ul>
+<li><b>紧致化:</b> 扩充复平面 $\mathbb{C} \cup \{\infty\}$ 与球面一一对应, 是一个<b>没有"边界"</b>的封闭曲面 —— 复平面被"卷"成了一个球. 这在拓扑上称为紧致化.</li>
+<li><b>保角性:</b> 球极投影保持角度不变 (共形), 是第六章共形映射思想的最早原型之一.</li>
+<li><b>统一有限与无穷:</b> 有了 $\infty$, 今后讨论 $z \to \infty$ 的极限、$\infty$ 为奇点的函数 (如 $f(z)=z$ 在 $\infty$ 处的行为)、分式线性映射 $\ w \mapsto \frac{az+b}{cz+d}$ 把 $z=-d/c$ 映到 $\infty$ 等问题时, 都有了统一的几何图像.</li>
+<li>地图学中的<b>墨卡托投影</b>、航空航线"大圆航线"的绘制, 用的正是同一数学思想.</li>
+</ul>
+</div>
+
+<div class="sec-title">4.2 高频考点提醒</div>
+
+<div class="box-warning">
+<div class="warn-label">易错 · 必记</div>
+<ol>
+<li>辐角必须按<b>象限</b>确定, 主值范围 $(-\pi, \pi]$;</li>
+<li>除法先"分母实数化": 乘共轭 $\bar z_2$;</li>
+<li>开 $n$ 次方得 $n$ 个根, 均匀分布成<b>正 $n$ 边形</b>, 相邻辐角差 $2\pi/n$;</li>
+<li>$0 \cdot \infty$、$\infty - \infty$ 等<b>无意义</b>, 不能参与运算;</li>
+<li>复数之间不能比较大小, 但模是实数可以比较.</li>
+</ol>
+</div>
+
+</div>
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>第一节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>复数的概念与表示</b> → <b>运算与共轭</b> → <b>乘幂与方根</b> → <b>复球面与无穷大</b>. 点击"逐步展开"看知识如何逐层生长, 点击"重新生长"从头演示.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">↻ 重新生长</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+虚实并置成复数, 点向对应落平面;<br>
+模加辐角定方向, 共轭一翻实轴旁;<br>
+乘法旋转又伸缩, 开方均分成正方;<br>
+球面北极纳无穷, 有限无限共一堂.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心公式/结论</th><th>几何图像</th></tr>
+<tr><td>复数</td><td>$z = x + \mathrm{i}y$, $\mathrm{i}^2 = -1$</td><td>复平面上的点/向量</td></tr>
+<tr><td>模与辐角</td><td>$|z| = \sqrt{x^2+y^2}$, $\operatorname{Arg} z = \arg z + 2k\pi$</td><td>向量的长度与方向</td></tr>
+<tr><td>四种表示</td><td>$x+\mathrm{i}y = r(\cos\theta+\mathrm{i}\sin\theta) = r\mathrm{e}^{\mathrm{i}\theta}$</td><td>极坐标</td></tr>
+<tr><td>共轭</td><td>$\bar z = x - \mathrm{i}y$, $z\bar z = |z|^2$</td><td>关于实轴对称</td></tr>
+<tr><td>乘除</td><td>模相乘(除)、辐角相加(减)</td><td>旋转 + 伸缩</td></tr>
+<tr><td>乘幂</td><td>$z^n = r^n \mathrm{e}^{\mathrm{i}n\theta}$ (De Moivre)</td><td>单位圆上跑圈</td></tr>
+<tr><td>方根</td><td>$w_k = r^{1/n} \mathrm{e}^{\mathrm{i}(\theta+2k\pi)/n}$, $k=0,\cdots,n-1$</td><td>正 $n$ 边形顶点</td></tr>
+<tr><td>复球面</td><td>扩充复平面 $\cong$ 球面, $N \leftrightarrow \infty$</td><td>球极投影</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 实数 $m$ 取何值时, $z = (m^2-3m-4) + (m^2-5m-6)\mathrm{i}$ 为纯虚数?</div>
+<label class="quiz-opt">A. $m = -1$</label>
+<label class="quiz-opt" data-ok="1">B. $m = 4$</label>
+<label class="quiz-opt">C. $m = 6$</label>
+<label class="quiz-opt">D. $m = 4$ 或 $m = -1$</label>
+<div class="quiz-explain"><b>解析:</b> 纯虚数要求实部为零且虚部不为零: $(m-4)(m+1)=0$ 得 $m=4$ 或 $-1$; 但 $m=-1$ 时虚部也为 $0$, 排除. 故 $m=4$, 此时 $z = -10\mathrm{i}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 设 $z = -1 - \mathrm{i}$, 则辐角主值 $\arg z = ?$</div>
+<label class="quiz-opt">A. $\pi/4$</label>
+<label class="quiz-opt">B. $3\pi/4$</label>
+<label class="quiz-opt" data-ok="1">C. $-3\pi/4$</label>
+<label class="quiz-opt">D. $-\pi/4$</label>
+<div class="quiz-explain"><b>解析:</b> $z$ 在第三象限, 参考角 $\arctan 1=\pi/4$, 主值范围为 $(-\pi,\pi]$, 故 $\arg z = -\pi + \pi/4 = -3\pi/4$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 设 $z = 3 + 4\mathrm{i}$, 则 $z\cdot\bar z = ?$</div>
+<label class="quiz-opt" data-ok="1">A. $25$</label>
+<label class="quiz-opt">B. $7$</label>
+<label class="quiz-opt">C. $7 + 24\mathrm{i}$</label>
+<label class="quiz-opt">D. $5$</label>
+<div class="quiz-explain"><b>解析:</b> $z\cdot\bar z = |z|^2 = 3^2+4^2 = 25$. 共轭相乘恒得非负实数.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. $(\cos 40^\circ + \mathrm{i}\sin 40^\circ)^6 = ?$</div>
+<label class="quiz-opt" data-ok="1">A. $\cos 240^\circ + \mathrm{i}\sin 240^\circ$</label>
+<label class="quiz-opt">B. $\cos 6.67^\circ + \mathrm{i}\sin 6.67^\circ$</label>
+<label class="quiz-opt">C. $\cos 40^\circ + \mathrm{i}\sin 40^\circ$</label>
+<label class="quiz-opt">D. $-1$</label>
+<div class="quiz-explain"><b>解析:</b> De Moivre 公式: 辐角乘 $6$ → $240^\circ$, 模为 $1$. 即 $\cos 240^\circ + \mathrm{i}\sin 240^\circ = -\frac12 - \frac{\sqrt3}{2}\mathrm{i}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 方程 $z^4 = -1$ 的四个根的几何位置是?</div>
+<label class="quiz-opt">A. 实轴上等距四点</label>
+<label class="quiz-opt" data-ok="1">B. 单位圆的内接正方形顶点</label>
+<label class="quiz-opt">C. 半径 $\sqrt[4]{2}$ 的圆上</label>
+<label class="quiz-opt">D. 虚轴上等距四点</label>
+<div class="quiz-explain"><b>解析:</b> $|-1| = 1$ → 模均为 $1$; 辐角 $(\pi+2k\pi)/4$, $k=0,1,2,3$, 相邻差 $90^\circ$. 四根是单位圆内接正方形的顶点 $\left(\pm\frac{\sqrt2}{2}\pm\frac{\sqrt2}{2}\mathrm{i}\right)$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 复数乘法 $z_1\cdot z_2$ 的几何意义是?</div>
+<label class="quiz-opt">A. 模相加, 辐角相乘</label>
+<label class="quiz-opt" data-ok="1">B. 模相乘, 辐角相加</label>
+<label class="quiz-opt">C. 模相乘, 辐角相乘</label>
+<label class="quiz-opt">D. 对应向量首尾相接</label>
+<div class="quiz-explain"><b>解析:</b> $z_1z_2 = r_1r_2\mathrm{e}^{\mathrm{i}(\theta_1+\theta_2)}$: 乘法 = 旋转 + 伸缩. "首尾相接"是加法的几何意义.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 下列关于无穷远点 $\infty$ 的运算, 哪个没有意义?</div>
+<label class="quiz-opt">A. $\infty + z$ ($z$ 为任意复数)</label>
+<label class="quiz-opt">B. $z/\infty = 0$</label>
+<label class="quiz-opt" data-ok="1">C. $0 \cdot \infty$</label>
+<label class="quiz-opt">D. $\infty \cdot z$ ($z \neq 0$)</label>
+<div class="quiz-explain"><b>解析:</b> 规定 $\infty\pm z=\infty$, $z/\infty=0$, $\infty\cdot z=\infty\ (z\neq0)$; 而 $0\cdot\infty$、$\infty\pm\infty$、$\infty/\infty$、$0/0$ 均为不确定型, 无意义.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 设 $z_1, z_2$ 为任意复数, 下列等式正确的是?</div>
+<label class="quiz-opt" data-ok="1">A. $|z_1 z_2| = |z_1|\cdot|z_2|$</label>
+<label class="quiz-opt">B. $|z_1 + z_2| = |z_1| + |z_2|$</label>
+<label class="quiz-opt">C. $|z_1 z_2| = |z_1| + |z_2|$</label>
+<label class="quiz-opt">D. $\operatorname{Arg}(z_1 z_2) = \operatorname{Arg} z_1 \cdot \operatorname{Arg} z_2$</label>
+<div class="quiz-explain"><b>解析:</b> 模是乘性的: $|z_1z_2|=|z_1||z_2|$; 辐角是加性的: $\operatorname{Arg}(z_1z_2)=\operatorname{Arg}z_1+\operatorname{Arg}z_2$. B 是三角不等式(一般取 $&lt;$), D 把"加"错写成"乘".</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 设 $z = x + \mathrm{i}y$, 则 $\operatorname{Re}(z)$ 可用共轭表示为?</div>
+<label class="quiz-opt" data-ok="1">A. $\frac{z + \bar z}{2}$</label>
+<label class="quiz-opt">B. $\frac{z - \bar z}{2}$</label>
+<label class="quiz-opt">C. $\frac{z - \bar z}{2\mathrm{i}}$</label>
+<label class="quiz-opt">D. $z + \bar z$</label>
+<div class="quiz-explain"><b>解析:</b> $z + \bar z = 2x$, 故 $x = \operatorname{Re}(z) = \frac{z+\bar z}{2}$; 而 $\frac{z-\bar z}{2\mathrm{i}} = y = \operatorname{Im}(z)$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 设 $w = \cos\frac{2\pi}{n} + \mathrm{i}\sin\frac{2\pi}{n}$ 是 $n$ 次单位根, 则 $\displaystyle\sum_{k=0}^{n-1} w^{k} = ?$</div>
+<label class="quiz-opt" data-ok="1">A. $0$</label>
+<label class="quiz-opt">B. $1$</label>
+<label class="quiz-opt">C. $n$</label>
+<label class="quiz-opt">D. $w$</label>
+<div class="quiz-explain"><b>解析:</b> $w\neq 1$ 且 $w^n = 1$, 由等比求和 $\displaystyle\sum_{k=0}^{n-1} w^k = \frac{w^n-1}{w-1} = 0$. 几何上看: $n$ 个单位根均匀分布在单位圆上, 其向量和为零.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>数系的每一次扩张, 都是一次思想的解放</h3>
+<div class="hero-sub">从"无解"到"有解", 人类用两千年的时间学会了一件事: 承认自己造出的符号, 然后理解它.</div>
+<div class="hero-quote">
+"虚数"并不"虚" —— 它是负数的平方根, 却是刻画旋转、波动与交流电最真实的语言.<br>
+数学的发展从来不是一条直线, 而是在<b>困惑、争辩与突破</b>中螺旋上升.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 卡尔达诺: 一个赌徒如何打开了复数的大门</div>
+
+<div class="person-card">
+<div class="p-av">卡</div>
+<div class="p-main">
+<div class="p-name">吉罗拉莫·卡尔达诺 (Girolamo Cardano, 1501—1576)</div>
+<div class="p-meta">意大利数学家、医生、占星家、赌徒 · 帕维亚大学教授 · 近代代数学开山之作《大术》作者 · 复数的"被迫发现者"</div>
+<p>他是文艺复兴意大利最矛盾、最传奇的人物之一: 是欧洲最负盛名的医生, 也是终生沉溺赌桌的赌徒; 是写出《大术》的一流数学家, 也是痴迷占星、最终因此入狱的"江湖术士"; 是病弱多病、其貌不扬的私生子, 却留下了百余部著作与一个改变了整个数学史的问题.</p>
+<p>他一生最大的功绩, 是在一本他并不完全理解的著作里, 被迫写下了一个他认为"毫无意义"的符号 —— 而正是这个符号, 为三百年后的电学、通信与现代科技埋下了伏笔.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 一个"不该出生"的孩子</h5>
+<p>1501 年 9 月 24 日, 卡尔达诺出生在米兰附近的帕维亚. 他是法学家法齐奥·卡尔达诺与一位年轻寡妇的<b>私生子</b> —— 在当时的社会, 这个身份几乎注定了他一生的坎坷. 他的父亲后来成为达·芬奇的好友, 是颇有名望的几何学家; 卡尔达诺从小体弱多病, 却在父亲的指导下打下了坚实的数学底子.</p>
+<p>他进入帕维亚大学与帕多瓦大学学医, 成绩优异, 才华出众. 但当他申请加入米兰医学行会时, <b>因为私生子身份被断然拒绝</b>. 为了谋生, 他一度只能靠赌博维持生计, 后来在米兰附近的小城萨科行医, 靠着医术名声鹊起才得以重新申请 —— 这一次他成功了, 并迅速成为整个米兰最受尊敬的医生之一.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>医术: 欧洲最负盛名的医生</h5>
+<p>卡尔达诺的医术在当时堪称顶尖. 他行医的足迹遍及意大利、法国、德国、英格兰, 甚至为苏格兰大主教进行过成功的治疗, 声名传到英伦三岛. 他拒绝为权贵做刻意的奉承, 却屡屡在别人束手无策时把病人救活 —— 在医学尚未摆脱中世纪阴影的年代, 这几乎是一种"神迹"般的名声.</p>
+<p>他最早<b>描述了伤寒</b>, 研究过梅毒、肺结核的治疗, 提出过关于病人护理的先进理念. 直到今天, 医学史上仍把他列为 16 世纪最重要的临床医生之一.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>赌桌上的数学家: 《论赌博游戏》</h5>
+<p>卡尔达诺一生嗜赌 —— 据他自述, 他连续二十五年"几乎每天都在赌博". 但与众不同的是, 他赌钱的同时<b>把赌局当作研究对象</b>. 他系统地分析骰子的点数组合, 计算必胜的策略, 写下《论赌博游戏》(<i>Liber de Ludo Aleae</i>, 完成于 16 世纪, 1663 年才出版).</p>
+<p>书中第一次提出了"<b>随机事件</b>"、"<b>公平赔率</b>"等概念, 并给出了一些赌博策略的数学分析 —— <b>这本书被认为是概率论的第一部著作</b>. 一个赌徒在赌桌上为概率论奠基, 这在科学史上堪称奇事.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>写出《大术》: 一场被"泄密"托起的出版</h5>
+<p>16 世纪意大利的数学界盛行"<b>擂台决斗</b>": 双方各出题目, 在规定的时间内解开对方的难题, 胜者名利双收. 求解三次方程的能力, 就是当时最顶尖的"杀手锏".</p>
+<p>1526 年前后, 意大利数学家<b>费罗</b> (Scipione del Ferro) 首先解出了形如 $x^3 + px = q$ 的三次方程, 但秘而不宣. 临终前他将秘密传给了学生菲奥. 另一位自学成才的意大利数学家<b>塔尔塔利亚</b> (Tartaglia, 本名 Niccolò Fontana, 因童年被法军砍伤而口吃, 因而得绰号"口吃者") 独立解出了同类方程, 并在 1535 年的一场公开决斗中<b>完胜菲奥</b>, 一举成名.</p>
+<p>卡尔达诺知道消息后, 用尽办法恳求塔尔塔利亚传授方法, 并立下<b>神圣誓言</b>绝不泄露. 塔尔塔利亚最终在 1539 年用一个隐晦的诗句形式把解法告诉了他. 但卡尔达诺并未止步: 他不但验证了这个方法, 还<b>把它推广到更一般的形式</b>, 并在 1545 年得知费罗早就独立发现之后, 认为自己不再受"不公开"誓言的约束, 于是把它写入《大术》(<i>Ars Magna</i>) —— 近代代数学的开山之作.</p>
+<p>塔尔塔利亚勃然大怒, 两人由此展开了长达数年的公开争吵, 甚至演变成一场擂台决斗(卡尔达诺派了自己的学生出赛). 这场延续多年的争议, 成了数学史上最著名的<b>"优先权之争"</b>之一 —— 而今天那个求解公式仍被称为"<b>卡尔达诺公式</b>".</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>关于《大术》的书名, 卡尔达诺原本想叫它《伟大的技艺》. 他写下这样一句话解释自己的野心: "我在五年之内写下了这部书, 它所包含的内容超过了此前所有关于代数的著作." 这句自信到近乎狂妄的话, 后来被证明并非夸张 —— 这部书确实开创了近代代数学的篇章.
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 优先权之争: 卡尔达诺 vs 塔尔塔利亚</div>
+<div class="cc-side"><b>塔尔塔利亚的立场:</b> "我告诉了你方法, 你发了誓永不公开, 却出版成书. 这是背信弃义!"</div>
+<div class="cc-side"><b>卡尔达诺的辩护:</b> "我从未见过费罗的解法. 但既然费罗早于你独立发现, 这个秘密就不再属于你 —— 我有权把自己的推广发表出来."</div>
+<div class="cc-side"><b>历史公论:</b> 方法的核心确实属于费罗与塔尔塔利亚, 而<b>推广到一般三次方程、发现并首次公布"不可约情形"中的虚数</b>, 是卡尔达诺独有的贡献 —— 也正是这份贡献, 让复数登上了历史舞台.</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 卡尔达诺面对的</div>
+求解方程 $x^3 = 15x + 4$ 时, 代入他那个时代的公式, 会得到两项之和, 形式为
+$$x = \sqrt[3]{2+\sqrt{-121}} + \sqrt[3]{2-\sqrt{-121}}$$
+那个年代没有任何人承认 $\sqrt{-121}$ 有意义. 但卡尔达诺注意到: 如果<b>硬着头皮</b>把 $\sqrt{-121} = 11\sqrt{-1}$ 当作一个符号参与运算, 两个立方根中的虚部会<b>恰好抵消</b>, 剩下的实数部分之和正好是 $x = 4$. 验证一下, 确实 $4^3 = 64 = 15\times 4 + 4$.<br>
+这就是历史上第一次"虚数"登场的瞬间 —— 它不是被"发明"的, 而是被<b>逼</b>出来的.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 卡尔达诺的心路</div>
+他后来在《大术》中这样写下自己的困惑:
+"<em>把 10 分成两部分, 使其乘积为 40, 这是不可能的. 但我们可以这样算: 把 10 分成 $5+\sqrt{-15}$ 与 $5-\sqrt{-15}$, 它们相加为 10, 相乘为 40 ……</em>"<br>
+他顿了顿, 接着补上一句:
+"<em>于是, 撇开精神上的折磨不谈, 我把它乘出来, 发现结果是 $25-(-15) = 40$. 这种量为真为假, 实在难以捉摸 —— 它是如此精巧, 以至于我不得不承认它确实存在.</em>"
+<span class="iv-sig">—— 这是人类在文献中第一次"硬着头皮"对负数开平方. 卡尔达诺一边说它"既无用处又不可理解", 一边不得不承认它"确实存在".</span>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>晚境: 从巅峰到牢狱</h5>
+<p>《大术》让卡尔达诺名满欧洲, 但厄运接踵而至. <b>他的长子因毒死不忠的妻子被处死刑</b>(1560), 另一个儿子品行不端、屡次向他勒索; 他最钟爱的幼子也早夭. 晚年的卡尔达诺在家庭悲剧与世人的非议中饱受摧残.</p>
+<p>1570 年, 他因根据占星术推算并公开"耶稣基督的生平"而<b>被宗教裁判所逮捕下狱</b>, 虽然后来获释, 却失去了教职与声誉, 只能迁居罗马度过余生. 据说他为了验证自己的占星预言, <b>整整绝食而亡</b> —— 1576 年 9 月 20 日, 死在自己推算出的那个日子里, 年 74 岁.</p>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">数学</div>《大术》首次系统处理三次、四次方程; 首次在文献中使用负数开方, 为复数铺路; 《论赌博游戏》开创概率论雏形.</div>
+<div class="legacy-item"><div class="lg-t">医学</div>16 世纪最重要的临床医生之一; 最早描述伤寒; 著有《论精妙的疾病》等大量医学著作.</div>
+<div class="legacy-item"><div class="lg-t">机械与治学</div>发明了"卡尔达诺悬挂"(万向节的前身); 与助手研究过密码学; 自传《我的一生》被认为是西方第一部现代意义上的自传.</div>
+<div class="legacy-item"><div class="lg-t">性格</div>自负、迷信、好赌、慷慨、勤奋、虚荣……他是文艺复兴"全才"与"凡人"最复杂的混合体, 也因此让这段科学史格外有人情味.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+卡尔达诺自认为一生最重要的成就是医学, 最引以为傲的是《大术》中的代数方法; 他<b>从未想过</b>自己顺手写下的 $\sqrt{-121}$ 会有什么价值 —— 他甚至把它当作需要"精神上忍受折磨"才能接受的怪东西.<br>
+然而四百年后, 人们记住他的名字, 主要不是因为他的医术, 而是因为那个他认为"无用"的符号: 在电路分析、信号处理、量子力学的公式里, $\mathrm{i}$ 无处不在.<b>这提醒我们: 一个理论真正的价值, 往往不取决于提出者自己的判断.</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 亲眼看见"奇怪数"如何抵消 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">卡尔达诺公式解 $x^3 = 15x + 4$ 时, 被迫写下 $\sqrt{-121} = 11\mathrm{i}$, 于是解中出现一对<b>共轭立方根</b> $\sqrt[3]{2\pm 11\mathrm{i}}$. 拖动滑块改变这对立方根的<b>虚部大小</b> $v$, 观察: 无论 $v$ 为何值, 只要取"共轭配对"的那一对, 虚部<b>必定互相抵消</b>, 结果永远是实数.</div>
+<canvas id="cvTartaglia" data-h="330"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>共轭对虚部 $v$:</label>
+<input type="range" id="ttV" min="0" max="15" step="0.5" value="11">
+<span class="val-badge" id="ttVv">11.0</span>
+<button class="control-btn" id="btnTtZero">回到 $v=11$ (原方程)</button>
+</div>
+<div class="readout" id="ttReadout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 卡尔达诺生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1501</span><span class="tl-title">出生于帕维亚, 私生子出身</span></div>
+<div class="tl-body">父亲法齐奥是法学家、几何学家, 达·芬奇的好友. 私生子的身份成为他一生的枷锁.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1520s</span><span class="tl-title">求学帕维亚、帕多瓦, 苦读医学</span></div>
+<div class="tl-body">才华出众却因出身被米兰医学行会拒绝, 一度靠赌博维生 —— 却也由此开始研究赌局中的数学.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1539</span><span class="tl-title">从塔尔塔利亚处得知三次方程解法</span></div>
+<div class="tl-body">以"神圣誓言"保证不泄露, 换取了求解 $x^3+px=q$ 的方法.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1545</span><span class="tl-title">《大术》出版 —— 虚数首次登场</span></div>
+<div class="tl-body">系统公布三次、四次方程解法; 书中首次公开处理"负数的平方根". 同年引发与塔尔塔利亚的优先权之争.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1560</span><span class="tl-title">长子被处死刑</span></div>
+<div class="tl-body">长子因毒杀不忠的妻子被判死刑, 这是他人生最沉重的打击.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1570</span><span class="tl-title">被宗教裁判所逮捕入狱</span></div>
+<div class="tl-body">因按占星术推算并公开基督生平而获罪, 获释后失去教职与声望, 迁居罗马.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1576</span><span class="tl-title">于罗马去世, 年 74 岁</span></div>
+<div class="tl-body">传说他为验证自己的占星预言而绝食而终, 死在自己推算的日子里.</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 复数思想史的三百年演进</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1545</span><span class="tl-title">《大术》出版 —— 虚数首次登场</span></div>
+<div class="tl-body">卡尔达诺公开三次方程解法, 书中出现"负数的平方根". 他称其为"既无用处又不可理解", 却无法回避它带来的正确答案.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1572</span><span class="tl-title">邦贝利 (R. Bombelli) 正式接受它</span></div>
+<div class="tl-body">意大利工程师邦贝利写出《代数》, 第一次系统地为"负数的平方根"制定加减乘除法则, 并用它成功解出"不可约情形"的三次方程 —— 复数运算规则由此奠基.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1637</span><span class="tl-title">笛卡尔命名 "imaginary"</span></div>
+<div class="tl-body">笛卡尔在《几何学》中写下"虚数"一词, 带着贬义 —— 他仍认为这种数是"想象的"、不真实的.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1777</span><span class="tl-title">欧拉引入符号 $i$</span></div>
+<div class="tl-body">欧拉首次用 $i$ 表示 $\sqrt{-1}$, 并给出著名的欧拉公式 $\mathrm{e}^{\mathrm{i}\theta} = \cos\theta + \mathrm{i}\sin\theta$ —— 复数从此获得指数形式与"旋转"的物理意义.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1799</span><span class="tl-title">高斯给出代数基本定理的证明</span></div>
+<div class="tl-body">高斯证明: 任何 $n$ 次复系数多项式恰有 $n$ 个复根. 复数不再是"过渡的工具", 而是<b>代数运算的终点</b>.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1831</span><span class="tl-title">高斯建立复平面 (Gauss 平面)</span></div>
+<div class="tl-body">复数与平面上的点一一对应, 加减法=向量合成, 乘法=旋转+伸缩. 曾被视为"虚构"的符号此刻获得了<b>看得见的几何实体</b>. 至此, 从"被迫承认"到"完全理解", 人类用了将近三百年.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 不因"暂时没用"而放弃探索</div>
+虚数在被发现后的整整三百年里, 被大多数数学家视为"无用之物", 甚至被嘲笑为"符号的鬼把戏". 连它的"发现者"卡尔达诺本人都说它"既无用处又不可理解", 需要"忍受精神上的折磨"才能接受. 然而当电学、流体力学和信号处理在十九、二十世纪兴起时, 人们发现: 交流电的相位、波的叠加、图像的频域, 全部天然地活在复数里.<br>
+<b>基础研究的价值, 常常在几十年甚至几百年之后才被兑现.</b> 承认"我不知道它有什么用, 但它逻辑自洽", 是科学精神中最难得的定力.<br>
+更值得注意的是: 卡尔达诺一生以医术自豪、以《大术》自许, 却从未重视过这个顺手写下的符号.<b>一个发现的意义, 往往超出发现者自己的想象</b> —— 这也正是人类知识探索最动人的地方.
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从复数看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>实与虚: 一对矛盾体的统一</h4>
+<p>实部与虚部看似水火不容, 却共同构成一个不可分割的整体 $z = x + \mathrm{i}y$. 单独取实部或虚部, 都丢失了复数的全部信息; 只有二者并置, 运算才封闭、几何才完整.</p>
+<p>这并不是"折中", 而是<b>对立面的统一</b> —— 正如物理学中电场与磁场、粒子性与波动性, 必须作为整体才能描述真实世界.</p>
+<div class="pc-math">$z = \operatorname{Re}(z) + \mathrm{i}\,\operatorname{Im}(z)$ &nbsp;·&nbsp; $\operatorname{Re}(z)=\frac{z+\bar z}{2}$, $\operatorname{Im}(z)=\frac{z-\bar z}{2\mathrm{i}}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>数系扩张: 一部"自我否定"的成长史</h4>
+<p>为了 $x+3=1$ 有解, 我们否定了正数, 引入负数; 为了 $2x=1$ 有解, 我们否定了整数, 引入分数; 为了 $x^2=2$ 有解, 我们否定了有理数, 引入无理数; 为了 $x^2=-1$ 有解, 我们否定了实数, 引入虚数.</p>
+<p>每一次扩张都是对前一阶段的"扬弃": <b>旧的数系被保留为特例, 新的数系获得了更大的运算封闭性</b>. 这不是简单的叠加, 而是螺旋式上升.</p>
+<div class="pc-math">$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R} \subset \mathbb{C}$ &nbsp;·&nbsp; 每一步都由"方程无解"推动</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">形式与内容</div>
+<h4>符号之"虚", 实在之"实"</h4>
+<p>$\mathrm{i}$ 在十九世纪之前只是一串没有所指的符号, 是"形式"; 而它在几何上对应"旋转 $90°$"这一实实在在的操作, 在物理上是交流电的相位 —— 这是"内容".</p>
+<p>数学总是<b>先有形式, 后有内容</b>: 形式推演在前, 现实解释在后. 这提醒我们, 逻辑自洽性本身就是一种重要的科学标准.</p>
+<div class="pc-math">$\mathrm{i}(x+\mathrm{i}y) = -y + \mathrm{i}x$ &nbsp;→&nbsp; 向量 $(x,y)$ 逆时针旋转 $90°$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>有限与无穷相统一的球面</h4>
+<p>扩充复平面把"无穷远点"这一无法在平面上画出的对象, 安置在球面的北极上. 有限与无穷不再是无法跨越的两端, 而是同一张曲面上的两个位置.</p>
+<p>球极投影告诉我们: <b>很多看似矛盾的对立, 换一个视角就能统一.</b> 这也是数学中"换坐标系 / 换模型"思想的方法论价值.</p>
+<div class="pc-math">$\mathbb{C} \cup \{\infty\} \;\longleftrightarrow\; S^2$ (Riemann 球面)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>多值性: 转一圈, 世界变了样</h4>
+<p>同一个点 $z$, 辐角却有无穷多个值: $\operatorname{Arg} z = \theta_0 + 2k\pi$. 绕着原点转一圈回到原地, <b>位置没变, 但辐角"量"累加了一个 $2\pi$</b>.</p>
+<p>正是这种"看似回到原处、实则累积变化"的现象, 孕育了后续<b>多值函数与黎曼曲面</b>的深刻理论 —— 微小的量的累积, 最终引起质的飞跃.</p>
+<div class="pc-math">$\operatorname{Arg} z = \theta_0 + 2k\pi$ &nbsp;·&nbsp; $z$ 绕原点一周 → 辐角增量 $2\pi \neq 0$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>方根的对称美: 离散与均匀</h4>
+<p>$z$ 的 $n$ 个 $n$ 次方根, 恰好均匀地分布在以 $r^{1/n}$ 为半径的圆上, 构成一个<b>正 $n$ 边形</b>. 这是代数方程与几何对称之间一次完美的握手.</p>
+<p>单位根 ${w_n^k}$ 更是群论中最重要的有限群的模型 —— <b>代数结构、几何对称与数的规律, 在这里达成了统一.</b></p>
+<div class="pc-math">$w_k = r^{1/n}\mathrm{e}^{\mathrm{i}(\theta+2k\pi)/n}$, $k=0,\cdots,n-1$ &nbsp;·&nbsp; 相邻辐角差 $2\pi/n$</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>类比与推广</td><td>把实数"数轴上的点"类比推广为复数"平面上的点"</td><td>把一维问题升维处理; 把标量关系升级为向量、矩阵关系</td></tr>
+<tr><td>化归与转换</td><td>除法化归为"乘共轭"; 开方化归为"求辐角平均值"</td><td>把陌生问题转化为熟悉问题; 把非线性问题线性化</td></tr>
+<tr><td>数形结合</td><td>乘法 = 旋转 + 伸缩; 方根 = 正多边形顶点</td><td>函数图像法、几何直观法、可视化建模</td></tr>
+<tr><td>从特殊到一般</td><td>由 $\mathrm{i}^2=-1$ 出发, 得到 De Moivre 公式与 $n$ 次方根公式</td><td>归纳推理; 用简单模型验证一般规律</td></tr>
+<tr><td>极限与逼近</td><td>$|z|\to\infty$ 时球面点 $P$ 逼近北极 $N$, 由此定义无穷远点</td><td>用有限逼近无限; 数值方法与迭代算法</td></tr>
+<tr><td>整体与局部</td><td>单点 $z$ 的辐角是局部的; 全体辐角 $\operatorname{Arg} z$ 与球面结构是整体的</td><td>系统思维; 从局部最优到全局最优的权衡</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+虚实并置成复数, 点向对应落平面;<br>
+模加辐角定方向, 共轭一翻实轴旁;<br>
+乘法旋转又伸缩, 开方均分成正方;<br>
+球面北极纳无穷, 有限无限共一堂.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代数学中的方程智慧</div>
+中国古代对"数的扩张"与"方程的解法"有着独立而辉煌的贡献: 《九章算术》(约公元前1世纪) 已系统使用<b>负数</b>, 并给出正负数的加减法则"正负术"; 宋元时期<b>秦九韶</b>《数书九章》提出"正负开方术"(高次方程的数值解法); <b>朱世杰</b>《四元玉鉴》更把未知数推广到四个, 称为"四元术".<br>
+虽然中国古代未走上"负数开方"这条抽象道路, 但那份<b>面对难题敢于构造新方法、不断突破已有框架</b>的精神, 与卡尔达诺、邦贝利在西方所做的努力是相通的 —— 这正是人类数学文明共同的精神底色.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 中国人自己的数学自强之路</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 从杂货铺学徒到世界级数学家, 在解析数论、矩阵几何学、多复变函数论等领域做出开创性工作, 并倾力推动数学的普及与应用, 被誉为"中国现代数学之父". 他的一句名言至今激励青年: <b>"聪明在于勤奋, 天才在于积累."</b></li>
+<li><b>陈景润</b> (1933—1996): 在六平方米的陋室里, 用一支笔、几麻袋草稿纸攻克哥德巴赫猜想的"1+2", 其成果被国际同行称为"陈氏定理". 他证明了: 基础研究同样可以<b>为国家赢得世界尊敬</b>.</li>
+<li><b>面向国家重大需求</b>: 从雷达探测、卫星导航, 到深海探测与高频通信, 都离不开复数与傅里叶分析的语言. 本课程后续的<b>傅里叶变换</b>, 正是 5G、雷达与图像处理的数学基石.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 把"冷板凳"坐热</div>
+数学研究往往远离聚光灯, 一篇论文、一个公式的价值可能要几十年后才能显现. 但正如虚数从"无用"到"处处在用"的三百年历程所表明的: 真正的基础研究, 是为国家和人类<b>储备未来的能力</b>. 拒绝浮躁、甘坐冷板凳、坚持长期主义, 是科技自立自强最需要的品质.
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"虚数是人类精神最精巧、最奇异的创造之一."<span class="q-src">—— 高斯 (C. F. Gauss)</span></div>
+<div class="quote-item">"数学中的一些美丽定理具有这样的特性: 它们极易从事实中归纳出来, 但证明却隐藏得极深."<span class="q-src">—— 高斯</span></div>
+<div class="quote-item">"新的数学概念常常先以'不合法'的面目出现, 后来才被接纳为自然的."<span class="q-src">—— 数学史的一般规律</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"在科学的道路上, 没有平坦的大道可走, 只有不畏劳苦沿着陡峭山路攀登的人, 才有希望达到光辉的顶点."<span class="q-src">—— 马克思</span></div>
+<div class="quote-item">"一切科学的抽象, 都更深刻、更正确、更完全地反映着自然."<span class="q-src">—— 列宁</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 卡尔达诺与邦贝利被迫接受"负数的平方根", 三百年后它成了现代科技的通用语言.<br>
+<b>一个道理:</b> 数系的每一次扩张, 都是对既有认知的超越; 承认矛盾、包容未知、坚持逻辑, 是数学也是科学最可贵的品质.<br>
+<b>一份责任:</b> 从《九章算术》到华罗庚、陈景润, 中华民族从未缺席人类对数学真理的探索. 今天我们学习复数, 既是掌握工具, 也是接续这份<b>探索与自强</b>的精神.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第一章第一节 复数及其几何表示 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=mjFixHL(html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: z(m) 轨迹 =================
+module('cvTrace',function(cv){
+  var m=0.5;
+  function zx(t){ return t*t-3*t-4; }
+  function zy(t){ return t*t-5*t-6; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-8,38,-15,21);
+    grid(ctx,w,h,m0,5);
+    // axes
+    var x0=m0.px(0),y0=m0.py(0);
+    ctx.strokeStyle='#546e7a';ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+    // curve
+    ctx.strokeStyle='#1565c0';ctx.lineWidth=2.6;
+    ctx.beginPath();
+    for(var t=-2;t<=8.0001;t+=0.02){
+      var px=m0.px(zx(t)),py=m0.py(zy(t));
+      if(t<=-2+1e-9) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // special points
+    function mark(x,y,color,text){
+      var px=m0.px(x),py=m0.py(y);
+      dot(ctx,px,py,6,color,'#fff');
+      tlabel(ctx,px+9,py-8,text,color);
+    }
+    mark(14,0,'#2e7d32','m=6: 实数 z=14');
+    mark(0,0,'#2e7d32','m=−1: z=0');
+    mark(0,-10,'#6a1b9a','m=4: 纯虚数 z=−10i');
+    // current point
+    var cx=m0.px(zx(m)),cy=m0.py(zy(m));
+    dot(ctx,cx,cy,8,'#e53935','#fff');
+    tlabel(ctx,cx+11,cy-10,'m='+fmt(m),'#e53935');
+    setRO('mReadout',
+      'm = '+hl(fmt(m))+'  →  z(m) = '+hl(cstr(C(zx(m),zy(m))))+
+      ' = '+fmt(zx(m))+' + ('+fmt(zy(m))+')i<br>'+
+      '类型: '+hl2(typeOf(zx(m),zy(m))));
+  }
+  function typeOf(x,y){
+    if(Math.abs(y)<0.03 && Math.abs(x)<0.03) return 'z = 0 —— 实数 ✓ (虚部为 0; 不算纯虚数, 因纯虚数要求虚部 ≠ 0)';
+    if(Math.abs(y)<0.03) return '实数 ✓ (虚部 = 0)';
+    if(Math.abs(x)<0.03) return '纯虚数 ✓ (实部 = 0 且虚部 ≠ 0)';
+    return '一般复数 (实部、虚部均非零)';
+  }
+  bindSlider('mSlider',function(v){ m=v; badge('mVal',fmt(v)); draw(); });
+  badge('mVal',fmt(m));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 复平面探索器 =================
+module('cvPlane',function(cv){
+  var z=C(1.6,1.2), showConj=false, showIz=false, showUnit=true;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-3.6,3.6,-2.6,3.6);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    if(showUnit){
+      ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(123,31,162,.55)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(OX,OY,1*m0.s,0,TAU);ctx.stroke();ctx.restore();
+      tlabel(ctx,m0.px(-0.95),m0.py(1.12),'单位圆 |z|=1','#7b1fa2','12px Segoe UI');
+    }
+    var r=cabs(z),t=carg(z);
+    // angle arc
+    if(r>0.12){ mathArc(ctx,OX,OY,0.55,0,t,'#ef6c00',2.4);
+      var mid=t/2; tlabel(ctx,OX+0.85*m0.s*Math.cos(mid),OY-0.85*m0.s*Math.sin(mid)-4,'arg z','#ef6c00'); }
+    // conjugate
+    if(showConj){
+      var zc=C(z.re,-z.im);
+      ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#1565c0';ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(m0.px(zc.re),m0.py(zc.im));ctx.stroke();ctx.restore();
+      arrow(ctx,OX,OY,m0.px(zc.re),m0.py(zc.im),'#1565c0',2.2,9);
+      dot(ctx,m0.px(zc.re),m0.py(zc.im),6,'#1565c0','#fff');
+      tlabel(ctx,m0.px(zc.re)+10,m0.py(zc.im)+16,'z̄','#1565c0');
+    }
+    // i*z
+    if(showIz){
+      var zi=C(-z.im,z.re);
+      arrow(ctx,OX,OY,m0.px(zi.re),m0.py(zi.im),'#2e7d32',2.2,9);
+      dot(ctx,m0.px(zi.re),m0.py(zi.im),6,'#2e7d32','#fff');
+      tlabel(ctx,m0.px(zi.re)+10,m0.py(zi.im)-10,'iz (旋转90°)','#2e7d32');
+    }
+    // z vector
+    arrow(ctx,OX,OY,m0.px(z.re),m0.py(z.im),'#e53935',3,12);
+    dot(ctx,m0.px(z.re),m0.py(z.im),8,'#e53935','#fff');
+    tlabel(ctx,m0.px(z.re)+10,m0.py(z.im)-10,'z','#e53935');
+    // readout
+    var rStr=fmt(r), tStr=fmt(t,3), tD=fmt(deg(t),1);
+    var conj=tD;
+    var trig = r<1e-9 ? 'z = 0' :
+      'z = '+rStr+'(cos '+tD+'° + i sin '+tD+'°)';
+    var ex = r<1e-9 ? 'z = 0' :
+      'z = '+rStr+'·e<sup>i·'+tD+'°</sup>';
+    setRO('planeReadout',
+      '<b>z</b> = '+hl(cstr(z))+' &nbsp; (x = '+fmt(z.re)+', y = '+fmt(z.im)+')<br>'+
+      '<b>|z|</b> = √(x²+y²) = '+hl(rStr)+' &nbsp;&nbsp; <b>arg z</b> = '+hl(tD+'°')+' = '+hl(tStr)+' rad<br>'+
+      '<b>三角表示式:</b> '+hl2(trig)+'<br>'+
+      '<b>指数表示式:</b> '+hl2(ex)+
+      (showConj?'<br><b>z̄</b> = '+hl(cstr(C(z.re,-z.im)))+' &nbsp;|z̄| = '+fmt(r)+'&nbsp;(关于实轴对称)':'')+
+      (showIz?'<br><b>iz</b> = '+hl(cstr(C(-z.im,z.re)))+' &nbsp;(模不变 '+fmt(r)+', 辐角 +90°)':''));
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-3.6,3.6,-2.6,3.6);
+    z=C(clamp(m0.ix(px),-3.5,3.5),clamp(m0.iy(py),-2.5,3.5));
+    draw();
+  });
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function toggle(id,get,set){
+    var b=document.getElementById(id);
+    b.addEventListener('click',function(){ set(!get()); b.classList.toggle('active',get()); draw(); });
+    b.classList.toggle('active',get());
+  }
+  toggle('btnShowConj',function(){return showConj;},function(v){showConj=v;});
+  toggle('btnShowIz',function(){return showIz;},function(v){showIz=v;});
+  toggle('btnShowUnit',function(){return showUnit;},function(v){showUnit=v;});
+  document.getElementById('btnResetPlane').addEventListener('click',function(){ z=C(1.6,1.2); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 3: 直角⇆极坐标互转 =================
+module('cvConvert',function(cv){
+  var z=C(1,1);
+  var inX=document.getElementById('inX'),inY=document.getElementById('inY'),
+      inR=document.getElementById('inR'),inT=document.getElementById('inT');
+  function syncFromXY(){
+    var r=cabs(z),t=carg(z);
+    inX.value=fmt(z.re,3); inY.value=fmt(z.im,3);
+    inR.value=fmt(r,3); inT.value=fmt(deg(t),2);
+  }
+  function syncFromRT(){
+    var r=parseFloat(inR.value)||0, t=rad(parseFloat(inT.value)||0);
+    z=C(r*Math.cos(t),r*Math.sin(t));
+    inX.value=fmt(z.re,3); inY.value=fmt(z.im,3);
+  }
+  [inX,inY].forEach(function(el){ el.addEventListener('input',function(){
+    z=C(parseFloat(inX.value)||0, parseFloat(inY.value)||0);
+    var r=cabs(z),t=carg(z); inR.value=fmt(r,3); inT.value=fmt(deg(t),2); draw();
+  });});
+  [inR,inT].forEach(function(el){ el.addEventListener('input',function(){
+    var r=Math.max(0,parseFloat(inR.value)||0), t=rad(parseFloat(inT.value)||0);
+    z=C(r*Math.cos(t),r*Math.sin(t));
+    inX.value=fmt(z.re,3); inY.value=fmt(z.im,3); draw();
+  });});
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-2.2,2.2,-1.7,1.7);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var r=cabs(z),t=carg(z);
+    // projections
+    ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#90a4ae';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(m0.px(z.re),OY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(OX,m0.py(z.im));ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,m0.px(z.re)-14,OY+22,'x = '+fmt(z.re),'#37474f');
+    tlabel(ctx,OX+8,m0.py(z.im)+4,'y = '+fmt(z.im),'#37474f');
+    // angle arc + labels
+    mathArc(ctx,OX,OY,0.48,0,t,'#ef6c00',2.2);
+    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2)+18,'θ = '+fmt(deg(t),1)+'°','#ef6c00');
+    arrow(ctx,OX,OY,m0.px(z.re),m0.py(z.im),'#e53935',3,12);
+    dot(ctx,m0.px(z.re),m0.py(z.im),8,'#e53935','#fff');
+    var dxv=m0.px(z.re)-OX, dyv=m0.py(z.im)-OY;
+    tlabel(ctx,OX+dxv*0.5-Math.abs(dyv)*0.35-42,OY+dyv*0.5+2,'r = '+fmt(r),'#c62828');
+    tlabel(ctx,m0.px(z.re)+10,m0.py(z.im)-10,'z','#e53935');
+    setRO('convReadout',
+      '<b>代数式:</b> z = '+hl(cstr(z))+'<br>'+
+      '<b>模:</b> r = |z| = √('+fmt(z.re)+'²+'+fmt(z.im)+'²) = '+hl(fmt(r,3))+
+      ' &nbsp;&nbsp; <b>辐角主值:</b> θ = '+hl(fmt(deg(t),2)+'°')+' = '+hl(fmt(t,4))+' rad<br>'+
+      '<b>三角式:</b> z = '+hl2(fmt(r,3)+'(cos '+fmt(deg(t),2)+'° + i sin '+fmt(deg(t),2)+'°)')+'<br>'+
+      '<b>指数式:</b> z = '+hl2(fmt(r,3)+'e<sup>'+fmt(deg(t),2)+'°i</sup>')+' &nbsp;&nbsp; '+
+      '<b>辐角全体:</b> Arg z = '+fmt(deg(t),2)+'° + k·360° (k∈ℤ)');
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-2.2,2.2,-1.7,1.7);
+    z=C(Math.max(-2.1,Math.min(2.1,m0.ix(px))),Math.max(-1.6,Math.min(2.1,m0.iy(py))));
+    var r=cabs(z),t=carg(z);
+    inX.value=fmt(z.re,3);inY.value=fmt(z.im,3);inR.value=fmt(r,3);inT.value=fmt(deg(t),2);
+    draw();
+  });
+  syncFromXY();
+  return {draw:draw};
+});
+
+// ================= 模块 4: 辐角多值性 =================
+module('cvArg',function(cv){
+  var t0=45;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var panelX=Math.max(w*0.54, 400);
+    var m0=mapperEq(panelX,h,-2.0,2.0,-1.72,1.72);
+    var OX=m0.px(0),OY=m0.py(0);
+    // 坐标轴(仅左侧)
+    ctx.strokeStyle='rgba(84,110,122,.55)';ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(0,OY);ctx.lineTo(panelX-12,OY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(OX,0);ctx.lineTo(OX,h);ctx.stroke();
+    tlabel(ctx,panelX-40,OY-8,'Re','rgba(84,110,122,.85)','12px Segoe UI');
+    tlabel(ctx,OX+8,18,'Im','rgba(84,110,122,.85)','12px Segoe UI');
+    // 单位圆
+    ctx.strokeStyle='#78909c';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(OX,OY,m0.s,0,TAU);ctx.stroke();
+    tlabel(ctx,m0.px(-1.02),m0.py(1.16),'|z|=1','#78909c','12px Segoe UI');
+    var t=rad(t0);
+    // 射线与主值角
+    arrow(ctx,OX,OY,OX+1.55*m0.s*Math.cos(t),OY-1.55*m0.s*Math.sin(t),'#ef6c00',2.4,10);
+    mathArc(ctx,OX,OY,0.40,0,t,'#ef6c00',2.2);
+    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2),'θ₀ 主值','#ef6c00','bold 12.5px Segoe UI');
+    // k 层叠点
+    var ux=Math.cos(t), uy=-Math.sin(t);
+    var vx=-Math.sin(t), vy=-Math.cos(t);
+    var side=(ux>=0)?1:-1;
+    [0,1,-1,2,-2].forEach(function(k){
+      var rr=1-0.22*Math.abs(k);
+      var x=OX+rr*m0.s*ux, y=OY+rr*m0.s*uy;
+      dot(ctx,x,y,k===0?8:5.5,k===0?'#e53935':'#7b1fa2','#fff');
+      if(k===0){ tlabel(ctx,x+vx*side*18+ux*4,y+vy*side*18+uy*4+4,'k=0 (主值)','#e53935','bold 12px Segoe UI'); }
+      else { tlabel(ctx,x+vx*side*15,y+vy*side*15+4,'k='+(k>0?'+':'')+k,'#7b1fa2','11.5px Segoe UI'); }
+    });
+    tlabel(ctx,14,20,'沿同一射线方向: 每加一圈, 辐角增加 2π, 共无穷多值','#455a64','12.5px Segoe UI');
+    // 右侧取值面板
+    var x0=panelX+10;
+    ctx.fillStyle='rgba(123,31,162,.07)';
+    ctx.fillRect(x0-10,10,w-x0+2,h-24);
+    tlabel(ctx,x0,40,'Arg z = θ₀ + 2kπ   (k ∈ ℤ)','#4a148c','bold 14px Segoe UI');
+    var rows=[[0,t0],[1,t0+360],[-1,t0-360],[2,t0+720],[-2,t0-720]];
+    var step=Math.max(30,(h-80)/5);
+    rows.forEach(function(row,i){
+      var k=row[0], v=row[1], main=(k===0);
+      var yy=70+i*step;
+      ctx.fillStyle=main?'#c62828':'#37474f';
+      ctx.font=(main?'bold ':'')+'13.5px Consolas, monospace';
+      ctx.fillText((k>0?'k = +':'k = ')+k+' :',x0,yy);
+      ctx.fillText(v+'°  =  '+fmt(rad(v),3)+' rad  ≈  '+fmt(rad(v)/Math.PI,3)+'π',x0+84,yy);
+    });
+    var lines='<b>主值:</b> arg z = θ₀ = '+hl(t0+'°')+' = '+hl(fmt(rad(t0),3))+' rad<br>';
+    lines+='<b>全体辐角:</b> Arg z = θ₀ + 2kπ, k ∈ ℤ<br>';
+    [-2,-1,0,1,2].forEach(function(k){
+      var v=t0+k*360;
+      var mark=(k===0);
+      lines+=(mark?'<span class="hl2">':'')+'k = '+(k>0?'+':'')+k+':  '+t0+'° + ('+(k>0?'+':'')+k+')·360° = '+v+'° = '+fmt(rad(v),3)+' rad ≈ '+fmt(rad(v)/Math.PI,3)+'π'+(mark?'</span>':'')+'<br>';
+    });
+    setRO('argReadout',lines);
+  }
+  bindSlider('argSlider',function(v){ t0=Math.round(v); badge('argVal',t0+'°'); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 5: 加减法 =================
+module('cvAdd',function(cv){
+  var z1=C(1.4,1.0), z2=C(-0.6,1.5);
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-3.4,3.4,-2.5,3.4);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var s=cadd(z1,z2), d=csub(z1,z2);
+    // parallelogram
+    ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(69,90,100,.55)';ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(m0.px(z1.re),m0.py(z1.im));ctx.lineTo(m0.px(s.re),m0.py(s.im));ctx.lineTo(m0.px(z2.re),m0.py(z2.im));ctx.stroke();
+    ctx.restore();
+    // difference vector z2 -> z1
+    arrow(ctx,m0.px(z2.re),m0.py(z2.im),m0.px(z1.re),m0.py(z1.im),'#ef6c00',2.6,11);
+    tlabel(ctx,(m0.px(z1.re)+m0.px(z2.re))/2+10,(m0.py(z1.im)+m0.py(z2.im))/2-8,'z₁−z₂','#ef6c00');
+    // vectors
+    arrow(ctx,OX,OY,m0.px(z1.re),m0.py(z1.im),'#1565c0',3,12);
+    dot(ctx,m0.px(z1.re),m0.py(z1.im),8,'#1565c0','#fff');
+    tlabel(ctx,m0.px(z1.re)+10,m0.py(z1.im)-10,'z₁','#1565c0');
+    arrow(ctx,OX,OY,m0.px(z2.re),m0.py(z2.im),'#2e7d32',3,12);
+    dot(ctx,m0.px(z2.re),m0.py(z2.im),8,'#2e7d32','#fff');
+    tlabel(ctx,m0.px(z2.re)+10,m0.py(z2.im)-10,'z₂','#2e7d32');
+    // sum
+    arrow(ctx,OX,OY,m0.px(s.re),m0.py(s.im),'#e53935',3.2,13);
+    dot(ctx,m0.px(s.re),m0.py(s.im),9,'#e53935','#fff');
+    tlabel(ctx,m0.px(s.re)+10,m0.py(s.im)-10,'z₁+z₂','#e53935');
+    var tr1=Math.abs(cabs(z1)+cabs(z2)-cabs(s))<1e-6;
+    setRO('addReadout',
+      '<b>z₁</b> = '+hl(cstr(z1))+' (|z₁|='+fmt(cabs(z1))+') &nbsp; <b>z₂</b> = '+hl(cstr(z2))+' (|z₂|='+fmt(cabs(z2))+')<br>'+
+      '<b>z₁+z₂</b> = '+hl2(cstr(s))+' &nbsp;&nbsp; <b>z₁−z₂</b> = '+hl2(cstr(d))+'<br>'+
+      '<b>三角不等式:</b> |z₁+z₂| = '+fmt(cabs(s))+' &nbsp;≤&nbsp; |z₁|+|z₂| = '+fmt(cabs(z1)+cabs(z2))+
+      (tr1?' &nbsp;<span class="hl2">(取等号: 同方向共线!)</span>':''));
+  }
+  makeDraggable(cv,function(px,py,cw,ch){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-3.4,3.4,-2.5,3.4);
+    var mx=m0.ix(px),my=m0.iy(py);
+    function dist(a){ return Math.hypot(a.re-mx,a.im-my); }
+    var pick=dist(z1)<dist(z2)?z1:z2;
+    pick.re=Math.max(-3.3,Math.min(3.3,mx));
+    pick.im=Math.max(-2.4,Math.min(3.3,my));
+    draw();
+  });
+  document.getElementById('btnAddReset').addEventListener('click',function(){ z1=C(1.4,1.0); z2=C(-0.6,1.5); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 6: 共轭 =================
+module('cvConj',function(cv){
+  var z=C(1.6,1.2);
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-2.2,2.2,-1.7,1.7);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var zc=C(z.re,-z.im);
+    // mirror segment
+    ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='#455a64';ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(m0.px(zc.re),m0.py(zc.im));ctx.stroke();
+    ctx.restore();
+    arrow(ctx,OX,OY,m0.px(z.re),m0.py(z.im),'#e53935',3,12);
+    dot(ctx,m0.px(z.re),m0.py(z.im),8,'#e53935','#fff');
+    tlabel(ctx,m0.px(z.re)+10,m0.py(z.im)-10,'z','#e53935');
+    arrow(ctx,OX,OY,m0.px(zc.re),m0.py(zc.im),'#1565c0',3,12);
+    dot(ctx,m0.px(zc.re),m0.py(zc.im),8,'#1565c0','#fff');
+    tlabel(ctx,m0.px(zc.re)+10,m0.py(zc.im)+20,'z̄','#1565c0');
+    var prod=cmul(z,zc);
+    setRO('conjReadout',
+      '<b>z</b> = '+hl(cstr(z))+' &nbsp;&nbsp; <b>z̄</b> = '+hl(cstr(zc))+'<br>'+
+      '<b>z + z̄</b> = '+hl2(cstr(cadd(z,zc)))+' = 2x = 2Re(z) → 实数 ✓<br>'+
+      '<b>z − z̄</b> = '+hl2(cstr(csub(z,zc)))+' = 2yi → '+(Math.abs(z.im)<1e-9?'0 (z为实数)':'纯虚数 ✓')+'<br>'+
+      '<b>z·z̄</b> = '+hl2(cstr(prod))+' = x²+y² = |z|² = '+fmt(cabs(z),3)+'² = '+fmt(prod.re,3)+' → 非负实数 ✓<br>'+
+      '<b>Re(z) = (z+z̄)/2</b> = '+fmt((cadd(z,zc).re)/2,3)+' &nbsp;&nbsp; <b>Im(z) = (z−z̄)/(2i)</b> = '+fmt(z.im,3));
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m0=mapperEq(f.w,f.h,-2.2,2.2,-1.7,1.7);
+    z=C(Math.max(-2.1,Math.min(2.1,m0.ix(px))),Math.max(-1.6,Math.min(2.1,m0.iy(py))));
+    draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 7: 乘除法 =================
+module('cvMul',function(cv){
+  var r1=1.3,t1=30,r2=1.5,t2=60,mode='mul';
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m0=mapperEq(w,h,-3.4,3.4,-2.5,3.4);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var a1=rad(t1),a2=rad(t2);
+    var z1=cexp(r1,a1),z2=cexp(r2,a2);
+    var res=(mode==='mul')?cmul(z1,z2):cdiv(z1,z2);
+    var rr=(mode==='mul')?r1*r2:r1/Math.max(r2,1e-9);
+    var tt=a1+(mode==='mul'?a2:-a2);
+    // result radius circle
+    if(rr>0.02&&rr<3.3){
+      ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(229,57,53,.4)';ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.arc(OX,OY,rr*m0.s,0,TAU);ctx.stroke();ctx.restore();
+    }
+    // arcs
+    mathArc(ctx,OX,OY,0.42,0,a1,'#1565c0',2.2);
+    tlabel(ctx,OX+0.72*m0.s*Math.cos(a1/2),OY-0.72*m0.s*Math.sin(a1/2)-2,'θ₁','#1565c0');
+    mathArc(ctx,OX,OY,0.62,0,a2,'#2e7d32',2.2);
+    tlabel(ctx,OX+0.92*m0.s*Math.cos(a2/2),OY-0.92*m0.s*Math.sin(a2/2)-2,'θ₂','#2e7d32');
+    var mainT=carg(res);
+    mathArc(ctx,OX,OY,0.82,0,mainT,'#e53935',2.6);
+    tlabel(ctx,OX+1.12*m0.s*Math.cos(mainT/2),OY-1.12*m0.s*Math.sin(mainT/2)-2,(mode==='mul'?'θ₁+θ₂':'θ₁−θ₂'),'#e53935');
+    // vectors
+    arrow(ctx,OX,OY,m0.px(z1.re),m0.py(z1.im),'#1565c0',2.8,11);
+    dot(ctx,m0.px(z1.re),m0.py(z1.im),7,'#1565c0','#fff');
+    tlabel(ctx,m0.px(z1.re)+10,m0.py(z1.im)-10,'z₁','#1565c0');
+    arrow(ctx,OX,OY,m0.px(z2.re),m0.py(z2.im),'#2e7d32',2.8,11);
+    dot(ctx,m0.px(z2.re),m0.py(z2.im),7,'#2e7d32','#fff');
+    tlabel(ctx,m0.px(z2.re)+10,m0.py(z2.im)-10,'z₂','#2e7d32');
+    arrow(ctx,OX,OY,m0.px(res.re),m0.py(res.im),'#e53935',3.2,13);
+    dot(ctx,m0.px(res.re),m0.py(res.im),8,'#e53935','#fff');
+    tlabel(ctx,m0.px(res.re)+10,m0.py(res.im)-10,(mode==='mul'?'z₁·z₂':'z₁/z₂'),'#e53935');
+    var op=mode==='mul'?'×':'÷';
+    setRO('mulReadout',
+      '<b>z₁</b> = '+fmt(r1)+'e<sup>'+t1+'°i</sup> = '+hl(cstr(z1))+'<br>'+
+      '<b>z₂</b> = '+fmt(r2)+'e<sup>'+t2+'°i</sup> = '+hl(cstr(z2))+'<br>'+
+      '<b>'+(mode==='mul'?'模相乘: '+fmt(r1)+' × '+fmt(r2)+' = '+hl(fmt(rr)):'模相除: '+fmt(r1)+' ÷ '+fmt(r2)+' = '+hl(fmt(rr)))+'</b><br>'+
+      '<b>'+(mode==='mul'?'辐角相加: '+t1+'° + '+t2+'° = '+(t1+t2)+'° → 主值 ':'辐角相减: '+t1+'° − '+t2+'° = '+(t1-t2)+'° → 主值 ')+hl(fmt(deg(mainT),1)+'°')+'</b><br>'+
+      '<b>'+(mode==='mul'?'z₁·z₂':'z₁/z₂')+' = '+hl2(fmt(rr)+'e<sup>'+fmt(deg(mainT),1)+'°i</sup>')+' = '+hl2(cstr(res))+'</b>');
+  }
+  bindSlider('r1s',function(v){r1=v;badge('r1v',fmt(v));draw();});
+  bindSlider('t1s',function(v){t1=Math.round(v);badge('t1v',t1+'°');draw();});
+  bindSlider('r2s',function(v){r2=v;badge('r2v',fmt(v));draw();});
+  bindSlider('t2s',function(v){t2=Math.round(v);badge('t2v',t2+'°');draw();});
+  var bM=document.getElementById('btnModeMul'),bD=document.getElementById('btnModeDiv');
+  function setMode(mo){ mode=mo; bM.classList.toggle('active',mo==='mul'); bD.classList.toggle('active',mo==='div'); draw(); }
+  bM.addEventListener('click',function(){setMode('mul');});
+  bD.addEventListener('click',function(){setMode('div');});
+  bM.classList.add('active');
+  document.getElementById('btnPresetI').addEventListener('click',function(){
+    r2=1;t2=90;setSlider('r2s',1);setSlider('t2s',90);badge('r2v','1.00');badge('t2v','90°');setMode('mul');});
+  document.getElementById('btnPresetConj').addEventListener('click',function(){
+    r2=r1;t2=-t1;setSlider('r2s',r1);setSlider('t2s',-t1);badge('r2v',fmt(r1));badge('t2v',(-t1)+'°');setMode('mul');});
+  document.getElementById('btnPresetUnit').addEventListener('click',function(){
+    r1=1;r2=1;setSlider('r1s',1);setSlider('r2s',1);badge('r1v','1.00');badge('r2v','1.00');setMode('mul');});
+  return {draw:draw};
+});
+
+// ================= 模块 8: De Moivre 幂 =================
+module('cvPower',function(cv){
+  var t=40,r=1.0,n=5,playing=false,stop=null;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var maxR=Math.max(1.4,Math.pow(r,n)*1.18,1);
+    var m0=mapperEq(w,h,-maxR,maxR,-maxR,maxR);
+    grid(ctx,w,h,m0,maxR>3?1:0.5); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var a=rad(t);
+    // unit circle
+    ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(123,31,162,.5)';ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.arc(OX,OY,m0.s,0,TAU);ctx.stroke();ctx.restore();
+    tlabel(ctx,m0.px(-0.95),m0.py(1.12),'单位圆','#7b1fa2','12px Segoe UI');
+    // points z^k
+    var prev=null;
+    for(var k=1;k<=n;k++){
+      var rk=Math.pow(r,k), ak=a*k;
+      var x=OX+rk*m0.s*Math.cos(ak), y=OY-rk*m0.s*Math.sin(ak);
+      if(prev){
+        ctx.strokeStyle='rgba(21,101,192,.5)';ctx.lineWidth=1.6;
+        ctx.beginPath();ctx.moveTo(prev[0],prev[1]);ctx.lineTo(x,y);ctx.stroke();
+      }
+      var isLast=(k===n);
+      dot(ctx,x,y,isLast?9:5,isLast?'#e53935':'#1565c0','#fff');
+      if(k===1) tlabel(ctx,x+10,y-10,'z','#1565c0');
+      if(isLast) tlabel(ctx,x+11,y-11,'z'+sup(n),'#e53935');
+      prev=[x,y];
+    }
+    // z vector
+    var zx=OX+r*m0.s*Math.cos(a), zy=OY-r*m0.s*Math.sin(a);
+    arrow(ctx,OX,OY,zx,zy,'#1565c0',2.4,10);
+    var zn=prev;
+    arrow(ctx,OX,OY,zn[0],zn[1],'#e53935',3,12);
+    // angle marks
+    mathArc(ctx,OX,OY,0.4,0,a,'#1565c0',2);
+    tlabel(ctx,OX+0.66*m0.s*Math.cos(a/2),OY-0.66*m0.s*Math.sin(a/2)-2,'θ','#1565c0');
+    var na=a*n;
+    mathArc(ctx,OX,OY,0.58,0,carg(cexp(Math.pow(r,n),na)),'#e53935',2.4);
+    tlabel(ctx,OX+0.86*m0.s*Math.cos(na/2),OY-0.86*m0.s*Math.sin(na/2)-2,'nθ','#e53935');
+    var znC=cexp(Math.pow(r,n),na);
+    setRO('pwReadout',
+      '<b>z</b> = '+fmt(r)+'e<sup>'+t+'°i</sup>, 模 r = '+hl(fmt(r))+', 辐角 θ = '+hl(t+'°')+'<br>'+
+      '<b>De Moivre:</b> z<sup>'+n+'</sup> = r<sup>'+n+'</sup>(cos '+n+'θ + i sin '+n+'θ)<br>'+
+      '模: '+fmt(r)+'<sup>'+n+'</sup> = '+hl(fmt(Math.pow(r,n),3))+' &nbsp;&nbsp; '+
+      '辐角: '+n+'×'+t+'° = '+(n*t)+'° → 主值 '+hl(fmt(deg(carg(znC)),1)+'°')+'<br>'+
+      '<b>z'+sup(n)+' = '+hl2(fmt(Math.pow(r,n),3)+'e<sup>'+fmt(deg(carg(znC)),1)+'°i</sup>')+' = '+hl2(cstr(znC,3))+'</b>');
+  }
+  bindSlider('pwT',function(v){t=Math.round(v);badge('pwTv',t+'°');draw();});
+  bindSlider('pwR',function(v){r=v;badge('pwRv',fmt(v));draw();});
+  bindSlider('pwN',function(v){n=Math.round(v);badge('pwNv',n);draw();});
+  document.getElementById('pwPlay').addEventListener('click',function(){
+    if(playing){ if(stop)stop(); playing=false; this.textContent='▶ 播放动画'; return; }
+    playing=true; this.textContent='⏸ 暂停';
+    stop=animLoop(function(){
+      n=n>=12?1:n+1;
+      setSlider('pwN',n); badge('pwNv',n); draw();
+      return true;
+    });
+    var self=this;
+    setTimeout(function(){ if(playing){ } },0);
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 9: n 次方根 =================
+module('cvRoot',function(cv){
+  var n=4,r=Math.SQRT2,t=45,k=-1,spinning=false,stop=null;
+  var dragZ=null;
+  function roots(){
+    var out=[],rr=Math.pow(r,1/n);
+    for(var k2=0;k2<n;k2++) out.push(cexp(rr,rad(t+360*k2)/n));
+    return out;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var maxR=Math.max(2.2,Math.pow(r,1/n)*1.3,r*1.12);
+    var m0=mapperEq(w,h,-maxR,maxR,-maxR,maxR);
+    grid(ctx,w,h,m0,1); axes(ctx,w,h,m0);
+    var OX=m0.px(0),OY=m0.py(0);
+    var rr=Math.pow(r,1/n);
+    var rs=roots();
+    // circle of roots
+    ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(21,101,192,.45)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(OX,OY,rr*m0.s,0,TAU);ctx.stroke();ctx.restore();
+    tlabel(ctx,m0.px(-rr*1.02),m0.py(-rr*1.22),'半径 r^(1/'+n+') = '+fmt(rr,3),'#1565c0','12.5px Segoe UI');
+    // polygon
+    if(n>=3){
+      ctx.strokeStyle='rgba(21,101,192,.6)';ctx.lineWidth=1.8;
+      ctx.beginPath();
+      rs.forEach(function(p,i){ var x=m0.px(p.re),y=m0.py(p.im); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+      ctx.closePath();ctx.stroke();
+    } else if(n===2){
+      ctx.strokeStyle='rgba(21,101,192,.6)';ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(m0.px(rs[0].re),m0.py(rs[0].im));ctx.lineTo(m0.px(rs[1].re),m0.py(rs[1].im));ctx.stroke();
+    }
+    // roots
+    rs.forEach(function(p,i){
+      var sel=(i===k);
+      dot(ctx,m0.px(p.re),m0.py(p.im),sel?9:7,sel?'#7b1fa2':'#1565c0','#fff');
+      tlabel(ctx,m0.px(p.re)+10,m0.py(p.im)-10,'w'+sub(i),sel?'#7b1fa2':'#1565c0');
+    });
+    // selected root powers
+    if(k>=0&&k<n){
+      var pw=C(1,0);
+      for(var j=1;j<=n;j++){
+        pw=cmul(pw,rs[k]);
+        dot(ctx,m0.px(pw.re),m0.py(pw.im),4,'rgba(123,31,162,.7)');
+      }
+      arrow(ctx,OX,OY,m0.px(rs[k].re),m0.py(rs[k].im),'#7b1fa2',2.2,9);
+    }
+    // z
+    var zc=cexp(r,rad(t));
+    arrow(ctx,OX,OY,m0.px(zc.re),m0.py(zc.im),'#e53935',3,12);
+    dot(ctx,m0.px(zc.re),m0.py(zc.im),8,'#e53935','#fff');
+    tlabel(ctx,m0.px(zc.re)+10,m0.py(zc.im)-10,'z','#e53935');
+    // readout
+    var lines='<b>z</b> = '+fmt(r)+'e<sup>'+t+'°i</sup> = '+hl(cstr(zc))+' &nbsp; (|z| = '+fmt(r,3)+', θ = '+t+'°)<br>';
+    lines+='<b>公式:</b> w<sub>k</sub> = r<sup>1/'+n+'</sup>[cos((θ+2kπ)/'+n+') + i sin((θ+2kπ)/'+n+')], k = 0,…,'+(n-1)+'<br>';
+    lines+='<b>'+n+' 个方根</b> (内接正 '+n+' 边形顶点, 相邻辐角差 '+fmt(360/n,1)+'°):<br>';
+    rs.forEach(function(p,i){
+      lines+='w'+sub(i)+' = '+hl2(cstr(p,3))+' (θ='+fmt(deg(carg(p)),1)+'°)'+(i===k?' ◀ 已选中':'')+'<br>';
+    });
+    if(k>=0&&k<n){
+      var pw=C(1,0),chain='w'+sub(k)+'<sup>'+n+'</sup> : ';
+      var steps=[];
+      for(var j2=1;j2<=n;j2++){ pw=cmul(pw,rs[k]); steps.push(cstr(pw,2)); }
+      lines+='<b>验证</b> '+chain+steps.join(' → ')+' = z ✓ (红点重合)';
+    }
+    setRO('rtReadout',lines);
+  }
+  makeDraggable(cv,function(px,py,cw,ch){
+    var f=fitCanvas(cv); if(!f) return;
+    var mx0=Math.max(2.2,Math.pow(r,1/n)*1.3,r*1.12);
+    var m0=mapperEq(f.w,f.h,-mx0,mx0,-mx0,mx0);
+    var mx=m0.ix(px),my=m0.iy(py);
+    var zc=cexp(r,rad(t));
+    var nearZ=Math.hypot(mx-zc.re,my-zc.im)<0.45;
+    var rs=roots();
+    var hitK=-1, best=0.4;
+    rs.forEach(function(p,i){ var dd=Math.hypot(mx-p.re,my-p.im); if(dd<best){best=dd;hitK=i;} });
+    if(hitK>=0){ k=hitK; }
+    else if(nearZ||dragZ){ dragZ=true;
+      var nr=Math.hypot(mx,my);
+      r=Math.max(0.2,Math.min(4,nr));
+      var nt=deg(Math.atan2(my,mx));
+      t=Math.round(nt);
+      setSlider('rtR',r.toFixed(2)); setSlider('rtT',t);
+      badge('rtRv',fmt(r)); badge('rtTv',t+'°');
+    }
+    draw();
+  },function(){ dragZ=null; });
+  bindSlider('rtN',function(v){ n=Math.round(v); if(k>=n)k=-1; badge('rtNv',n); draw(); });
+  bindSlider('rtT',function(v){ t=Math.round(v); badge('rtTv',t+'°'); draw(); });
+  bindSlider('rtR',function(v){ r=v; badge('rtRv',fmt(v)); draw(); });
+  var spinBtn=document.getElementById('btnRootSpin');
+  spinBtn.addEventListener('click',function(){
+    if(spinning){ if(stop)stop(); spinning=false; this.textContent='▶ 旋转动画'; return; }
+    spinning=true; this.textContent='⏸ 停止旋转';
+    stop=animLoop(function(){
+      t+=0.6; if(t>180)t-=360;
+      setSlider('rtT',Math.round(t)); badge('rtTv',Math.round(t)+'°');
+      draw(); return true;
+    });
+  });
+  document.getElementById('btnPresetEx3').addEventListener('click',function(){ n=4;r=Math.SQRT2;t=45;k=-1;
+    setSlider('rtN',4);setSlider('rtR',r.toFixed(2));setSlider('rtT',45);
+    badge('rtNv','4');badge('rtRv',fmt(r));badge('rtTv','45°');draw(); });
+  document.getElementById('btnPresetEx4').addEventListener('click',function(){ n=4;r=1;t=180;k=-1;
+    setSlider('rtN',4);setSlider('rtR','1.00');setSlider('rtT',180);
+    badge('rtNv','4');badge('rtRv','1.00');badge('rtTv','180°');draw(); });
+  document.getElementById('btnPresetUnity').addEventListener('click',function(){ n=6;r=1;t=0;k=-1;
+    setSlider('rtN',6);setSlider('rtR','1.00');setSlider('rtT',0);
+    badge('rtNv','6');badge('rtRv','1.00');badge('rtTv','0°');draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 10: 复球面 =================
+module('cvSphere',function(cv){
+  var z=C(1.3,0.9), spin=35, animating=false, stopFn=null;
+  var TILT=0.52;
+  function P3(X,Y){ var r2=X*X+Y*Y;
+    return [4*X/(r2+4), 4*Y/(r2+4), 2*r2/(r2+4)]; }
+  function boxed(ctx,x,y,text,color,bg,font){
+    ctx.font=font||'bold 12.5px Segoe UI';
+    var tw=ctx.measureText(text).width;
+    ctx.fillStyle=bg||'rgba(255,255,255,.82)';
+    ctx.fillRect(x-3,y-12,tw+8,17);
+    ctx.fillStyle=color||'#263238';
+    ctx.fillText(text,x+1,y);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var sc=Math.min(w/8.5,h/5.0);
+    var a=rad(spin), cx=w/2, cy=h/2;
+    function proj(p){
+      var x1=p[0]*Math.cos(a)-p[1]*Math.sin(a);
+      var y1=p[0]*Math.sin(a)+p[1]*Math.cos(a);
+      var y2=y1*Math.cos(TILT)+p[2]*Math.sin(TILT);
+      return [cx+x1*sc, cy-y2*sc];
+    }
+    // 1. 平面网格
+    ctx.strokeStyle='rgba(120,144,156,.32)'; ctx.lineWidth=1;
+    for(var i=-3;i<=3;i++){
+      var p1=proj([i,-3,0]), p2=proj([i,3,0]);
+      ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.stroke();
+      var q1=proj([-3,i,0]), q2=proj([3,i,0]);
+      ctx.beginPath();ctx.moveTo(q1[0],q1[1]);ctx.lineTo(q2[0],q2[1]);ctx.stroke();
+    }
+    // 2. 实轴 / 虚轴
+    var ax1=proj([-3.3,0,0]),ax2=proj([3.3,0,0]);
+    ctx.strokeStyle='rgba(211,47,47,.7)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(ax1[0],ax1[1]);ctx.lineTo(ax2[0],ax2[1]);ctx.stroke();
+    boxed(ctx,ax2[0]+5,ax2[1]+4,'Re','#c62828','rgba(255,255,255,.85)');
+    var ay1=proj([0,-3.3,0]),ay2=proj([0,3.3,0]);
+    ctx.strokeStyle='rgba(46,125,50,.7)';
+    ctx.beginPath();ctx.moveTo(ay1[0],ay1[1]);ctx.lineTo(ay2[0],ay2[1]);ctx.stroke();
+    boxed(ctx,ay2[0]+5,ay2[1]-6,'Im','#2e7d32','rgba(255,255,255,.85)');
+    // 3. 球体(不透明, 遮住其后的网格)
+    var c3=proj([0,0,1]);
+    var grad=ctx.createRadialGradient(c3[0]-sc*0.38,c3[1]-sc*0.42,sc*0.12,c3[0],c3[1],sc*1.06);
+    grad.addColorStop(0,'#ffffff');
+    grad.addColorStop(0.72,'#edf3fb');
+    grad.addColorStop(1,'#d7e3f2');
+    ctx.beginPath();ctx.arc(c3[0],c3[1],sc,0,TAU);
+    ctx.fillStyle=grad;ctx.fill();
+    ctx.strokeStyle='rgba(55,71,79,.9)';ctx.lineWidth=2.4;ctx.stroke();
+    // 4. 纬线与经线
+    ctx.strokeStyle='rgba(69,90,100,.32)'; ctx.lineWidth=1;
+    [-0.62,-0.3,0,0.3,0.62].forEach(function(lh){
+      var rr=Math.sqrt(Math.max(0,1-lh*lh));
+      ctx.beginPath();
+      for(var u=0;u<=48;u++){
+        var pt=proj([rr*Math.cos(u/48*TAU),rr*Math.sin(u/48*TAU),1+lh]);
+        if(u===0)ctx.moveTo(pt[0],pt[1]);else ctx.lineTo(pt[0],pt[1]);
+      }
+      ctx.stroke();
+    });
+    for(var lon=0;lon<180;lon+=45){
+      ctx.beginPath();
+      for(var v=-90;v<=90;v+=6){
+        var la=rad(lon), va=rad(v);
+        var pt=proj([Math.cos(la)*Math.cos(va),Math.sin(la)*Math.cos(va),1+Math.sin(va)]);
+        if(v===-90)ctx.moveTo(pt[0],pt[1]);else ctx.lineTo(pt[0],pt[1]);
+      }
+      ctx.stroke();
+    }
+    // 5. 投影射线(先画虚线, 再画点)
+    var N=proj([0,0,2]), S=proj([0,0,0]);
+    var zp=proj([z.re,z.im,0]);
+    var P=P3(z.re,z.im), pp=proj(P);
+    ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#6a1b9a';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(N[0],N[1]);ctx.lineTo(zp[0],zp[1]);ctx.stroke();ctx.restore();
+    // 6. 关键点
+    dot(ctx,S[0],S[1],5,'#37474f','#fff');
+    boxed(ctx,S[0]-64,S[1]+18,'S = O (南极)','#37474f','rgba(255,255,255,.85)');
+    dot(ctx,N[0],N[1],6.5,'#e65100','#fff');
+    boxed(ctx,N[0]+12,N[1]+6,'N 北极 ↔ ∞','#e65100','rgba(255,255,255,.9)');
+    dot(ctx,zp[0],zp[1],8,'#e53935','#fff');
+    boxed(ctx,zp[0]+11,zp[1]+18,'z','#e53935','rgba(255,255,255,.9)','bold 14px Georgia');
+    dot(ctx,pp[0],pp[1],8,'#7b1fa2','#fff');
+    boxed(ctx,pp[0]+12,pp[1]-6,'P','#7b1fa2','rgba(255,255,255,.9)','bold 14px Georgia');
+    // 7. 读数
+    var rr=Math.hypot(z.re,z.im);
+    var pn=Math.hypot(pp[0]-N[0],pp[1]-N[1])/sc;
+    setRO('spReadout',
+      '<b>平面上:</b> z = '+hl(cstr(z))+', |z| = '+hl(fmt(rr,3))+'<br>'+
+      '<b>球面上:</b> P = ('+fmt(P[0],3)+', '+fmt(P[1],3)+', '+fmt(P[2],3)+')<br>'+
+      '<b>到北极的距离:</b> |PN| ≈ '+hl(fmt(pn,3))+' (球半径 = 1) — |z| 越大, P 越靠近 N<br>'+
+      (rr>12?'<span class="hl">|z| → ∞ 时 P 无限逼近北极 N —— 这就是无穷远点的几何位置!</span>':'拖动平面上的红点 z, 或点击"演示 z → ∞"; 也可用"观察视角"滑块旋转整个场景'));
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var sc=Math.min(f.w/8.5,f.h/5.0), cx=f.w/2, cy=f.h/2;
+    var a=rad(spin);
+    var x1=(px-cx)/sc;
+    var y1=(cy-py)/sc/Math.cos(TILT);
+    var X=x1*Math.cos(a)+y1*Math.sin(a), Y=-x1*Math.sin(a)+y1*Math.cos(a);
+    var nr=Math.hypot(X,Y);
+    if(nr>3.4){ X*=3.4/nr; Y*=3.4/nr; }
+    z=C(X,Y);
+    draw();
+  });
+  bindSlider('spSpin',function(v){ spin=Math.round(v); badge('spSpinV',spin+'°'); draw(); });
+  var infBtn=document.getElementById('btnInfinity');
+  infBtn.addEventListener('click',function(){
+    if(animating){ if(stopFn)stopFn(); animating=false; this.textContent='▶ 演示 z → ∞'; return; }
+    animating=true; this.textContent='⏸ 停止演示';
+    stopFn=animLoop(function(){
+      var nr=Math.hypot(z.re,z.im);
+      if(nr>40){ animating=false; infBtn.textContent='▶ 演示 z → ∞'; return false; }
+      z=C(z.re*1.05+0.004,z.im*1.05+0.003);
+      draw(); return true;
+    });
+  });
+  document.getElementById('btnSphereReset').addEventListener('click',function(){
+    if(stopFn)stopFn(); animating=false; infBtn.textContent='▶ 演示 z → ∞';
+    z=C(1.3,0.9); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已作答 '+done+' / '+total+' 题, 正确 '+right+' 题</b>'+(done===total?(right===total?' —— 满分! 本节内容已掌握 🎉':' —— 建议回看错题对应的小节再试一次'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 知识图谱: 本节结构树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'复数的概念与表示', c:'#1976d2', leaves:['代数形式 $z=x+\\mathrm{i}y$ ($\\mathrm{i}^2=-1$)','实部 / 虚部 / 纯虚数','复数相等 (实虚分别等)','复平面 · 点表示与向量表示','模 $|z|$ 与辐角 $\\operatorname{Arg} z$ (主值)','三角式与指数式 $r\\mathrm{e}^{\\mathrm{i}\\theta}$']},
+    {t:'运算与共轭', c:'#e65100', leaves:['加 / 减: 向量平移','乘: 模相乘 · 辐角相加','除: 分母实数化','共轭 $\\bar{z}$ 与 $z\\bar{z}=|z|^2$','共轭的运算性质','乘除的几何意义']},
+    {t:'乘幂、方根与 De Moivre', c:'#c62828', leaves:['De Moivre 公式','$z^n$ 的模与辐角','方根 $w_k=r^{1/n}\\mathrm{e}^{\\mathrm{i}(\\theta+2k\\pi)/n}$','$n$ 个根成正 $n$ 边形','单位根的对称性']},
+    {t:'复球面与无穷大', c:'#2e7d32', leaves:['Riemann 球面构造','球极投影 (一一对应)','北极 $N$ ↔ 无穷远点 $\\infty$','扩充复平面 $\\mathbb{C}\\cup\\{\\infty\\}$','$\\infty$ 的运算规定','不确定型 (无意义)']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第一章第一节 · 复数及其几何表示';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=cd.leaves[j];
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 概念 → 运算 → 乘幂方根 → 复球面; 一句话: <b>把复数看成点或向量, 一切运算都有了几何图像</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 11: 卡尔达诺立方根抵消 =================
+module('cvTartaglia',function(cv){
+  // v 为共轭立方根对的虚部大小; v=11 对应方程 x³ = 15x + 4 的真实情形
+  var v=11, t=0;
+  // 展示当前取值下的验证细节
+  function detailTxt(bb,v){
+    var q=3*Math.cbrt(4+v*v);
+    var r=bb.sum*bb.sum*bb.sum-q*bb.sum;
+    return '<b>验证:</b> $'+fmt(bb.sum,4)+'^3 = '+fmt(bb.sum*bb.sum*bb.sum,2)+'$, &nbsp; $'+fmt(q,3)+'\\times'+fmt(bb.sum,4)+' + ('+fmt(r,2)+') = '+fmt(q*bb.sum+r,2)+'$ ✓ 满足对应的三次方程<br>';
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var u=2;
+    var m0=mapperEq(w,h,-1.15,1.15,-1.05,1.05);
+    var OX=m0.px(0),OY=m0.py(0);
+    grid(ctx,w,h,m0,0.5); axes(ctx,w,h,m0);
+    var rr=m0.s*0.86;
+    // 参考圆(展示"模相同"这一共轭特征)
+    ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(120,144,156,.55)';ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.arc(OX,OY,rr,0,TAU);ctx.stroke();ctx.restore();
+    // 两个共轭点 u ± vi, 同模 → 落在同一圆上
+    var norm=Math.max(1,Math.hypot(u,v));
+    var pu=u/norm, pv=v/norm;
+    // 半径缩放到 rr
+    function pt(x,y){ return [OX+x*rr, OY-y*rr]; }
+    var P1=pt(pu,pv), P2=pt(pu,-pv);
+    tlabel(ctx,OX-rr-14,OY+rr*0.55,'模相同 → 同圆','#78909c','11.5px Segoe UI');
+    // 连线(共轭对称轴)
+    ctx.save();ctx.setLineDash([5,5]);ctx.strokeStyle='#455a64';ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.moveTo(P1[0],P1[1]);ctx.lineTo(P2[0],P2[1]);ctx.stroke();ctx.restore();
+    // 虚部相消示意: 向上的箭头与向下的箭头
+    arrow(ctx,P1[0],OY,P1[0],P1[1],'#7b1fa2',2.4,10);
+    arrow(ctx,P2[0],OY,P2[0],P2[1],'#7b1fa2',2.4,10);
+    arrow(ctx,OX,OY,P1[0],OY,'#1565c0',2.4,10);
+    arrow(ctx,OX,OY,P2[0],OY,'#1565c0',2.4,10);
+    dot(ctx,P1[0],P1[1],8,'#7b1fa2','#fff');
+    dot(ctx,P2[0],P2[1],8,'#7b1fa2','#fff');
+    tlabel(ctx,P1[0]+11,P1[1]-9,'u + vi','#7b1fa2');
+    tlabel(ctx,P2[0]+11,P2[1]+20,'u − vi','#7b1fa2');
+    dot(ctx,OX,OY,4,'#546e7a');
+    tlabel(ctx,OX+8,OY+18,'O','#546e7a');
+    if(v<0.05) tlabel(ctx,OX+14,OY-14,'虚部 = 0 → 两个点重合在实轴上','#2e7d32','bold 12.5px Segoe UI');
+    // 读数
+    // 固定 v = 11: 对应方程 x³ = 15x + 4 (即 x³ = px + q, p=15, q=4, 判别式 (q/2)²+(p/3)³ < 0)
+    // 卡尔达诺公式中出现 √(-121) = 11i, 于是两个立方根为 u ± vi 的共轭对
+    // 三个分支的实部和 (对 v=11 恰好是方程的 3 个实根: 4, -2±√3)
+    // 配对规则: 立方根辐角必须互为相反数, 即取 (φ+2kπ)/3 与 (-φ+2jπ)/3 且 j ≡ (3-k) mod 3
+    var rr3=Math.cbrt(Math.hypot(2,v)), phi=Math.atan2(v,2);
+    var branch=[], sums=[];
+    for(var kk=0;kk<3;kk++){
+      var jj=((3-kk)%3+3)%3;
+      var ak=(phi+2*Math.PI*kk)/3, bk=(-phi+2*Math.PI*jj)/3;
+      var re1=rr3*Math.cos(ak), im1=rr3*Math.sin(ak);
+      var re2=rr3*Math.cos(bk), im2=rr3*Math.sin(bk);
+      branch.push({re1:re1,im1:im1,re2:re2,im2:im2,sum:re1+re2,gap:(im1+im2),k:kk,j:jj});
+      sums.push(re1+re2);
+    }
+    // 三支中实部最大者 → 对应实根 4
+    var best=0;
+    branch.forEach(function(b,idx){ if(b.sum>branch[best].sum) best=idx; });
+    var bb=branch[best];
+    var otherSums=branch.filter(function(b,idx){return idx!==best;}).map(function(b){return b.sum;});
+    var isOrig=Math.abs(v-11)<1e-9;
+    var interTxt = '<span class="hl2">$\\sqrt[3]{2+'+fmt(v)+'i}$ 与 $\\sqrt[3]{2-'+fmt(v)+'i}$ 的虚部恰好互为相反数 → 相加后虚部 = 0, 只剩下实数!</span>';
+    var tailTxt=(v<0.05)
+      ? '<br><span class="hl2">当 $\\sqrt{-121}$ 退化为 $0$ (即 $v=0$), 方程离开"不可约情形", 卡尔达诺公式不再需要虚数 —— 但正是"必须使用它"的那一瞬间, 复数诞生了.</span>'
+      : '';
+    setRO('ttReadout',
+      (isOrig
+        ? '<b>卡尔达诺的三次方程:</b> $x^3 = 15x + 4$ &nbsp; 在"不可约情形"下, 公式被迫出现 $\\sqrt{-121} = 11\\mathrm{i}$<br>'
+        : '<b>当前演示:</b> 取共轭立方根对 $\\sqrt[3]{2\\pm '+fmt(v)+'\\mathrm{i}}$ —— 滑块用于演示"抵消机理"; 此时对应的方程已不再是 $x^3=15x+4$ (点"回到 v = 11"可复原)<br>')+
+      '<b>于是解写成:</b> $x = \\sqrt[3]{2+'+fmt(v)+'\\mathrm{i}} + \\sqrt[3]{2-'+fmt(v)+'\\mathrm{i}}$<br>'+
+      '<b>取"共轭"的一对立方根:</b><br>'+
+      '&nbsp;&nbsp;$\\sqrt[3]{2+'+fmt(v)+'\\mathrm{i}} = '+fmt(bb.re1,4)+(bb.im1<0?' - ':' + ')+fmt(Math.abs(bb.im1),4)+'\\mathrm{i}$'+
+      ' &nbsp;&nbsp; $\\sqrt[3]{2-'+fmt(v)+'\\mathrm{i}} = '+fmt(bb.re2,4)+(bb.im2<0?' - ':' + ')+fmt(Math.abs(bb.im2),4)+'\\mathrm{i}$<br>'+
+      '<b>虚部相加:</b> $('+fmt(bb.im1,4)+') + ('+fmt(bb.im2,4)+') = '+fmt(bb.im1+bb.im2,8)+'$ → '+hl('虚部彻底消失')+'<br>'+
+      '<b>实部相加:</b> $'+fmt(bb.re1,4)+' + '+fmt(bb.re2,4)+' = '+fmt(bb.sum,4)+'$<br>'+
+      interTxt+'<br>'+
+      detailTxt(bb,v)+
+      (isOrig
+        ? '<b>另两支给出的实部和:</b> $'+fmt(otherSums[0],3)+'$ , $'+fmt(otherSums[1],3)+'$ —— 恰为方程 $x^3=15x+4$ 的另两个实根 $-2\\pm\\sqrt{3}$'
+        : '<b>另两支给出的实部和:</b> $'+fmt(otherSums[0],3)+'$ , $'+fmt(otherSums[1],3)+'$ —— 仍是三个不同的实根; 无论 $v$ 为何值, "虚部抵消"这一现象始终成立')+tailTxt);
+  }
+  bindSlider('ttV',function(val){ v=val; badge('ttVv',fmt(val,1)); draw(); });
+  badge('ttVv',fmt(v,1));
+  document.getElementById('btnTtZero').addEventListener('click',function(){
+    v=11; setSlider('ttV',11); badge('ttVv','11.0'); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'有人说: "虚数在发现后的三百年里毫无用处, 所以当初就不该研究它." 你怎么看?',
+     hints:['科学研究不能只用"当下有没有用"来衡量价值 —— 基础研究的回报往往滞后几十年甚至几百年.',
+            '承认逻辑自洽性本身就是一种科学标准: 数学家的职责之一, 是把推理进行到底, 哪怕暂时看不到应用.',
+            '今天, 交流电、雷达、通信、图像压缩、量子力学无一不依赖复数 —— 三百年后, "无用"变成了"处处在用".',
+            '可迁移的态度: 对待基础研究、冷门学科和长期投入, 需要"功成不必在我"的定力与"功成必定有我"的担当.']},
+    {q:'"负数的平方根是想象的、不真实的" —— 笛卡尔曾这样评价虚数. 这种看法错在哪里?',
+     hints:['混淆了"符号的直观可想象性"与"数学对象的客观有效性": 无法在数轴上指出 √−1 的位置, 不代表它不存在.',
+            '复数在复平面上有确切的几何位置 —— 它就是"旋转 90°"这个操作本身.',
+            '数学对象的"存在性"由逻辑体系决定, 而非由感官直观决定; 后来复数在物理中被广泛验证, 更印证了这一点.',
+            '可迁移的态度: 不要因为"看不见、摸不着"就否定新事物, 但要坚持以逻辑和实证来检验它.']},
+    {q:'从 $\\mathbb{N}\\subset\\mathbb{Z}\\subset\\mathbb{Q}\\subset\\mathbb{R}\\subset\\mathbb{C}$ 的数系扩张史中, 你能得到什么方法论启示?',
+     hints:['每一次扩张都由"方程无解"这个具体矛盾推动 —— 问题意识是理论创新的起点.',
+            '新数系都保留了旧数系作为特例(如 $\\mathbb{R}\\subset\\mathbb{C}$, 虚部为 0 即实数), 这叫"扬弃", 不是推倒重来.',
+            '封闭性逐步增强: 从"减法不总可行"到"复数范围内任何多项式方程都有解", 系统追求自身的完备与自洽.',
+            '可迁移的态度: 面对现有框架解决不了的问题, 敢于扩展框架, 而不是削足适履地把问题改小.']},
+    {q:'把复数看作"旋转 + 伸缩", 这一几何解释对人类利用自然有什么启示?',
+     hints:['同一数学对象可以有代数、三角、指数、几何等多种等价描述 —— 转换视角能发现全新的意义.',
+            '正是 $\\mathrm{e}^{\\mathrm{i}\\theta}=\\cos\\theta+\\mathrm{i}\\sin\\theta$ 这一形式, 让工程师得以用复数统一描述交流电的幅值与相位.',
+            '数形结合、多表征转换, 是解决实际问题时极其有效的方法论.',
+            '可迁移的态度: 遇到难题时不妨换个表示方法或换个坐标系, 往往能"柳暗花明".']},
+    {q:'结合华罗庚、陈景润的事迹, 谈谈当代大学生应该怎样对待基础学科的学习.',
+     hints:['基础学科周期长、见效慢, 需要甘坐冷板凳的定力与长期主义的心态.',
+            '陈景润在六平方米陋室中攻克"1+2", 说明重大成果往往来自长期专注而非短期突击.',
+            '华罗庚"聪明在于勤奋, 天才在于积累"道出了成长的本质: 持续投入远比天赋更重要.',
+            '可迁移的态度: 把个人成长融入国家需求, 在需要长期积累的领域里坚持深耕.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);                 // 绑定 label, 点击按钮可切换
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+</script>
+</body>
+</html>

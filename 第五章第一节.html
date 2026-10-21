@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章第一节 孤立奇点</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 图注 (HTML + MathJax) ===== */
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第五章 第1节 孤立奇点</h1>
+    <p>孤立奇点 &middot; 三类分类 &middot; 零点与极点 &middot; 无穷远点</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解<b>孤立奇点</b>的定义, 会判断给定点是否为孤立奇点, 会举出"奇点但不孤立"的例子;
+2. 掌握按<b>洛朗级数的负幂项</b>对孤立奇点所作的三分类 —— 可去奇点、极点、本性奇点, 以及各自的极限判据;
+3. 理解<b>函数零点与极点的关系</b>, 会用定理 1.4、定理 1.5 把"判断极点"转化为"判断零点";
+4. 掌握函数在<b>无穷远点</b>的形态判定: 既能用 $\xi=\frac{1}{z}$ 变换化归到 $\xi=0$, 也能按洛朗级数正幂项直接判断;
+5. 体会"孤立"二字所承载的结构思想, 认识数学分类中"局部展开决定整体行为"的深刻性.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-5a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-5a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-5a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-5a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-5a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-5a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、孤立奇点概念、可去奇点</label>
+    <label class="tab-btn" for="tab2" id="label2">二、极点与本性奇点</label>
+    <label class="tab-btn" for="tab3" id="label3">三、零点与极点的关系</label>
+    <label class="tab-btn" for="tab4" id="label4">四、无穷远点的形态</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 孤立奇点概念、可去奇点 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 孤立奇点的概念</div>
+
+<div class="box-think">
+<div class="think-label">思考: "孤立"二字, 到底排除了什么?</div>
+函数在 $z_0$ 处"没有定义"或"不解析", 这只是<b>一个点</b>的性质. 但如果想知道函数在 $z_0$ <b>附近</b>到底发生了什么, 就必须保证 $z_0$ 四周有一圈"干净"的地方 —— 在那里函数处处解析.
+<br><br>
+这就是"孤立"的含义: <b>$z_0$ 是一个被解析区域单独包围起来的奇点.</b> 没有这一条, 洛朗展开、极限讨论都无从谈起.
+</div>
+
+<div class="box-key">
+<div class="title">定义 1.1 (孤立奇点)</div>
+如果函数 $f(z)$ 在 $z_0$ 的某一去心邻域 $0&lt;|z-z_0|&lt;\delta$ 内处处解析, 则称 $z_0$ 为 $f(z)$ 的<b>孤立奇点</b>.
+<br><br>
+例如 $\mathrm{e}^{1/z}$、$\frac{\sin z}{z}$ 的孤立奇点是 $z=0$; $\frac{1}{z+1}$ 的孤立奇点是 $z=-1$.
+<br><br>
+<span style="color:#c62828"><b>注:</b></span> 孤立奇点一定是奇点, 但奇点不一定是孤立奇点.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1</div>
+找出函数 $f(z)=\frac{1}{\sin\frac{1}{z}}$ 的奇点.
+<input type="checkbox" id="ans51" class="answer-toggle">
+<label for="ans51" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+函数的奇点为
+<div class="box-formula">$$z_0=0,\qquad z_n=\dfrac{1}{n\pi},\qquad (n=\pm1,\pm2,\cdots).$$</div>
+对于任意固定非零整数 $n$, $z_n=\frac{1}{n\pi}$ 都是 $f(z)$ 的孤立奇点.
+<br><br>
+由于 $\lim\limits_{n\to\infty}\frac{1}{n\pi}=0$, 说明在 $z=0$ 的<b>不论怎样小</b>的去心邻域内, 总有 $f(z)$ 的奇点存在, 所以 <b>$z=0$ 不是孤立奇点</b>.
+</div>
+</div>
+</div>
+
+<div class="sec-title">1.2 孤立奇点的分类依据</div>
+
+<div class="box-key">
+<div class="title">分类依据 (按洛朗级数的负幂项)</div>
+依据 $f(z)$ 在其孤立奇点 $z_0$ 的去心邻域 $0&lt;|z-z_0|&lt;\delta$ 内的洛朗级数
+<div class="box-formula">$$\sum_{n=-\infty}^{+\infty}c_n(z-z_0)^n$$</div>
+中<b>负幂项</b>的情况, 把孤立奇点分成三类:
+<br><br>
+&nbsp;&nbsp;<b>(1) 可去奇点</b> —— 不含负幂项;
+<br>&nbsp;&nbsp;<b>(2) 极点</b> —— 只有有限个负幂项;
+<br>&nbsp;&nbsp;<b>(3) 本性奇点</b> —— 有无穷多个负幂项.
+<br><br>
+<span style="color:#c62828"><b>一句话:</b></span> 孤立奇点的类型, 完全由它在去心邻域内洛朗展开式的<b>负幂部分</b>决定.
+</div>
+
+<div class="box-key">
+<div class="title">定义 1.2 (可去奇点)</div>
+如果 $f(z)$ 在奇点 $z_0$ 的去心邻域内的洛朗展开式中<b>不含 $z-z_0$ 的负幂项</b>, 则称 $z_0$ 为 $f(z)$ 的<b>可去奇点</b>.
+<br><br>
+显然, 对一切的 $n&lt;0$, 有 $c_n=0$, 即
+<div class="box-formula">$$f(z)=c_0+c_1(z-z_0)+c_2(z-z_0)^2+\cdots,\qquad 0&lt;|z-z_0|&lt;\delta.$$</div>
+右端是不含负幂的幂级数, 它在整个圆域 $|z-z_0|&lt;\delta$ 内解析 —— 这正是"<b>可去</b>"二字的由来.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.2</div>
+函数 $\frac{\sin z}{z}$ 在奇点 $z=0$ 的洛朗展开式为
+<div class="box-formula">$$\dfrac{\sin z}{z}=1-\dfrac{1}{3!}z^2+\dfrac{1}{5!}z^4-\cdots.$$</div>
+上式右端的级数不含负幂项, 故 $z=0$ 是 $\frac{\sin z}{z}$ 的<b>可去奇点</b>. 如果补充定义
+<div class="box-formula">$$f(z)=\begin{cases}\dfrac{\sin z}{z},& z\neq0,\\[6pt] 1,& z=0,\end{cases}$$</div>
+那么 $f(z)$ 在 $z=0$ <b>解析</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.1 (可去奇点的极限判据)</div>
+设函数 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta\ (\delta&gt;0)$ 内解析, 则 $z_0$ 是 $f(z)$ 的<b>可去奇点</b>的充要条件是
+<div class="box-formula">$$\lim\limits_{z\to z_0}f(z)=c_0\qquad(\text{存在且有限}).$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 1.1 的证明</div>
+<input type="checkbox" id="ans52" class="answer-toggle">
+<label for="ans52" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+<b>必要性.</b> 由 $z_0$ 是 $f(z)$ 的可去奇点, 知在 $0&lt;|z-z_0|&lt;\delta$ 内有
+<div class="box-formula">$$f(z)=c_0+c_1(z-z_0)+\cdots+c_n(z-z_0)^n+\cdots.$$</div>
+上式右端幂级数的和函数在圆域 $|z-z_0|&lt;\delta$ 内解析, 显然有 $\lim\limits_{z\to z_0}f(z)=c_0$.
+<br><br>
+<b>充分性.</b> 由于 $\lim\limits_{z\to z_0}f(z)=c_0$, 故 $\exists M&gt;0$, 当 $0&lt;|z-z_0|&lt;r\ (r&lt;\delta)$ 时有 $|f(z)|\le M$. 由洛朗系数公式
+<div class="box-formula">$$c_n=\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi-z_0|=\rho}\dfrac{f(\xi)}{(\xi-z_0)^{n+1}}\mathrm{d}\xi\qquad(n=0,\pm1,\pm2,\cdots),$$</div>
+则有
+<div class="box-formula">$$|c_n|\le\dfrac{1}{2\pi}\cdot\dfrac{M\cdot2\pi\rho}{\rho^{n+1}}=\dfrac{M}{\rho^{n}}\qquad(n=0,\pm1,\pm2,\cdots).$$</div>
+当 $n&lt;0$ 时, 令 $\rho\to0$, 得到 $c_n=0\ (n=-1,-2,\cdots)$. 于是 $z_0$ 是 $f(z)$ 的可去奇点. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">推论 1.1 (有界 $\iff$ 可去)</div>
+设函数 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta\ (\delta&gt;0)$ 内解析, 则 $z_0$ 是 $f(z)$ 的可去奇点的充要条件是: <b>存在正数 $r&lt;\delta$, 使得 $f(z)$ 在 $0&lt;|z-z_0|&lt;r$ 内有界.</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 去心邻域与 $\delta$ 的取值 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">孤立奇点 $z_0$ 被一圈"隔离带"包围, 这圈隔离带就是去心邻域 $0&lt;|z-z_0|&lt;\delta$. 拖动滑块, 或直接在图中拖动虚线圆周, 改变 $\delta$, 观察这个去心邻域的形状 —— 注意中心点 $z_0$ 总是被<b>挖掉</b>的.</div>
+<canvas id="cvNeighbor" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半径 $\delta$:</label>
+<input type="range" id="nbDelta" min="0.3" max="2.4" step="0.02" value="1.4">
+<span class="val-badge" id="nbDV">1.40</span>
+</div>
+<div class="readout" id="nbReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 极点与本性奇点 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 极点</div>
+
+<div class="box-key">
+<div class="title">定义 1.3 (极点)</div>
+如果 $f(z)$ 在奇点 $z_0$ 的去心邻域内的洛朗展开式中<b>只有有限个负幂项</b>, 即有正整数 $m$, $c_{-m}\neq0$, 而当 $n&lt;-m$ 时 $c_n=0$, 则称 $z_0$ 为 $f(z)$ 的<b>极点</b>, 并称正整数 $m$ 为它的<b>级</b>.
+<div class="box-formula">$$f(z)=c_{-m}(z-z_0)^{-m}+\cdots+c_{-1}(z-z_0)^{-1}+c_0+c_1(z-z_0)+\cdots\quad(m\ge1,\ c_{-m}\neq0).$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">极点的洛朗展开式结构</div>
+当 $0&lt;|z-z_0|&lt;\delta$ 时, 把上式提出因子 $(z-z_0)^{-m}$, 得
+<div class="box-formula">$$f(z)=\dfrac{1}{(z-z_0)^m}\Big[c_{-m}+c_{-m+1}(z-z_0)+\cdots+c_{-1}(z-z_0)^{m-1}+c_0(z-z_0)^m+c_1(z-z_0)^{m+1}+\cdots\Big].$$</div>
+即
+<div class="box-formula">$$f(z)=\dfrac{1}{(z-z_0)^m}\varphi(z),$$</div>
+其中 $\varphi(z)$ 在 $|z-z_0|&lt;\delta$ 内解析, 且 $\varphi(z_0)=c_{-m}\neq0$. 反过来, 只要 $f$ 能写成这种形状, $z_0$ 就一定是极点 —— 这正是下面的充要条件.
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.2 (极点的充要条件)</div>
+设函数 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta\ (\delta&gt;0)$ 内解析, 则 $z_0$ 是 $f(z)$ 的极点的充要条件是 $f(z)$ 可表示为
+<div class="box-formula">$$f(z)=\dfrac{\varphi(z)}{(z-z_0)^m},\qquad (*)$$</div>
+其中 $\varphi(z)$ 在 $z_0$ 解析, $m$ 为正整数, $\varphi(z_0)\neq0$. 此时 $z_0$ 是 $f(z)$ 的 <b>$m$ 级极点</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">推论 1.2 (极点的极限刻画)</div>
+设函数 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta\ (\delta&gt;0)$ 内解析, 则 $z_0$ 是 $f(z)$ 的极点的充要条件是
+<div class="box-formula">$$\lim\limits_{z\to z_0}f(z)=\infty.$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.3</div>
+研究函数 $f(z)=\frac{1}{z^3(z-2)}$ 的类型.
+<input type="checkbox" id="ans53" class="answer-toggle">
+<label for="ans53" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+孤立奇点: $z=0,\ z=2$.
+<br><br>
+在 $z=0$ 的邻域内, 取解析函数 $\varphi(z)=\frac{1}{z-2}$, $\varphi(0)=-\frac{1}{2}\neq0$, 有
+<div class="box-formula">$$f(z)=\dfrac{1}{z^3}\cdot\dfrac{1}{z-2}=\dfrac{1}{z^3}\varphi(z),$$</div>
+从而 $z=0$ 是<b>三级极点</b>.
+<br><br>
+在 $z=2$ 的邻域内, 取解析函数 $g(z)=\frac{1}{z^3}$, $g(2)=\frac{1}{8}\neq0$, 有
+<div class="box-formula">$$f(z)=\dfrac{1}{z^3}\cdot\dfrac{1}{z-2}=\dfrac{1}{z-2}g(z),$$</div>
+从而 $z=2$ 是<b>一级极点</b>.
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.2 本性奇点</div>
+
+<div class="box-key">
+<div class="title">定义 1.4 (本性奇点)</div>
+如果 $f(z)$ 在奇点 $z_0$ 的去心邻域内的洛朗展开式中有<b>无穷多个负幂项</b>, 即有无穷多个 $n&lt;0$ 使 $c_n\neq0$, 则称 $z_0$ 为 $f(z)$ 的<b>本性奇点</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定理 (本性奇点的充要条件)</div>
+设函数 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta\ (\delta&gt;0)$ 内解析, 则 $z_0$ 是 $f(z)$ 的本性奇点的充要条件是
+<div class="box-formula">$$\lim\limits_{z\to z_0}f(z)\ \text{不存在也不为}\ \infty.$$</div>
+<span style="color:#c62828"><b>对照记忆:</b></span> 极限存在且有限 $\iff$ 可去奇点; 极限为 $\infty$ $\iff$ 极点; 极限既不存在也不为 $\infty$ $\iff$ 本性奇点.
+</div>
+
+<div class="chart-container">
+<h3>交互: 三类孤立奇点的洛朗系数对比 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">用柱状图画出洛朗系数 $c_n\ (n=-6,\cdots,6)$. 拖动滑块在"可去奇点 / $m$ 级极点 / 本性奇点"之间切换, 观察 <b>负幂项 ($n&lt;0$ 的项) 的个数</b> 如何决定奇点的类型与对应的极限行为.</div>
+<canvas id="cvLaurent" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>奇点类型:</label>
+<input type="range" id="ltKind" min="0" max="2" step="1" value="0">
+<span class="val-badge" id="ltKV">可去奇点</span>
+</div>
+<div class="readout" id="ltReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 函数零点与极点的关系 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 零点的概念</div>
+
+<div class="box-key">
+<div class="title">定义 1.5 ($m$ 级零点)</div>
+不恒等于零的解析函数 $f(z)$ 在 $z_0$ 的邻域内能表示成
+<div class="box-formula">$$f(z)=(z-z_0)^m\varphi(z),$$</div>
+其中 $\varphi(z)$ 在 $z_0$ 解析且 $\varphi(z_0)\neq0$, $m$ 为某一正整数, 则称 $z_0$ 为 $f(z)$ 的 <b>$m$ 级零点</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.4</div>
+求函数 $f(z)=z(z-1)^3$ 的零点, 并指出各零点的级.
+<input type="checkbox" id="ans54" class="answer-toggle">
+<label for="ans54" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+零点为 $z=0,\ z=1$. 由定义知: $z=0$ 是<b>一级零点</b>; $z=1$ 是<b>三级零点</b>.
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.2 零点的判断</div>
+
+<div class="box-key">
+<div class="title">定理 1.3 (零点阶的导数判据)</div>
+设 $f(z)$ 在 $z_0$ 解析, 则 $z_0$ 为 $f(z)$ 的 $m$ 级零点的充要条件是
+<div class="box-formula">$$f^{(n)}(z_0)=0\ (n=0,1,2,\cdots,m-1);\qquad f^{(m)}(z_0)\neq0.$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 1.3 的证明 (必要性)</div>
+<input type="checkbox" id="ans55" class="answer-toggle">
+<label for="ans55" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+设 $z_0$ 为 $f(z)$ 的 $m$ 级零点, 则 $f(z)=(z-z_0)^m\varphi(z)$, $\varphi(z_0)\neq0$. 设解析函数 $\varphi(z)$ 在 $z_0$ 的泰勒展开式为
+<div class="box-formula">$$\varphi(z)=c_0+c_1(z-z_0)+c_2(z-z_0)^2+\cdots,\qquad c_0=\varphi(z_0)\neq0,$$</div>
+从而 $f(z)$ 在 $z_0$ 的泰勒展开式为
+<div class="box-formula">$$f(z)=c_0(z-z_0)^m+c_1(z-z_0)^{m+1}+c_2(z-z_0)^{m+2}+\cdots.$$</div>
+展开式的前 $m$ 项系数都为零, 由泰勒级数系数公式知
+<div class="box-formula">$$f^{(n)}(z_0)=0\ (n=0,1,2,\cdots,m-1);\qquad \dfrac{f^{(m)}(z_0)}{m!}=c_0\neq0. \qquad \blacksquare$$</div>
+<b>例如:</b> $f(z)=z(z-1)^3$ 有 $f(1)=f'(1)=f''(1)=0$, $f'''(1)=6\neq0$, 故 $z=1$ 是三级零点.
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.3 零点与极点的关系</div>
+
+<div class="box-key">
+<div class="title">定理 1.4 (零点与极点互为倒数)</div>
+如果 $z_0$ 是 $f(z)$ 的 $m$ 级极点, 则 $z_0$ 就是 $\frac{1}{f(z)}$ 的 $m$ 级零点; 反过来也成立.
+<br><br>
+<b>证明要点:</b> 由 $f(z)=\frac{g(z)}{(z-z_0)^m}$ ($g(z_0)\neq0$), 当 $z\neq z_0$ 时
+<div class="box-formula">$$\dfrac{1}{f(z)}=(z-z_0)^m\dfrac{1}{g(z)}=(z-z_0)^m\varphi(z),\qquad \varphi(z_0)=\dfrac{1}{g(z_0)}\neq0.$$</div>
+由于 $\lim\limits_{z\to z_0}\frac{1}{f(z)}=0$, 只要令 $\frac{1}{f(z_0)}=0$, 即知 $z_0$ 是 $\frac{1}{f(z)}$ 的 $m$ 级零点. 反之, 若 $z_0$ 是 $\frac{1}{f(z)}$ 的 $m$ 级零点, 则 $\frac{1}{f(z)}=(z-z_0)^m\varphi(z)$, 于是 $f(z)=\frac{1}{(z-z_0)^m}h(z)$ (其中 $h(z_0)\neq0$), 故 $z_0$ 是 $f(z)$ 的 $m$ 级极点.
+<br><br>
+<span style="color:#c62828"><b>注:</b></span> 该定理表明, <b>判断极点可以转化为判断零点</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">定理 1.5 (两个函数的商)</div>
+设函数 $\varphi(z)$ 和 $\psi(z)$ 分别以 $z_0$ 为 $m$ 级零点和 $n$ 级零点, $f(z)=\frac{\varphi(z)}{\psi(z)}$, 则有
+<br><br>
+&nbsp;&nbsp;(1) 当 $m&gt;n$ 时, $z_0$ 是 $f(z)$ 的 $m-n$ 级<b>零点</b>;
+<br>&nbsp;&nbsp;(2) 当 $m&lt;n$ 时, $z_0$ 是 $f(z)$ 的 $n-m$ 级<b>极点</b>;
+<br>&nbsp;&nbsp;(3) 当 $m=n$ 时, $z_0$ 是 $f(z)$ 的<b>可去奇点</b>.
+</div>
+
+<div class="sec-title">3.4 例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.5</div>
+函数 $\frac{1}{\sin z}$ 有些什么奇点? 如果是极点, 指出它的级.
+<input type="checkbox" id="ans56" class="answer-toggle">
+<label for="ans56" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+函数的奇点是使 $\sin z=0$ 的点, 即 $z=k\pi\ (k=0,\pm1,\pm2,\cdots)$, 它们都是孤立奇点. 由于
+<div class="box-formula">$$(\sin z)'\Big|_{z=k\pi}=\cos z\Big|_{z=k\pi}=(-1)^k\neq0,$$</div>
+所以 $z=k\pi$ 是 $\sin z$ 的一级零点, 即 $\frac{1}{\sin z}$ 的<b>一级极点</b>.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.6</div>
+$z=0$ 是 $\frac{\mathrm{e}^z-1}{z^2}$ 的几级极点?
+<input type="checkbox" id="ans57" class="answer-toggle">
+<label for="ans57" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<div class="box-formula">$$\dfrac{\mathrm{e}^z-1}{z^2}=\dfrac{1}{z^2}\left(\sum_{n=0}^{\infty}\dfrac{z^n}{n!}-1\right)=\dfrac{1}{z^2}\left(z+\dfrac{z^2}{2!}+\dfrac{z^3}{3!}+\cdots\right)=\dfrac{1}{z}+\dfrac{1}{2!}+\dfrac{z}{3!}+\cdots.$$</div>
+负幂项只剩 $z^{-1}$ 这一项, 所以 $z=0$ 是<b>一级极点</b>.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.7</div>
+函数 $f(z)=\frac{(z^2-1)(z-2)^3}{(\sin\pi z)^3}$ 有哪些类型的奇点? 如果是极点, 指出它的级.
+<input type="checkbox" id="ans58" class="answer-toggle">
+<label for="ans58" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$f(z)$ 的奇点是使 $\sin\pi z=0$ 的点, 故奇点为 $z=0,\pm1,\pm2,\cdots$, 而且均是孤立奇点. 由于
+<div class="box-formula">$$(\sin\pi z)'=\pi\cos\pi z\neq0\qquad(z=0,\pm1,\pm2,\cdots),$$</div>
+这些点都是 $\sin\pi z$ 的一级零点, 从而是 $(\sin\pi z)^3$ 的三级零点, 故这些点中<b>除 $1,-1,2$ 外, 都是 $f(z)$ 的三级极点</b>.
+<br><br>
+又由于 $z=\pm1$ 是 $(z^2-1)(z-2)^3$ 的一级零点, 由定理 1.5 知 $z=\pm1$ 是 $f(z)$ 的<b>二级极点</b>; $z=2$ 是 $(z^2-1)(z-2)^3$ 的三级零点, 与分母的三级零点相抵 (即 $m=n$), 故 $z=2$ 是 $f(z)$ 的<b>可去奇点</b>.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 零点与极点的倒数对偶 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">定理 1.4 说: $z_0$ 是 $f$ 的 $m$ 级极点 $\iff$ $z_0$ 是 $1/f$ 的 $m$ 级零点. 左图画 $|f|$ (在 $z_0$ 处趋于 $0$), 右图画 $|1/f|$ (在同一 $z_0$ 处趋于 $\infty$). 拖动滑块改变阶数 $m$, 观察这对"零点—极点"的对称关系.</div>
+<div class="fig-caps">
+<div class="fc" id="cvDualCap"></div>
+</div>
+<canvas id="cvDual" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>阶数 $m$:</label>
+<input type="range" id="dlK" min="1" max="4" step="1" value="2">
+<span class="val-badge" id="dlKV">2</span>
+</div>
+<div class="readout" id="dlReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 函数在无穷远点的形态 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 无穷远点的邻域</div>
+
+<div class="box-key">
+<div class="title">定义 1.6 (无穷远点是孤立奇点)</div>
+设函数 $f(z)$ 在无穷远点 $z=\infty$ 的去心邻域 $R&lt;|z|&lt;+\infty$ 内解析, 则称点 $\infty$ 为 $f(z)$ 的<b>孤立奇点</b>.
+<br><br>
+为了研究 $z=\infty$, 作变换
+<div class="box-formula">$$\xi=\dfrac{1}{z},\qquad \mathrm{Arg}\,z=-\mathrm{Arg}\,\xi.$$</div>
+它把 $f(z)$ 在扩充 $z$ 平面上的去心邻域 $R&lt;|z|&lt;+\infty$ 解析, 变成 $\varphi(\xi)=f\!\left(\frac{1}{\xi}\right)$ 在扩充 $\xi$ 平面上的去心邻域 $0&lt;|\xi|&lt;\frac{1}{R}$ 解析. 于是 <b>$z=\infty$ 的问题, 就被搬到了 $\xi=0$ 来处理</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定义 1.7 (无穷远点类型的定义)</div>
+设 $\varphi(\xi)=f\!\left(\frac{1}{\xi}\right)$. 如果 $\xi=0$ 是 $\varphi(\xi)$ 的可去奇点、$m$ 级极点或本性奇点, 则称 $z=\infty$ 是 $f(z)$ 的<b>可去奇点</b>、<b>$m$ 级极点</b>或<b>本性奇点</b>.
+<br><br>
+若 $f(z)=\sum\limits_{n=-\infty}^{+\infty}c_nz^n$, $\varphi(\xi)=\sum\limits_{n=-\infty}^{+\infty}b_n\xi^n$, 则
+<div class="box-formula">$$b_n=c_{-n}\quad(n\in\mathbb{Z}),\qquad f(z)=\sum_{n=-\infty}^{+\infty}b_nz^{-n}.$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.6 (按正幂项判定)</div>
+如果 $f(z)$ 在 $R&lt;|z|&lt;+\infty$ 内的洛朗级数
+<br><br>
+&nbsp;&nbsp;1) 不含正幂项;
+<br>&nbsp;&nbsp;2) 含有有限多的正幂项且 $z^m$ 为最高正幂;
+<br>&nbsp;&nbsp;3) 含有无穷多的正幂项;
+<br><br>
+则 $z=\infty$ 分别是 $f(z)$ 的
+<br><br>
+&nbsp;&nbsp;1) <b>可去奇点</b>;
+<br>&nbsp;&nbsp;2) <b>$m$ 级极点</b>;
+<br>&nbsp;&nbsp;3) <b>本性奇点</b>.
+<br><br>
+<span style="color:#c62828"><b>易错提醒:</b></span> 有限点看<b>负</b>幂项, 无穷远点看<b>正</b>幂项 —— 二者的判据恰好"换了个方向".
+</div>
+
+<div class="sec-title">4.2 例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.8</div>
+函数 $f(z)=\frac{z}{1+z^2}$ 的 $z=\infty$ 是什么类型的奇点?
+<input type="checkbox" id="ans59" class="answer-toggle">
+<label for="ans59" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解一 · 用变换】</div>
+函数有两个有限奇点 $z=\pm\mathrm{i}$, 故它在 $z=\infty$ 的邻域 $1&lt;|z|&lt;+\infty$ 内解析, 即 $z=\infty$ 是孤立奇点. 作变换 $\xi=\frac{1}{z}$, 得
+<div class="box-formula">$$\varphi(\xi)=f\!\left(\dfrac{1}{\xi}\right)=\dfrac{\xi}{\xi^2+1}.$$</div>
+可见 $\xi=0$ 是 $\varphi(\xi)$ 的可去奇点, 故 $z=\infty$ 是 $f(z)$ 的<b>可去奇点</b>.
+<br><br>
+<div class="res-label">【解二 · 用洛朗展开】</div>
+在 $1&lt;|z|&lt;+\infty$ 内展开成洛朗级数:
+<div class="box-formula">$$f(z)=\dfrac{z}{1+z^2}=\dfrac{1}{z}\cdot\dfrac{1}{1+\left(\dfrac{1}{z}\right)^2}=\dfrac{1}{z}\left[1-\left(\dfrac{1}{z}\right)^2+\left(\dfrac{1}{z}\right)^4+\cdots\right].$$</div>
+展开式中<b>无正幂项</b>, 故由定理 1.6 (1) 知 $z=\infty$ 是 $f(z)$ 的可去奇点.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.9</div>
+函数 $\sin z$ 是否以 $z=\infty$ 为孤立奇点? 若是, 属哪一类?
+<input type="checkbox" id="ans510" class="answer-toggle">
+<label for="ans510" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+在 $|z|&lt;+\infty$ 内展开成洛朗级数:
+<div class="box-formula">$$\sin z=z-\dfrac{z^3}{3!}+\dfrac{z^5}{5!}-\cdots+(-1)^n\dfrac{z^{2n+1}}{(2n+1)!}+\cdots.$$</div>
+展开式中有<b>无穷多正幂项</b>, 故 $z=\infty$ 是 $\sin z$ 的<b>本性奇点</b>.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 无穷远点的 $\xi=\frac{1}{z}$ 变换 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面: 去心邻域 $R&lt;|z|&lt;+\infty$ 是被大圆"挖空"之外的区域, 一直延伸到无穷远点; 右图是 $\xi$ 平面: 经 $\xi=1/z$ 之后, 它变成一个以原点为中心的去心圆盘 $0&lt;|\xi|&lt;1/R$. 拖动滑块改变 $R$, 观察 $z=\infty$ 的形态如何归结为 $\xi=0$ 的形态.</div>
+<div class="fig-caps">
+<div class="fc">$\xi$ 平面: $\infty$ 被 $\xi=\frac{1}{z}$ 拉回原点</div>
+</div>
+<canvas id="cvInfinity" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>圆半径 $R$:</label>
+<input type="range" id="ifK" min="0.8" max="2.6" step="0.02" value="1.6">
+<span class="val-badge" id="ifKV">1.60</span>
+</div>
+<div class="readout" id="ifReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>孤立奇点定义</b> → <b>按负幂项分类</b> (可去 / 极点 / 本性) → <b>零点与极点的关系</b> → <b>无穷远点的形态</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>类型</th><th>洛朗展开（负幂项）</th><th>极限行为</th><th>零点关系</th></tr>
+<tr><td>可去奇点</td><td>不含负幂项, 即 $c_n=0\ (n&lt;0)$</td><td>$\lim\limits_{z\to z_0}f(z)=c_0$ 存在且有限; 在去心邻域内有界</td><td>补充定义后 $z_0$ 成为解析点</td></tr>
+<tr><td>$m$ 级极点</td><td>只有有限个负幂项, 最低为 $(z-z_0)^{-m}$</td><td>$\lim\limits_{z\to z_0}f(z)=\infty$</td><td>$z_0$ 是 $\frac{1}{f(z)}$ 的 $m$ 级零点 (定理 1.4)</td></tr>
+<tr><td>本性奇点</td><td>有无穷多个负幂项</td><td>$\lim\limits_{z\to z_0}f(z)$ 不存在也不为 $\infty$</td><td>无类似的简单零点对应</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 关于 $f(z)=\frac{1}{\sin\frac{1}{z}}$, 下列说法正确的是?</div>
+<label class="quiz-opt">A. $z=0$ 是三级极点</label>
+<label class="quiz-opt">B. $z=0$ 是本性奇点</label>
+<label class="quiz-opt" data-ok="1">C. $z=0$ 不是孤立奇点</label>
+<label class="quiz-opt">D. $z=0$ 是可去奇点</label>
+<div class="quiz-explain"><b>解析:</b> 奇点为 $z=0$ 与 $z_n=\frac{1}{n\pi}\ (n=\pm1,\pm2,\cdots)$. 由于 $\lim\limits_{n\to\infty}\frac{1}{n\pi}=0$, 在 $z=0$ 的任意小的去心邻域内都还有奇点, 故 $z=0$ 不是孤立奇点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $z=0$ 是 $\frac{\sin z}{z}$ 的什么类型的奇点?</div>
+<label class="quiz-opt" data-ok="1">A. 可去奇点</label>
+<label class="quiz-opt">B. 一级极点</label>
+<label class="quiz-opt">C. 二级极点</label>
+<label class="quiz-opt">D. 本性奇点</label>
+<div class="quiz-explain"><b>解析:</b> $\frac{\sin z}{z}=1-\frac{z^2}{3!}+\frac{z^4}{5!}-\cdots$ 不含负幂项, 故为可去奇点; 补充定义 $f(0)=1$ 后函数在 $z=0$ 解析.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 设 $f(z)$ 在 $0&lt;|z-z_0|&lt;\delta$ 内解析, 则 $z_0$ 是 $f(z)$ 的<b>可去奇点</b>的充要条件是?</div>
+<label class="quiz-opt">A. $\lim\limits_{z\to z_0}f(z)=\infty$</label>
+<label class="quiz-opt" data-ok="1">B. $\lim\limits_{z\to z_0}f(z)$ 存在且有限</label>
+<label class="quiz-opt">C. $\lim\limits_{z\to z_0}f(z)$ 不存在也不为 $\infty$</label>
+<label class="quiz-opt">D. $f$ 在 $z_0$ 的洛朗展开式含无穷多负幂项</label>
+<div class="quiz-explain"><b>解析:</b> 这是定理 1.1; 与它等价的说法是推论 1.1 —— $f(z)$ 在某个去心邻域内有界.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. $z=0$ 是 $\frac{\mathrm{e}^z-1}{z^2}$ 的几级极点?</div>
+<label class="quiz-opt" data-ok="1">A. 一级极点</label>
+<label class="quiz-opt">B. 二级极点</label>
+<label class="quiz-opt">C. 三级极点</label>
+<label class="quiz-opt">D. 可去奇点</label>
+<div class="quiz-explain"><b>解析:</b> $\frac{\mathrm{e}^z-1}{z^2}=\frac{1}{z}+\frac{1}{2!}+\frac{z}{3!}+\cdots$, 负幂项只有 $z^{-1}$, 故为一级极点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. $z=0$ 是 $\sin\frac{1}{z}$ 的什么类型的奇点?</div>
+<label class="quiz-opt">A. 可去奇点</label>
+<label class="quiz-opt">B. 一级极点</label>
+<label class="quiz-opt" data-ok="1">C. 本性奇点</label>
+<label class="quiz-opt">D. 不是奇点</label>
+<div class="quiz-explain"><b>解析:</b> $\sin\frac{1}{z}=\frac{1}{z}-\frac{1}{3!z^3}+\cdots$ 含无穷多负幂项, 且 $\lim\limits_{z\to 0}\sin\frac{1}{z}$ 不存在也不为 $\infty$, 故为本性奇点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 函数 $f(z)=\frac{1}{z^2+1}$ 的奇点及其类型是?</div>
+<label class="quiz-opt">A. $z=\pm\mathrm{i}$ 都是二级极点</label>
+<label class="quiz-opt" data-ok="1">B. $z=\pm\mathrm{i}$ 都是一级极点</label>
+<label class="quiz-opt">C. $z=0$ 是二级极点</label>
+<label class="quiz-opt">D. $z=\infty$ 是本性奇点</label>
+<div class="quiz-explain"><b>解析:</b> $z^2+1=(z-\mathrm{i})(z+\mathrm{i})$, 故 $z=\pm\mathrm{i}$ 都是分母的一级零点, 由定理 1.4 可知它们都是 $f$ 的一级极点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. (定理 1.4) 若 $z_0$ 是 $f(z)$ 的 $m$ 级极点, 则 $z_0$ 是 $\frac{1}{f(z)}$ 的?</div>
+<label class="quiz-opt">A. $m$ 级极点</label>
+<label class="quiz-opt" data-ok="1">B. $m$ 级零点</label>
+<label class="quiz-opt">C. 可去奇点</label>
+<label class="quiz-opt">D. 本性奇点</label>
+<div class="quiz-explain"><b>解析:</b> 零点与极点通过"取倒数"精确对应: $z_0$ 是 $f$ 的 $m$ 级极点 $\iff$ $z_0$ 是 $1/f$ 的 $m$ 级零点. 这正是把"判断极点"转化为"判断零点"的依据.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. (定理 1.5) 设 $\varphi(z)$、$\psi(z)$ 分别以 $z_0$ 为 $m$ 级、$n$ 级零点, $f(z)=\frac{\varphi(z)}{\psi(z)}$. 当 $m&gt;n$ 时, $z_0$ 是 $f(z)$ 的?</div>
+<label class="quiz-opt">A. $m+n$ 级极点</label>
+<label class="quiz-opt" data-ok="1">B. $m-n$ 级零点</label>
+<label class="quiz-opt">C. $n-m$ 级极点</label>
+<label class="quiz-opt">D. 可去奇点</label>
+<div class="quiz-explain"><b>解析:</b> $f(z)=(z-z_0)^{m-n}\frac{\varphi_0(z)}{\psi_0(z)}$, 其中 $\frac{\varphi_0(z_0)}{\psi_0(z_0)}\neq0$, 故 $z_0$ 是 $m-n$ 级零点; $m&lt;n$ 时为 $n-m$ 级极点, $m=n$ 时为可去奇点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. $z=0$ 是 $f(z)=z^3\mathrm{e}^{1/z}$ 的什么类型的奇点?</div>
+<label class="quiz-opt">A. 三级零点</label>
+<label class="quiz-opt">B. 三级极点</label>
+<label class="quiz-opt" data-ok="1">C. 本性奇点</label>
+<label class="quiz-opt">D. 可去奇点</label>
+<div class="quiz-explain"><b>解析:</b> $\mathrm{e}^{1/z}=\sum\limits_{n=0}^{\infty}\frac{1}{n!}z^{-n}$, 乘以 $z^3$ 后仍含无穷多负幂项 ($n\ge4$ 的项), 故 $z=0$ 是本性的.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 关于函数在无穷远点的类型, 下列说法正确的是?</div>
+<label class="quiz-opt">A. $\sin z$ 以 $z=\infty$ 为可去奇点</label>
+<label class="quiz-opt" data-ok="1">B. $\sin z$ 以 $z=\infty$ 为本性奇点</label>
+<label class="quiz-opt">C. $z=\infty$ 的类型由洛朗级数的负幂项决定</label>
+<label class="quiz-opt">D. $\frac{z}{1+z^2}$ 以 $z=\infty$ 为本性奇点</label>
+<div class="quiz-explain"><b>解析:</b> $\sin z$ 在 $|z|&lt;+\infty$ 的洛朗展开含无穷多正幂项, 故 $z=\infty$ 是本性奇点; 无穷远点的类型由<b>正幂项</b>判定 (定理 1.6); 而 $\frac{z}{1+z^2}$ 在 $1&lt;|z|&lt;+\infty$ 无正幂项, $z=\infty$ 是可去奇点.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位中学教师, 把"无穷"与"孤立"写进了严格的数学</h3>
+<div class="hero-sub">他白天教书、夜晚演算, 用一整套"严格化"的工作, 让分析学的每一句话都能被逐字检验 —— 也把"函数在一点附近的行为"彻底讲清楚了.</div>
+<div class="hero-quote">
+从极限的 $\varepsilon$–$\delta$ 语言到解析函数的局部展开, 魏尔斯特拉斯把"直觉"变成了"可以证明的事".<br>
+<b>本节里"孤立奇点"的分类与对应的极限判据, 正是这种严格精神的一次具体呈现.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 魏尔斯特拉斯: 把"孤立"讲清楚的人</div>
+
+<div class="person-card">
+<div class="p-av">魏</div>
+<div class="p-main">
+<div class="p-name">卡尔·魏尔斯特拉斯 (Karl Weierstrass, 1815—1897)</div>
+<div class="p-meta">德国数学家 · 现代分析学之父 · "分析严格化"运动的领军人物 · 曾当了十三年中学教师</div>
+<p>他被公认为<b>现代分析学之父</b>. 今天数学里通用的"$\varepsilon$–$\delta$"语言、"一致收敛"、"解析函数的局部展开", 都深深打上了他的烙印. 但很少有人知道, 他的前半生, 是一名默默无闻的中学教师.</p>
+<p>他出生在德国一个普通职员家庭, 大学时被父亲送进波恩大学学法律与财政, 他却把大部分时间花在数学上, 以致最后没有拿到学位. 此后十多年, 他在偏僻的小镇上教书 —— 白天讲授地理、书法甚至体育, 夜晚独自研究阿贝尔与雅可比的工作.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 从法律系走出来的数学家</h5>
+<p>1815 年, 魏尔斯特拉斯出生于德国威斯特法伦的一个官员家庭. 1829 年, 他被父亲送入波恩大学攻读法律与财政 —— 那是当时通往"体面职业"的通行路径. 然而他真正着迷的, 是数学.</p>
+<p>据记载, 他在波恩把绝大部分时间用在自学数学上, 四年后离开时没有获得学位. 父亲极为失望, 于是把他送到明斯特去参加教师资格考试 —— 这条路, 本来只是"退而求其次"的安排.</p>
+<p><b>正是这条"退路", 让他在明斯特听到了古德曼 (Gudermann) 关于椭圆函数的讲座, 从此踏进了复分析的核心领域.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>十三年中学教师: 白天上课, 夜里演算</h5>
+<p>1842 年起, 魏尔斯特拉斯先后在几个小镇的中学任教, 前后长达十三年. 他要教地理、历史、书法, 甚至体育, 每周课时很重 —— 但他仍在夜间坚持研究数学.</p>
+<p>更难得的是, 他并没有因为"讲的东西浅"而懈怠. 相反, 他后来之所以能建立起严密的分析体系, 恰恰因为他把每一个基础概念都真正想透了 —— <b>能把初等的东西讲清楚的人, 往往也最清楚高层理论的地基在哪里.</b></p>
+<p>1854 年, 他在《克雷尔杂志》上发表关于阿贝尔函数的论文. 这篇论文一举解决了一个公认的难题, 立刻引起轰动 —— 魏尔斯特拉斯的名字, 第一次真正进入了德国数学界.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>严格化运动: 让每一句话都可被检验</h5>
+<p>十九世纪以前, 微积分里充斥着"无穷小"这类含糊的表述. 魏尔斯特拉斯主张: <b>凡是不能严格证明的, 都不应当写进数学.</b> 他用"$\varepsilon$–$\delta$"语言重新定义了极限, 使"趋于"这一含糊的说法, 变成可以逐字检验的判断.</p>
+<p>他还指出: 连续函数不一定处处可导; 一条曲线可以处处没有切线, 却依然处处连续. 这些"反常"的例子让当时的数学家大为震惊, 却也迫使分析学彻底摆脱了对"几何直觉"的依赖.</p>
+<p>本节中, "可去奇点 $\iff$ 极限存在且有限""极点 $\iff$ 极限为 $\infty$""本性奇点 $\iff$ 极限既不存在也不为 $\infty$" —— 这些把<b>局部形态</b>与<b>极限行为</b>一一对应起来的判据, 正是这种"把话说死"的精神的产物.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>晚年的荣光与"魏尔斯特拉斯函数"</h5>
+<p>1856 年, 经库默尔等人力荐, 41 岁的魏尔斯特拉斯被授予柏林大学荣誉博士学位, 随后成为柏林大学副教授, 次年升任教授. 他从一名中学教师, 一跃成为世界数学的中心人物之一.</p>
+<p>此后近三十年, 他在柏林讲课, 听众常常数百人, 其中走出了许多一流数学家. 他的讲义被学生整理成册, 成为现代分析学的经典教材.</p>
+<p>1872 年, 他给出了一个震撼学界的例子: <b>一个处处连续但处处不可导的函数</b> (后来被称为"魏尔斯特拉斯函数"). 这个例子说明: "连续"远比人们想象的更弱 —— 直觉在无穷小的尺度上会失效, 只有严格的逻辑才靠得住.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说魏尔斯特拉斯年轻时因为"没有学位", 长期不被主流学术圈接纳; 而当他的论文发表后, 柏林大学甚至没有经过常规程序, 就直接授予他荣誉博士学位. 他后来回忆那段中学教师的岁月时说, 正是那些夜晚的演算, 让他养成了一种习惯 —— <b>对每一步都追问"为什么可以这样".</b> 这个习惯, 最终成了他最有力的数学工具.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 魏尔斯特拉斯式的信念</div>
+在他那里, 数学中真正危险的从来不是"太抽象", 而是"不清楚":
+<br>
+"<em>一个数学家的职责, 不是给出漂亮的结论, 而是让每一个结论都站得住脚 —— 哪怕它看起来很朴素.</em>"
+<br>
+据说, 当他面对一个晦涩的证明时, 总要先问一句:
+<br>
+"<em>这句话究竟在说什么? 它能不能被检验?</em>"
+<span class="iv-sig">—— 这种不满足于"看起来对"的态度, 正是本节把三种奇点用"极限是否存在、是否为无穷"来精确刻画的思想根源.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>一个点附近的行为, 决定了它的"身份"</h4>
+<p>孤立奇点的类型, 完全由函数在该点<b>去心邻域内</b>的洛朗展开决定 —— 我们甚至不需要知道函数在别处的取值.</p>
+<p>这是典型的"局部决定身份": 只要看得足够近, 一个点的性质就暴露无遗. 而复分析中最深刻的结果之一, 正是"解析函数的局部决定整体".</p>
+<div class="pc-math">$z_0$ 的类型 $\Longleftarrow$ $0&lt;|z-z_0|&lt;\delta$ 内的洛朗系数</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>负幂项从"有限"到"无限", 类型随之改变</h4>
+<p>可去奇点、极点、本性奇点的差别, 只在于<b>负幂项的个数</b>: $0$ 个、有限个、无穷多个. 数量上的这一点差别, 却带来了性质上的质变 —— 极限从"存在且有限", 到"为无穷", 再到"根本不存在".</p>
+<p>这正是"量变引起质变"的一个干净样本: 变化的是可数的项数, 变化的结果却是完全不同的函数行为.</p>
+<div class="pc-math">$0$ 项 $\to$ 可去; 有限项 $\to$ 极点; 无限项 $\to$ 本性</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>零点与极点, 通过"取倒数"互为对偶</h4>
+<p>定理 1.4 指出: $z_0$ 是 $f$ 的 $m$ 级极点, 当且仅当它是 $\frac{1}{f}$ 的 $m$ 级零点. 两个看似相反的对象, 被"取倒数"这一个动作精确地对应起来.</p>
+<p>把"判断极点"转化为"判断零点", 就是利用这种对偶关系, 把陌生的问题变成熟悉的问题. <b>对偶, 是数学中最经济的思想之一.</b></p>
+<div class="pc-math">$z_0$ 是 $f$ 的 $m$ 级极点 $\iff$ $z_0$ 是 $1/f$ 的 $m$ 级零点</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>无穷远点, 被一个变换"拉回"原点</h4>
+<p>$z=\infty$ 本来是一个"摸不到"的点. 但通过 $\xi=\frac{1}{z}$, 它的去心邻域 $R&lt;|z|&lt;+\infty$ 变成了 $\xi$ 平面上一个普通的去心圆盘 $0&lt;|\xi|&lt;\frac{1}{R}$.</p>
+<p>于是"研究无穷远"被彻底转化为"研究原点". <b>把陌生对象通过映射联系到熟悉对象上, 是数学中最有力的策略之一.</b></p>
+<div class="pc-math">$\xi=\frac{1}{z}$: $R&lt;|z|&lt;+\infty$<br>$\longleftrightarrow\ 0&lt;|\xi|&lt;\frac{1}{R}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>"孤立"是一种需要验证的条件, 而非常态</h4>
+<p>例 1.1 中, $f(z)=\frac{1}{\sin\frac{1}{z}}$ 的奇点在 $z=0$ 附近<b>无限聚集</b>, 因此 $z=0$ 不是孤立奇点. 这提醒我们: "孤立"是一个很强的条件, 是需要被验证、而不是想当然的.</p>
+<p>正是这个"例外", 划定了孤立奇点理论的适用范围 —— 后面的留数定理之所以成立, 前提正是奇点的"孤立性".</p>
+<div class="pc-math">$z_n=\frac{1}{n\pi}\to0$: 奇点无限聚集 $\Rightarrow$ $z=0$ 不孤立</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>有限点看负幂, 无穷远点看正幂</h4>
+<p>在有限点处, 我们看洛朗级数的<b>负幂项</b>; 而在无穷远点, 判据翻转为看<b>正幂项</b>. 同一个洛朗级数, 换一个视角, "关键信息"就换了位置.</p>
+<p>这说明: 所谓"主次"并不是绝对的, 而是相对于观察位置而言的. <b>先弄清"站在哪里看", 往往比急着计算更重要.</b></p>
+<div class="pc-math">有限点: 数负幂项; $z=\infty$: 数正幂项</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "辨类"与"穷理"</div>
+中国古代数学与哲学, 素来重视<b>辨别事物的类别</b>与<b>穷究事物的道理</b>. 《墨经》中有"<b>同异</b>"之说, 讲的正是通过比较来区分事物的性质; 《周易·系辞》说"<b>穷理尽性, 以至于命</b>", 强调把事物的本性推究到底.
+<br><br>
+而<b>刘徽</b>注《九章算术》时, 使用的正是"<b>析理以辞, 解体用图</b>"的方法: 把一个问题分解为若干类, 逐类分析, 再合起来看整体规律. 这种"先分类、再穷理"的思路, 与本节的逻辑几乎一致 —— 我们正是先按洛朗级数<b>把孤立奇点分成三类</b>, 再逐一给出各自的极限判据与零点关系.
+<br><br>
+分类不是目的, 分类是为了<b>把无穷多的复杂情形, 归结为有限的几种典型</b>. 三种奇点一旦认清, 任意解析函数在其孤立奇点附近的行为, 就都在掌握之中了.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: "零点与极点"背后的中国工作</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论中, 他系统研究了解析函数的零点分布与"零点集"的结构, 提出了"华氏算子"等工具. 把"一个点的行为"推广到"高维零点集的行为", 正是从本节"零点与极点关系"这一基本思想生长出来的问题.</li>
+<li><b>陈建功</b> (1893—1971): 中国函数论的主要奠基人之一. 他研究函数级数的收敛性与零点, 1928 年即在日本《东北数学杂志》发表关于无穷乘积的论文, 是中国最早在国际数学刊物上发表研究工作的学者之一.</li>
+<li><b>熊庆来</b> (1893—1969): 我国函数论研究的重要开拓者, 在亚纯函数的"值分布"问题上作出系统工作 —— 而亚纯函数论的核心, 正是对"零点、极点与增量"三者关系的精确刻画. 他培养了大批中国数学家, 是把"奇点理论"接续到中国的人.</li>
+<li><b>面向国家需求</b>: 控制理论中的"极点配置"、信号处理中的"零点补偿"、电路分析中的"极点频率", 全都以本节的概念为共同语言. 我们今天学的"零点与极点", 是无数工程方法的数学起点.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 分类, 是认识的起点</div>
+"孤立奇点"这一节, 做的其实只有一件事: <b>把函数在奇点附近的行为分成三类, 并给每一类一个可检验的判据.</b> 看上去朴素, 却把"无穷多种可能"压缩成了"三种典型情形".
+<br><br>
+这件事的价值在于: <b>只有先分类, 才能有理论.</b> 华罗庚对多复变零点集的研究、陈建功与熊庆来对函数论中零点与极点的刻画, 都是在更复杂的情形下继续做着这种"分清类型"的工作. 数学的进步, 常常不是发现了新对象, 而是把旧对象看得更清楚.
+<br><br>
+可以说: <b>把问题想清楚的第一步, 是把问题分好类.</b> 这是本节的数学, 也是本节的方法论.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"数学家的职责不是给出漂亮的结论, 而是让每一个结论都站得住脚."<span class="q-src">—— 魏尔斯特拉斯数学观的一种概括</span></div>
+<div class="quote-item">"凡是不能严格证明的, 都不应当写进数学."<span class="q-src">—— 十九世纪分析严格化运动的精神</span></div>
+<div class="quote-item">"把无穷多种情形, 归结为有限的几种类型 —— 这就是理论的力量."<span class="q-src">—— 关于本节分类思想的启示</span></div>
+<div class="quote-item">"析理以辞, 解体用图."<span class="q-src">—— 刘徽《九章算术注》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"科学是老老实实的学问, 任何一点调皮都是不行的."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 魏尔斯特拉斯曾在偏僻小镇的中学里教了十三年地理与书法, 夜晚在油灯下演算数学; 41 岁才被柏林大学授予荣誉博士学位, 后来成为现代分析学的奠基人. 他把"趋于"这类含糊的说法, 改写成可以逐字检验的严格语言 —— 本节的三种奇点判据, 正是这份严格精神的直接产物.<br>
+<b>一个道理:</b> 孤立奇点的分类看上去只是"数一数负幂项", 但它把无穷多种函数形态归并为三种典型: <b>可去、极点、本性</b>. 洛朗系数从 $0$ 个到有限个再到无穷多个, 数量上的差别带来了极限行为的本质不同 —— 这正是"量变引起质变"在数学中的一次干净呈现.<br>
+<b>一份责任:</b> 从刘徽"析理以辞"的分类智慧, 到陈建功、熊庆来、华罗庚在函数论上对零点与极点的精细刻画, 中国数学家始终在这条"把问题看清楚"的路上接续前行. 今天我们学习孤立奇点, 既是在掌握"极点配置""零点补偿"等工程方法的数学起点, 也是在承接这份<b>把最基础的概念想到底、讲到严</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第五章第一节 孤立奇点 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 去心邻域与 δ =================
+module('cvNeighbor',function(cv){
+  var delta=1.4;
+  function mp(w,h){ return mapperEq(w-40,h-64,-2.8,2.8,-2.4,2.4); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var H=h-64;
+    var m=mp(w,h);
+    ctx.save(); ctx.translate(20,40);
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),delta*m.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,.12)'; ctx.fill();
+    grid(ctx,w-40,H,m,0.5); axes(ctx,w-40,H,m,'Re','Im');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),delta*m.s,0,TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    arrow(ctx,m.px(0),m.py(0),m.px(delta),m.py(0),'#e65100',2.4,10);
+    tlabel(ctx,m.px(delta*0.5)+4,m.py(0)-9,'δ = '+fmt(delta),'#e65100','bold 12px Segoe UI');
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),7,0,TAU);
+    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.4; ctx.stroke();
+    tlabel(ctx,m.px(0)+12,m.py(0)+20,'z₀ (挖去)','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,20,26,'去心邻域 |z − z₀| ∈ (0, δ)   (可拖动虚线圆周改变 δ)','#37474f','bold 13px Segoe UI');
+    setRO('nbReadout',
+      '去心邻域: $0&lt;|z-z_0|&lt;\\delta$, 其中 $\\delta='+hl(fmt(delta))+'$.<br>'+
+      '在这个区域内 $f(z)$ 处处解析; 中心点 $z_0$ 被挖去, 正是奇点所在.<br>'+
+      '无论 $\\delta$ 取多小, 只要 $f$ 在 $0&lt;|z-z_0|&lt;\\delta$ 内解析, $z_0$ 就是一个<b>孤立奇点</b>.');
+  }
+  makeDraggable(cv,function(mx,my,w,h){
+    var m=mp(w,h);
+    var dx=(mx-20)-m.px(0), dy=(my-40)-m.py(0);
+    var rr=Math.hypot(dx,dy)/m.s;
+    delta=Math.max(0.3,Math.min(2.4,rr));
+    setSlider('nbDelta',delta); badge('nbDV',fmt(delta)); draw();
+  });
+  bindSlider('nbDelta',function(v){ delta=v; badge('nbDV',fmt(v)); draw(); });
+  badge('nbDV',fmt(delta));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 三类奇点的洛朗系数对比 =================
+module('cvLaurent',function(cv){
+  var kind=0;
+  var NAMES=['可去奇点','m 级极点 (m = 3)','本性奇点'];
+  function coef(k,n){
+    if(k===0){
+      if(n>=0){ if(n===0)return 1.0; if(n===1)return 0.7; if(n===2)return 0.45; return 0.25; }
+      return 0;
+    }
+    if(k===1){
+      if(n===-1)return 0.55;
+      if(n===-2)return 0.8;
+      if(n===-3)return 1.0;
+      if(n>=0){ if(n===0)return 0.9; if(n===1)return 0.5; return 0.25; }
+      return 0;
+    }
+    var a=Math.abs(n);
+    if(n<0) return 1/(a+1);
+    if(n===0) return 0.6;
+    return 0.6/(a+1);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var padL=48, padR=26, padT=72, padB=46;
+    var plotW=w-padL-padR;
+    var plotH=h-padT-padB;
+    var y0=padT+plotH*0.68;
+    var scale=plotH*0.52;
+    var step=plotW/13;
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(padL-16,y0); ctx.lineTo(w-padR+8,y0); ctx.stroke();
+    var xsep=padL+6*step;
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(xsep,padT-4); ctx.lineTo(xsep,y0+12); ctx.stroke();
+    ctx.restore();
+    for(var n=-6;n<=6;n++){
+      var v=coef(kind,n);
+      var cx=padL+(n+6)*step+step*0.5;
+      if(Math.abs(v)<1e-9){
+        ctx.fillStyle='#b0bec5';
+        ctx.fillRect(cx-step*0.3,y0-1.5,step*0.6,3);
+      } else {
+        var bh=v*scale;
+        ctx.fillStyle=(n<0)?'#e65100':'#1976d2';
+        ctx.fillRect(cx-step*0.3,y0-bh,step*0.6,bh);
+      }
+      ctx.fillStyle='#546e7a'; ctx.font='11px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText((n<0?'−':'')+Math.abs(n),cx,y0+17);
+      ctx.textAlign='left';
+    }
+    tlabel(ctx,w-padR-14,y0+20,'n','#546e7a','italic 13px Georgia');
+    tlabel(ctx,padL-40,y0-18,'cₙ','#546e7a','italic 13px Georgia');
+    tlabel(ctx,padL-24,padT-26,'橙色柱 = 负幂项 (n '+LT+' 0); 蓝色柱 = 非负幂项 (n ≥ 0)','#37474f','bold 13px Segoe UI');
+    ctx.fillStyle='#e65100'; ctx.font='bold 11px Segoe UI';
+    ctx.fillText('负幂区',padL+step*0.4,padT-8);
+    ctx.fillStyle='#1976d2';
+    ctx.fillText('非负幂区',xsep+10,padT-8);
+    var concl;
+    if(kind===0){
+      concl='洛朗展开<b>不含负幂项</b> ($c_n=0,\\ n&lt;0$) ⇒ $z_0$ 是<b>可去奇点</b>.<br>'+
+            '此时 $\\lim\\limits_{z\\to z_0}f(z)=c_0$ 存在且有限, 且 $f$ 在去心邻域内有界.';
+    } else if(kind===1){
+      concl='洛朗展开<b>只有有限个负幂项</b> (最低项为 $(z-z_0)^{-3}$) ⇒ $z_0$ 是<b>三级极点</b>.<br>'+
+            '此时 $\\lim\\limits_{z\\to z_0}f(z)=\\infty$.';
+    } else {
+      concl='洛朗展开<b>有无穷多个负幂项</b> ⇒ $z_0$ 是<b>本性奇点</b>.<br>'+
+            '此时 $\\lim\\limits_{z\\to z_0}f(z)$ 不存在也不为 $\\infty$.';
+    }
+    setRO('ltReadout', concl+'<br>'+hl2('判断口诀: 数一数负幂项 —— 0 个可去, 有限个极点, 无穷个本性.'));
+  }
+  bindSlider('ltKind',function(v){ kind=Math.round(v); badge('ltKV',NAMES[kind]); draw(); });
+  badge('ltKV',NAMES[kind]);
+  return {draw:draw};
+});
+
+// ================= 模块 3: 零点与极点的倒数对偶 =================
+module('cvDual',function(cv){
+  var order=2;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // ---- 左: f 的 m 级零点 ----
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-0.18,1.25,-0.18,1.55);
+    grid(ctx,halfW,H,m1,0.25); axes(ctx,halfW,H,m1,'r','|f|');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var r=0;r<=1.2;r+=0.01){
+      var v=Math.pow(r,order);
+      var px=m1.px(r), py=m1.py(v);
+      if(r===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    dot(ctx,m1.px(0),m1.py(0),7,'#2e7d32','#fff');
+    tlabel(ctx,m1.px(0)+10,m1.py(0)+20,'f(z₀) = 0  ('+order+' 级零点)','#2e7d32','bold 11px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'|f(z)| ≈ C·r^'+order+' → 0   (r = |z − z₀|)','#37474f','bold 12px Segoe UI');
+    // ---- 右: 1/f 的 m 级极点 ----
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.18,1.25,-0.4,6.2);
+    grid(ctx,halfW,H,m2,0.25); axes(ctx,halfW,H,m2,'r','|1/f|');
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    var started=false;
+    for(var r2=0.02;r2<=1.2;r2+=0.005){
+      var v2=1/Math.pow(r2,order);
+      if(v2>6.2) continue;
+      var px2=m2.px(r2), py2=m2.py(v2);
+      if(!started){ ctx.moveTo(px2,py2); started=true; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.setLineDash([6,5]); ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(m2.px(0),m2.py(6.0)); ctx.lineTo(m2.px(1.2),m2.py(6.0)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m2.px(0.34),m2.py(6.5),'→ ∞  ('+order+' 级极点)','#c62828','bold 11px Segoe UI');
+    ctx.restore();
+    setCap('cvDualCap','$\\left|1/f(z)\\right|\\approx r^{-'+order+'}\\to\\infty$ (同一个 $\\ z_0$)');
+    setRO('dlReadout',
+      '取 $f(z)=(z-z_0)^m\\,\\varphi(z)$ ($\\varphi(z_0)\\neq0$), 则 $z_0$ 是 $f$ 的 '+hl(order+' 级零点')+'.<br>'+
+      '而 $\\frac{1}{f(z)}=(z-z_0)^{-m}\\frac{1}{\\varphi(z)}$ 在 $z_0$ 处是 '+hl2(order+' 级极点')+'.<br>'+
+      '<b>定理 1.4:</b> $z_0$ 是 $f$ 的 $m$ 级极点 $\\iff$ $z_0$ 是 $\\frac{1}{f}$ 的 $m$ 级零点 —— 零点与极点通过「取倒数」精确对偶.');
+  }
+  bindSlider('dlK',function(v){ order=Math.round(v); badge('dlKV',String(order)); draw(); });
+  badge('dlKV',String(order));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 无穷远点的 ξ = 1/z 变换 =================
+module('cvInfinity',function(cv){
+  var R=1.6;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // ---- 左: z 平面, ∞ 的去心邻域 ----
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.6,2.6,-2.2,2.2);
+    ctx.beginPath();
+    ctx.rect(0,0,halfW,H);
+    ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU,true);
+    ctx.fillStyle='rgba(230,81,0,.10)'; ctx.fill();
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'Re','Im');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m1.px(0)-58,m1.py(R)-9,'|z| = R = '+fmt(R),'#e65100','bold 12px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),4,'#37474f');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#37474f','bold 12px Georgia');
+    tlabel(ctx,10,H-10,'外部区域 |z| '+GT+' R, 一直延伸到 ∞','#bf360c','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: ∞ 的去心邻域 R '+LT+' |z| '+LT+' +∞','#37474f','bold 12px Segoe UI');
+    // ---- 右: ξ 平面, ξ = 1/z ----
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-1.25,1.25,-1.25,1.25);
+    var rr=Math.min(1/R,1.15);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),rr*m2.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,.12)'; ctx.fill();
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re ξ','Im ξ');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),rr*m2.s,0,TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),7,0,TAU);
+    ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#c62828'; ctx.lineWidth=2.4; ctx.stroke();
+    tlabel(ctx,m2.px(0)+12,m2.py(0)+20,'ξ = 0','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(0)+8,m2.py(rr)-9,'|ξ| = 1/R','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,10,H-10,'去心圆盘 0 '+LT+' |ξ| '+LT+' 1/R   (ξ = 1/z)','#0d47a1','bold 12px Segoe UI');
+    ctx.restore();
+    setRO('ifReadout',
+      '左图: $z$ 平面上 $\\infty$ 的去心邻域 $R&lt;|z|&lt;+\\infty$, 其中 $R='+hl(fmt(R))+'$.<br>'+
+      '令 $\\xi=\\frac{1}{z}$, 则 $|z|>R \\iff |\\xi|&lt;\\frac{1}{R}='+hl2(fmt(1/R))+'$.<br>'+
+      '于是 <b>$z=\\infty$ 的形态 ⟺ $\\xi=0$ 的形态</b>: 若 $\\xi=0$ 是 $\\varphi$ 的可去 / 极点 / 本性奇点, 则 $z=\\infty$ 相应是 $f$ 的可去 / 极点 / 本性奇点.');
+  }
+  bindSlider('ifK',function(v){ R=v; badge('ifKV',fmt(v)); draw(); });
+  badge('ifKV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'概念与分类依据', c:'#1976d2', leaves:['孤立奇点: 去心邻域内处处解析','孤立奇点一定是奇点','奇点不一定孤立','例1.1: $\\frac{1}{\\sin(1/z)}$, $z=0$ 不孤立','分类依据: 洛朗系数负幂项','可去奇点: 不含负幂项']},
+    {t:'极点与本性奇点', c:'#e65100', leaves:['定义1.3: 只有有限个负幂项','$m$ 级极点: 最低项 $(z-z_0)^{-m}$','定理1.2: $f=\\frac{\\varphi(z)}{(z-z_0)^m}$','推论1.2: $\\lim f(z)=\\infty$','定义1.4: 无穷多个负幂项','本性: $\\lim f(z)$ 不存在也不为 $\\infty$']},
+    {t:'零点与极点的关系', c:'#c62828', leaves:['定义1.5: $m$ 级零点','定理1.3: 导数判据 $f^{(n)}(z_0)$','定理1.4: 极点 ⇔ 倒数零点','定理1.5: $\\frac{\\varphi}{\\psi}$ 的 $m-n$ 级零点','例1.5: $\\frac{1}{\\sin z}$ 的一级极点','例1.6 / 例1.7: 逐点判断类型']},
+    {t:'无穷远点的形态', c:'#2e7d32', leaves:['定义1.6: $|z|>R$ 内解析','定义1.7: $\\xi=1/z$, 归结到 $\\xi=0$','定理1.6: 按正幂项判定','无正幂项 → 可去奇点','最高正幂 $z^m$ → $m$ 级极点','无穷多正幂项 → 本性奇点']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第五章第一节 · 孤立奇点';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 → 分类 (可去 / 极点 / 本性) → 零点与极点 → 无穷远点; 一句话: <b>数一数负幂项, 类型立现; 判断极点, 就看倒数零点</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'例 1.1 中 z = 0 因为奇点「无限聚集」而不再是孤立奇点. 这说明「孤立」是一个怎样性质的条件? 它对整章理论有什么意义?',
+     hints:['「孤立」是一个很强的限制: 它要求奇点周围存在一圈完全解析的区域, 而多数奇点并不满足.',
+            '只有孤立奇点才能做洛朗展开, 才有三类分类与极限判据 —— 洛朗展开是后面留数定理的技术基础.',
+            '因此「孤立性」不是可有可无的细节, 而是整个留数理论的适用前提.',
+            '可迁移的态度: 使用一个定理前, 先确认它的前提条件是否真的成立.']},
+    {q:'三种孤立奇点的差别, 只是负幂项「0 个 / 有限个 / 无穷多个」. 为什么这么小的数量差别会带来本质不同的极限行为?',
+     hints:['有限个负幂项时, 提取出因子 (z − z₀)^(−m) 后剩下的是解析函数, 于是 f 趋于 ∞; 但无穷多个负幂项无法被有限次提取「消掉」.',
+            '这正是「量变引起质变」的典型: 变化的量是可数的项数, 变的结果却是极限存在 / 为无穷 / 不存在三种截然不同的形态.',
+            '数学中很多分类的本质, 就是找到那个「关键的临界量」.',
+            '可迁移的态度: 面对复杂现象, 先找出决定性质的那个关键指标.']},
+    {q:'定理 1.4 把「判断极点」转化为「判断零点」. 这种「把问题转化为熟悉问题」的做法, 你在哪些地方也见过?',
+     hints:['本节本身: 无穷远点的问题通过 ξ = 1/z 转化为原点的问题 —— 同一思想的不同应用.',
+            '在更早的章节: 复积分被转化为两个实曲线积分, 从而使用实分析工具.',
+            '数学之外的类比: 把陌生的工程问题建模为已知的数学问题, 同样是「转化」.',
+            '可迁移的态度: 与其硬算, 不如先问「它能不能变成我熟悉的样子」.']},
+    {q:'有限点看负幂项, 无穷远点看正幂项. 同一个洛朗级数, 为什么「关键信息」会换位置?',
+     hints:['因为无穷远点是通过 ξ = 1/z 定义的: z 的正幂对应 ξ 的负幂, 判据自然「翻转」.',
+            '可见所谓「主次」并不是绝对的, 而是相对于观察位置而言的.',
+            '这也提醒我们: 定义方式会决定看问题的角度, 进而决定什么被看作「关键」.',
+            '可迁移的态度: 结论变了, 先检查是不是「视角」变了, 而不是急着怀疑计算.']},
+    {q:'从刘徽「析理以辞」的分类智慧, 到陈建功、熊庆来、华罗庚对零点与极点的研究: 中国数学的这条脉络给你什么启发?',
+     hints:['他们的工作有一个共同点: 都在做「把对象分清楚」的基础工作 —— 而基础工作决定了上层理论的高度.',
+            '陈建功、熊庆来都是在艰苦条件下做出世界级工作的, 靠的是长期的专注与积累.',
+            '今天学的「零点与极点」, 正是控制、信号、电路等领域「极点配置」「零点补偿」的共同语言.',
+            '可迁移的态度: 尊重那些短期内看不到直接产出的基础工作, 并愿意在其中长期投入.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

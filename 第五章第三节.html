@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章第三节 留数在定积分计算中的应用</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 图注 (HTML + MathJax) ===== */
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第五章 第三节 留数在定积分计算中的应用</h1>
+    <p>三类实积分 &middot; 闭路取法 &middot; 大圆弧估计 &middot; 约当引理</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握形如 $\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta$ 的积分: 令 $z=\mathrm{e}^{\mathrm{i}\theta}$, 把它化为单位圆周 $|z|=1$ 上的有理函数闭路积分;
+2. 掌握形如 $\int_{-\infty}^{+\infty}R(x)\mathrm{d}x$ 的积分: 取上半平面半圆闭路, 用大圆弧估计证明 $C_R$ 上的积分随 $R\to+\infty$ 而趋于 $0$;
+3. 掌握形如 $\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x\ (a&gt;0)$ 的积分, 理解<b>约当引理</b>的作用, 并会分离实部与虚部求 $\cos ax$、$\sin ax$ 型积分;
+4. 能从"路径取法 — 适用条件 — 大圆弧估计 — 最终公式"四个维度, 统一理解三类积分;
+5. 了解约当 (Camille Jordan) 的生平与贡献, 体会"让围道积分的多余部分退场"这一数学智慧的思想价值.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-5c" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-5c" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-5c" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-5c" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-5c" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-5c" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、单位圆周上的积分</label>
+    <label class="tab-btn" for="tab2" id="label2">二、无穷区间上的积分</label>
+    <label class="tab-btn" for="tab3" id="label3">三、含 $\mathrm{e}^{iax}$ 的积分</label>
+    <label class="tab-btn" for="tab4" id="label4">四、统一视角与综合练习</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 形如 ∫₀^{2π} R(cosθ,sinθ) dθ 的积分 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 思路: 把圆周上的积分"搬回"单位圆周</div>
+
+<div class="box-think">
+<div class="think-label">思考: 三角有理式的积分, 为什么能和留数扯上关系?</div>
+被积函数 $R(\cos\theta,\sin\theta)$ 是 $\sin\theta$、$\cos\theta$ 的有理函数. 直接积分往往十分麻烦, 但只要把 $\theta$ 换成一个<b>复数变量</b>, 局面立刻改变 —— 因为欧拉公式
+<div class="box-formula">$$\mathrm{e}^{\mathrm{i}\theta}=\cos\theta+\mathrm{i}\sin\theta$$</div>
+恰好把 $\cos\theta$ 与 $\sin\theta$ 一起装进了同一个复变量 $z=\mathrm{e}^{\mathrm{i}\theta}$ 里. 而当 $\theta$ 走遍 $[0,2\pi]$ 时, 这个 $z$ 正好沿<b>单位圆周</b>绕行一周.
+<br><br>
+这样一来, 一条实轴上的积分, 就变成了一条<b>闭路积分</b>; 而闭路积分, 正是留数定理的地盘.
+</div>
+
+<div class="box-key">
+<div class="title">方法 3.1 (单位圆周变换)</div>
+设 $R(\cos\theta,\sin\theta)$ 为有理函数. 令
+<div class="box-formula">$$z=\mathrm{e}^{\mathrm{i}\theta},\qquad 0\le\theta\le2\pi,\qquad \mathrm{d}z=\mathrm{i}\mathrm{e}^{\mathrm{i}\theta}\mathrm{d}\theta=\mathrm{i}z\,\mathrm{d}\theta,$$</div>
+于是
+<div class="box-formula">$$\begin{aligned}
+&\mathrm{d}\theta=\dfrac{\mathrm{d}z}{\mathrm{i}z},\\[4pt]
+&\cos\theta=\dfrac{1}{2}\left(\mathrm{e}^{\mathrm{i}\theta}+\mathrm{e}^{-\mathrm{i}\theta}\right)=\dfrac{z+z^{-1}}{2}=\dfrac{z^2+1}{2z},\\[4pt]
+&\sin\theta=\dfrac{1}{2\mathrm{i}}\left(\mathrm{e}^{\mathrm{i}\theta}-\mathrm{e}^{-\mathrm{i}\theta}\right)=\dfrac{z-z^{-1}}{2\mathrm{i}}=\dfrac{z^2-1}{2\mathrm{i}z}.
+\end{aligned}$$</div>
+当 $\theta$ 从 $0$ 变化到 $2\pi$ 时, $z$ 沿单位圆周 $|z|=1$ 正向绕行一周, 故
+<div class="box-formula">$$\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta=\oint_{|z|=1}R\!\left[\dfrac{z^2+1}{2z},\ \dfrac{z^2-1}{2\mathrm{i}z}\right]\dfrac{\mathrm{d}z}{\mathrm{i}z}.$$</div>
+右端是 $z$ 的<b>有理函数</b>沿单位圆周的积分, 记
+<div class="box-formula">$$f(z)=R\!\left[\dfrac{z^2+1}{2z},\ \dfrac{z^2-1}{2\mathrm{i}z}\right]\dfrac{1}{\mathrm{i}z}.$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">适用条件与结论</div>
+只要 $R(\cos\theta,\sin\theta)$ 在 $0\le\theta\le2\pi$ 上有意义 (即 <b>$R$ 在单位圆周 $|z|=1$ 上无奇点</b>), 那么 $f(z)$ 的孤立奇点就全部落在单位圆的内部或外部, 留数定理可以直接使用:
+<div class="box-formula">$$\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta=\oint_{|z|=1}f(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{n}\operatorname{Res}\left[f(z),z_k\right],$$</div>
+其中 $z_k\ (k=1,2,\cdots,n)$ 为单位圆周 $|z|=1$ <b>内部</b>的全部孤立奇点.
+<br><br>
+<span style="color:#c62828"><b>口诀:</b></span> 令 $z=\mathrm{e}^{\mathrm{i}\theta}$, 三角有理式 → 单位圆周有理式; 单位圆内的极点, 一个都不能漏.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.1</div>
+计算 $I=\int_0^{2\pi}\frac{\cos2\theta}{1-2p\cos\theta+p^2}\mathrm{d}\theta\quad(0&lt;p&lt;1)$.
+<input type="checkbox" id="ans71" class="answer-toggle">
+<label for="ans71" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由于 $0&lt;p&lt;1$, 有
+<div class="box-formula">$$1-2p\cos\theta+p^2=(1-p)^2+2p(1-\cos\theta)&gt;0,$$</div>
+故被积函数在 $0\le\theta\le2\pi$ 上连续, 积分有意义. 令 $z=\mathrm{e}^{\mathrm{i}\theta}$, 则
+<div class="box-formula">$$\cos\theta=\dfrac{z+z^{-1}}{2},\qquad \cos2\theta=\dfrac{1}{2}\left(z^2+z^{-2}\right),\qquad \mathrm{d}\theta=\dfrac{\mathrm{d}z}{\mathrm{i}z}.$$</div>
+代入得
+<div class="box-formula">$$I=\oint_{|z|=1}\dfrac{z^2+z^{-2}}{2}\cdot\dfrac{1}{1-2p\cdot\dfrac{z+z^{-1}}{2}+p^2}\cdot\dfrac{\mathrm{d}z}{\mathrm{i}z}=\oint_{|z|=1}\dfrac{1+z^4}{2\mathrm{i}z^2(1-pz)(z-p)}\mathrm{d}z=\oint_{|z|=1}f(z)\mathrm{d}z.$$</div>
+被积函数有<b>三个极点</b> $z=0,\ p,\ \frac{1}{p}$. 因 $0&lt;p&lt;1$, 在圆周 $|z|=1$ 内只有 $z=0$ 与 $z=p$: 其中 $z=0$ 是<b>二级极点</b>, $z=p$ 是<b>一级极点</b>.
+<br><br>
+计算留数:
+<div class="box-formula">$$\operatorname{Res}[f(z),0]=\lim\limits_{z\to0}\dfrac{\mathrm{d}}{\mathrm{d}z}\left[\dfrac{1+z^4}{2\mathrm{i}(1-pz)(z-p)}\right]=-\dfrac{1+p^2}{2\mathrm{i}p^2},$$</div>
+<div class="box-formula">$$\operatorname{Res}[f(z),p]=\lim\limits_{z\to p}\left[(z-p)\cdot\dfrac{1+z^4}{2\mathrm{i}z^2(1-pz)(z-p)}\right]=\dfrac{1+p^4}{2\mathrm{i}p^2(1-p^2)}.$$</div>
+因此
+<div class="box-formula">$$I=2\pi\mathrm{i}\left[-\dfrac{1+p^2}{2\mathrm{i}p^2}+\dfrac{1+p^4}{2\mathrm{i}p^2(1-p^2)}\right]=\dfrac{2\pi p^2}{1-p^2}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 单位圆周变换与 $z=\mathrm{e}^{\mathrm{i}\theta}$ <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图画出单位圆周 $|z|=1$ 与点 $z=\mathrm{e}^{\mathrm{i}\theta}$; 拖动角度滑块, 看点如何绕圆周一周. 拖动参数 $p$ 滑块, 观察例 3.1 中三个极点 $0,\ p,\ 1/p$ 的位置 —— 只有落在单位圆<b>内</b>的 $z=0$ 与 $z=p$ 才进入留数求和. 右图是例 3.1 被积函数随 $\theta$ 的变化曲线.</div>
+<canvas id="cvTheta" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>角度 $\theta$:</label>
+<input type="range" id="thTheta" min="0" max="6.2832" step="0.01" value="1.05">
+<span class="val-badge" id="thTV">1.05</span>
+</div>
+<div class="row">
+<label>参数 $p$:</label>
+<input type="range" id="thP" min="0.1" max="0.9" step="0.01" value="0.4">
+<span class="val-badge" id="thPV">0.40</span>
+</div>
+<div class="readout" id="thReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 形如 ∫_{-∞}^{+∞} R(x) dx 的积分 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 条件与路径: 在上半平面补一个大圆弧</div>
+
+<div class="box-key">
+<div class="title">适用条件</div>
+设 $R(x)$ 为有理函数, 分母的次数至少比分子的次数<b>高两次</b>, 并且 $R(x)$ 在<b>实轴上无孤立奇点</b>. 一般设
+<div class="box-formula">$$R(z)=\dfrac{z^n+a_1z^{n-1}+\cdots+a_n}{z^m+b_1z^{m-1}+\cdots+b_m},\qquad m-n\ge2.$$</div>
+<span style="color:#c62828"><b>为什么必须"高两次"?</b></span> 因为只有 $m-n\ge2$ 时, 大圆弧 $C_R$ 上的积分才按 $1/R$ 的速率衰减到 $0$ (见 2.2 的估计).
+</div>
+
+<div class="box-key">
+<div class="title">闭路取法 (半圆闭路 $C$)</div>
+取 $C_R$ 为以原点为心、$R$ 为半径的<b>上半圆周</b>, 它与实轴上的线段 $[-R,\,R]$ 合成一条闭路 $C$. 取 $R$ 充分大, 使 $R(z)$ 在上半平面内的全部极点 $z_k\ (k=1,2,\cdots,K)$ 都落在 $C$ 内. 由留数定理
+<div class="box-formula">$$\int_{-R}^{R}R(x)\mathrm{d}x+\int_{C_R}R(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{K}\operatorname{Res}\left[R(z),z_k\right].$$</div>
+这个等式与 $R$ 无关 —— 无论 $R$ 取多大, 只要把所有上半平面极点圈在圈内, 右端的值就不变.
+</div>
+
+<div class="sec-title">2.2 大圆弧估计: $\displaystyle\lim\limits_{R\to+\infty}\int_{C_R}R(z)\mathrm{d}z=0$</div>
+
+<div class="box-key">
+<div class="title">估计的关键一步</div>
+当 $|z|$ 充分大时, 总可以使
+<div class="box-formula">$$\left|a_1z^{-1}+\cdots+a_nz^{-n}\right|&lt;\dfrac{1}{2},\qquad \left|b_1z^{-1}+\cdots+b_mz^{-m}\right|&lt;\dfrac{1}{2}.$$</div>
+于是
+<div class="box-formula">$$|R(z)|=\dfrac{1}{|z|^{m-n}}\left|\dfrac{1+a_1z^{-1}+\cdots+a_nz^{-n}}{1+b_1z^{-1}+\cdots+b_mz^{-m}}\right|\le\dfrac{1}{|z|^{m-n}}\cdot\dfrac{1+\dfrac{1}{2}}{1-\dfrac{1}{2}}=\dfrac{3}{|z|^{m-n}}\le\dfrac{3}{|z|^{2}}.$$</div>
+在 $C_R$ 上有 $|z|=R$, 弧长 $L=\pi R$, 由 $ML$ 估计
+<div class="box-formula">$$\left|\int_{C_R}R(z)\mathrm{d}z\right|\le\int_{C_R}|R(z)|\,\mathrm{d}s\le\dfrac{3}{R^{2}}\cdot\pi R=\dfrac{3\pi}{R}\xrightarrow[\ R\to+\infty\ ]{}0.$$</div>
+所以大圆弧上的积分在 $R\to+\infty$ 时"退场"了 —— 这正是留数法的精妙之处: <b>用一条可估计的曲线, 换掉一个无穷区间</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">结论 (第二类积分公式)</div>
+<div class="box-formula">$$\int_{-\infty}^{+\infty}R(x)\mathrm{d}x=2\pi\mathrm{i}\sum_{k=1}^{K}\operatorname{Res}\left[R(z),z_k\right],$$</div>
+其中 $z_k\ (k=1,2,\cdots,K)$ 为 $R(z)$ 在<b>上半平面</b>内的全部极点.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.2</div>
+计算 $\int_{-\infty}^{+\infty}\frac{x^2\mathrm{d}x}{(x^2+a^2)(x^2+b^2)}\quad(a&gt;0,\ b&gt;0,\ a\ne b)$.
+<input type="checkbox" id="ans72" class="answer-toggle">
+<label for="ans72" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+被积函数对应的有理函数
+<div class="box-formula">$$R(z)=\dfrac{z^2}{(z^2+a^2)(z^2+b^2)}$$</div>
+在复平面上有一级极点 $\pm a\mathrm{i},\ \pm b\mathrm{i}$, 其中 $a\mathrm{i},\ b\mathrm{i}$ 在上半平面. 其分母次数 $4$ 比分子次数 $2$ 高两次, 满足适用条件.
+<div class="box-formula">$$\operatorname{Res}[R(z),a\mathrm{i}]=\lim\limits_{z\to a\mathrm{i}}(z-a\mathrm{i})\dfrac{z^2}{(z-a\mathrm{i})(z+a\mathrm{i})(z^2+b^2)}=\dfrac{a}{2\mathrm{i}(a^2-b^2)},$$</div>
+同理
+<div class="box-formula">$$\operatorname{Res}[R(z),b\mathrm{i}]=\dfrac{b}{2\mathrm{i}(b^2-a^2)}.$$</div>
+于是
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{x^2\mathrm{d}x}{(x^2+a^2)(x^2+b^2)}=2\pi\mathrm{i}\left\{\operatorname{Res}[R(z),a\mathrm{i}]+\operatorname{Res}[R(z),b\mathrm{i}]\right\}=\dfrac{\pi}{a+b}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 上半平面半圆闭路与 $C_R$ 上的积分估计 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图画出上半平面闭路 $C$: 实轴线段 $[-R,R]$ 加上半圆周 $C_R$, 并标出上半平面内的极点 $a\mathrm{i}$、$b\mathrm{i}$ (以例 3.2 为例). 拖动 $R$ 滑块, 观察半圆如何一步步把所有上半平面极点"圈进来"; 右图画出 $3\pi/R$ 随 $R$ 的衰减, 说明 $C_R$ 上的积分贡献最终归于 $0$.</div>
+<canvas id="cvHalf" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半圆半径 $R$:</label>
+<input type="range" id="hpR" min="0.8" max="4.0" step="0.02" value="2.4">
+<span class="val-badge" id="hpRV">2.40</span>
+</div>
+<div class="readout" id="hpReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 形如 ∫ R(x) e^{iax} dx 的积分 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 条件与路径: 让振荡因子"帮忙"</div>
+
+<div class="box-key">
+<div class="title">适用条件</div>
+设 $R(x)$ 是有理函数, 分母的次数至少比分子的次数<b>高一次</b> (注意: 比第二类少一次!), 且 $R(z)$ 在<b>实轴上没有奇点</b>. 作上半平面半圆闭路 $C$, 使 $R(z)$ 在上半平面内的全部孤立奇点 $z_k\ (k=1,2,\cdots,K)$ 都在圆内. 由留数定理
+<div class="box-formula">$$\int_{-R}^{R}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x+\int_{C_R}R(z)\mathrm{e}^{\mathrm{i}az}\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{K}\operatorname{Res}\left[R(z)\mathrm{e}^{\mathrm{i}az},z_k\right].$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">约当引理 (Jordan's Lemma)</div>
+对 $a&gt;0$, 当 $R\to+\infty$ 时
+<div class="box-formula">$$\lim\limits_{R\to+\infty}\int_{C_R}R(z)\mathrm{e}^{\mathrm{i}az}\mathrm{d}z=0.$$</div>
+<span style="color:#c62828"><b>直观理解:</b></span> 在上半平面写 $z=x+\mathrm{i}y\ (y\ge0)$, 则
+<div class="box-formula">$$\left|\mathrm{e}^{\mathrm{i}az}\right|=\left|\mathrm{e}^{\mathrm{i}a(x+\mathrm{i}y)}\right|=\mathrm{e}^{-ay}\le1,$$</div>
+而 $\mathrm{e}^{\mathrm{i}ax}$ 在实轴上只是一个纯粹的<b>振荡</b>因子. 正是这种快速振荡带来的相消, 使得条件"分母高两次"可以放宽为"<b>高一次</b>" —— 这就是约当引理比第二类估计更"省力"的地方.
+<br><br>
+于是
+<div class="box-formula">$$\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x=2\pi\mathrm{i}\sum_{k=1}^{K}\operatorname{Res}\left[R(z)\mathrm{e}^{\mathrm{i}az},z_k\right].$$</div>
+</div>
+
+<div class="sec-title">3.2 分离实部与虚部</div>
+
+<div class="box-result">
+<div class="res-label">由复积分得到两个实积分</div>
+将 $\mathrm{e}^{\mathrm{i}ax}=\cos ax+\mathrm{i}\sin ax$ 代入上式, 并把两端实部、虚部分开:
+<div class="box-formula">$$\int_{-\infty}^{+\infty}R(x)\cos ax\,\mathrm{d}x+\mathrm{i}\int_{-\infty}^{+\infty}R(x)\sin ax\,\mathrm{d}x=2\pi\mathrm{i}\sum_{k=1}^{K}\operatorname{Res}\left[R(z)\mathrm{e}^{\mathrm{i}az},z_k\right].$$</div>
+即: 右端取<b>实部</b>得 $\int_{-\infty}^{+\infty}R(x)\cos ax\,\mathrm{d}x$, 取<b>虚部</b>得 $\int_{-\infty}^{+\infty}R(x)\sin ax\,\mathrm{d}x$. 特别地, 当 $R(x)$ 为<b>偶函数</b>时, 还能把 $\int_0^{+\infty}$ 写成 $\frac{1}{2}\int_{-\infty}^{+\infty}$.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3</div>
+计算 $\int_0^{+\infty}\frac{x\sin x}{x^2+a^2}\mathrm{d}x\quad(a&gt;0)$.
+<input type="checkbox" id="ans73" class="answer-toggle">
+<label for="ans73" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+考察 $f(z)=\frac{z}{z^2+a^2}\mathrm{e}^{\mathrm{i}z}$. 分母次数 $2$ 比分子次数 $1$ 高一次, 实轴无奇点, 满足约当引理的条件. $f(z)$ 在上半平面只有一级极点 $z=a\mathrm{i}$.
+<div class="box-formula">$$\operatorname{Res}[f(z),a\mathrm{i}]=\lim\limits_{z\to a\mathrm{i}}(z-a\mathrm{i})\dfrac{z}{(z-a\mathrm{i})(z+a\mathrm{i})}\mathrm{e}^{\mathrm{i}z}=\dfrac{a\mathrm{i}}{2a\mathrm{i}}\mathrm{e}^{-a}=\dfrac{\mathrm{e}^{-a}}{2}.$$</div>
+于是
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{x}{x^2+a^2}\mathrm{e}^{\mathrm{i}x}\mathrm{d}x=2\pi\mathrm{i}\cdot\dfrac{\mathrm{e}^{-a}}{2}=\pi\mathrm{i}\,\mathrm{e}^{-a}.$$</div>
+由于 $\frac{x\sin x}{x^2+a^2}$ 关于 $x$ 为偶函数, 且 $\mathrm{i}\mathrm{e}^{-a}$ 的虚部为 $\mathrm{e}^{-a}$, 故
+<div class="box-formula">$$\int_0^{+\infty}\dfrac{x\sin x}{x^2+a^2}\mathrm{d}x=\dfrac{1}{2}\int_{-\infty}^{+\infty}\dfrac{x\sin x}{x^2+a^2}\mathrm{d}x=\dfrac{1}{2}\operatorname{Im}\!\left[\int_{-\infty}^{+\infty}\dfrac{x}{x^2+a^2}\mathrm{e}^{\mathrm{i}x}\mathrm{d}x\right]=\dfrac{\pi}{2}\mathrm{e}^{-a}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 约当引理 —— $\mathrm{e}^{\mathrm{i}az}$ 在半圆上的振荡与衰减 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图在上半平面半圆 $C_R$ 上按 $|\mathrm{e}^{\mathrm{i}az}|=\mathrm{e}^{-ay}$ 给圆弧着色: 越靠近实轴越"亮" (衰减越小), 越往高处越"暗". 拖动 $a$ 滑块, 参数越大, 上半平面的指数衰减越快 —— 圆弧上的贡献被压得越彻底, 这正是约当引理成立的原因. 右图画出衰减曲线 $\mathrm{e}^{-ay}$.</div>
+<div class="fig-caps">
+<div class="fc">半圆 $C_R$ 上 $\left|\mathrm{e}^{\mathrm{i}az}\right|=\mathrm{e}^{-ay}$: 随高度指数衰减</div>
+<div class="fc">衰减曲线 $\mathrm{e}^{-ay}$: 橙色为当前 $a$ 值</div>
+</div>
+<canvas id="cvJordan" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $a$:</label>
+<input type="range" id="jdA" min="0.3" max="3.0" step="0.05" value="1.00">
+<span class="val-badge" id="jdAV">1.00</span>
+</div>
+<div class="readout" id="jdReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 三类积分的统一视角与综合练习 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 三类积分的方法对照表</div>
+
+<table>
+<tr><th>类型</th><th>路径取法</th><th>适用条件</th><th>$C_R$ 上积分的估计</th><th>最终公式</th></tr>
+<tr><td>$\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta$</td><td>单位圆周 $|z|=1$ (无大圆弧)</td><td>$R$ 在单位圆周上无奇点</td><td>整条闭路就是单位圆, 无需补弧</td><td>$2\pi\mathrm{i}\sum\limits_{\text{圆内}}\operatorname{Res}[f,z_k]$</td></tr>
+<tr><td>$\int_{-\infty}^{+\infty}R(x)\mathrm{d}x$</td><td>上半圆周 $C_R$ + 实轴段 $[-R,R]$</td><td>分母至少比分子高<b>两次</b>; 实轴无奇点</td><td>$|R(z)|\le\frac{3}{R^2}$, 故 $\left|\int_{C_R}\right|\le\frac{3\pi}{R}\to0$</td><td>$2\pi\mathrm{i}\sum\limits_{\text{上半平面}}\operatorname{Res}[R,z_k]$</td></tr>
+<tr><td>$\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x$</td><td>上半圆周 $C_R$ + 实轴段 $[-R,R]$</td><td>分母至少比分子高<b>一次</b>; 实轴无奇点; $a&gt;0$</td><td>约当引理: $\lim\limits_{R\to+\infty}\int_{C_R}R(z)\mathrm{e}^{\mathrm{i}az}\mathrm{d}z=0$</td><td>$2\pi\mathrm{i}\sum\limits_{\text{上半平面}}\operatorname{Res}[R\mathrm{e}^{\mathrm{i}az},z_k]$</td></tr>
+</table>
+
+<span style="color:#c62828"><b>三句话读懂这张表:</b></span> 第一类"换变量", 第二类"补大弧 + 用 $ML$ 估计", 第三类"补大弧 + 用振荡衰减". 三者的共同骨架都是 <b>闭路 + 留数</b>, 不同之处只在于<b>凭什么认为大圆弧(或无关部分)上的积分会消失</b>.
+<br><br>
+注意 $\sum\limits_{\text{圆内}}$ 表示只对落在单位圆内的奇点求和, $\sum\limits_{\text{上半平面}}$ 表示只对上半平面内的奇点求和 —— 这是留数法"取哪一半"的关键.
+
+<div class="chart-container">
+<h3>交互: 三类积分的"路径选择器" <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">点击下面的按钮, 在三类积分之间切换, 右侧会画出对应的闭路与极点布局, 并给出适用的估计方式与积分公式. 体会同一条思路在不同条件下的"变形".</div>
+<div class="fig-caps">
+<div class="fc" id="cvPathCap"></div>
+<div class="fc" id="ptNoteCap"></div>
+</div>
+<canvas id="cvPath" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnPath1">① 单位圆周</button>
+<button class="control-btn" id="btnPath2">② 半圆 + ML 估计</button>
+<button class="control-btn" id="btnPath3">③ 半圆 + 约当引理</button>
+</div>
+<div class="readout" id="ptReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.2 综合练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.1 (第一类)</div>
+计算 $\int_0^{2\pi}\frac{\mathrm{d}\theta}{2+\cos\theta}$.
+<input type="checkbox" id="ans61" class="answer-toggle">
+<label for="ans61" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+令 $z=\mathrm{e}^{\mathrm{i}\theta}$, $\cos\theta=\frac{z+z^{-1}}{2}$, $\mathrm{d}\theta=\frac{\mathrm{d}z}{\mathrm{i}z}$, 得
+<div class="box-formula">$$\int_0^{2\pi}\dfrac{\mathrm{d}\theta}{2+\cos\theta}=\oint_{|z|=1}\dfrac{1}{2+\dfrac{z+z^{-1}}{2}}\cdot\dfrac{\mathrm{d}z}{\mathrm{i}z}=\oint_{|z|=1}\dfrac{2\,\mathrm{d}z}{\mathrm{i}\,(z^2+4z+1)}.$$</div>
+被积函数的极点是 $z^2+4z+1=0$ 的根, 即 $z=-2\pm\sqrt{3}$. 因 $0&lt;2-\sqrt{3}&lt;1&lt;2+\sqrt{3}$, 单位圆内只有 $z_0=-2+\sqrt{3}$. 于是
+<div class="box-formula">$$\int_0^{2\pi}\dfrac{\mathrm{d}\theta}{2+\cos\theta}=2\pi\mathrm{i}\cdot\dfrac{2}{\mathrm{i}}\cdot\dfrac{1}{2z_0+4}=\dfrac{2\pi}{\sqrt{3}}.$$</div>
+(也可用公式 $\int_0^{2\pi}\frac{\mathrm{d}\theta}{a+b\cos\theta}=\frac{2\pi}{\sqrt{a^2-b^2}}\ (a&gt;|b|)$, 取 $a=2,\ b=1$ 直接得 $\frac{2\pi}{\sqrt{3}}$.)
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.2 (第二类)</div>
+计算 $\int_{-\infty}^{+\infty}\frac{\mathrm{d}x}{(x^2+1)(x^2+4)}$.
+<input type="checkbox" id="ans62" class="answer-toggle">
+<label for="ans62" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+取 $R(z)=\frac{1}{(z^2+1)(z^2+4)}$, 分母次数 $4$ 比分子次数 $0$ 高两次, 实轴无奇点, 满足条件. 上半平面内的极点是一级极点 $z=\mathrm{i}$ 与 $z=2\mathrm{i}$.
+<div class="box-formula">$$\operatorname{Res}[R(z),\mathrm{i}]=\lim\limits_{z\to\mathrm{i}}\dfrac{1}{(z+\mathrm{i})(z^2+4)}=\dfrac{1}{2\mathrm{i}\cdot3}=\dfrac{1}{6\mathrm{i}},$$</div>
+<div class="box-formula">$$\operatorname{Res}[R(z),2\mathrm{i}]=\lim\limits_{z\to2\mathrm{i}}\dfrac{1}{(z^2+1)(z+2\mathrm{i})}=\dfrac{1}{(-3)\cdot4\mathrm{i}}=-\dfrac{1}{12\mathrm{i}}.$$</div>
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{\mathrm{d}x}{(x^2+1)(x^2+4)}=2\pi\mathrm{i}\left(\dfrac{1}{6\mathrm{i}}-\dfrac{1}{12\mathrm{i}}\right)=2\pi\mathrm{i}\cdot\dfrac{1}{12\mathrm{i}}=\dfrac{\pi}{6}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.3 (第三类)</div>
+计算 $\int_{-\infty}^{+\infty}\frac{\cos x}{x^2+1}\mathrm{d}x$.
+<input type="checkbox" id="ans63" class="answer-toggle">
+<label for="ans63" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+考察 $\int_{-\infty}^{+\infty}\frac{\mathrm{e}^{\mathrm{i}x}}{x^2+1}\mathrm{d}x$. 取 $R(z)=\frac{1}{z^2+1}$, 分母次数 $2$ 比分子次数 $0$ 高两次 (当然也满足"高一次"), 实轴无奇点, $a=1&gt;0$, 约当引理可用. 上半平面内一级极点 $z=\mathrm{i}$.
+<div class="box-formula">$$\operatorname{Res}\left[\dfrac{\mathrm{e}^{\mathrm{i}z}}{z^2+1},\mathrm{i}\right]=\lim\limits_{z\to\mathrm{i}}(z-\mathrm{i})\dfrac{\mathrm{e}^{\mathrm{i}z}}{(z-\mathrm{i})(z+\mathrm{i})}=\dfrac{\mathrm{e}^{-1}}{2\mathrm{i}}.$$</div>
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{\mathrm{e}^{\mathrm{i}x}}{x^2+1}\mathrm{d}x=2\pi\mathrm{i}\cdot\dfrac{\mathrm{e}^{-1}}{2\mathrm{i}}=\dfrac{\pi}{\mathrm{e}}.$$</div>
+取实部即得
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{\cos x}{x^2+1}\mathrm{d}x=\operatorname{Re}\!\left[\dfrac{\pi}{\mathrm{e}}\right]=\dfrac{\pi}{\mathrm{e}}.$$</div>
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>三类实积分</b> 各配一条闭路 —— 第一类化为单位圆周, 第二类补半圆并用 $ML$ 估计, 第三类补半圆并用约当引理. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>积分类型</th><th>适用条件</th><th>大圆弧是否需估计</th><th>结果</th></tr>
+<tr><td>$\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta$</td><td>$R$ 在 $|z|=1$ 上无奇点</td><td>否(直接在单位圆周上积分)</td><td>$2\pi\mathrm{i}\sum\limits_{\text{圆内}}\operatorname{Res}[f,z_k]$</td></tr>
+<tr><td>$\int_{-\infty}^{+\infty}R(x)\mathrm{d}x$</td><td>分母比分子高 $\ge2$ 次; 实轴无奇点</td><td>是: $\left|\int_{C_R}R(z)\mathrm{d}z\right|\le\frac{3\pi}{R}\to0$</td><td>$2\pi\mathrm{i}\sum\limits_{\text{上半平面}}\operatorname{Res}[R,z_k]$</td></tr>
+<tr><td>$\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x$</td><td>分母比分子高 $\ge1$ 次; 实轴无奇点; $a&gt;0$</td><td>是: 由约当引理 $\lim\limits_{R\to+\infty}\int_{C_R}R\mathrm{e}^{\mathrm{i}az}\mathrm{d}z=0$</td><td>$2\pi\mathrm{i}\sum\limits_{\text{上半平面}}\operatorname{Res}[R\mathrm{e}^{\mathrm{i}az},z_k]$</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 计算 $\int_0^{2\pi}R(\cos\theta,\sin\theta)\mathrm{d}\theta$ 时, 应作的变换是?</div>
+<label class="quiz-opt" data-ok="1">A. 令 $z=\mathrm{e}^{\mathrm{i}\theta}$, 则 $\mathrm{d}\theta=\frac{\mathrm{d}z}{\mathrm{i}z}$</label>
+<label class="quiz-opt">B. 令 $z=\mathrm{e}^{-\mathrm{i}\theta}$, 则 $\mathrm{d}\theta=\mathrm{i}z\,\mathrm{d}z$</label>
+<label class="quiz-opt">C. 令 $z=\cos\theta$, 则 $\mathrm{d}\theta=\frac{\mathrm{d}z}{\sqrt{1-z^2}}$</label>
+<label class="quiz-opt">D. 令 $z=\tan\frac{\theta}{2}$, 且积分路径为单位圆</label>
+<div class="quiz-explain"><b>解析:</b> 由 $z=\mathrm{e}^{\mathrm{i}\theta}$ 得 $\mathrm{d}z=\mathrm{i}z\,\mathrm{d}\theta$, 故 $\mathrm{d}\theta=\frac{\mathrm{d}z}{\mathrm{i}z}$; 同时 $\cos\theta=\frac{z+z^{-1}}{2}$, $\sin\theta=\frac{z-z^{-1}}{2\mathrm{i}}$. 当 $\theta$ 从 $0$ 到 $2\pi$ 时 $z$ 沿 $|z|=1$ 正向绕一周.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $\int_0^{2\pi}\frac{\mathrm{d}\theta}{2+\cos\theta}$ 的值为?</div>
+<label class="quiz-opt">A. $\frac{\pi}{\sqrt{3}}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{2\pi}{\sqrt{3}}$</label>
+<label class="quiz-opt">C. $\pi$</label>
+<label class="quiz-opt">D. $2\pi$</label>
+<div class="quiz-explain"><b>解析:</b> 由公式 $\int_0^{2\pi}\frac{\mathrm{d}\theta}{a+b\cos\theta}=\frac{2\pi}{\sqrt{a^2-b^2}}\ (a&gt;|b|)$ 取 $a=2,\ b=1$, 得 $\frac{2\pi}{\sqrt{2^2-1^2}}=\frac{2\pi}{\sqrt{3}}$. 也可化为单位圆周积分后计算 $z^2+4z+1=0$ 的圆内根 $z_0=-2+\sqrt3$ 的留数得到同样结果.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 用留数法计算 $\int_{-\infty}^{+\infty}R(x)\mathrm{d}x$ 时, $R(x)$ 的分母次数至少要比分子次数高几次?</div>
+<label class="quiz-opt">A. 一次</label>
+<label class="quiz-opt" data-ok="1">B. 两次</label>
+<label class="quiz-opt">C. 三次</label>
+<label class="quiz-opt">D. 无要求</label>
+<div class="quiz-explain"><b>解析:</b> 第二类积分要求 $m-n\ge2$ (分母至少高两次). 只有这样才能得到 $|R(z)|\le\frac{3}{|z|^2}$, 从而 $\left|\int_{C_R}R(z)\mathrm{d}z\right|\le\frac{3\pi}{R}\to0$. 若只高一次, 则需借助约当引理(第三类).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. $\int_{-\infty}^{+\infty}\frac{\mathrm{d}x}{x^2+1}$ 的值为?</div>
+<label class="quiz-opt">A. $\frac{\pi}{2}$</label>
+<label class="quiz-opt" data-ok="1">B. $\pi$</label>
+<label class="quiz-opt">C. $2\pi$</label>
+<label class="quiz-opt">D. $\frac{\pi}{4}$</label>
+<div class="quiz-explain"><b>解析:</b> 上半平面内一级极点 $z=\mathrm{i}$, $\operatorname{Res}\left[\frac{1}{z^2+1},\mathrm{i}\right]=\frac{1}{2\mathrm{i}}$, 故积分 $=2\pi\mathrm{i}\cdot\frac{1}{2\mathrm{i}}=\pi$. 分母次数 $2$ 比分子次数 $0$ 高两次, 满足第二类条件.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 当 $\int_{-\infty}^{+\infty}R(x)\mathrm{d}x=2\pi\mathrm{i}\sum\operatorname{Res}[R(z),z_k]$ 时, 求和范围是?</div>
+<label class="quiz-opt">A. 单位圆周 $|z|=1$ 内的奇点</label>
+<label class="quiz-opt" data-ok="1">B. 上半平面内的全部极点</label>
+<label class="quiz-opt">C. 下半平面内的全部极点</label>
+<label class="quiz-opt">D. 整个复平面内的全部极点</label>
+<div class="quiz-explain"><b>解析:</b> 第二类积分取上半平面半圆闭路, 故只对<b>上半平面</b>内的极点 $z_k$ 求和. 单位圆周内求和是<b>第一类</b>的特征; 若取下半平面则对应的绕行方向与符号要另行处理.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 在第二类积分的估计中, 当 $|z|=R$ 充分大时可得 $\left|\int_{C_R}R(z)\mathrm{d}z\right|\le$ ?</div>
+<label class="quiz-opt">A. $\frac{3}{R}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{3\pi}{R}$</label>
+<label class="quiz-opt">C. $\pi R$</label>
+<label class="quiz-opt">D. $3\pi R$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $|R(z)|\le\frac{3}{|z|^2}=\frac{3}{R^2}$ 及弧长 $L=\pi R$, 用 $ML$ 估计得 $\left|\int_{C_R}R(z)\mathrm{d}z\right|\le\frac{3}{R^2}\cdot\pi R=\frac{3\pi}{R}\to0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 关于约当引理 $\lim\limits_{R\to+\infty}\int_{C_R}R(z)\mathrm{e}^{\mathrm{i}az}\mathrm{d}z=0$, 下列说法正确的是?</div>
+<label class="quiz-opt">A. 要求分母次数至少比分子高两次, 且 $a&gt;0$</label>
+<label class="quiz-opt" data-ok="1">B. 要求分母次数至少比分子高一次, 且 $a&gt;0$</label>
+<label class="quiz-opt">C. 要求 $R(z)$ 在实轴上有奇点</label>
+<label class="quiz-opt">D. 对一切实数 $a$ 都成立</label>
+<div class="quiz-explain"><b>解析:</b> 约当引理的条件正是"分母至少比分子高一次", 且 $a&gt;0$、实轴无奇点. 关键利用上半平面 $|\mathrm{e}^{\mathrm{i}az}|=\mathrm{e}^{-ay}\le1$ 的指数衰减, 把"高两次"放宽为"高一次".</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 由 $\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x=2\pi\mathrm{i}\sum\operatorname{Res}[R(z)\mathrm{e}^{\mathrm{i}az},z_k]$ 分离实虚部, 则 $\int_{-\infty}^{+\infty}R(x)\sin ax\,\mathrm{d}x$ 等于右端的?</div>
+<label class="quiz-opt">A. 实部</label>
+<label class="quiz-opt" data-ok="1">B. 虚部</label>
+<label class="quiz-opt">C. 模</label>
+<label class="quiz-opt">D. 辐角</label>
+<div class="quiz-explain"><b>解析:</b> 因 $\mathrm{e}^{\mathrm{i}ax}=\cos ax+\mathrm{i}\sin ax$, 故取实部得 $\int R(x)\cos ax\,\mathrm{d}x$, 取虚部得 $\int R(x)\sin ax\,\mathrm{d}x$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. $\int_{-\infty}^{+\infty}\frac{\cos x}{x^2+1}\mathrm{d}x$ 的值为?</div>
+<label class="quiz-opt">A. $\pi\mathrm{e}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{\pi}{\mathrm{e}}$</label>
+<label class="quiz-opt">C. $\frac{\pi}{2}\mathrm{e}$</label>
+<label class="quiz-opt">D. $\pi$</label>
+<div class="quiz-explain"><b>解析:</b> $\int_{-\infty}^{+\infty}\frac{\mathrm{e}^{\mathrm{i}x}}{x^2+1}\mathrm{d}x=2\pi\mathrm{i}\cdot\operatorname{Res}\left[\frac{\mathrm{e}^{\mathrm{i}z}}{z^2+1},\mathrm{i}\right]=2\pi\mathrm{i}\cdot\frac{\mathrm{e}^{-1}}{2\mathrm{i}}=\frac{\pi}{\mathrm{e}}$. 取实部即得原积分 $=\frac{\pi}{\mathrm{e}}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 例 3 的结果 $\int_0^{+\infty}\frac{x\sin x}{x^2+a^2}\mathrm{d}x\ (a&gt;0)$ 等于?</div>
+<label class="quiz-opt">A. $\frac{\pi}{2}\mathrm{e}^{a}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{\pi}{2}\mathrm{e}^{-a}$</label>
+<label class="quiz-opt">C. $\pi\mathrm{e}^{-a}$</label>
+<label class="quiz-opt">D. $\frac{\pi}{a}$</label>
+<div class="quiz-explain"><b>解析:</b> $f(z)=\frac{z}{z^2+a^2}\mathrm{e}^{\mathrm{i}z}$ 在上半平面的一级极点 $z=a\mathrm{i}$ 处留数为 $\frac{\mathrm{e}^{-a}}{2}$, 故 $\int_{-\infty}^{+\infty}\frac{x}{x^2+a^2}\mathrm{e}^{\mathrm{i}x}\mathrm{d}x=\pi\mathrm{i}\mathrm{e}^{-a}$. 被积函数偶, 取一半的虚部得 $\frac{\pi}{2}\mathrm{e}^{-a}$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位法国数学家, 让"多余的围道"在路上就消失了</h3>
+<div class="hero-sub">他写下了"简单闭曲线把平面分成内外两半"这一条看似显然、证明却极为困难的定理; 也为复分析留下一件工具 —— 让大圆弧上的积分在 $\mathrm{e}^{\mathrm{i}az}$ 的振荡中悄然退场.</div>
+<div class="hero-quote">
+数学里最难的不是"算出结果", 而是"证明可以不算": 把一大段贡献合理地扔掉, 剩下的才是问题的本质.<br>
+<b>本节里让 $C_R$ 上的积分趋于 $0$ 的每一步估计, 正是这种"有据可依的减法".</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 约当: 让围道积分"退场"的人</div>
+
+<div class="person-card">
+<div class="p-av">约</div>
+<div class="p-main">
+<div class="p-name">卡米耶·约当 (Camille Jordan, 1838—1922)</div>
+<div class="p-meta">法国数学家 · 约当引理与约当曲线定理的提出者 · 《置换论》作者 · 曾任法国数学会主席</div>
+<p>在复分析里, 他的名字和一条引理绑在一起: 只要被积函数带上了 $\mathrm{e}^{\mathrm{i}az}\ (a&gt;0)$, 上半圆上的积分就会自动趋于 $0$. 这条"约当引理", 是本节第三类积分得以成立的技术支柱.</p>
+<p>但在更广的数学史上, 约当的分量远不止于此. 他是十九世纪后期法国分析学派的关键人物之一, 在群论、代数、拓扑与测度论上都留下了以他命名的概念 —— <b>约当标准型</b>、<b>约当曲线定理</b>、<b>约当测度</b>, 都与这个名字相连.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 工程师出身的数学家</h5>
+<p>1838 年, 约当出生于法国里昂. 他进入著名的<b>巴黎综合理工学院</b> (École polytechnique) 学习, 毕业后一度从事工程工作, 后来才把全部精力转向数学研究.</p>
+<p>这条路在当时的法国并不罕见: 综合理工学院培养的许多杰出人物, 都是从工程或公职转向科学的. 约当也不例外 —— 他先做工程师, 再回到讲台与研究, 最终成为巴黎综合理工学院与法兰西公学院的教授.</p>
+<p><b>工程训练给了他一种务实的气质: 面对一个积分, 先想的是"哪一部分可以不要", 而不是"怎样把每一部分都算出来".</b> 这正是约当引理的思想底色.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>约当曲线定理: "显然"背后的百年难题</h5>
+<p>一条简单闭曲线 (自身不相交的封闭曲线) 把平面分成<b>内部</b>和<b>外部</b>两部分 —— 这句话连小孩子都能接受. 但要在数学上严格证明它, 却异常困难, 被称为<b>约当曲线定理</b>.</p>
+<p>约当在 1887 年给出了这条定理的证明 (尽管当时的证明被认为不够完备, 后来由他人补正). 它的意义在于: 它把"闭路内部"这一我们习以为常的说法, 放到了严格的逻辑地基上.</p>
+<p>本节里我们反复说"把极点圈在闭路 $C$ 内" —— 这句"内"字之所以能放心使用, 正是因为有这条定理作担保. 拓扑直观看似免费, 其实并不免费.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>约当引理: 把"高两次"放宽为"高一次"</h5>
+<p>在复分析中, 计算 $\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x$ 时, 若只要求分母次数比分子高一次, 那么单纯用 $ML$ 估计是<b>不够</b>的 —— 因为 $\int_{C_R}|R(z)\mathrm{d}z|$ 的量级只到 $1/R$, 乘以弧长 $\pi R$ 后未必趋于 $0$.</p>
+<p>约当引理的关键在于: 把圆弧分成靠近实轴与远离实轴两段. 靠近实轴的一段很短, 贡献可控; 远离实轴的一段上, $\mathrm{e}^{\mathrm{i}az}$ 的模 $\mathrm{e}^{-ay}$ <b>指数衰减</b>, 迅速趋近于 $0$. 两段合起来, 整段圆弧的贡献就被压没了.</p>
+<p>这就是"用振荡换取衰减"的智慧: <b>不必把每一项都算清楚, 只要证明多余的项确实可以忽略.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>《置换论》与更广阔的地图</h5>
+<p>1870 年, 约当出版了巨著<b>《置换论与代数方程》</b> (Traité des substitutions et des équations algébriques). 这部书系统地整理并传播了伽罗瓦的群论思想, 使一度被忽视的伽罗瓦理论, 成为后来代数的主流语言.</p>
+<p>此外, 他在代数中给出了矩阵"相似标准形"的完整理论, 今天称为<b>约当标准型</b>; 在分析中提出了<b>约当测度</b>, 为更一般的测度论铺路; 他还长期主编《纯粹与应用数学杂志》, 深刻影响了法国数学的走向.</p>
+<p>1922 年, 约当在巴黎去世. 他留下的不是一个孤立的公式, 而是一整片相互连通的概念地图 —— <b>这提醒我们: 真正有分量的工作, 往往同时在好几个方向上"发光".</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说约当讲课条理极严、符号极密, 常常让听众一时跟不上; 但正是这种"把每一步都写清楚"的习惯, 使他的著作成为后来者可靠的教科书. 有人评价说, 约当的工作"像一张细密的网" —— 单个结点未必惊艳, 但连起来就能兜住整片理论. 本节里那条把圆弧"分成两段、分别估计"的引理, 就是这张网上一个朴素却关键的结点.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 约当式的信念</div>
+在他那里, 计算的核心从来不是"算很多", 而是"知道哪些可以不算":
+<br>
+"<em>如果能证明某一部分的贡献终将消失, 那么这一部分就无需计算.</em>"
+<br>
+据说他面对一条复杂的围道时, 首先追问的是:
+<br>
+"<em>这一段上, 我的函数到底在做什么?</em>"
+<span class="iv-sig">—— 这种先估计、再计算的次序, 正是本节"补大圆弧 + 估计其贡献 → 0"这一整套做法的精神来源.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">转化与化归</div>
+<h4>把一条实积分,"搬"成一条闭路积分</h4>
+<p>第一类积分本是区间 $[0,2\pi]$ 上的实积分, 一旦令 $z=\mathrm{e}^{\mathrm{i}\theta}$, 它就变成了单位圆周上的闭路积分 —— 陌生的实积分, 变成了熟悉的留数问题.</p>
+<p>化归的力量在于: <b>问题没有变简单, 只是换到了一个我们更有办法的地方.</b> 数学中的许多突破, 都是这种"换个场地再打".</p>
+<div class="pc-math">$\int_0^{2\pi}(\cdots)\mathrm{d}\theta\ \longleftrightarrow\ \oint_{|z|=1}f(z)\mathrm{d}z$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>"高一次"与"高两次", 只差一次, 方法却换了一整套</h4>
+<p>第二类要求分母比分子<b>高两次</b>, 第三类只要求<b>高一次</b>. 仅仅相差一次的衰减速率, 就决定了: 前者用 $ML$ 估计即可, 后者必须请出约当引理.</p>
+<p>这正是"量变引起质变"的又一样本: 变化的是幂次这个<b>数量指标</b>, 改变的是<b>可用的整套工具</b>.</p>
+<div class="pc-math">$m-n\ge2$: $ML$ 估计; $\quad m-n\ge1$: 约当引理</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>振荡与衰减, 在同一个因子里合二为一</h4>
+<p>$\mathrm{e}^{\mathrm{i}az}$ 在实轴上表现为纯<b>振荡</b> ($\cos ax+\mathrm{i}\sin ax$), 在上半平面却表现为纯<b>衰减</b> ($\mathrm{e}^{-ay}$). 一个因子, 两种面貌, 恰好互为补充.</p>
+<p>正是这"一体两面", 让第三类积分能同时处理 $\cos ax$ 与 $\sin ax$ 两种实积分 —— <b>既得振荡之利, 又用衰减之力.</b></p>
+<div class="pc-math">$|\mathrm{e}^{\mathrm{i}az}|=\mathrm{e}^{-ay}$: 实轴振荡 $\leftrightarrow$ 上半平面衰减</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>三类积分, 其实是同一条思路</h4>
+<p>把三类积分并列来看: 都是"取一条闭路 + 用留数定理 + 处理多余部分". 第一类没有多余部分 (闭路就是单位圆), 第二、三类各自补上一段大圆弧并证明它趋于 $0$.</p>
+<p>抓住这条共同骨架, 三类积分就不再是三块互不相关的知识, 而是<b>同一方法的三种变体</b>.</p>
+<div class="pc-math">闭路 + 留数 + (多余部分 $\to0$) = 留数法</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">极限思想</div>
+<h4>"退场"是一种被证明过的减法</h4>
+<p>$\lim\limits_{R\to+\infty}\int_{C_R}(\cdots)=0$ 这句话的意思, 是"这部分的贡献最终可以不要". 但"可以不要"不是凭感觉删掉的, 而是被严格<b>估计</b>出来的.</p>
+<p>先做减法、再做除法, 是高效计算的通则: 在动笔之前, 先弄清哪些项<b>注定无关紧要</b>.</p>
+<div class="pc-math">$\left|\int_{C_R}R\right|\le\frac{3\pi}{R}\to0$: 有据可依地"扔掉"</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>路径的取法, 由奇点的分布决定</h4>
+<p>为什么第二、三类都取<b>上半平面</b>半圆? 因为那里恰好装着我们要的那一半极点. 路径不是随手画的, 而是<b>由被积函数的整体结构反推出来</b>的.</p>
+<p>先看全局 (极点都在哪), 再定局部 (路径怎么走) —— 这种"先整体后局部"的顺序, 是从本节到整章都通行的思路.</p>
+<div class="pc-math">上半平面极点 $\Rightarrow$ 取上半平面半圆闭路</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "割圆"与"招差"中的极限思想</div>
+中国古代数学里, 早已孕育着朴素的<b>极限</b>思想. 三国时期的<b>刘徽</b>用"<b>割圆术</b>"求圆周率: 在圆内作正多边形, 边数不断加倍, "割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣" —— 这段话说的正是"用可算的逼近不可算的".
+<br><br>
+元代<b>朱世杰</b>在"<b>招差术</b>"中, 用逐阶差分去逼近复杂的函数关系; <b>沈括</b>的"<b>隙积术</b>"则用有限求和逼近连续体的体积. 它们共同的精神是: <b>把一段"办不到"的过程, 化为一列"办得到"的近似.</b>
+<br><br>
+本节的"大圆弧退场"正是同一精神在现代分析里的体现: 我们不去硬算 $C_R$ 上那个复杂的积分, 而是估计它一定趋于 $0$ —— <b>用"足够小"代替"必须算出来"</b>. 从割圆到约当引理, 变的是对象, 不变的是"以逼近驭无穷"的思路.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从留数计算到中国工程与数学</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论与积分表示理论中作出奠基性工作. 复积分与留数思想在多元、多复变情形下的推广, 正是沿着"闭合积分 = 内部奇点之和"这条线索向前延伸的.</li>
+<li><b>陈建功</b> (1893—1971): 我国函数论的主要奠基人之一, 深耕三角级数与函数逼近. 他研究的"用简单对象逼近复杂对象", 与本节"用大圆弧估计逼近无穷区间积分"在方法论上同源.</li>
+<li><b>龚昇</b> (1930—2011): 在多复变函数论、奇异积分与调和分析方面成果卓著, 长期致力于把深刻的现代分析成果写成人人能懂的教材 —— <b>把复杂的数学讲清楚, 本身就是一项艰巨的创造.</b></li>
+<li><b>面向国家需求</b>: 雷达与通信中的信号谱分析、结构力学中的积分方程、电磁场计算中的傅里叶积分, 都要频繁处理 $\int_{-\infty}^{+\infty}R(x)\mathrm{e}^{\mathrm{i}ax}\mathrm{d}x$ 这类积分. 留数法与约当引理, 是这些工程算法背后的共同数学基础.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: "取主舍次", 是一种高级的清醒</div>
+"留数在定积分中的应用"这一节, 教给我们的不只是三个公式, 更是一种<b>取舍的方法</b>: 面对一个庞大的计算对象, 先判断什么必须算、什么可以扔 —— 第二、三类积分之所以能算出来, 恰恰因为我们证明了"大圆弧上的那一段可以不要".
+<br><br>
+这种"取主舍次"的能力, 是数学的, 也可能是人生的. <b>不是所有的量都要去算, 不是所有的事都值得去争; 看清主次, 集中力量于真正重要的那一部分, 往往才是解决问题的关键.</b>
+<br><br>
+从刘徽"割之弥少", 到约当让围道"退场", 再到今日中国工程师用留数法处理信号与场的问题 —— 这条路上贯穿着同一个信念: <b>真正的聪明, 不是把所有事都做完, 而是知道哪些事不必做.</b>
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"如果能证明某一部分的贡献终将消失, 那么这一部分就无需计算."<span class="q-src">—— 约当引理蕴含的计算哲学</span></div>
+<div class="quote-item">"数学里最难的不是算出结果, 而是证明可以不算."<span class="q-src">—— 关于本节大圆弧估计的一种概括</span></div>
+<div class="quote-item">"把陌生的实积分, 变成熟悉的闭路积分 —— 这就是化归的力量."<span class="q-src">—— 关于第一类积分思想的启示</span></div>
+<div class="quote-item">"割之弥细, 所失弥少; 割之又割, 以至于不可割, 则与圆合体而无所失矣."<span class="q-src">—— 刘徽《九章算术注·割圆术》</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"把复杂的东西讲简单, 是一件不容易的事."<span class="q-src">—— 龚昇数学教育工作的一种写照</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 约当是一位工程师出身的法国数学家, 他写下了"简单闭曲线把平面分成内外"这条看似显然、证明却极难的曲线定理, 也留下了约当引理 —— 在上半平面, 因为 $|\mathrm{e}^{\mathrm{i}az}|=\mathrm{e}^{-ay}$ 的指数衰减, 大圆弧上的积分会静静退场. 正是这一步"有据可依的减法", 把第三类积分的条件从"高两次"放宽到了"高一次".<br>
+<b>一个道理:</b> 三类积分表面上各不相同, 骨子里却是同一条思路 —— <b>取闭路、用留数、让多余的部分退场</b>. 第一类靠换变量把实积分搬上单位圆周, 第二类靠 $ML$ 估计证明大弧贡献 $\le\frac{3\pi}{R}$, 第三类靠振荡带来的衰减证明大弧贡献趋于 $0$. 学会先判断"哪一部分可以不要", 比埋头把所有部分都算一遍, 往往更能抓住问题的本质.<br>
+<b>一份责任:</b> 从刘徽割圆"割之弥少"的逼近思想, 到陈建功、华罗庚、龚昇在现代分析上的接力, 中国数学始终贯穿着"把复杂问题化简、把深刻道理讲清"的传统. 今天我们学习留数在定积分中的应用, 既是在掌握信号谱分析、电磁场计算等领域常用的数学工具, 也是在承接这份<b>于纷繁中见主次、在取舍中求真知</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第五章第三节 留数在定积分计算中的应用 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tsub(ctx,x,y,main,sub,tail,color,font,subFont){
+  ctx.font=font; ctx.fillStyle=color; ctx.fillText(main,x,y);
+  var w1=ctx.measureText(main).width;
+  ctx.font=subFont||font.replace(/([\d.]+)px/,function(_,p){ return (parseFloat(p)*0.72)+'px'; });
+  ctx.fillText(sub,x+w1+0.5,y+3);
+  if(tail){ var w2=ctx.measureText(sub).width; ctx.font=font; ctx.fillText(tail,x+w1+w2+1.5,y); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 单位圆周变换 z = e^{iθ} =================
+module('cvTheta',function(cv){
+  var theta=1.05, p=0.4;
+  function g(th,pp){ return Math.cos(2*th)/(1-2*pp*Math.cos(th)+pp*pp); }
+  function LF(w,h){ return mapperEq((w-40)/2,h-72,-1.75,1.75,-1.6,1.6); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-40)/2, H=h-72;
+    // ---- 左: z 平面单位圆周 ----
+    ctx.save(); ctx.translate(18,44);
+    var m=LF(w,h);
+    grid(ctx,halfW,H,m,0.5); axes(ctx,halfW,H,m,'Re','Im');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),m.s,0,TAU); ctx.stroke();
+    // 极点 z=0 (二级) 与 z=p (一级)
+    dot(ctx,m.px(0),m.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m.px(0)-30,m.py(0)+22,'0 (二级)','#c62828','bold 11px Segoe UI');
+    dot(ctx,m.px(p),m.py(0),5,'#e65100','#fff');
+    tlabel(ctx,m.px(p)-30,m.py(0)-11,'p (一级)','#e65100','bold 11px Segoe UI');
+    var op=1/p;
+    if(op<=1.7){
+      dot(ctx,m.px(op),m.py(0),5,'#9e9e9e','#fff');
+      tlabel(ctx,m.px(op)-34,m.py(0)+22,'1/p (圆外)','#757575','bold 11px Segoe UI');
+    } else {
+      tlabel(ctx,halfW-96,m.py(0)-11,'1/p 落在圆外','#757575','bold 11px Segoe UI');
+    }
+    // 当前点 z = e^{iθ}
+    var zx=m.px(Math.cos(theta)), zy=m.py(Math.sin(theta));
+    arrow(ctx,m.px(0),m.py(0),zx,zy,'#2e7d32',2,9);
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),Math.min(m.s*0.40,46),0,-theta,true);
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=1.6; ctx.stroke();
+    tlabel(ctx,m.px(0)+26,m.py(0)-30,'θ','#2e7d32','bold 12px Georgia');
+    dot(ctx,zx,zy,6,'#2e7d32','#fff');
+    tlabel(ctx,m.px(1)-30,m.py(0)-8,'|z| = 1','#1565c0','bold 11px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,18,26,'z 平面: 单位圆周 |z| = 1 (θ: 0 → 2π)','#37474f','bold 12px Segoe UI');
+    // ---- 右: 被积函数曲线 ----
+    var sx=halfW+40;
+    ctx.save(); ctx.translate(sx,44);
+    var vmin=1e9, vmax=-1e9, i, th, val;
+    for(i=0;i<=200;i++){ th=TAU*i/200; val=g(th,p); if(val<vmin)vmin=val; if(val>vmax)vmax=val; }
+    vmin=Math.min(vmin,-0.5); vmax=Math.max(vmax,0.5);
+    var pad=(vmax-vmin)*0.18; vmin-=pad; vmax+=pad;
+    var m2=mapperEq(halfW,H,0,TAU,vmin,vmax);
+    grid(ctx,halfW,H,m2,(vmax-vmin)/4);
+    axes(ctx,halfW,H,m2,'θ','R');
+    ctx.strokeStyle='#1976d2'; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    for(i=0;i<=300;i++){ var t2=TAU*i/300; var vv=g(t2,p); var px=m2.px(t2),py=m2.py(vv); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke();
+    var cur=g(theta,p);
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=1.6; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(m2.px(theta),m2.py(vmin)); ctx.lineTo(m2.px(theta),m2.py(vmax)); ctx.stroke(); ctx.setLineDash([]);
+    dot(ctx,m2.px(theta),m2.py(cur),5,'#e65100','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'例 3.1 被积函数随 θ 的变化','#37474f','bold 12px Segoe UI');
+    setRO('thReadout',
+      '当前 $z=\\mathrm{e}^{\\mathrm{i}\\theta}$: $\\theta='+hl(fmt(theta))+'$, $\\cos\\theta='+fmt(Math.cos(theta))+'$, $\\sin\\theta='+fmt(Math.sin(theta))+'$; 被积函数值 $\\frac{\\cos2\\theta}{1-2p\\cos\\theta+p^2}='+hl2(fmt(cur))+'$.<br>'+
+      '参数 $p='+hl(fmt(p))+'$: 极点 $0$ (二级) 与 $p='+fmt(p)+'$ (一级) 落在单位圆内, $1/p='+fmt(op)+'$ 落在单位圆外.<br>'+
+      '故 $\\displaystyle I=\\oint_{|z|=1}f(z)\\mathrm{d}z=2\\pi\\mathrm{i}\\sum\\limits_{\\text{圆内}}\\operatorname{Res}[f,z_k]$, 只对 $0$ 与 $p$ 求和, 得 $\\frac{2\\pi p^2}{1-p^2}='+hl2(fmt(2*Math.PI*p*p/(1-p*p)))+'$.');
+  }
+  makeDraggable(cv,function(mx,my,w,h){
+    var m=LF(w,h);
+    var dx=(mx-18)-m.px(0), dy=(my-44)-m.py(0);
+    theta=(Math.atan2(-dy,dx)+TAU)%TAU;
+    setSlider('thTheta',theta.toFixed(2)); badge('thTV',fmt(theta)); draw();
+  });
+  bindSlider('thTheta',function(v){ theta=v; badge('thTV',fmt(v)); draw(); });
+  bindSlider('thP',function(v){ p=v; badge('thPV',fmt(v)); draw(); });
+  badge('thTV',fmt(theta)); badge('thPV',fmt(p));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 上半平面半圆闭路与 ML 估计 =================
+module('cvHalf',function(cv){
+  var R=2.4, a=1, b=0.7;
+  function LH(w,h){ return mapperEq((w-40)/2,h-72,-3.3,3.3,-0.5,3.5); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-40)/2, H=h-72;
+    // ---- 左: 闭路 C 与极点 ----
+    ctx.save(); ctx.translate(18,44);
+    var m=LH(w,h);
+    grid(ctx,halfW,H,m,0.5); axes(ctx,halfW,H,m,'Re','Im');
+    // 上半圆周 C_R (canvas 中自 π 到 2π 经过顶部)
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath(); ctx.arc(m.px(0),m.py(0),R*m.s,Math.PI,TAU,false); ctx.stroke();
+    // 实轴段 [-R,R]
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(m.px(-R),m.py(0)); ctx.lineTo(m.px(R),m.py(0)); ctx.stroke();
+    arrow(ctx,m.px(-R),m.py(0),m.px(R),m.py(0),'#c62828',3,11);
+    // 极点 ai 与 bi
+    dot(ctx,m.px(0),m.py(a),5,'#2e7d32','#fff');
+    tlabel(ctx,m.px(0)+9,m.py(a)+4,'ai','#2e7d32','bold 12px Georgia');
+    dot(ctx,m.px(0),m.py(b),5,'#2e7d32','#fff');
+    tlabel(ctx,m.px(0)+9,m.py(b)+4,'bi','#2e7d32','bold 12px Georgia');
+    tsub(ctx,m.px(0)+R*m.s*0.7,m.py(R*0.72),'C','R','','#1565c0','bold 13px Georgia');
+    tlabel(ctx,m.px(R)+6,m.py(0)+16,'R','#c62828','italic 12px Georgia');
+    tlabel(ctx,m.px(-R)-14,m.py(0)+16,'−R','#c62828','italic 12px Georgia');
+    ctx.restore();
+    tlabel(ctx,18,26,'闭路 C = 实轴段 [−R, R] + 上半圆周 (蓝弧)','#37474f','bold 12px Segoe UI');
+    // ---- 右: 3π/R 衰减曲线 ----
+    var sx=halfW+40;
+    ctx.save(); ctx.translate(sx,44);
+    var m2=mapperEq(halfW,H,0,6,0,4.0);
+    grid(ctx,halfW,H,m2,1);
+    axes(ctx,halfW,H,m2,'R','估计值');
+    ctx.strokeStyle='#1976d2'; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    for(var i=1;i<=120;i++){
+      var rr=6*i/120; var bd=3*Math.PI/rr;
+      if(bd>4.0) continue;
+      var px=m2.px(rr),py=m2.py(bd);
+      if(i===1) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    var bdR=3*Math.PI/R;
+    if(bdR<=4.0){
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=1.6; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(m2.px(R),m2.py(0)); ctx.lineTo(m2.px(R),m2.py(bdR)); ctx.stroke(); ctx.setLineDash([]);
+      dot(ctx,m2.px(R),m2.py(bdR),5,'#e65100','#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'上界 3π/R 随 R 的衰减 (R 越大, 圆弧贡献越小)','#37474f','bold 12px Segoe UI');
+    var inside=(R>Math.max(a,b));
+    setRO('hpReadout',
+      '半圆半径 $R='+hl(fmt(R))+'$: 闭路 $C$ 由实轴段 $[-R,R]$ 与上半圆周 $C_R$ 组成.<br>'+
+      '上半平面极点 $z_1='+fmt(a)+'\\mathrm{i}$ 与 $z_2='+fmt(b)+'\\mathrm{i}$ '+(inside?'<b>已</b>':'<b>尚未</b>')+'全部落在 $C$ 内.<br>'+
+      '大圆弧估计: $|R(z)|\\le\\frac{3}{|z|^2}=\\frac{3}{R^2}$, 弧长 $L=\\pi R$ ⇒ $\\left|\\int_{C_R}R(z)\\mathrm{d}z\\right|\\le\\frac{3\\pi}{R}='+hl2(fmt(3*Math.PI/R))+'\\to0$.<br>'+
+      '故 $\\int_{-\\infty}^{+\\infty}\\frac{x^2\\mathrm{d}x}{(x^2+a^2)(x^2+b^2)}=2\\pi\\mathrm{i}\\sum\\limits_{\\text{上半平面}}\\operatorname{Res}[R,z_k]=\\frac{\\pi}{a+b}='+fmt(Math.PI/(a+b))+'$.');
+  }
+  bindSlider('hpR',function(v){ R=v; badge('hpRV',fmt(v)); draw(); });
+  badge('hpRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 约当引理 —— e^{iaz} 的振荡与衰减 =================
+module('cvJordan',function(cv){
+  var a=1.0;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-40)/2, H=h-72, i, j;
+    // ---- 左: 半圆按 e^{−ay} 着色 ----
+    ctx.save(); ctx.translate(18,44);
+    var m=mapperEq(halfW,H,-2.2,2.2,-0.5,2.5);
+    grid(ctx,halfW,H,m,0.5); axes(ctx,halfW,H,m,'Re','Im');
+    var Rr=1.9, seg=100;
+    for(i=0;i<seg;i++){
+      var t1=Math.PI+(TAU-Math.PI)*i/seg;
+      var t2=Math.PI+(TAU-Math.PI)*(i+1)/seg;
+      var tmid=(t1+t2)/2;
+      var ym=-Math.sin(tmid)*Rr;           // 上半平面数学 y >= 0
+      var decay=Math.exp(-a*ym);
+      ctx.beginPath();
+      ctx.arc(m.px(0),m.py(0),Rr*m.s,t1,t2,false);
+      ctx.strokeStyle='rgba(25,118,210,'+(0.10+0.9*decay).toFixed(3)+')';
+      ctx.lineWidth=10; ctx.stroke();
+    }
+    // 实轴段
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(m.px(-Rr),m.py(0)); ctx.lineTo(m.px(Rr),m.py(0)); ctx.stroke();
+    tlabel(ctx,m.px(-Rr)-4,m.py(0)+18,'−R','#c62828','italic 12px Georgia');
+    tlabel(ctx,m.px(Rr)-8,m.py(0)+18,'R','#c62828','italic 12px Georgia');
+    tlabel(ctx,m.px(-1.75),m.py(0.28),'越靠实轴越亮','#1565c0','bold 11px Segoe UI');
+    ctx.restore();
+    // ---- 右: 衰减曲线 ----
+    var sx=halfW+40;
+    ctx.save(); ctx.translate(sx,44);
+    var m2=mapperEq(halfW,H,0,1.8,0,1.05);
+    grid(ctx,halfW,H,m2,0.5);
+    axes(ctx,halfW,H,m2,'y','e^{−ay}');
+    var cols=['#90caf9','#42a5f5','#1976d2','#0d47a1'];
+    var aa=[0.4,0.8,1.6,2.6];
+    for(var k=0;k<aa.length;k++){
+      ctx.strokeStyle=cols[k]; ctx.lineWidth=2;
+      ctx.beginPath();
+      for(j=0;j<=120;j++){
+        var y=1.8*j/120; var v=Math.exp(-aa[k]*y);
+        var px=m2.px(y),py=m2.py(v);
+        if(j===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(j=0;j<=120;j++){
+      var y2=1.8*j/120; var v2=Math.exp(-a*y2);
+      var px2=m2.px(y2),py2=m2.py(v2);
+      if(j===0) ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    dot(ctx,m2.px(1),m2.py(Math.exp(-a)),6,'#e65100','#fff');
+    ctx.restore();
+    setRO('jdReadout',
+      '当前 $a='+hl(fmt(a))+'$: 在上半平面 $z=x+\\mathrm{i}y\\ (y\\ge0)$ 上, $|\\mathrm{e}^{\\mathrm{i}az}|=\\mathrm{e}^{-ay}$ (例如 $y=1$ 处为 $\\mathrm{e}^{-'+fmt(a)+'}='+hl2(fmt(Math.exp(-a)))+'$).<br>'+
+      '$\\mathrm{e}^{\\mathrm{i}ax}$ 只是实轴上的<b>振荡</b>因子; 正是这份振荡带来的相消, 使约当引理只需「分母至少比分子高一次」.<br>'+
+      '结论: $\\int_{-\\infty}^{+\\infty}R(x)\\mathrm{e}^{\\mathrm{i}ax}\\mathrm{d}x=2\\pi\\mathrm{i}\\sum\\limits_{\\text{上半平面}}\\operatorname{Res}[R(z)\\mathrm{e}^{\\mathrm{i}az},z_k]$, 分离实虚部即得 $\\cos ax$ 与 $\\sin ax$ 型积分.');
+  }
+  bindSlider('jdA',function(v){ a=v; badge('jdAV',fmt(v)); draw(); });
+  badge('jdAV',fmt(a));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 三类积分的路径选择器 =================
+module('cvPath',function(cv){
+  var kind=1;
+  var HEADS=['① 第一类: 单位圆周上的积分','② 第二类: 半圆闭路 + ML 估计','③ 第三类: 半圆闭路 + 约当引理'];
+  var NOTES=[
+    '令 $z=\\mathrm{e}^{\\mathrm{i}\\theta}$: 实积分 → 单位圆周 $|z|=1$ 上的闭路积分',
+    '补大圆弧 $C_R$: $|R(z)|\\le 3/|z|^2$, 故 $\\left|\\int_{C_R}R\\,\\mathrm{d}z\\right|\\le \\frac{3\\pi}{R} \\to 0$',
+    '补大圆弧 $C_R$: 由约当引理 $\\int_{C_R}R\\,\\mathrm{e}^{\\mathrm{i}az}\\,\\mathrm{d}z \\to 0$ ($a&gt;0$)'
+  ];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-3.1,3.1,-0.5,3.3);
+    ctx.save(); ctx.translate(0,-24);
+    grid(ctx,w,h,m,0.5); axes(ctx,w,h,m,'Re','Im');
+    if(kind===1){
+      // 单位圆周
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+      ctx.beginPath(); ctx.arc(m.px(0),m.py(0),1.4*m.s,0,TAU); ctx.stroke();
+      dot(ctx,m.px(0),m.py(0),5,'#c62828','#fff'); tlabel(ctx,m.px(0)-34,m.py(0)+22,'0 (二级)','#c62828','bold 11px Segoe UI');
+      dot(ctx,m.px(0.8),m.py(0),5,'#e65100','#fff'); tlabel(ctx,m.px(0.8)-30,m.py(0)-11,'p (一级)','#e65100','bold 11px Segoe UI');
+      dot(ctx,m.px(2.3),m.py(0),5,'#9e9e9e','#fff'); tlabel(ctx,m.px(2.3)-32,m.py(0)+22,'1/p (圆外)','#757575','bold 11px Segoe UI');
+      tlabel(ctx,m.px(-1.35),m.py(1.62),'|z| = 1','#1565c0','bold 12px Georgia');
+    } else {
+      var Rr=2.2;
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+      ctx.beginPath(); ctx.arc(m.px(0),m.py(0),Rr*m.s,Math.PI,TAU,false); ctx.stroke();
+      ctx.strokeStyle='#c62828'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(m.px(-Rr),m.py(0)); ctx.lineTo(m.px(Rr),m.py(0)); ctx.stroke();
+      tlabel(ctx,m.px(-Rr)-4,m.py(0)+18,'−R','#c62828','italic 12px Georgia');
+      tlabel(ctx,m.px(Rr)-8,m.py(0)+18,'R','#c62828','italic 12px Georgia');
+      tsub(ctx,m.px(0.75),m.py(1.75),'C','R','','#1565c0','bold 13px Georgia');
+      if(kind===2){
+        dot(ctx,m.px(0),m.py(0.9),5,'#2e7d32','#fff'); tlabel(ctx,m.px(0)+9,m.py(0.9)+4,'ai','#2e7d32','bold 12px Georgia');
+        dot(ctx,m.px(0),m.py(1.7),5,'#2e7d32','#fff'); tlabel(ctx,m.px(0)+9,m.py(1.7)+4,'bi','#2e7d32','bold 12px Georgia');
+        tlabel(ctx,m.px(-Rr)+6,m.py(0.35),'|R(z)| ≤ 3/|z|²,  L = πR','#0d47a1','bold 12px Segoe UI');
+      } else {
+        for(var i=0;i<=26;i++){
+          var t=Math.PI+(TAU-Math.PI)*i/26;
+          var px=m.px(Rr*Math.cos(t)), py=m.py(Rr*Math.sin(t));
+          dot(ctx,px,py,3,'rgba(230,81,0,.85)');
+        }
+        dot(ctx,m.px(0),m.py(0.9),5,'#2e7d32','#fff'); tlabel(ctx,m.px(0)+9,m.py(0.9)+4,'ai','#2e7d32','bold 12px Georgia');
+      }
+    }
+    ctx.restore();
+    setCap('cvPathCap', kind===3 ? '$\\left|\\mathrm{e}^{\\mathrm{i}az}\\right|=\\mathrm{e}^{-ay}$ 快速衰减' : '');
+    tlabel(ctx,16,24,HEADS[kind-1],'#37474f','bold 14px Segoe UI');
+    setCap('ptNoteCap', NOTES[kind-1]);
+    var concl;
+    if(kind===1){
+      concl='$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\mathrm{d}\\theta=2\\pi\\mathrm{i}\\sum\\limits_{\\text{圆内}}\\operatorname{Res}[f,z_k]$';
+    } else if(kind===2){
+      concl='$\\int_{-\\infty}^{+\\infty}R(x)\\mathrm{d}x=2\\pi\\mathrm{i}\\sum\\limits_{\\text{上半平面}}\\operatorname{Res}[R,z_k]$';
+    } else {
+      concl='$\\int_{-\\infty}^{+\\infty}R(x)\\mathrm{e}^{\\mathrm{i}ax}\\mathrm{d}x=2\\pi\\mathrm{i}\\sum\\limits_{\\text{上半平面}}\\operatorname{Res}[R(z)\\mathrm{e}^{\\mathrm{i}az},z_k]$';
+    }
+    setRO('ptReadout', hl(HEADS[kind-1])+'<br>'+concl);
+  }
+  var b1=document.getElementById('btnPath1'); if(b1) b1.addEventListener('click',function(){ kind=1; draw(); });
+  var b2=document.getElementById('btnPath2'); if(b2) b2.addEventListener('click',function(){ kind=2; draw(); });
+  var b3=document.getElementById('btnPath3'); if(b3) b3.addEventListener('click',function(){ kind=3; draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'第一类 · 单位圆周', c:'#1976d2', leaves:['令 $z=\\mathrm{e}^{\\mathrm{i}\\theta},\\ \\mathrm{d}\\theta=\\frac{\\mathrm{d}z}{\\mathrm{i}z}$','$\\cos\\theta=\\frac{z^2+1}{2z}$','$\\sin\\theta=\\frac{z^2-1}{2\\mathrm{i}z}$','化为 $|z|=1$ 上的闭路积分','条件: $R$ 在单位圆周上无奇点','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[f,z_k]$ (圆内)']},
+    {t:'第二类 · 无穷区间', c:'#e65100', leaves:['条件: $m-n\\ge 2$, 实轴无奇点','取上半平面半圆闭路 $C_R+[-R,R]$','估计 $|R(z)|\\le\\frac{3}{|z|^2}$','ML 估计: $\\left|\\int_{C_R}\\right|\\le\\frac{3\\pi}{R}\\to 0$','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[R,z_k]$ (上半平面)','例3.2: $\\int\\frac{x^2\\,\\mathrm{d}x}{(x^2+a^2)(x^2+b^2)}=\\frac{\\pi}{a+b}$']},
+    {t:'第三类 · 含 e^{iax}', c:'#c62828', leaves:['条件: $m-n\\ge 1$, 实轴无奇点','约当引理: $\\int_{C_R}R\\mathrm{e}^{\\mathrm{i}az}\\to 0$ ($a>0$)','$|\\mathrm{e}^{\\mathrm{i}az}|=\\mathrm{e}^{-ay}\\le 1$ 指数衰减','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[R\\mathrm{e}^{\\mathrm{i}az},z_k]$','分离实虚部得 $\\cos/\\sin$ 型积分','例3: $\\int_0^{\\infty}\\frac{x\\sin x}{x^2+a^2}\\,\\mathrm{d}x=\\frac{\\pi}{2}\\mathrm{e}^{-a}$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第五章第三节 · 留数在定积分计算中的应用';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('3 类积分 1 条主线')+' &nbsp;|&nbsp; 三类实积分 → 各自的闭路 + 留数定理 → 多余部分退场; 一句话: <b>取闭路、算留数、让大弧消失</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'约当引理让大圆弧上的积分「自动退场」. 在数学中, 证明某一项「可以不算」, 为什么往往比把它硬算出来更有价值?',
+     hints:['因为算清每一项常常代价巨大, 而证明某部分趋于 0, 可以把它合理地删去, 只留下问题的核心.',
+            '约当引理把条件从「分母高两次」放宽为「高一次」—— 一次「减法」换来了一整套更广的适用性.',
+            '这正是极限思想的价值: 用「趋于 0」代替「等于某个数」, 判断比计算更省力.',
+            '可迁移的态度: 面对庞杂的任务, 先判断哪些部分可以忽略, 再集中力量处理真正重要的部分.']},
+    {q:'第一类积分通过 z = e^{iθ}, 把一条实轴区间上的积分变成单位圆周上的闭路积分. 这种「换场地」的化归思想, 你在哪些地方也见过?',
+     hints:['本节第二、三类积分同样是化归: 把无穷区间上的积分转化为半圆闭路积分, 从而可用留数定理.',
+            '更早的章节: 复积分被转化为两个实曲线积分, 以借用实分析的工具.',
+            '数学之外: 把陌生的工程问题建模为已知的数学问题, 本质也是「把问题换到我熟悉的地方」.',
+            '可迁移的态度: 与其在原场地硬拼, 不如先问「它能不能搬到更有利的地方去」.']},
+    {q:'为什么第二类积分要求分母比分子至少高两次, 而第三类只需高一次? 这个「一次之差」说明了什么?',
+     hints:['第二类靠 ML 估计: 需要 |R(z)| 的衰减足够快 (≤ 3/|z|²), 乘以弧长 πR 后才能趋于 0.',
+            '第三类多了一个因子 e^{iaz}, 它在半圆上指数衰减, 省下一次衰减也足够, 于是条件放宽.',
+            '可见条件不是凭空规定的, 而是被「凭什么能证明多余部分消失」所决定的.',
+            '可迁移的态度: 遇到条件时, 先追问「它为什么必须这样」, 条件往往对应着方法背后的关键估计.']},
+    {q:'从刘徽「割之弥细, 所失弥少」的割圆术, 到约当让围道积分「退场」: 这两件事在方法论上有什么相通之处?',
+     hints:['两者都在处理「无穷」: 一个用正多边形逼近圆, 一个用大圆弧上的估计逼近无穷区间积分.',
+            '共同策略是「以可算逼近不可算」「以足够小代替必须算出来」.',
+            '陈建功的函数逼近、华罗庚的积分表示理论, 同样是沿这条「逼近」的思路做现代的延伸.',
+            '可迁移的态度: 面对无法直接把握的对象, 分许多步去逼近, 往往比追求「一步到位」更可靠.']},
+    {q:'三类积分的共同骨架都是「闭路 + 留数 + 多余部分退场」. 抓住这条骨架, 对你学习数学有什么启发?',
+     hints:['把表面各异的公式归到同一条主线, 记忆与理解都会轻松许多.',
+            '数学中很多「分类」的真正价值, 就在于显露出不同对象背后的共同结构.',
+            '有了共同骨架, 遇到新积分时就能先判断「它像哪一类」, 再决定用什么方法.',
+            '可迁移的态度: 与其零散地记结论, 不如先找出它们共享的那条结构主线.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

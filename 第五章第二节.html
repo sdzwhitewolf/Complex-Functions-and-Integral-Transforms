@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章第二节 留数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 图注 (HTML + MathJax) ===== */
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第五章 第2节 留数</h1>
+    <p>留数定义 &middot; 留数定理 &middot; 极点留数 &middot; 无穷远点留数</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解<b>留数</b>的定义 —— 洛朗展开式中负一次幂项的系数 $c_{-1}$, 掌握它的积分表达式 $\mathrm{Res}[f(z),z_0]=\frac{1}{2\pi\mathrm{i}}\oint_C f(z)\mathrm{d}z$;
+2. 理解并会证明<b>留数定理</b>(定理 2.1), 会用留数定理把闭路积分化为有限个留数之和;
+3. 熟练掌握函数在<b>极点</b>处留数的三条准则 —— 准则 1 (一级极点)、准则 2 ($m$ 级极点)、准则 3 ($f=P/Q$ 型), 并能灵活选用;
+4. 理解<b>无穷远点的留数</b>的定义与<b>留数总和为零</b>定理(定理 2.2), 掌握准则 4 及其应用;
+5. 建立"三类计算方法"的整体视图, 体会"局部确定整体"这一复分析核心思想.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-5b" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-5b" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-5b" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-5b" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-5b" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-5b" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、留数的定义与留数定理</label>
+    <label class="tab-btn" for="tab2" id="label2">二、函数在极点的留数</label>
+    <label class="tab-btn" for="tab3" id="label3">三、无穷远点的留数</label>
+    <label class="tab-btn" for="tab4" id="label4">四、计算总览与综合例题</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 留数的定义与留数定理 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 留数的概念</div>
+
+<div class="box-think">
+<div class="think-label">思考: 一个闭路积分, 为什么会"只记住"一项系数?</div>
+设 $z_0$ 为 $f(z)$ 的一个孤立奇点, $f(z)$ 在去心邻域 $0&lt;|z-z_0|&lt;R$ 内的洛朗展开式为
+<div class="box-formula">$$f(z)=\cdots+c_{-n}(z-z_0)^{-n}+\cdots+c_{-1}(z-z_0)^{-1}+c_0+c_1(z-z_0)+\cdots+c_n(z-z_0)^n+\cdots$$</div>
+这是关于 $f$ 在 $z_0$ 附近"局部形态"的完整记录. 但如果把它沿一条绕过 $z_0$ 的正向简单闭曲线 $C$ <b>逐项积分</b>, 奇迹就发生了: 几乎所有的项都"消失"了, 只剩下唯一的一项 —— 而这幸存的一项, 恰好把 $f$ 在 $z_0$ 附近的整体信息, 浓缩成了<b>一个数</b>.
+</div>
+
+<div class="box-key">
+<div class="title">逐项积分: 只有 $n=-1$ 项存活</div>
+取 $C$ 为 $0&lt;|z-z_0|&lt;R$ 内的一条正向简单闭曲线, 对上式两端沿 $C$ 逐项积分, 得
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=\cdots+c_{-n}\oint_C(z-z_0)^{-n}\mathrm{d}z+\cdots+c_{-1}\oint_C(z-z_0)^{-1}\mathrm{d}z+\oint_C c_0\mathrm{d}z+\cdots$$</div>
+其中由柯西积分定理,
+<div class="box-formula">$$\oint_C(z-z_0)^{n}\mathrm{d}z=\begin{cases}2\pi\mathrm{i},& n=-1,\\[4pt] 0,& n\neq-1.\end{cases}$$</div>
+也就是说, 除 $\oint_C(z-z_0)^{-1}\mathrm{d}z=2\pi\mathrm{i}$ 外, 其余各项积分均为 $0$, 从而
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\,c_{-1}.$$</div>
+<span style="color:#c62828"><b>要义:</b></span> <b>积分看不见整个函数, 它只筛选出负一次幂项的系数.</b> 这个系数, 就是留数.
+</div>
+
+<div class="box-key">
+<div class="title">定义 2.1 (留数)</div>
+设 $z_0$ 为函数 $f(z)$ 的孤立奇点, 即 $f(z)$ 在去心邻域 $0&lt;|z-z_0|&lt;R$ 内的洛朗展开式中<b>负一次幂项</b>的系数 $c_{-1}$, 称为 $f(z)$ 在 $z_0$ 的<b>留数</b>, 记为 $\mathrm{Res}[f(z),z_0]$, 即
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=c_{-1}=\dfrac{1}{2\pi\mathrm{i}}\oint_C f(z)\mathrm{d}z.$$</div>
+其中 $C$ 为 $0&lt;|z-z_0|&lt;R$ 内的任何一条正向简单闭曲线.
+<br><br>
+<span style="color:#c62828"><b>注:</b></span> 留数的值只取决于 $f$ 在 $z_0$ 附近的局部形态, 与闭曲线 $C$ 的具体形状、大小无关.
+</div>
+
+<div class="sec-title">1.2 留数定理及其证明</div>
+
+<div class="box-key">
+<div class="title">定理 2.1 (留数定理)</div>
+函数 $f(z)$ 在区域 $D$ 内除有限个孤立奇点 $z_1,z_2,\cdots,z_n$ 外处处解析, $C$ 是 $D$ 内包围诸奇点的一条正向简单闭曲线, 则
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k].$$</div>
+<span style="color:#c62828"><b>注:</b></span> 留数定理把沿封闭曲线 $C$ 的积分, 转化为求被积函数在 $C$ 内各孤立奇点处的留数.
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 2.1 的证明</div>
+<input type="checkbox" id="ans61" class="answer-toggle">
+<label for="ans61" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+把每个孤立奇点 $z_k\ (k=1,2,\cdots,n)$ 分别用一条正向简单闭曲线 $C_k$ 包围, 且各 $C_k$ 互不相交、都含于 $C$ 内. 由多连通区域上的柯西积分定理,
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=\oint_{C_1} f(z)\mathrm{d}z+\oint_{C_2} f(z)\mathrm{d}z+\cdots+\oint_{C_n} f(z)\mathrm{d}z.$$</div>
+两边同时除以 $2\pi\mathrm{i}$, 得
+<div class="box-formula">$$\dfrac{1}{2\pi\mathrm{i}}\oint_C f(z)\mathrm{d}z=\dfrac{1}{2\pi\mathrm{i}}\sum_{k=1}^{n}\oint_{C_k} f(z)\mathrm{d}z=\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k],$$</div>
+即
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k].\qquad\blacksquare$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">1.3 留数的计算方法: 三条路线</div>
+
+<div class="box-key">
+<div class="title">计算留数的三条路线</div>
+&nbsp;&nbsp;<b>(1) 可去奇点</b> —— 若 $z_0$ 为 $f(z)$ 的可去奇点, 则 $\mathrm{Res}[f(z),z_0]=0$;
+<br>&nbsp;&nbsp;<b>(2) 本性奇点</b> —— 若 $z_0$ 为 $f(z)$ 的本性奇点, 则需把 $f(z)$ 展开成洛朗级数, 取 $c_{-1}$;
+<br>&nbsp;&nbsp;<b>(3) 极点</b> —— 若 $z_0$ 为 $f(z)$ 的极点, 则有相应的计算准则 (见本页第二部分).
+<br><br>
+<span style="color:#c62828"><b>选择原则:</b></span> 先判断奇点类型, 再选最省力的路线 —— 有准则的绝不硬展开, 能借道无穷远点的绝不逐个去算.
+</div>
+
+<div class="chart-container">
+<h3>交互: 留数定理 —— 闭曲线内外的奇点 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">闭曲线 $C$ 内有三个留数已知的奇点. 拖动圆心改变 $C$ 的位置, 或用滑块改变半径 $R$, 观察哪些奇点被"圈"进来, 以及积分值 $\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum\mathrm{Res}[f(z),z_k]$ 怎样随之跳变.</div>
+<div class="fig-caps"><div class="fc">留数定理: $\oint_C f(z)\,\mathrm{d}z = 2\pi\mathrm{i}\sum\limits_{k}\operatorname{Res}[f, z_k]$ (拖动圆心, 滑块改半径)</div></div>
+<canvas id="cvResidue" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>曲线半径 $R$:</label>
+<input type="range" id="rsR" min="0.6" max="2.6" step="0.02" value="2.10">
+<span class="val-badge" id="rsRV">2.10</span>
+</div>
+<div class="readout" id="rsReadout"></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 洛朗展开中 "提取" $c_{-1}$ <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">以 $f(z)=\frac{\mathrm{e}^z}{z^3}$ 为例, 画出它的洛朗系数 $c_n\ (n=-5,\cdots,5)$. 拖动滑块选择幂次 $n$, 观察: 只有 $n=-1$ 那一项, 在沿闭曲线积分时留下 $2\pi\mathrm{i}$ 的贡献 —— 它就是留数.</div>
+<canvas id="cvExtract" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>关注幂次 $n$:</label>
+<input type="range" id="exK" min="-5" max="5" step="1" value="-1">
+<span class="val-badge" id="exKV">$n=-1$</span>
+</div>
+<div class="readout" id="exReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 函数在极点的留数 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 准则 1: 一级极点的留数</div>
+
+<div class="box-key">
+<div class="title">准则 1</div>
+如果 $z_0$ 为 $f(z)$ 的<b>一级极点</b>, 则
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=\lim\limits_{z\to z_0}(z-z_0)f(z).$$</div>
+<span style="color:#c62828"><b>理解:</b></span> 把 $(z-z_0)f(z)$ 在 $z_0$ 的去心邻域内看成解析函数的"可去延拓", 它在 $z_0$ 的极限恰好就是 $c_{-1}$.
+</div>
+
+<div class="sec-title">2.2 准则 2: $m$ 级极点的留数</div>
+
+<div class="box-key">
+<div class="title">准则 2</div>
+如果 $z_0$ 为 $f(z)$ 的 <b>$m$ 级极点</b>, 则
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=\dfrac{1}{(m-1)!}\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right].$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">准则 2 的证明</div>
+<input type="checkbox" id="ans62" class="answer-toggle">
+<label for="ans62" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+由 $z_0$ 为 $f(z)$ 的 $m$ 级极点, 在 $0&lt;|z-z_0|&lt;R$ 内有
+<div class="box-formula">$$f(z)=c_{-m}(z-z_0)^{-m}+\cdots+c_{-2}(z-z_0)^{-2}+c_{-1}(z-z_0)^{-1}+c_0+c_1(z-z_0)+\cdots$$</div>
+两端乘上 $(z-z_0)^m$, 得
+<div class="box-formula">$$(z-z_0)^m f(z)=c_{-m}+c_{-m+1}(z-z_0)+\cdots+c_{-1}(z-z_0)^{m-1}+c_0(z-z_0)^m+c_1(z-z_0)^{m+1}+\cdots$$</div>
+两边求 $m-1$ 阶导数, 得
+<div class="box-formula">$$\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!\,c_{-1}+(\text{含有 }(z-z_0)\text{ 的项}),$$</div>
+令 $z\to z_0$, 含 $(z-z_0)$ 的项趋于 $0$, 于是
+<div class="box-formula">$$\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!\,c_{-1},$$</div>
+即
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=c_{-1}=\dfrac{1}{(m-1)!}\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right].\qquad\blacksquare$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.3 准则 3: $f(z)=\frac{P(z)}{Q(z)}$ 型的留数</div>
+
+<div class="box-key">
+<div class="title">准则 3</div>
+设 $f(z)=\frac{P(z)}{Q(z)}$, $P(z)$ 及 $Q(z)$ 在 $z_0$ 处解析, 如果
+<div class="box-formula">$$P(z_0)\neq0,\qquad Q(z_0)=0,\qquad Q'(z_0)\neq0,$$</div>
+则 $z_0$ 为 $f(z)$ 的一级极点, 且有
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=\dfrac{P(z_0)}{Q'(z_0)}.$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">准则 3 的证明</div>
+<input type="checkbox" id="ans63" class="answer-toggle">
+<label for="ans63" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+由于 $Q(z_0)=0,\ Q'(z_0)\neq0$, 故 $z_0$ 为 $Q(z)$ 的一级零点, 从而 $z_0$ 为 $\frac{1}{Q(z)}$ 的一级极点. 因此
+<div class="box-formula">$$\dfrac{1}{Q(z)}=\dfrac{1}{z-z_0}\varphi(z),$$</div>
+其中 $\varphi(z)$ 在 $z_0$ 解析, 且 $\varphi(z_0)=\frac{1}{Q'(z_0)}\neq0$. 于是
+<div class="box-formula">$$f(z)=\dfrac{1}{z-z_0}\cdot P(z)\varphi(z)=\dfrac{1}{z-z_0}g(z),$$</div>
+其中 $g(z)=P(z)\varphi(z)$ 解析, 且 $g(z_0)=P(z_0)\varphi(z_0)\neq0$, 故 $z_0$ 为 $f(z)$ 的一级极点. 由准则 1,
+<div class="box-formula">$$\mathrm{Res}[f(z),z_0]=\lim\limits_{z\to z_0}(z-z_0)f(z)=\lim\limits_{z\to z_0}(z-z_0)\dfrac{P(z)}{Q(z)}=\lim\limits_{z\to z_0}\dfrac{P(z)}{\dfrac{Q(z)-Q(z_0)}{z-z_0}}=\dfrac{P(z_0)}{Q'(z_0)}.\qquad\blacksquare$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.4 例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.1</div>
+计算积分 $\oint_C \frac{\mathrm{e}^z}{z(z-1)^2}\mathrm{d}z$, 其中 $C$ 为正向圆周 $|z|=2$.
+<input type="checkbox" id="ans64" class="answer-toggle">
+<label for="ans64" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+被积函数 $f(z)=\frac{\mathrm{e}^z}{z(z-1)^2}$ 的孤立奇点为 $z=0$ 与 $z=1$, 二者都在 $C$ 的内部. 其中 $z=0$ 为一级极点, $z=1$ 为二级极点.
+<br><br>
+对 $z=0$ 用准则 1:
+<div class="box-formula">$$\mathrm{Res}[f(z),0]=\lim\limits_{z\to0}z\cdot\dfrac{\mathrm{e}^z}{z(z-1)^2}=\lim\limits_{z\to0}\dfrac{\mathrm{e}^z}{(z-1)^2}=1.$$</div>
+对 $z=1$ 用准则 2 (取 $m=2$):
+<div class="box-formula">$$\mathrm{Res}[f(z),1]=\dfrac{1}{(2-1)!}\lim\limits_{z\to1}\dfrac{\mathrm{d}}{\mathrm{d}z}\left[(z-1)^2\dfrac{\mathrm{e}^z}{z(z-1)^2}\right]=\lim\limits_{z\to1}\dfrac{\mathrm{d}}{\mathrm{d}z}\left(\dfrac{\mathrm{e}^z}{z}\right)$$</div>
+<div class="box-formula">$$=\lim\limits_{z\to1}\dfrac{\mathrm{e}^z(z-1)}{z^2}=0.$$</div>
+于是由留数定理,
+<div class="box-formula">$$\oint_C \dfrac{\mathrm{e}^z}{z(z-1)^2}\mathrm{d}z=2\pi\mathrm{i}\{\mathrm{Res}[f(z),0]+\mathrm{Res}[f(z),1]\}=2\pi\mathrm{i}(1+0)=2\pi\mathrm{i}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.2</div>
+求 $f(z)=\frac{z-\sin z}{z^6}$ 在 $z=0$ 的留数.
+<input type="checkbox" id="ans65" class="answer-toggle">
+<label for="ans65" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解法 1 · 洛朗展开】</div>
+在 $0&lt;|z|&lt;+\infty$ 内进行洛朗展开:
+<div class="box-formula">$$f(z)=\dfrac{z-\sin z}{z^6}=\dfrac{1}{z^6}\left[z-\left(z-\dfrac{z^3}{3!}+\dfrac{z^5}{5!}-\cdots\right)\right]=\dfrac{1}{3!}\dfrac{1}{z^3}-\dfrac{1}{5!}\dfrac{1}{z}+\dfrac{1}{7!}z-\cdots$$</div>
+故
+<div class="box-formula">$$\mathrm{Res}\left[\dfrac{z-\sin z}{z^6},0\right]=c_{-1}=-\dfrac{1}{5!}=-\dfrac{1}{120}.$$</div>
+<div class="res-label">【解法 2 · 准则 2】</div>
+由准则 2 的证明过程可知, $m$ 取值比实际极点的级数高时, 结论仍成立 —— 这里取 $m=6$:
+<div class="box-formula">$$\mathrm{Res}[f(z),0]=\dfrac{1}{(6-1)!}\lim\limits_{z\to0}\dfrac{\mathrm{d}^5}{\mathrm{d}z^5}\left[z^6\cdot\dfrac{z-\sin z}{z^6}\right]=\dfrac{1}{5!}\lim\limits_{z\to0}\dfrac{\mathrm{d}^5}{\mathrm{d}z^5}(z-\sin z)=-\dfrac{1}{5!}.$$</div>
+<span style="color:#c62828"><b>注:</b></span> 应用准则 2 时, 根据实际情况, $m$ 可以取得比实际极点级数更高, 结论依然成立.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 三条准则的计算流程 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">面对一个极点, 该用哪条准则? 拖动滑块在三种情形之间切换, 观察计算流程的走向: 一级极点走<b>准则 1</b>, $m$ 级极点走<b>准则 2</b>, $P/Q$ 型走<b>准则 3</b>. 下方同步给出完整的计算步骤.</div>
+<canvas id="cvRule" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>情形:</label>
+<input type="range" id="ruleK" min="0" max="2" step="1" value="0">
+<span class="val-badge" id="ruleKV">准则 1</span>
+</div>
+<div class="readout" id="ruleReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 无穷远点的留数 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 无穷远点的留数 (定义 2.2)</div>
+
+<div class="box-key">
+<div class="title">定义 2.2 (无穷远点的留数)</div>
+设函数 $f(z)$ 在圆环域 $R&lt;|z|&lt;+\infty$ 内解析, $C$ 为圆环域内绕原点的任何一条正向简单闭曲线, 则
+<div class="box-formula">$$-\dfrac{1}{2\pi\mathrm{i}}\oint_{C^-} f(z)\mathrm{d}z$$</div>
+称为 $f(z)$ 在 $z=\infty$ 处的留数, 记作
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=\dfrac{1}{2\pi\mathrm{i}}\oint_{C^-} f(z)\mathrm{d}z=-\dfrac{1}{2\pi\mathrm{i}}\oint_{C} f(z)\mathrm{d}z,$$</div>
+其中 $C^-$ 表示 $C$ 的<b>负向</b>(即顺时针方向). 如果 $f(z)$ 在 $R&lt;|z|&lt;+\infty$ 内有洛朗展开
+<div class="box-formula">$$f(z)=\sum_{n=-\infty}^{\infty} c_n z^n,$$</div>
+则有
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-c_{-1}.$$</div>
+<span style="color:#c62828"><b>易错提醒:</b></span> 定义里有一个<b>负号</b>! 这是无穷远点留数与有限点留数最大的区别 —— 原因在于, 无穷远点处的"正向"是顺时针方向.
+</div>
+
+<div class="sec-title">3.2 扩充复平面上的留数总和为零 (定理 2.2)</div>
+
+<div class="box-key">
+<div class="title">定理 2.2</div>
+如果函数 $f(z)$ 在扩充复平面内只有有限个孤立奇点(包括无穷远点), 设为 $z_1,z_2,\cdots,z_n,\infty$, 则 $f(z)$ 在所有各奇点(包括 $z=\infty$)的留数总和等于零:
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]+\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k]=0.$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 2.2 的证明</div>
+<input type="checkbox" id="ans66" class="answer-toggle">
+<label for="ans66" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+设 $C$ 是围绕原点并包含 $z_1,z_2,\cdots,z_n$ 的正向简单闭曲线, 由留数定理,
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k].$$</div>
+又由无穷远点留数的定义,
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=-2\pi\mathrm{i}\,\mathrm{Res}[f(z),\infty].$$</div>
+两式比较, 即得
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]+\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k]=0.\qquad\blacksquare$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.3 准则 4: 通过无穷远点求积分</div>
+
+<div class="box-key">
+<div class="title">准则 4</div>
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].$$</div>
+<span style="color:#c62828"><b>注:</b></span> 定理 2.2 与准则 4 提供了计算函数沿闭曲线积分的又一种方法: 通过求无穷远点的留数来计算积分
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\,\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].$$</div>
+如果曲线 $C$ 内奇点的留数不容易求, 就可用这一方法简化计算.
+</div>
+
+<div class="box-example">
+<div class="ex-label">准则 4 的证明</div>
+<input type="checkbox" id="ans67" class="answer-toggle">
+<label for="ans67" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+取正向简单闭曲线 $C$ 为半径足够大的正向圆周 $|z|=\rho$, 使 $f(z)$ 在 $\rho\le|z|&lt;+\infty$ 内无奇点. 令 $z=\frac{1}{\xi}$ (即 $\xi=\frac{1}{z}$), 则 $\mathrm{d}z=-\frac{\mathrm{d}\xi}{\xi^2}$, 于是
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=\dfrac{1}{2\pi\mathrm{i}}\oint_{C^-} f(z)\mathrm{d}z=-\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi|=\frac{1}{\rho}} f\!\left(\dfrac{1}{\xi}\right)\dfrac{\mathrm{d}\xi}{\xi^2}$$</div>
+<div class="box-formula">$$=-\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi|=\frac{1}{\rho}} f\!\left(\dfrac{1}{\xi}\right)\dfrac{1}{\xi^2}\,\mathrm{d}\xi=-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].\qquad\blacksquare$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.4 例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.4</div>
+计算 $\oint_C \frac{\mathrm{d}z}{(z+\mathrm{i})^{10}(z-1)(z-3)}$, 其中 $C$ 为正向圆周 $|z|=2$.
+<input type="checkbox" id="ans68" class="answer-toggle">
+<label for="ans68" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+被积函数 $f(z)=\frac{1}{(z+\mathrm{i})^{10}(z-1)(z-3)}$ 在扩充复平面上的孤立奇点为 $-\mathrm{i},1,3,\infty$. 由定理 2.2,
+<div class="box-formula">$$\mathrm{Res}[f(z),-\mathrm{i}]+\mathrm{Res}[f(z),1]+\mathrm{Res}[f(z),3]+\mathrm{Res}[f(z),\infty]=0.$$</div>
+由于 $-\mathrm{i},1$ 在 $C$ 的内部, 故有
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\{\mathrm{Res}[f(z),-\mathrm{i}]+\mathrm{Res}[f(z),1]\}$$</div>
+<div class="box-formula">$$=-2\pi\mathrm{i}\{\mathrm{Res}[f(z),3]+\mathrm{Res}[f(z),\infty]\}=-2\pi\mathrm{i}\left\{\mathrm{Res}[f(z),3]-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\dfrac{1}{z^2},0\right]\right\}$$</div>
+这里 $z=3$ 是一级极点, 故 $\mathrm{Res}[f(z),3]=\frac{1}{2(3+\mathrm{i})^{10}}$; 而
+<div class="box-formula">$$f\!\left(\dfrac{1}{z}\right)\dfrac{1}{z^2}=\dfrac{z^{10}}{(1+\mathrm{i}z)^{10}(1-z)(1-3z)}$$</div>
+在 $z=0$ 解析且取值为 $0$, 故 $\mathrm{Res}\left[f\!\left(\frac{1}{z}\right)\frac{1}{z^2},0\right]=0$. 于是
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=-2\pi\mathrm{i}\left\{\dfrac{1}{2(3+\mathrm{i})^{10}}-0\right\}=-\dfrac{\pi\mathrm{i}}{(3+\mathrm{i})^{10}}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.5</div>
+利用准则 4 求 $f(z)=\frac{1}{z}$ 在 $z=\infty$ 的留数.
+<input type="checkbox" id="ans69" class="answer-toggle">
+<label for="ans69" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由准则 4, 因 $f\!\left(\frac{1}{\xi}\right)\cdot\frac{1}{\xi^2}=\xi\cdot\frac{1}{\xi^2}=\frac{1}{\xi}$, 故
+<div class="box-formula">$$\mathrm{Res}\left[\dfrac{1}{z},\infty\right]=-\mathrm{Res}\left[f\!\left(\dfrac{1}{\xi}\right)\dfrac{1}{\xi^2},0\right]=-\mathrm{Res}\left[\dfrac{1}{\xi},0\right]=-1.$$</div>
+此题也可用定义直接求: 把 $f(z)=\frac{1}{z}$ 写成洛朗展开式 $f(z)=z^{-1}$, 因而
+<div class="box-formula">$$\mathrm{Res}\left[\dfrac{1}{z},\infty\right]=-c_{-1}=-1.$$</div>
+<span style="color:#c62828"><b>注意:</b></span> 展式中无正幂项, 因而 $z=\infty$ 是 $f(z)$ 的<b>可去奇点</b>, 但它在 $\infty$ 处的留数<b>不为 $0$</b> —— 这正是无穷远点与有限奇点最不同的地方.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 无穷远点留数与"留数总和为零" <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $f(z)=\frac{2z+1}{z(z-1)}$, 它在扩充复平面上的奇点只有 $z_1=0,\ z_2=1,\ z=\infty$. 拖动滑块选择"待求"的那个奇点, 观察其余留数之和如何"反推出"它 —— 这就是定理 2.2 的用法.</div>
+<canvas id="cvInfRes" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>待求奇点:</label>
+<input type="range" id="irK" min="0" max="2" step="1" value="2">
+<span class="val-badge" id="irKV">$z=\infty$</span>
+</div>
+<div class="readout" id="irReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 留数计算总览与综合例题 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 三类计算方法对照表</div>
+
+<div class="box-key">
+<div class="title">先分类, 再选法</div>
+求留数的方法可以归纳为三类: <b>洛朗展开法</b>、<b>极点准则</b>、<b>无穷远点准则</b>. 它们并不是互相独立的技巧, 而是同一件事 --- "找出 $c_{-1}$" --- 在不同情形下的不同算法.
+</div>
+
+<table>
+<tr><th>方法</th><th>适用条件</th><th>公式 / 做法</th><th>什么时候用它</th></tr>
+<tr><td>洛朗展开法</td><td>$z_0$ 为孤立奇点 (尤其是<b>本性奇点</b>)</td><td>把 $f$ 在 $0&lt;|z-z_0|&lt;R$ 内展开, 直接读出 $c_{-1}$; 若 $z_0$ 为可去奇点, 则 $\mathrm{Res}=0$</td><td>极点准则不适用时 (如本性奇点)</td></tr>
+<tr><td>准则 1</td><td>$z_0$ 为<b>一级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\lim\limits_{z\to z_0}(z-z_0)f(z)$</td><td>分母是一级零点时最快捷</td></tr>
+<tr><td>准则 2</td><td>$z_0$ 为 <b>$m$ 级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\frac{1}{(m-1)!}\lim\limits_{z\to z_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]$</td><td>$m$ 可取得比实际级数更高, 结论仍成立</td></tr>
+<tr><td>准则 3</td><td>$f=\frac{P}{Q}$, 且 $P(z_0)\neq0$, $Q(z_0)=0$, $Q'(z_0)\neq0$</td><td>$\mathrm{Res}[f(z),z_0]=\frac{P(z_0)}{Q'(z_0)}$</td><td>本质是一级极点, 计算最省事</td></tr>
+<tr><td>无穷远点准则 (准则 4)</td><td>$z=\infty$ 是 $f$ 的孤立奇点; 或 $C$ 内奇点留数不易求</td><td>$\mathrm{Res}[f(z),\infty]=-\mathrm{Res}\left[f\!\left(\frac{1}{z}\right)\frac{1}{z^2},0\right]$</td><td>配合定理 2.2 "留数总和为零" 使用</td></tr>
+</table>
+
+<div class="chart-container">
+<h3>交互: 选择计算路线 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动滑块在三个典型函数之间切换, 观察从"函数"到"奇点类型"再到"选用方法"的整条推理链 —— 选对方法, 往往让计算量相差一个数量级.</div>
+<canvas id="cvRoute" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>示例:</label>
+<input type="range" id="rtK" min="0" max="2" step="1" value="0">
+<span class="val-badge" id="rtKV">二级极点</span>
+</div>
+<div class="readout" id="rtReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.2 综合例题</div>
+
+<div class="box-example">
+<div class="ex-label">综合例 1</div>
+计算 $\oint_{|z|=1}\frac{\mathrm{e}^z}{z^2}\mathrm{d}z$.
+<input type="checkbox" id="ans610" class="answer-toggle">
+<label for="ans610" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$z=0$ 为被积函数 $f(z)=\frac{\mathrm{e}^z}{z^2}$ 的<b>二级极点</b>, 且在 $C$ 内再无其它奇点. 用准则 2 (取 $m=2$):
+<div class="box-formula">$$\mathrm{Res}[f(z),0]=\dfrac{1}{(2-1)!}\lim\limits_{z\to0}\dfrac{\mathrm{d}}{\mathrm{d}z}\left[z^2\cdot\dfrac{\mathrm{e}^z}{z^2}\right]=\lim\limits_{z\to0}\mathrm{e}^z=1.$$</div>
+于是
+<div class="box-formula">$$\oint_{|z|=1}\dfrac{\mathrm{e}^z}{z^2}\mathrm{d}z=2\pi\mathrm{i}\cdot1=2\pi\mathrm{i}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">综合例 2</div>
+计算 $\oint_{|z|=3}\frac{z}{z^2+1}\mathrm{d}z$.
+<input type="checkbox" id="ans611" class="answer-toggle">
+<label for="ans611" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+令 $f(z)=\frac{P(z)}{Q(z)}$, $P(z)=z$, $Q(z)=z^2+1=(z-\mathrm{i})(z+\mathrm{i})$. 奇点 $z=\pm\mathrm{i}$ 都满足 $Q'(z)=2z\neq0$, 故都是<b>一级极点</b>, 且都在 $|z|=3$ 内部. 用准则 3:
+<div class="box-formula">$$\mathrm{Res}[f(z),\mathrm{i}]=\dfrac{P(\mathrm{i})}{Q'(\mathrm{i})}=\dfrac{\mathrm{i}}{2\mathrm{i}}=\dfrac{1}{2},\qquad \mathrm{Res}[f(z),-\mathrm{i}]=\dfrac{P(-\mathrm{i})}{Q'(-\mathrm{i})}=\dfrac{-\mathrm{i}}{-2\mathrm{i}}=\dfrac{1}{2}.$$</div>
+于是
+<div class="box-formula">$$\oint_{|z|=3}\dfrac{z}{z^2+1}\mathrm{d}z=2\pi\mathrm{i}\left(\dfrac{1}{2}+\dfrac{1}{2}\right)=2\pi\mathrm{i}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">综合例 3</div>
+计算 $\oint_{|z|=4}z^3\mathrm{e}^{1/z}\,\mathrm{d}z$.
+<input type="checkbox" id="ans612" class="answer-toggle">
+<label for="ans612" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解法 1 · 洛朗展开】</div>
+$z=0$ 是被积函数的<b>本性奇点</b>. 在 $0&lt;|z|&lt;+\infty$ 内展开:
+<div class="box-formula">$$z^3\mathrm{e}^{1/z}=z^3\sum_{n=0}^{\infty}\dfrac{1}{n!}\dfrac{1}{z^n}=\sum_{n=0}^{\infty}\dfrac{z^{3-n}}{n!}.$$</div>
+$z^{-1}$ 项对应于 $3-n=-1$, 即 $n=4$, 故 $c_{-1}=\frac{1}{4!}=\frac{1}{24}$. 于是
+<div class="box-formula">$$\oint_{|z|=4}z^3\mathrm{e}^{1/z}\mathrm{d}z=2\pi\mathrm{i}\cdot\dfrac{1}{24}=\dfrac{\pi\mathrm{i}}{12}.$$</div>
+<div class="res-label">【解法 2 · 借道无穷远点】</div>
+由准则 4, $f\!\left(\frac{1}{z}\right)\frac{1}{z^2}=\frac{1}{z^5}\mathrm{e}^{z}$, 其在 $z=0$ 的留数为 $\mathrm{e}^z$ 中 $z^4$ 项系数 $\frac{1}{4!}=\frac{1}{24}$, 故
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-\dfrac{1}{24},\qquad \oint_{|z|=4}f(z)\mathrm{d}z=-2\pi\mathrm{i}\,\mathrm{Res}[f(z),\infty]=\dfrac{\pi\mathrm{i}}{12}.$$</div>
+两种解法结果一致.
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>留数的定义</b> → <b>留数定理</b> → <b>极点处的三条准则</b> → <b>无穷远点留数</b> → <b>计算路线与综合</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>准则</th><th>适用条件</th><th>公式</th><th>备注</th></tr>
+<tr><td>准则 1</td><td>$z_0$ 为 $f(z)$ 的<b>一级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\lim\limits_{z\to z_0}(z-z_0)f(z)$</td><td>最常用; 是准则 3 的基础</td></tr>
+<tr><td>准则 2</td><td>$z_0$ 为 $f(z)$ 的 <b>$m$ 级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\frac{1}{(m-1)!}\lim\limits_{z\to z_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]$</td><td>$m$ 可取得比实际级数更高, 结论仍成立</td></tr>
+<tr><td>准则 3</td><td>$f=\frac{P}{Q}$, $P(z_0)\neq0$, $Q(z_0)=0$, $Q'(z_0)\neq0$</td><td>$\mathrm{Res}[f(z),z_0]=\frac{P(z_0)}{Q'(z_0)}$</td><td>本质是一级极点, 计算最便捷</td></tr>
+<tr><td>无穷远点准则 (准则 4)</td><td>$z=\infty$ 为 $f$ 的孤立奇点; 或 $C$ 内奇点留数不易求</td><td>$\mathrm{Res}[f(z),\infty]=-\mathrm{Res}\left[f\!\left(\frac{1}{z}\right)\frac{1}{z^2},0\right]$</td><td>常配合定理 2.2 "留数总和为零" 使用</td></tr>
+</table>
+
+<div class="box-result">
+<div class="res-label">补充: 另外两种情形</div>
+&nbsp;&nbsp;<b>可去奇点</b> —— $\mathrm{Res}[f(z),z_0]=0$ (洛朗展开无负幂项);
+<br>&nbsp;&nbsp;<b>本性奇点</b> —— 只能把 $f(z)$ 展开成洛朗级数, 直接读出 $c_{-1}$;
+<br>&nbsp;&nbsp;<b>已知 $z_0$ 为极点时</b> —— 优先考虑准则 1 / 2 / 3, 尽量避免硬展开.
+</div>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 按定义, $\mathrm{Res}[f(z),z_0]$ 等于洛朗展开式中的哪一项系数?</div>
+<label class="quiz-opt">A. $c_0$</label>
+<label class="quiz-opt" data-ok="1">B. $c_{-1}$</label>
+<label class="quiz-opt">C. $c_{1}$</label>
+<label class="quiz-opt">D. $c_{-n}$ ($n\ge2$)</label>
+<div class="quiz-explain"><b>解析:</b> 定义 2.1: 留数就是洛朗展开式中负一次幂项的系数, $\mathrm{Res}[f(z),z_0]=c_{-1}=\frac{1}{2\pi\mathrm{i}}\oint_C f(z)\mathrm{d}z$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 设 $z_0$ 是 $f(z)$ 的<b>可去奇点</b>, 且 $f$ 在去心邻域内解析, 则 $\mathrm{Res}[f(z),z_0]=$?</div>
+<label class="quiz-opt" data-ok="1">A. $0$</label>
+<label class="quiz-opt">B. $c_{-1}\neq0$</label>
+<label class="quiz-opt">C. $\infty$</label>
+<label class="quiz-opt">D. 不能确定</label>
+<div class="quiz-explain"><b>解析:</b> 可去奇点的洛朗展开不含任何负幂项, 故 $c_{-1}=0$, 从而留数为 $0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. $\mathrm{Res}\left[\frac{\mathrm{e}^z}{z^2},0\right]=$?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $1$</label>
+<label class="quiz-opt">C. $\frac{1}{2}$</label>
+<label class="quiz-opt">D. $2$</label>
+<div class="quiz-explain"><b>解析:</b> $\frac{\mathrm{e}^z}{z^2}=\frac{1}{z^2}\left(1+z+\frac{z^2}{2!}+\cdots\right)=\frac{1}{z^2}+\frac{1}{z}+\frac{1}{2!}+\cdots$, 负一次幂项系数为 $1$, 故留数为 $1$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. (例 2.1) $\oint_{|z|=2}\frac{\mathrm{e}^z}{z(z-1)^2}\mathrm{d}z=$?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">C. $-2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $4\pi\mathrm{i}$</label>
+<div class="quiz-explain"><b>解析:</b> $z=0$ 是一级极点, 由准则 1 得 $\mathrm{Res}[f,0]=1$; $z=1$ 是二级极点, 由准则 2 得 $\mathrm{Res}[f,1]=0$. 故积分为 $2\pi\mathrm{i}(1+0)=2\pi\mathrm{i}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. $f(z)=\frac{1}{z^2+1}$ 在 $z=\mathrm{i}$ 处的留数等于?</div>
+<label class="quiz-opt">A. $\frac{1}{2}$</label>
+<label class="quiz-opt" data-ok="1">B. $-\frac{\mathrm{i}}{2}$</label>
+<label class="quiz-opt">C. $\frac{\mathrm{i}}{2}$</label>
+<label class="quiz-opt">D. $-1$</label>
+<div class="quiz-explain"><b>解析:</b> 取 $P(z)=1$, $Q(z)=z^2+1$, $Q'(z)=2z$. 由准则 3, $\mathrm{Res}[f,\mathrm{i}]=\frac{P(\mathrm{i})}{Q'(\mathrm{i})}=\frac{1}{2\mathrm{i}}=-\frac{\mathrm{i}}{2}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. $f(z)=\frac{z}{z^2-1}$ 在 $z=1$ 处的留数等于?</div>
+<label class="quiz-opt">A. $1$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{2}$</label>
+<label class="quiz-opt">C. $-\frac{1}{2}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 由准则 1, $\mathrm{Res}[f,1]=\lim\limits_{z\to1}(z-1)\frac{z}{(z-1)(z+1)}=\lim\limits_{z\to1}\frac{z}{z+1}=\frac{1}{2}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. $f(z)=z^3\mathrm{e}^{1/z}$ 在 $z=0$ 处的留数等于?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt">B. $\frac{1}{6}$</label>
+<label class="quiz-opt" data-ok="1">C. $\frac{1}{24}$</label>
+<label class="quiz-opt">D. $1$</label>
+<div class="quiz-explain"><b>解析:</b> $z=0$ 是本性奇点, 需用洛朗展开: $z^3\mathrm{e}^{1/z}=\sum\limits_{n=0}^{\infty}\frac{z^{3-n}}{n!}$. 取 $z^{-1}$ 项对应 $3-n=-1$, 即 $n=4$, 故 $c_{-1}=\frac{1}{4!}=\frac{1}{24}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 若 $f(z)$ 在 $R&lt;|z|&lt;+\infty$ 内解析, 且 $f(z)=\sum\limits_{n=-\infty}^{\infty}c_n z^n$, 则 $\mathrm{Res}[f(z),\infty]=$?</div>
+<label class="quiz-opt">A. $c_{-1}$</label>
+<label class="quiz-opt" data-ok="1">B. $-c_{-1}$</label>
+<label class="quiz-opt">C. $c_{1}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 由定义 2.2, 无穷远点的留数带负号: $\mathrm{Res}[f(z),\infty]=\frac{1}{2\pi\mathrm{i}}\oint_{C^-}f(z)\mathrm{d}z=-c_{-1}$. 这个负号来自无穷远点处"正向为顺时针"的约定.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 设 $f(z)$ 在扩充复平面上只有有限个孤立奇点 $z_1,z_2,\cdots,z_n,\infty$, 则 $\mathrm{Res}[f(z),\infty]+\sum\limits_{k=1}^{n}\mathrm{Res}[f(z),z_k]=$?</div>
+<label class="quiz-opt" data-ok="1">A. $0$</label>
+<label class="quiz-opt">B. $1$</label>
+<label class="quiz-opt">C. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. 与 $f$ 的具体形式有关, 不能确定</label>
+<div class="quiz-explain"><b>解析:</b> 这是定理 2.2: 扩充复平面上所有奇点(含无穷远点)的留数总和恒为零. 它给出了"用一个奇点的留数反推另一个"的桥梁.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 关于 $\mathrm{Res}\left[\frac{1}{z},\infty\right]$, 下列说法正确的是?</div>
+<label class="quiz-opt">A. $z=\infty$ 是可去奇点, 故留数为 $0$</label>
+<label class="quiz-opt" data-ok="1">B. $z=\infty$ 是可去奇点, 但留数为 $-1$</label>
+<label class="quiz-opt">C. $z=\infty$ 是一级极点, 留数为 $-1$</label>
+<label class="quiz-opt">D. $z=\infty$ 是本性奇点, 留数为 $-1$</label>
+<div class="quiz-explain"><b>解析:</b> $f(z)=\frac{1}{z}=z^{-1}$ 无正幂项, 故 $z=\infty$ 是<b>可去奇点</b>; 但 $\mathrm{Res}\left[\frac{1}{z},\infty\right]=-c_{-1}=-1\neq0$. 这说明"可去奇点"与"留数为 $0$"在无穷远点处不再等价.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>他用一纸留数定理, 把"求积分"变成了"数几个点"</h3>
+<div class="hero-sub">他是十九世纪最丰产的数学家之一, 一生留下近八百篇论文; 他把分析学的每一步都推到"可以严格证明"的程度 —— 而他留给后世的留数定理, 至今仍是复积分最有力的工具.</div>
+<div class="hero-quote">
+从柯西积分定理到柯西积分公式, 再到留数定理, 一条"局部确定整体"的主线贯穿始终.<br>
+<b>本节的留数定理, 正是这条主线上最关键、也最实用的一环.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 柯西: 留数定理的缔造者</div>
+
+<div class="person-card">
+<div class="p-av">柯</div>
+<div class="p-main">
+<div class="p-name">奥古斯丁·路易·柯西 (Augustin-Louis Cauchy, 1789—1857)</div>
+<div class="p-meta">法国数学家 · 复分析的奠基人 · "留数"概念与留数定理的提出者 · 一生发表论文近八百篇</div>
+<p>他是<b>复变函数论的奠基人</b>. 今天课本上反复出现的"柯西积分定理""柯西积分公式""柯西–黎曼方程""柯西不等式", 都出自他的笔下; 而把闭路积分归结为若干"留数"之和的<b>留数定理</b>, 更是复分析中最常用、也最具"化繁为简"力量的一条定理.</p>
+<p>他出生在法国大革命前夜的巴黎. 父亲是律师, 与拉格朗日、拉普拉斯往来密切; 据说拉格朗日还曾当面劝他父亲, 不要让这孩子过早捧起数学书. 谁也没有想到, 这个孩子后来改写了整个分析学.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 大革命年代里的巴黎少年</h5>
+<p>1789 年, 柯西出生于巴黎. 那一年, 法国大革命刚刚爆发. 他的父亲路易·弗朗索瓦·柯西是一名虔诚的天主教徒与律师, 在动荡的年代里几经迁居, 一度带着全家到乡下避难.</p>
+<p>特殊的家庭环境反而给了柯西极好的启蒙: 父亲与当时最顶尖的数学家拉格朗日、拉普拉斯相熟, 家中常有学者往来. 幼年的柯西在这样"半是书房、半是课堂"的氛围里长大, 很早就显露出对数学的敏感.</p>
+<p><b>据说拉普拉斯读到他的数学习作后, 曾建议他先把希腊文与文学学好 —— 因为在他看来, 这孩子将来做数学, 只是时间问题.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>从工程师到巴黎科学院院士</h5>
+<p>1805 年, 柯西考入巴黎综合工科学校; 1810 年转入桥梁公路学校, 毕业后成为一名工程师, 被派往瑟堡参与港口与要塞工程.</p>
+<p>然而工程现场并没有消磨掉他对数学的兴趣. 白天处理工程事务, 晚上他仍在演算; 他后来提出的"柯西不等式""柯西准则"等结果, 相当一部分就孕育于这段工程师岁月.</p>
+<p>1813 年他回到巴黎, 把全部精力投入数学. 1816 年, 年仅二十七岁的柯西当选巴黎科学院院士, 并出任综合工科学校教授 —— 从此进入法国数学的权力中心.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>缔造留数定理 (1825—1826)</h5>
+<p>1825 年, 柯西发表了一篇划时代的论文《关于积分限为虚数的定积分》. 在这项工作里, 他把复数域上的积分与函数在奇点附近的行为联系起来, 发现了那条今天被称为<b>留数定理</b>的规律.</p>
+<p>次年, 他进一步明确提出了"<b>留数</b> (résidu)"这一概念, 并证明: 沿闭曲线的积分, 只由该曲线所围住的那些奇点处的留数决定.</p>
+<p>本节的定义 2.1、定理 2.1, 以及后面的准则 1、2、3, 都是这项工作的现代表述. <b>它把"求一个连续变化量沿整条曲线的积分", 换成了"算出有限个孤立的数, 再相加".</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>严格化与《分析教程》</h5>
+<p>1821 年, 柯西出版了《分析教程》, 随后又有《无穷小计算概要》. 在这些书里, 他第一次系统地用"极限"作为微积分的基础, 把过去含糊的"无穷小"替换成可以逐句检验的陈述 —— 这比我们前面提到的魏尔斯特拉斯严格化还要早几十年.</p>
+<p>他还建立了级数收敛的判别法(今天的"柯西准则"), 并用它来研究幂级数的收敛半径. 复分析之所以能够从"技巧"升格为"理论", 与他的这一套严格化工作密不可分.</p>
+<p>本节里"留数 = 洛朗展开中 $c_{-1}$"这一定义之所以站得住脚, 正是因为前置的柯西积分定理、洛朗展开都已建立在严格的基础之上.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>著作等身与治学风格</h5>
+<p>柯西一生发表论文近八百篇, 全集多达二十余卷. 他写作的速度极快, 常常同时向多家刊物投稿, 甚至被同事调侃为"赶稿的开创者"; 巴黎科学院一度不得不限制他在期刊上单篇论文的篇幅, 好把版面留给别人.</p>
+<p>他的风格是"想到就写、写了就推广": 一个方法刚刚成形, 他就立刻把它用到许多不同的领域去. 这种连续性, 让他的思想传播得极快, 也让同时代人常常"刚消化完上一步, 他已经走出了好几步".</p>
+<p>无论在政治上经历怎样的起伏, 他都保持着同样惊人的创作节奏. <b>对他而言, 数学不是一门需要等待灵感的艺术, 而是一份必须日复一日推进的工作.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说柯西讲课时常临时改变题目, 讲起自己最新想到的推广; 学生往往要一边听讲、一边追赶他的思路. 他写论文的数量之大, 让科学院不得不"限篇幅"来保证别的学者也有机会发表. 有人评价说, 与柯西同时代做分析的人, 都不得不先阅读他的新作 —— 因为他一个人的产出, 就相当于半个学派.
+</div>
+
+<div class="clash-card">
+<div class="cc-title">学术公案: 两份被搁置的手稿</div>
+<p>1826 年前后, 挪威青年<b>阿贝尔</b>与法国少年<b>伽罗瓦</b>先后把关于代数方程可解性的重要论文寄往巴黎科学院. 按当时的流程, 论文被交给柯西审阅 —— 然而这两份手稿都被长期搁置: 阿贝尔的论文迟迟没有回音, 伽罗瓦的手稿更是几经转手, 后来甚至部分遗失.</p>
+<p>两位天才都在二十几岁便早逝, 他们最重要的成果直到很多年之后才被世人真正读懂. 这一公案长期被后人讨论: 有人归因于当时的审阅制度不够健全, 也有人认为柯西本人的性情与惊人的忙碌难辞其咎.</p>
+<p><b>它提醒我们:</b> 学术不只是"想出好结果", 也包括发现与珍视他人的好结果. 制度、审阅与传承, 与创造本身同等重要.</p>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 柯西式的信念</div>
+在他那里, 一个结果是"真"的, 意味着它经得起一步一步的推演:
+<br>
+"<em>把整体交给局部去交代 —— 只要每个点的行为都清楚, 整条曲线上的积分就无处可逃.</em>"
+<br>
+据说他在给出留数定理时, 反复强调的是一句极朴素的话:
+<br>
+"<em>闭路上的积分, 只由它围住的那些点决定.</em>"
+<span class="iv-sig">—— 这正是本节的核心: 整体积分 = 局部留数之和. 一个"大"的量, 被有限个"小"的数完全锁定.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>一个闭路积分, 只由它围住的点决定</h4>
+<p>留数定理最惊人的地方在于: 函数在曲线 $C$ 上的所有取值, 竟然被 $C$ 内有限个奇点处的留数"完全决定". 连续变化的整体量, 化归为离散的局部量.</p>
+<p>这正是复分析"局部确定整体"这一核心思想的又一次体现 —— 与上一节"孤立奇点由局部洛朗展开决定类型"是同一精神.</p>
+<div class="pc-math">$\oint_C f\,\mathrm{d}z=2\pi\mathrm{i}\sum_k\mathrm{Res}[f,z_k]$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">化繁为简</div>
+<h4>把"算积分"换成"数几个点"</h4>
+<p>原来要沿整条曲线做积分, 现在只需在几个孤立点上算几个数. 计算的规模从"连续无穷多"降到"有限几个", 这是数学中最典型的"降维"策略.</p>
+<p>但要注意: 简化不是凭空得来的 —— 前提是函数在 $C$ 内除有限个孤立奇点外处处解析. <b>好的简化, 总是以清楚的前提为代价.</b></p>
+<div class="pc-math">沿曲线积分 $\longrightarrow$ 有限个留数之和</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">守恒</div>
+<h4>留数总和为零 —— 一种"收支平衡"</h4>
+<p>定理 2.2 说: 扩充复平面上所有奇点的留数之和恒为零. 有限点处"多出来的", 一定在无穷远点处"补回去".</p>
+<p>这与物理学里的守恒量极为相似: 局部可以此消彼长, 但总和恒定. 它也提供了实用的计算捷径 —— 用容易求的部分, 反推难求的那一个.</p>
+<div class="pc-math">$\mathrm{Res}[f,\infty]$<br>$+\sum\limits_{k=1}^{n}\mathrm{Res}[f,z_k]=0$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>极点的"级"决定了求导的阶数</h4>
+<p>准则 2 里, $m$ 级极点对应 $m-1$ 阶导数. 级数每提高一级, 计算的"代价"就提高一阶 —— 数量上的差别, 直接决定了方法的难易.</p>
+<p>也正因如此, 面对高阶极点时, 人们宁愿绕道无穷远点. <b>认清"量的差别", 才能选对"质的方法".</b></p>
+<div class="pc-math">$m$ 级极点 $\Rightarrow$ 求 $m-1$ 阶导数</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">转化与联系</div>
+<h4>无穷远点, 被 $\xi=1/z$ 拉回原点</h4>
+<p>准则 4 把"最难触及"的无穷远点留数, 翻译成"最容易处理"的原点处留数. 陌生的对象, 通过一个变换变成了熟悉的对象.</p>
+<p>这与上一节无穷远点类型的判定一脉相承: <b>把陌生问题转化为熟悉问题, 是数学中最有力的通用策略.</b></p>
+<div class="pc-math">$\mathrm{Res}[f,\infty]$<br>$=-\mathrm{Res}\left[f(1/z)/z^2,0\right]$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">辩证看待"例外"</div>
+<h4>可去奇点, 在无穷远处竟未必"可去"</h4>
+<p>例 2.5 中, $z=\infty$ 是 $\frac{1}{z}$ 的可去奇点, 但它在 $\infty$ 处的留数却是 $-1$, 并不为 $0$. 与有限点处"可去 $\Rightarrow$ 留数为 $0$"形成鲜明对照.</p>
+<p>这说明规律往往带有"适用边界". <b>遇到例外, 正确的态度不是怀疑结论, 而是回到定义, 检查在哪里"换了前提".</b></p>
+<div class="pc-math">$z=\infty$ 可去, 但 $\mathrm{Res}[1/z,\infty]=-1\neq0$</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "执简驭繁"与"举一纲而万目张"</div>
+中国古代思想素来看重<b>以简驭繁</b>与<b>提纲挈领</b>. 《周易·系辞》说"<b>易简而天下之理得矣</b>", 强调把复杂的道理归结到最简洁的几条; 郑玄在《诗谱序》中写道"<b>举一纲而万目张, 解一卷而众篇明</b>", 讲的正是抓住关键、其余自明.
+<br><br>
+而<b>刘徽</b>注《九章算术》时所用的"割圆术", 又展示了另一种智慧: 用<b>有限而可数的步骤</b>, 去把握连续变化的对象 —— "割之弥细, 所失弥少". 这与留数定理的精神何其相似: 沿曲线的积分本是连续无穷的, 但最终只需算出<b>有限几个</b>留数, 就把整体完全锁定.
+<br><br>
+分类、提纲、以少驭多 —— 这些思路古已有之; 而柯西用一条定理把它写成了严密的数学.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 留数思想在中国与工程中的延续</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 他是中国现代数学的奠基人之一, 在多复变函数论、典型域上的调和分析等领域作出世界级工作. 从"单复变的留数"到"高维积分与奇点结构", 正是沿着"用局部信息把握整体"这条线继续向前.</li>
+<li><b>陈建功</b> (1893—1971): 中国函数论的主要奠基人之一, 在三角级数、函数逼近与函数级数理论上有系统贡献. 他 1928 年在日本《东北数学杂志》发表关于无穷乘积的论文, 是最早在国际数学刊物上发表研究工作的中国学者之一.</li>
+<li><b>龚昇</b> (1930—2011): 师从华罗庚, 长期在中国科学技术大学讲授复分析, 著有《简明复分析》等影响深远的教材. 他把"局部与整体""留数与积分"讲得清楚透亮, 影响了几代中国学子 —— 本节的许多表述, 正承袭于这条教学脉络.</li>
+<li><b>面向国家需求</b>: 在工程与信息科学中, 留数法至今活跃 —— <b>拉普拉斯反变换</b>用留数求和还原信号; <b>控制系统</b>用极点位置判断稳定性; <b>信号处理与通信</b>里的围线积分、误码率计算, 也常通过留数定理求解. 本节学的这条定理, 是无数工程方法的数学起点.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"大"化"小", 是数学的力量</div>
+留数定理做的, 其实只有一件事: <b>把沿整条闭曲线的积分, 化归为有限个孤立点上的留数之和.</b> 看上去朴素, 却把一个连续、无穷的过程, 压缩成了有限、离散的加法.
+<br><br>
+这件事的价值在于: <b>数学的强大, 往往不体现在"算得多", 而体现在"算得少".</b> 能用局部说明整体、能用有限锁定无穷, 这是复分析最深的魅力, 也是本节最该带走的方法论.
+<br><br>
+可以说: <b>把复杂问题算清楚的第一步, 是找到那几个真正"说话算数"的点.</b> 这是本节的数学, 也是本节的方法.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"闭路上的积分, 只由它围住的那些点决定."<span class="q-src">—— 留数定理的一种朴素表述</span></div>
+<div class="quote-item">"把整体交给局部去交代."<span class="q-src">—— 柯西式推理的风格概括</span></div>
+<div class="quote-item">"数学的强大, 往往不体现在算得多, 而体现在算得少."<span class="q-src">—— 本节留数思想的一点启示</span></div>
+<div class="quote-item">"易简而天下之理得矣."<span class="q-src">—— 《周易·系辞》</span></div>
+<div class="quote-item">"举一纲而万目张, 解一卷而众篇明."<span class="q-src">—— 郑玄《诗谱序》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 柯西出生在法国大革命前夜的巴黎, 做过工程师, 白天在港口处理工程事务, 晚上却坚持演算; 二十七岁当选巴黎科学院院士, 一生写下近八百篇论文. 1825 年, 他提出并证明了留数定理, 把"沿闭曲线的积分"归结为"有限个留数之和" —— 本节的定义 2.1 与定理 2.1, 正是这项工作的现代表述.<br>
+<b>一个道理:</b> 留数定理看上去只是"把积分换成求和", 但它揭示的是一种深刻的结构: <b>整体被局部完全决定</b>. 曲线上的连续无穷, 被几个孤立点上的离散数值牢牢锁定; 而"留数总和为零"(定理 2.2)又像一条守恒律, 让有限点与无穷远点彼此平衡. 从"求积分"到"数几个点", 数学的力量恰恰体现在"算得更少、却知道得更多".<br>
+<b>一份责任:</b> 从刘徽"割圆术"用有限逼近无穷的智慧, 到华罗庚在多复变、陈建功在函数论、龚昇在复分析教学上的接续耕耘, 中国数学家始终在这条"以简驭繁、由局部见整体"的路上前行. 今天我们学习留数, 既是在掌握"拉普拉斯反变换""极点判稳"等工程方法的数学起点, 也是在承接这份<b>把最核心的思想想透、讲到透亮</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第五章第二节 留数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+var LT='\u003c', GT='\u003e';
+function ns(n){ return n<0 ? '−'+(-n) : ''+n; }
+
+// ================= 模块 1: 留数定理示意 (Tab1) =================
+module('cvResidue',function(cv){
+  var cx0=0.0, cy0=0.0, R=2.10;
+  var sing=[
+    {re:-0.9, im: 0.7, res: 1.0},
+    {re: 0.7, im: 1.0, res:-0.5},
+    {re: 1.6, im:-0.6, res: 0.25}
+  ];
+  function mp(w,h){ return mapperEq(w-30,h-70,-2.9,2.9,-2.3,2.3); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var H=h-70, m=mp(w,h);
+    ctx.save(); ctx.translate(15,46);
+    grid(ctx,w-30,H,m,0.5); axes(ctx,w-30,H,m,'Re','Im');
+    ctx.beginPath(); ctx.arc(m.px(cx0),m.py(cy0),R*m.s,0,TAU);
+    ctx.fillStyle='rgba(25,118,210,.10)'; ctx.fill();
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.stroke();
+    var ax=m.px(cx0), ay=m.py(cy0)-R*m.s;
+    arrow(ctx,ax-16,ay-5,ax+16,ay-5,'#1565c0',2.2,10);
+    tlabel(ctx,ax+20,ay-2,'C (正向)','#1565c0','bold 12px Segoe UI');
+    dot(ctx,m.px(cx0),m.py(cy0),3,'#90a4ae');
+    var sum=0, insideTxt=[], list=[];
+    sing.forEach(function(s,i){
+      var inC=Math.hypot(s.re-cx0,s.im-cy0)<R;
+      var col=inC?'#c62828':'#90a4ae';
+      dot(ctx,m.px(s.re),m.py(s.im),inC?7:5,col,'#fff');
+      tlabel(ctx,m.px(s.re)+10,m.py(s.im)-8,'z'+(i+1),col,'bold 12px Segoe UI');
+      if(inC){ sum+=s.res; insideTxt.push('z'+(i+1)); }
+      list.push('Res[f,z'+(i+1)+']='+fmt(s.res)+(inC?' (圈内)':' (圈外)'));
+    });
+    ctx.restore();
+    setRO('rsReadout',
+      '当前闭曲线 $C$ 的圆心约在 '+hl2(cstr(C(cx0,cy0),1))+' 处, 半径 $R='+hl(fmt(R))+'$.<br>'+
+      '各奇点留数: '+list.join('; ')+'.<br>'+
+      '落在 $C$ 内部的奇点: <b>'+(insideTxt.length?insideTxt.join(', '):'无')+'</b>, 其留数之和 $\\sum\\mathrm{Res}='+hl2(fmt(sum))+'$.<br>'+
+      '由留数定理, $\\oint_C f(z)\\mathrm{d}z=2\\pi\\mathrm{i}\\times('+fmt(sum)+')$'+
+      (insideTxt.length? ', 即约为 $'+cstr(C(0,TAU*sum),2)+'$.' : ' $=0$ (路径内无奇点).'));
+  }
+  makeDraggable(cv,function(mx,my,w,h){
+    var m=mp(w,h);
+    cx0=m.ix(mx-15); cy0=m.iy(my-46);
+    cx0=Math.max(-2.0,Math.min(2.0,cx0));
+    cy0=Math.max(-1.6,Math.min(1.6,cy0));
+    draw();
+  });
+  bindSlider('rsR',function(v){ R=v; badge('rsRV',fmt(v)); draw(); });
+  badge('rsRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 洛朗展开中提取 c₋₁ (Tab1) =================
+module('cvExtract',function(cv){
+  var sel=-1, KMIN=-5, KMAX=5;
+  function coef(n){ var mm=n+3; if(mm<0) return 0; var r=1; for(var i=2;i<=mm;i++) r*=i; return 1/r; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var padL=46, padR=26, padT=84, padB=46;
+    var plotW=w-padL-padR, plotH=h-padT-padB;
+    var y0=padT+plotH*0.64, scale=plotH*0.52;
+    var n=KMAX-KMIN+1, step=plotW/n;
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(padL-16,y0); ctx.lineTo(w-padR+8,y0); ctx.stroke();
+    var xm1=padL+(-1-KMIN)*step+step*0.5;
+    ctx.save(); ctx.setLineDash([5,5]); ctx.strokeStyle='#c62828'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(xm1,padT-8); ctx.lineTo(xm1,y0+12); ctx.stroke(); ctx.restore();
+    for(var k=KMIN;k<=KMAX;k++){
+      var v=coef(k);
+      var cx=padL+(k-KMIN)*step+step*0.5;
+      var bh=v*scale;
+      if(Math.abs(v)<1e-9){
+        ctx.fillStyle='#b0bec5'; ctx.fillRect(cx-step*0.28,y0-2,step*0.56,4);
+      } else {
+        ctx.fillStyle=(k===-1)?'#c62828':(k<0?'#e65100':'#1976d2');
+        ctx.fillRect(cx-step*0.28,y0-bh,step*0.56,bh);
+      }
+      if(k===sel){
+        ctx.strokeStyle='#263238'; ctx.lineWidth=2.2;
+        ctx.strokeRect(cx-step*0.36,y0-bh-5,step*0.72,bh+10);
+      }
+      ctx.fillStyle='#546e7a'; ctx.font='12px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(ns(k),cx,y0+18); ctx.textAlign='left';
+    }
+    tlabel(ctx,w-padR-12,y0+20,'n','#546e7a','italic 13px Georgia');
+    tlabel(ctx,padL-36,y0-16,'cₙ','#546e7a','italic 13px Georgia');
+    tlabel(ctx,padL-26,padT-34,'f(z) = eᶻ / z³ 的洛朗系数 cₙ  (n = −5 … 5)','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,padL-22,padT-13,'红色柱 = n = −1 项 (就是留数 c₋₁); 橙色柱 = 其它负幂项; 蓝色柱 = 非负幂项','#607d8b','12px Segoe UI');
+    var txt;
+    if(sel===-1){
+      txt='选中的 $n='+hl('-1')+'$: $c_{-1}='+hl2(fmt(coef(-1)))+'$, 这正是 $f(z)=\\dfrac{\\mathrm{e}^z}{z^3}$ 在 $z=0$ 的<b>留数</b>.<br>'+
+          '沿闭曲线积分时, 只有这一项留下 $2\\pi\\mathrm{i}$ 的贡献: $\\oint_C f(z)\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$.';
+    } else if(sel<0){
+      txt='选中的 $n='+sel+'$: $c_{'+sel+'}='+hl2(fmt(coef(sel)))+'$ —— 它虽然是负幂项, 但不是 $n=-1$, 积分时会被消去.';
+    } else {
+      txt='选中的 $n='+sel+'$: $c_{'+sel+'}='+hl2(fmt(coef(sel)))+'$ —— 非负幂项, 沿闭曲线的积分为 $0$.';
+    }
+    setRO('exReadout', txt+'<br>'+(sel===-1?hl('结论: 提取 $c_{-1}$, 就得到了留数.'):'继续拖动滑块, 找到 $n=-1$ 那一项.'));
+  }
+  bindSlider('exK',function(v){ sel=Math.round(v); badge('exKV','$n='+sel+'$'); draw(); });
+  badge('exKV','$n='+sel+'$');
+  return {draw:draw};
+});
+
+// ================= 模块 3: 三条准则的计算流程 (Tab2) =================
+module('cvRule',function(cv){
+  var kind=0;
+  var NAMES=['准则 1','准则 2','准则 3'];
+  var SUB=['一级极点','m 级极点','P/Q 型'];
+  var FORM=['Res = lim (z−z₀) f(z)','含 (m−1) 阶导数','Res = P(z₀) / Q′(z₀)'];
+  var COL=['#1976d2','#e65100','#2e7d32'];
+  function fitText(ctx,txt,maxW,basePx,bold){
+    var px=basePx;
+    ctx.font=(bold?'bold ':'')+px+'px Segoe UI';
+    while(ctx.measureText(txt).width>maxW && px>9){ px--; ctx.font=(bold?'bold ':'')+px+'px Segoe UI'; }
+    return px;
+  }
+  function rbox(ctx,bx,by,bw,bh,col,r,lw){
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,r); else ctx.rect(bx,by,bw,bh);
+    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var topY=40, topW=Math.min(360,w*0.62), topH=52;
+    rbox(ctx,w/2-topW/2,topY,topW,topH,'#37474f',9);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#37474f'; ctx.font='bold 13px Segoe UI';
+    ctx.fillText('已知 z₀ 是极点 → 判断它的级', w/2, topY+topH/2);
+    var bw=Math.min((w-60)/3,200), bh=104;
+    var gap=(w-3*bw)/4;
+    var by=topY+topH+56;
+    var busY=topY+topH+28;
+    var cen=function(i){ return gap*(i+1)+bw*i+bw/2; };
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(w/2,topY+topH); ctx.lineTo(w/2,busY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cen(0),busY); ctx.lineTo(cen(2),busY); ctx.stroke();
+    for(var i=0;i<3;i++){
+      var bx=gap*(i+1)+bw*i;
+      var col=COL[i], act=(i===kind);
+      ctx.strokeStyle=act?col:'#cfd8dc'; ctx.lineWidth=act?2.2:1.4;
+      ctx.beginPath(); ctx.moveTo(cen(i),busY); ctx.lineTo(cen(i),by-6); ctx.stroke();
+      rbox(ctx,bx,by,bw,bh,col,9,act?3.4:1.6);
+      if(act){ ctx.fillStyle='rgba(25,118,210,.05)'; ctx.fillRect(bx+2,by+2,bw-4,bh-4); }
+      ctx.fillStyle=col; ctx.font='bold 14px Segoe UI'; ctx.textAlign='center';
+      ctx.fillText(NAMES[i],cen(i),by+20);
+      ctx.font='12px Segoe UI'; ctx.fillStyle='#546e7a';
+      ctx.fillText(SUB[i],cen(i),by+42);
+      var px=fitText(ctx,FORM[i],bw-16,12,false);
+      ctx.font=px+'px Segoe UI'; ctx.fillStyle='#455a64';
+      ctx.fillText(FORM[i],cen(i),by+70);
+    }
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    var out;
+    if(kind===0){
+      out='<b>情形:</b> $f(z)=\\dfrac{\\mathrm{e}^z}{z(z-1)^2}$, $z_0=0$ 是一级极点, 走 '+hl('准则 1')+'.<br>'+
+          '$$\\mathrm{Res}[f(z),0]=\\lim\\limits_{z\\to0}z\\cdot\\dfrac{\\mathrm{e}^z}{z(z-1)^2}=\\lim\\limits_{z\\to0}\\dfrac{\\mathrm{e}^z}{(z-1)^2}='+hl2('1')+'.$$';
+    } else if(kind===1){
+      out='<b>情形:</b> 同一个 $f(z)$, $z_0=1$ 是二级极点 ($m=2$), 走 '+hl('准则 2')+'.<br>'+
+          '$$\\mathrm{Res}[f(z),1]=\\dfrac{1}{1!}\\lim\\limits_{z\\to1}\\dfrac{\\mathrm{d}}{\\mathrm{d}z}\\left[\\dfrac{\\mathrm{e}^z}{z}\\right]=\\lim\\limits_{z\\to1}\\dfrac{\\mathrm{e}^z(z-1)}{z^2}='+hl2('0')+'.$$';
+    } else {
+      out='<b>情形:</b> $f(z)=\\dfrac{1}{z^2+1}=\\dfrac{P(z)}{Q(z)}$, $Q(\\mathrm{i})=0$, $Q\'(\\mathrm{i})=2\\mathrm{i}\\neq0$, 走 '+hl('准则 3')+'.<br>'+
+          '$$\\mathrm{Res}[f(z),\\mathrm{i}]=\\dfrac{P(\\mathrm{i})}{Q\'(\\mathrm{i})}=\\dfrac{1}{2\\mathrm{i}}='+hl2('-\\dfrac{\\mathrm{i}}{2}')+'.$$';
+    }
+    setRO('ruleReadout', out);
+  }
+  bindSlider('ruleK',function(v){ kind=Math.round(v); badge('ruleKV',NAMES[kind]); draw(); });
+  badge('ruleKV',NAMES[kind]);
+  return {draw:draw};
+});
+
+// ================= 模块 4: 无穷远点留数与留数总和为零 (Tab3) =================
+module('cvInfRes',function(cv){
+  var pick=2, maxAbs=3.2;
+  var data=[
+    {name:'z₁ = 0',  res:-1,  tex:'z_1=0'},
+    {name:'z₂ = 1',  res: 3,  tex:'z_2=1'},
+    {name:'z = ∞',   res:-2,  tex:'\\infty'}
+  ];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var nameX=12, colX=Math.min(120,w*0.22), valX=w-122;
+    var axisX=(colX+valX)/2;
+    var top=72, rowH=(h-top-46)/3;
+    var sc=(Math.min(axisX-colX,valX-axisX)-8)/maxAbs;
+    ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(axisX,top-18); ctx.lineTo(axisX,h-38); ctx.stroke();
+    tlabel(ctx,axisX+5,top-24,'0','#546e7a','bold 12px Segoe UI');
+    var others=0;
+    data.forEach(function(d,i){ if(i!==pick) others+=d.res; });
+    for(var i=0;i<3;i++){
+      var d=data[i], cy=top+rowH*i+rowH/2;
+      var bw=Math.abs(d.res)*sc;
+      var col=(i===pick)?'#c62828':(i===2?'#e65100':'#1976d2');
+      ctx.fillStyle=col;
+      if(d.res>=0) ctx.fillRect(axisX,cy-14,bw,28);
+      else ctx.fillRect(axisX-bw,cy-14,bw,28);
+      var npx=fitLbl(ctx,d.name,colX-nameX-14);
+      ctx.font='bold '+npx+'px Segoe UI'; ctx.fillStyle=col;
+      ctx.fillText(d.name, nameX, cy+5);
+      ctx.font='bold 12px Segoe UI'; ctx.fillStyle=col;
+      ctx.fillText((i===pick)?'？ 待求':'Res = '+fmt(d.res), valX, cy+5);
+    }
+    tlabel(ctx,nameX,26,'f(z) = (2z+1) / [ z (z−1) ]  的诸奇点留数','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,nameX,h-16,'定理 2.2: Res[f, z₁] + Res[f, z₂] + Res[f, ∞] = 0','#c62828','bold 12px Segoe UI');
+    var calc=-others, trueV=data[pick].res;
+    var known=[];
+    data.forEach(function(d,i){ if(i!==pick) known.push('$\\mathrm{Res}[f,'+d.tex+']='+fmt(d.res)+'$'); });
+    setRO('irReadout',
+      '考虑 $f(z)=\\dfrac{2z+1}{z(z-1)}$, 它在扩充复平面上的孤立奇点只有 $z_1=0$, $z_2=1$, $z=\\infty$.<br>'+
+      '已知: '+known.join(', ')+'.<br>'+
+      '由定理 2.2, 诸奇点留数总和为零, 故待求的 $\\mathrm{Res}[f,'+data[pick].tex+']=-\\sum\\limits_{\\text{其余}}='+hl2(fmt(calc))+'$'+
+      (Math.abs(calc-trueV)<1e-9? ', 与准则 4 (或直接展开) 算出的结果一致.' : '.'));
+  }
+  function fitLbl(ctx,txt,maxW){
+    var px=13;
+    ctx.font='bold '+px+'px Segoe UI';
+    while(ctx.measureText(txt).width>maxW && px>9){ px--; ctx.font='bold '+px+'px Segoe UI'; }
+    return px;
+  }
+  bindSlider('irK',function(v){ pick=Math.round(v); badge('irKV','$'+data[pick].tex+'$'); draw(); });
+  badge('irKV','$'+data[pick].tex+'$');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 选择计算路线 (Tab4) =================
+module('cvRoute',function(cv){
+  var sel=0;
+  var CASES=[
+    {f:'f(z) = eᶻ / z²',     sing:'z₀ = 0 (二级极点)',   meth:'准则 2',   res:'Res = 1'},
+    {f:'f(z) = z / (z²+1)',  sing:'z₀ = i (一级极点)',   meth:'准则 3',   res:'Res = 1/2'},
+    {f:'f(z) = z³ · e^(1/z)',sing:'z₀ = 0 (本性奇点)',   meth:'洛朗展开',  res:'Res = 1/24'}
+  ];
+  var TIT=['f(z)','奇点类型','选用方法','留数结果'];
+  var COL=['#546e7a','#e65100','#1976d2','#2e7d32'];
+  function fitText(ctx,txt,maxW,basePx,bold){
+    var px=basePx;
+    ctx.font=(bold?'bold ':'')+px+'px Segoe UI';
+    while(ctx.measureText(txt).width>maxW && px>9){ px--; ctx.font=(bold?'bold ':'')+px+'px Segoe UI'; }
+    return px;
+  }
+  function rbox(ctx,bx,by,bw,bh,col,r,lw){
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,r); else ctx.rect(bx,by,bw,bh);
+    ctx.fillStyle='#fff'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var c=CASES[sel];
+    var texts=[c.f, c.sing, c.meth, c.res];
+    var n=4, gap=Math.max(16,(w-40)/10);
+    var bw=(w-2*20-gap*(n-1))/n, bh=104;
+    var by=h/2-bh/2+8;
+    for(var i=0;i<n;i++){
+      var bx=20+i*(bw+gap);
+      var act=(i===2);
+      rbox(ctx,bx,by,bw,bh,COL[i],10,act?3.6:1.8);
+      var tpx=fitText(ctx,TIT[i],bw-14,11,false);
+      ctx.font=tpx+'px Segoe UI'; ctx.fillStyle='#90a4ae'; ctx.textAlign='center';
+      ctx.fillText(TIT[i],bx+bw/2,by+20);
+      var px=fitText(ctx,texts[i],bw-16,12,true);
+      ctx.font='bold '+px+'px Segoe UI'; ctx.fillStyle=COL[i];
+      ctx.fillText(texts[i],bx+bw/2,by+bh/2+14);
+      if(i<n-1) arrow(ctx,bx+bw+3,by+bh/2,bx+bw+gap-3,by+bh/2,'#b0bec5',1.8,9);
+    }
+    ctx.textAlign='left';
+    var out;
+    if(sel===0){
+      out='选定路线: 二级极点, 走 '+hl('准则 2')+'.<br>'+
+          '$$\\mathrm{Res}\\left[\\dfrac{\\mathrm{e}^z}{z^2},0\\right]=\\dfrac{1}{1!}\\lim\\limits_{z\\to0}\\dfrac{\\mathrm{d}}{\\mathrm{d}z}\\left[z^2\\cdot\\dfrac{\\mathrm{e}^z}{z^2}\\right]=\\lim\\limits_{z\\to0}\\mathrm{e}^z='+hl2('1')+'.$$';
+    } else if(sel===1){
+      out='选定路线: 一级极点, $f=P/Q$ 型, 走 '+hl('准则 3')+'.<br>'+
+          '$$\\mathrm{Res}\\left[\\dfrac{z}{z^2+1},\\mathrm{i}\\right]=\\dfrac{P(\\mathrm{i})}{Q\'(\\mathrm{i})}=\\dfrac{\\mathrm{i}}{2\\mathrm{i}}='+hl2('\\dfrac{1}{2}')+'.$$';
+    } else {
+      out='选定路线: 本性奇点, 走 '+hl('洛朗展开')+'.<br>'+
+          '$$z^3\\mathrm{e}^{1/z}=\\sum_{n=0}^{\\infty}\\dfrac{z^{3-n}}{n!},\\quad 3-n=-1\\Rightarrow n=4,\\quad c_{-1}=\\dfrac{1}{4!}='+hl2('\\dfrac{1}{24}')+'.$$';
+    }
+    setRO('rtReadout', out);
+  }
+  bindSlider('rtK',function(v){ sel=Math.round(v); badge('rtKV',CASES[sel].meth); draw(); });
+  badge('rtKV',CASES[sel].meth);
+  return {draw:draw};
+});
+
+// ================= 模块 6: 知识图谱 (Tab5) =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'留数的定义与定理', c:'#1976d2', leaves:['定义2.1: 负一次幂系数 $c_{-1}$','$\\operatorname{Res}[f,z_0]=c_{-1}$','逐项积分: 只留 $n=-1$ 项','定理2.1（留数定理）','$\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum\\operatorname{Res}$','可去奇点 → $\\operatorname{Res}=0$']},
+    {t:'函数在极点的留数', c:'#e65100', leaves:['准则1: 一级极点','$\\operatorname{Res}=\\lim\\limits_{z\\to z_0}(z-z_0)f(z)$','准则2: $m$ 级极点','含 $(m-1)$ 阶导数','准则3: $f=P/Q$ 型','$\\operatorname{Res}=\\frac{P(z_0)}{Q\'(z_0)}$']},
+    {t:'无穷远点的留数', c:'#c62828', leaves:['定义2.2: 定义里带负号','$\\operatorname{Res}[f,\\infty]=-c_{-1}$','定理2.2: 留数总和 $=0$','准则4: 含 $1/z$ 与 $1/z^2$','例2.4 / 例2.5','可去奇点也可能 $\\operatorname{Res}\\neq 0$']},
+    {t:'计算路线与综合', c:'#2e7d32', leaves:['可去 → $\\operatorname{Res}=0$','本性 → 洛朗展开','极点 → 准则 1 / 2 / 3','奇点多 → 改用 $\\infty$ 点','$\\oint_C f\\,\\mathrm{d}z=-2\\pi\\mathrm{i}\\,\\operatorname{Res}[f,\\infty]$','一句话: 局部决定整体']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第五章第二节 · 留数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 (留数 = c₋₁) → 定理 (∮ = 2πi Σ Res) → 极点三准则 (1 / 2 / 3) → 无穷远点 (准则 4 与留数和为零); 一句话: <b>闭路积分只由它围住的点决定</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'留数定理把「沿闭曲线的积分」压缩成「有限个留数之和」. 这种「整体化归为局部」的思想, 你在数学中或生活中还见过哪些?',
+     hints:['本节内部: 无穷远点的留数通过 ξ = 1/z 化归到原点; 上一节的孤立奇点类型由局部洛朗展开决定.',
+            '更早的章节: 复积分被化成两个实曲线积分, 从而可以使用实分析的工具.',
+            '数学之外: 工程师把复杂系统建模成少数几个关键参数, 医生用几项指标判断整体健康状况, 都是同一思路.',
+            '可迁移的态度: 与其平均用力, 不如先找出那几个真正「说了算」的关键量.']},
+    {q:'无穷远点的留数定义里为什么必须带一个负号? 这个符号背后是怎样的约定?',
+     hints:['因为无穷远点处的「正向」被约定为顺时针方向 —— 它对应的正是有限点处正向的相反方向.',
+            '在 z = 1/ξ 的变换下, 正向的圆 |z| = ρ 对应到 ξ 平面上就是反向的圆, 符号由此产生.',
+            '所以符号不是「记错」, 而是定义中方向的自然结果; 忽略它, 结论就会整体差一个负号.',
+            '可迁移的态度: 公式里的每一个符号都有来历, 记不住时回到定义的「几何约定」去还原.']},
+    {q:'例 2.5 中 z = ∞ 是 1/z 的可去奇点, 但留数却等于 −1. 这个「例外」说明了什么?',
+     hints:['有限点处「可去奇点 ⟺ 留数为 0」, 这条规律在无穷远点处不再成立 —— 因为 ∞ 的处理方式与有限点不同.',
+            '它提醒我们: 结论往往带有适用边界, 边界之外不能想当然地照搬.',
+            '正确的态度不是怀疑定理, 而是回到定义, 检查究竟在哪里「换了前提」.',
+            '可迁移的态度: 遇到反例, 先定位前提的差异, 而不是急着否定整个结论.']},
+    {q:'从「洛朗展开只留一项」到「留数定理只算有限个点」: 为什么在数学里「少」反而更有力量?',
+     hints:['因为「少」意味着找到了结构: 不是所有信息都同等重要, 只有特定位置的特定系数在说话.',
+            '把连续无穷的运算降为有限离散的加法, 既省计算, 又便于建立理论.',
+            '定理 2.2 更进一步: 诸留数还有「总和为零」的约束, 于是很多量可以相互推出.',
+            '可迁移的态度: 面对复杂对象, 先问「其中哪些是本质的」, 而不是先埋头算.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

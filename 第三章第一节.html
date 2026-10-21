@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章第一节 复变函数积分的概念</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第三章 第1节 复变函数积分的概念</h1>
+    <p>有向曲线 &middot; 积分定义 &middot; 计算与估值</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解<b>有向曲线</b>与<b>简单闭曲线正向</b>的规定, 会判断曲线的正、负方向;
+2. 掌握复变函数积分的定义 (分割、求和、取极限), 理解它与实变定积分定义的异同;
+3. 熟记并会运用积分计算的核心公式 $\int_C f(z)\mathrm{d}z=\int_\alpha^\beta f[z(t)]z'(t)\mathrm{d}t$ (定理 1.1);
+4. 掌握复积分的五条基本性质, 特别是<b>估值不等式</b> $\left|\int_C f(z)\mathrm{d}z\right|\le ML$, 会用它估计积分的上界;
+5. 记住重要结论 $$\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{(z-z_0)^{n+1}}=\begin{cases}2\pi\mathrm{i}, & n=0\\0, & n\neq 0\end{cases}$$, 理解它"与中心、半径无关"的深刻含义.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-3a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-3a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-3a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-3a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-3a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-3a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、有向曲线与积分定义</label>
+    <label class="tab-btn" for="tab2" id="label2">二、积分的计算</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型例题</label>
+    <label class="tab-btn" for="tab4" id="label4">四、性质与估值不等式</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 有向曲线与积分定义 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 有向曲线</div>
+
+<div class="box-think">
+<div class="think-label">思考: 为什么积分之前要先给曲线"定向"?</div>
+在实变函数的定积分 $\int_a^b f(x)\mathrm{d}x$ 中, 区间 $[a,b]$ 天然带着方向 —— 从 $a$ 到 $b$. 而平面上的一条曲线本身<b>没有方向</b>, 它只是一堆点的集合.
+<br><br>
+因此要在曲线上建立积分, 必须<b>先约定一个前进方向</b>. 方向的选取直接影响积分值的正负号, 也决定了后面"闭路正向"、"复合闭路"等一系列规定 —— 这是复积分理论的起点.
+</div>
+
+<div class="box-key">
+<div class="title">定义 (有向曲线)</div>
+设 $C$ 为平面上给定的一条光滑 (或按段光滑) 曲线. 如果选定 $C$ 的两个可能方向中的一个作为正方向 (或正向), 那么我们就把 $C$ 理解为带有方向的曲线, 称为<b>有向曲线</b>.
+<br><br>
+如果起点 $A$ 到终点 $B$ 作为曲线 $C$ 的正向, 那么 $B$ 到 $A$ 就是曲线 $C$ 的<b>负向</b>, 记为 $C^-$.
+</div>
+
+<div class="box-key">
+<div class="title">简单闭曲线的正向</div>
+简单闭曲线 $C$ 的正向是指: 当曲线上的点 $P$ 顺此方向前进时, 邻近 $P$ 点的曲线的<b>内部始终位于 $P$ 点的左方</b>.
+<br><br>
+与之相反的方向就是曲线的负方向.
+<br><br>
+<span style="color:#c62828"><b>实用记法:</b></span> 对最熟悉的圆周 $|z-z_0|=r$ 而言, 其正向就是<b>逆时针方向</b> —— 这时圆心 (内部) 始终在左手边.
+</div>
+
+<div class="sec-title">1.2 积分的定义</div>
+
+<div class="box-key">
+<div class="title">定义 1.1 (复变函数的积分)</div>
+设 $C$ 为复平面上起点为 $A$ 终点为 $B$ 的一条光滑的有向曲线, 函数 $w=f(z)$ 在 $C$ 上有定义. 把曲线 $C$ 任意分成 $n$ 个小弧段, 设分点依次为
+<div class="box-formula">$$A=z_0,\ z_1,\ \cdots,\ z_{k-1},\ z_k,\ \cdots,\ z_n=B,$$</div>
+在每个小弧段 $\widehat{z_{k-1}z_k}$ $(k=1,2,\cdots,n)$ 上任取一点 $\xi_k$, 作和式
+<div class="box-formula">$$S_n=\sum_{k=1}^{n}f(\xi_k)\cdot(z_k-z_{k-1})=\sum_{k=1}^{n}f(\xi_k)\cdot\Delta z_k,$$</div>
+这里 $\Delta z_k=z_k-z_{k-1}$.
+</div>
+
+<div class="box-result">
+<div class="res-label">定义 1.1 (续): 积分</div>
+设 $\lambda=\max\limits_{1\le k\le n}|\Delta z_k|$, 当 $\lambda\to 0$ 时, 如果和式的极限存在, 且此极限值与 $C$ 的分法及 $\xi_k$ 的选取无关, 则称此极限值为 $f(z)$ 沿曲线 $C$ 自 $A$ 到 $B$ 的<b>积分</b>, 记作
+<div class="box-formula">$$\int_C f(z)\mathrm{d}z=\lim\limits_{\lambda\to 0}\sum_{k=1}^{n}f(\xi_k)\Delta z_k.$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">三条记号约定</div>
+<b>(1) 负方向上的积分:</b>
+$$\int_{C^-}f(z)\mathrm{d}z=-\int_C f(z)\mathrm{d}z;$$
+<b>(2) 闭曲线上的积分:</b> 当 $C$ 为闭曲线时, 记作
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z,$$</div>
+其中 $C$ 的<b>正向为逆时针方向</b>;
+<b>(3) 起点终点记号:</b> 有时也写作 $\int_A^B f(z)\mathrm{d}z$ (在有向曲线 $C$ 上).
+</div>
+
+<div class="box-warning">
+<div class="warn-label">与实变定积分对照</div>
+复变函数的积分定义在<b>形式上</b>与实变定积分完全一致: 分割 → 取点 → 求和 → 取极限. 但有两点不同:
+<br><br>
+&nbsp;&nbsp;• 分割的对象是<b>曲线</b>而非区间, 因此"$\lambda\to 0$"要求的是<b>所有小弧段的最大长度</b>趋于 $0$;
+<br>
+&nbsp;&nbsp;• 积分值是<b>复数</b>, 不再具有"曲边梯形面积"那样的简单几何意义 —— 它表示的是一个复数的"积累量".
+</div>
+
+<div class="chart-container">
+<h3>交互: 分割、取点、求和 —— 复积分的三步 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">把曲线 $C$ 分成 $n$ 个小弧段, 在每个小弧段上任取一点 $\xi_k$, 计算 $\sum f(\xi_k)\Delta z_k$. 拖动滑块增大 $n$, 观察和式如何逼近积分值 $\int_C f(z)\mathrm{d}z$.</div>
+<canvas id="cvRiemannSum" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>分割数 $n$:</label>
+<input type="range" id="rsN" min="1" max="60" step="1" value="6">
+<span class="val-badge" id="rsNV">6</span>
+<button class="control-btn" id="btnRsAnim">▶ 自动细化</button>
+<button class="control-btn" id="btnRsReset">↻ 重置</button>
+</div>
+<div class="readout" id="rsReadout"></div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 有向曲线与闭曲线的正向 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">点击按钮切换曲线类型, 观察"内部始终在左手边"这一规定的含义. 对闭曲线, 逆时针为正向; 拖动圆弧上的点, 观察切向箭头与左手方向的关系.</div>
+<canvas id="cvCurveDir" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>曲线类型:</label>
+<button class="control-btn" id="cdB1">简单弧 (A→B)</button>
+<button class="control-btn" id="cdB2">圆周 (正/负向)</button>
+<button class="control-btn" id="cdB3">任意简单闭曲线</button>
+</div>
+<div class="readout" id="cdReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 积分的计算 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 可积性与线积分表示</div>
+
+<div class="box-key">
+<div class="title">定理 1.1 (可积性与线积分表示)</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 沿光滑曲线 $C$ 连续, 则 $f(z)$ 沿 $C$ 可积, 且
+<div class="box-formula">$$\int_C f(z)\mathrm{d}z=\int_C u(x,y)\mathrm{d}x-v(x,y)\mathrm{d}y+\mathrm{i}\int_C v(x,y)\mathrm{d}x+u(x,y)\mathrm{d}y.$$</div>
+这个公式把复积分"翻译"成了两个<b>实变量的第二类曲线积分</b> —— 后者可以用熟知的格林公式、参数化方法处理.
+</div>
+
+<div class="box-key">
+<div class="title">核心计算公式 (参数化)</div>
+令曲线 $C$ 的参数方程为
+<div class="box-formula">$$z(t)=x(t)+\mathrm{i}y(t) \qquad (\alpha\le t\le\beta),$$</div>
+则有
+<div class="box-formula">$$\int_C f(z)\mathrm{d}z=\int_{\alpha}^{\beta}f[z(t)]z'(t)\mathrm{d}t.$$</div>
+<span style="color:#c62828"><b>这是计算复积分最基本、最常用的方法.</b></span>
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 1.1 的证明</div>
+<input type="checkbox" id="ans31" class="answer-toggle">
+<label for="ans31" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+设 $\xi_k=\xi_k'+\mathrm{i}\eta_k$, $\Delta z_k=\Delta x_k+\mathrm{i}\Delta y_k$, 从而
+$$\sum_{k=1}^{n}f(\xi_k)\Delta z_k=\sum_{k=1}^{n}\left[u(\xi_k,\eta_k)+\mathrm{i}v(\xi_k,\eta_k)\right](\Delta x_k+\mathrm{i}\Delta y_k)$$
+$$=\sum_{k=1}^{n}\left[u(\xi_k,\eta_k)\Delta x_k-v(\xi_k,\eta_k)\Delta y_k\right]+\mathrm{i}\sum_{k=1}^{n}\left[v(\xi_k,\eta_k)\Delta x_k+u(\xi_k,\eta_k)\Delta y_k\right].$$
+由于 $f(z)$ 在 $C$ 上连续, 从而 $u,v$ 在 $C$ 上连续. 当 $\lambda\to 0$ 时, 有 $\max\limits_{1\le k\le n}|\Delta x_k|\to 0$ 及 $\max\limits_{1\le k\le n}|\Delta y_k|\to 0$, 于是上式右端极限存在, 且
+$$\int_C f(z)\mathrm{d}z=\int_C u\,\mathrm{d}x-v\,\mathrm{d}y+\mathrm{i}\int_C v\,\mathrm{d}x+u\,\mathrm{d}y. \qquad \blacksquare$$
+</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">参数化公式的推导</div>
+设曲线 $C$ 的参数方程为 $z=z(t)=x(t)+\mathrm{i}y(t)$, $\alpha\le t\le\beta$, 则有
+$$\int_C f(z)\mathrm{d}z=\int_{\alpha}^{\beta}\left[u(x(t),y(t))x'(t)-v(x(t),y(t))y'(t)\right]\mathrm{d}t+\mathrm{i}\int_{\alpha}^{\beta}\left[v(x(t),y(t))x'(t)+u(x(t),y(t))y'(t)\right]\mathrm{d}t$$
+$$=\int_{\alpha}^{\beta}\left[u(x(t),y(t))+\mathrm{i}v(x(t),y(t))\right]\left[x'(t)+\mathrm{i}y'(t)\right]\mathrm{d}t=\int_{\alpha}^{\beta}f[z(t)]z'(t)\mathrm{d}t.$$
+<b>要点:</b> 把 $z$ 用参数表示 → 求 $\mathrm{d}z=z'(t)\mathrm{d}t$ → 化为关于 $t$ 的实积分.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1</div>
+计算 $\int_C z\,\mathrm{d}z$, 其中 $C$ 是从原点到点 $3+4\mathrm{i}$ 的直线段.
+<input type="checkbox" id="ans32" class="answer-toggle">
+<label for="ans32" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+直线方程为 $x=3t,\ y=4t$, 或写成 $z=(3+4\mathrm{i})t$, 其中 $0\le t\le 1$.
+<br>
+从而 $\mathrm{d}z=(3+4\mathrm{i})\mathrm{d}t$,
+$$\int_C z\,\mathrm{d}z=\int_0^1 (3+4\mathrm{i})^2\,t\,\mathrm{d}t=(3+4\mathrm{i})^2\int_0^1 t\,\mathrm{d}t=\frac{(3+4\mathrm{i})^2}{2}.$$
+由于
+$$\int_C z\,\mathrm{d}z=\int_C (x+\mathrm{i}y)(\mathrm{d}x+\mathrm{i}\mathrm{d}y)=\int_C x\,\mathrm{d}x-y\,\mathrm{d}y+\mathrm{i}\int_C y\,\mathrm{d}x+x\,\mathrm{d}y,$$
+易证右边两个线积分<b>与路径无关</b>, 故对于连接原点到 $3+4\mathrm{i}$ 的<b>任何曲线</b>, 该积分值保持不变.
+<br><br>
+<span style="color:#c62828"><b>启示:</b></span> 这一"路径无关"的现象并非偶然 —— 它正是下一节<b>柯西积分定理</b>的先声.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 参数化计算的几何过程 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">观察曲线 $C$ 被参数 $t$ 逐点描出的过程, 以及被积函数 $f(z)=z$ 与 $z'(t)$ 的乘积如何沿曲线累积. 点击"播放"看积分如何从起点"走"到终点.</div>
+<canvas id="cvParam" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $t$:</label>
+<input type="range" id="pmT" min="0" max="1" step="0.01" value="1">
+<span class="val-badge" id="pmTV">1.00</span>
+<button class="control-btn" id="btnPmAnim">▶ 沿曲线走一遍</button>
+</div>
+<div class="readout" id="pmReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型例题 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 一个极其重要的结论</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.2</div>
+计算 $\oint_C\frac{1}{(z-z_0)^{n+1}}\mathrm{d}z$, 其中 $C$ 为以 $z_0$ 为中心, $r$ 为半径的<b>正向</b>圆周, $n$ 为整数.
+<input type="checkbox" id="ans33" class="answer-toggle">
+<label for="ans33" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+积分路径的参数方程为
+$$z=z_0+r\mathrm{e}^{\mathrm{i}\theta} \qquad (0\le\theta\le 2\pi),$$
+于是 $\mathrm{d}z=\mathrm{i}r\mathrm{e}^{\mathrm{i}\theta}\mathrm{d}\theta$, 从而
+$$\oint_C\frac{1}{(z-z_0)^{n+1}}\mathrm{d}z=\int_0^{2\pi}\frac{\mathrm{i}r\mathrm{e}^{\mathrm{i}\theta}}{r^{n+1}\mathrm{e}^{\mathrm{i}(n+1)\theta}}\mathrm{d}\theta=\frac{\mathrm{i}}{r^{n}}\int_0^{2\pi}\mathrm{e}^{-\mathrm{i}n\theta}\mathrm{d}\theta.$$
+<b>当 $n=0$ 时:</b>
+$$\oint_C\frac{1}{z-z_0}\mathrm{d}z=\mathrm{i}\int_0^{2\pi}\mathrm{d}\theta=2\pi\mathrm{i};$$
+<b>当 $n\neq 0$ 时:</b>
+$$\oint_C\frac{1}{(z-z_0)^{n+1}}\mathrm{d}z=\frac{\mathrm{i}}{r^{n}}\int_0^{2\pi}(\cos n\theta-\mathrm{i}\sin n\theta)\mathrm{d}\theta=0.$$
+所以
+<div class="box-formula">$$\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{(z-z_0)^{n+1}}=\begin{cases}2\pi\mathrm{i}, & n=0,\\[4pt] 0, & n\neq 0.\end{cases}$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">重要结论</div>
+<b>该积分值与路径圆周的中心和半径无关.</b>
+<br><br>
+这个结论是整章后续内容的"技术支点": 柯西积分公式、高阶导数公式、留数定理 —— 全都建立在它之上. 请务必牢记.
+<br><br>
+直觉理解: $\frac{1}{z-z_0}$ 是唯一"绕 $z_0$ 一圈积分不为零"的简单函数, 它探测到了闭曲线内部存在一个<b>奇点</b> $z_0$. 这与后面"留数"的概念一脉相承.
+</div>
+
+<div class="chart-container">
+<h3>交互: 积分的值只取决于 $n$ 是否为零 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动滑块改变 $n$ (从 $-4$ 到 $4$), 观察 $\oint\frac{\mathrm{d}z}{(z-z_0)^{n+1}}$ 的值. 注意: <b>只有 $n=0$ 时积分才等于 $2\pi\mathrm{i}$, 其余情形全为零</b>; 同时拖动半径 $r$, 验证结果与半径无关.</div>
+<div class="fig-caps">
+<div class="fc">$\oint=\frac{\mathrm{i}}{r^n}\int_0^{2\pi}\mathrm{e}^{-\mathrm{i}n\theta}\,\mathrm{d}\theta$</div>
+</div>
+<canvas id="cvCircleInt" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>指数 $n$:</label>
+<input type="range" id="ciN" min="-4" max="4" step="1" value="0">
+<span class="val-badge" id="ciNV">0</span>
+<label>半径 $r$:</label>
+<input type="range" id="ciR" min="0.4" max="2.2" step="0.02" value="1.2">
+<span class="val-badge" id="ciRV">1.20</span>
+</div>
+<div class="readout" id="ciReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">3.2 积分与路径有关的一个例子</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.3</div>
+计算 $\int_C \bar z\,\mathrm{d}z$, 其中 $C$ 是
+<br>(1) 从点 $1$ 到 $\mathrm{i}$ 的直线段 $C_1$;
+<br>(2) 从点 $1$ 到 $O$ 的直线段 $C_2$, 再从点 $O$ 到点 $\mathrm{i}$ 的直线段 $C_3$ 所连接成的折线段 $C=C_2+C_3$.
+<input type="checkbox" id="ans34" class="answer-toggle">
+<label for="ans34" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> 积分路径 $C_1$ 的参数方程为
+$$z(t)=1-t+t\mathrm{i} \qquad (0\le t\le 1),$$
+于是 $\bar z=1-t-t\mathrm{i}$, $\mathrm{d}z=(-1+\mathrm{i})\mathrm{d}t$, 从而有
+$$\int_{C_1}\bar z\,\mathrm{d}z=\int_0^1(1-t-t\mathrm{i})(-1+\mathrm{i})\mathrm{d}t=\int_0^1(2t-1)\mathrm{d}t+\mathrm{i}\int_0^1\mathrm{d}t=\mathrm{i}.$$
+<b>(2)</b> 积分路径由两段直线段构成:
+<br>直线段 $C_2$ 的参数方程为 $z(t)=1-t$ $(0\le t\le 1)$;
+<br>直线段 $C_3$ 的参数方程为 $z(t)=\mathrm{i}t$ $(0\le t\le 1)$.
+于是
+$$\int_C\bar z\,\mathrm{d}z=\int_{C_2}\bar z\,\mathrm{d}z+\int_{C_3}\bar z\,\mathrm{d}z=-\int_0^1(1-t)\mathrm{d}t+\int_0^1(-\mathrm{i}t)\,\mathrm{i}\,\mathrm{d}t=0.$$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">对比与启示</div>
+两条路径的起点、终点完全相同, 但积分值一个是 $\mathrm{i}$, 一个是 $0$ —— <b>积分与路径有关!</b>
+<br><br>
+原因: 被积函数 $\bar z$ 在复平面内<b>处处不解析</b> (它不满足柯西—黎曼方程). 下一节将看到: <b>只有当 $f(z)$ 在单连通区域内解析时, 积分才与路径无关</b>. 这构成了"解析性 ⟺ 路径无关"这一深刻联系的实证.
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 性质与估值不等式 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 复积分的基本性质</div>
+
+<div class="box-key">
+<div class="title">性质 (与实变定积分类似)</div>
+复积分与实变函数的定积分有类似的性质:
+<br><br>
+<b>(1)</b> $\int_{C^-}f(z)\mathrm{d}z=-\int_C f(z)\mathrm{d}z$;
+<br>
+<b>(2)</b> $\int_C kf(z)\mathrm{d}z=k\int_C f(z)\mathrm{d}z$ ($k$ 为复常数);
+<br>
+<b>(3)</b> $\int_C[f(z)\pm g(z)]\mathrm{d}z=\int_C f(z)\mathrm{d}z\pm\int_C g(z)\mathrm{d}z$;
+<br>
+<b>(4)</b> $\int_C f(z)\mathrm{d}z=\int_{C_1}f(z)\mathrm{d}z+\int_{C_2}f(z)\mathrm{d}z$;
+<br>
+其中, 曲线 $C$ 是由光滑曲线段 $C_1,C_2$ 连接成的按段光滑曲线.
+</div>
+
+<div class="box-key">
+<div class="title">(5) 估值不等式 —— 本节最重要的不等式</div>
+<div class="box-formula">$$\left|\int_C f(z)\mathrm{d}z\right|\le\int_C|f(z)|\mathrm{d}s. \qquad (*)$$</div>
+特别地, 若在 $C$ 上有 $|f(z)|\le M$, 曲线 $C$ 的长为 $L$, 则
+<div class="box-formula">$$\left|\int_C f(z)\mathrm{d}z\right|\le ML. \qquad (**)$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">估值不等式的证明</div>
+<input type="checkbox" id="ans35" class="answer-toggle">
+<label for="ans35" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+由积分定义,
+$$\left|\sum_{k=1}^{n}f(\xi_k)\Delta z_k\right|\le\sum_{k=1}^{n}|f(\xi_k)|\cdot|\Delta z_k|\le\sum_{k=1}^{n}|f(\xi_k)|\Delta s_k.$$
+其中 $\Delta s_k$ 是小弧段 $\widehat{z_{k-1}z_k}$ 的弧长. 两边取极限可证 $(*)$ 式.
+<br><br>
+再由 $|f(z)|\le M$,
+$$\sum_{k=1}^{n}|f(\xi_k)|\cdot\Delta s_k\le M\sum_{k=1}^{n}\Delta s_k=ML,$$
+$(**)$ 式得证. $\blacksquare$
+<br><br>
+<span style="color:#c62828"><b>关键一步:</b></span> 这里用到了 $|\Delta z_k|\le\Delta s_k$ —— 弦长不超过弧长. 正是这个初等事实, 让"复积分的模"被"弧长积分"控制住.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.4</div>
+设 $C$ 为从原点到点 $3+4\mathrm{i}$ 的直线段, 试求积分 $\int_C\frac{1}{z-\mathrm{i}}\mathrm{d}z$ 绝对值的一个上界.
+<input type="checkbox" id="ans36" class="answer-toggle">
+<label for="ans36" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$C$ 的参数方程为 $z=(3+4\mathrm{i})t$, $(0\le t\le 1)$.
+<br>
+根据估值不等式知
+$$\left|\int_C\frac{1}{z-\mathrm{i}}\mathrm{d}z\right|\le\int_C\left|\frac{1}{z-\mathrm{i}}\right|\mathrm{d}s.$$
+在 $C$ 上
+$$\left|\frac{1}{z-\mathrm{i}}\right|=\frac{1}{|3t+(4t-1)\mathrm{i}|}=\frac{1}{\sqrt{(3t)^2+(4t-1)^2}}=\frac{1}{\sqrt{25\left(t-\frac{4}{25}\right)^2+\frac{9}{25}}}.$$
+当 $t=\frac{4}{25}$ 时, 上式分母取最小值 $\frac{3}{5}$, 故被积函数的模的最大值为 $\frac{5}{3}$:
+$$\left|\frac{1}{z-\mathrm{i}}\right|\le\frac{5}{3}.$$
+从而
+$$\left|\int_C\frac{1}{z-\mathrm{i}}\mathrm{d}z\right|\le\frac{5}{3}\int_C\mathrm{d}s.$$
+又 $C$ 的长度 $\int_C\mathrm{d}s=|3+4\mathrm{i}|=5$, 故
+<div class="box-formula">$$\left|\int_C\frac{1}{z-\mathrm{i}}\mathrm{d}z\right|\le\frac{25}{3}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 估值不等式 $ML$ 的几何含义 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">左图显示曲线 $C$ 上的点 $z=(3+4\mathrm{i})t$ 与被积函数模 $|f(z)|=|1/(z-\mathrm{i})|$ 随 $t$ 的变化, 并标出最大值 $M=\frac53$; 右图显示 "积分值的模 $\le M\times L$" 这一控制关系. 拖动滑块改变 $t$, 观察 $|f|$ 的分布.</div>
+<canvas id="cvEstimate" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $t$:</label>
+<input type="range" id="esT" min="0" max="1" step="0.01" value="0.16">
+<span class="val-badge" id="esTV">0.16</span>
+<button class="control-btn" id="btnEsAnim">▶ 扫描</button>
+</div>
+<div class="readout" id="esReadout"></div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">为什么估值不等式如此重要?</div>
+在后续章节中, 我们会反复遇到"证明某个积分趋于零"的任务. 直接计算积分往往非常困难, 但用估值不等式只需做两步:
+<br><br>
+&nbsp;&nbsp;<b>第一步</b> 估计 $|f(z)|$ 在曲线上的最大值 $M$;
+<br>
+&nbsp;&nbsp;<b>第二步</b> 算出曲线长度 $L$;
+<br>
+&nbsp;&nbsp;于是 $|积分|\le ML$, 若 $ML\to 0$ 即可得结论.
+<br><br>
+柯西积分公式的证明、刘维尔定理的证明、大圆弧引理 —— 都将用到这一手法. <b>它是复分析中"以估计代替计算"的典范工具.</b>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>有向曲线</b> → <b>积分定义</b> → <b>参数化计算</b> → <b>典型例题</b> → <b>性质与估值</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+曲线先定向, 内部在左手;<br>
+分割取点作和式, 极限无关才可积.<br>
+参数代入求微分, 化成实积好计算;<br>
+闭路积分记圈号, 逆时针为正方向.<br>
+估值不等式要用好, 模积小于 M 乘 L;<br>
+圆上倒数积分奇, 只有 n 零得 2πi.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心结论/公式</th><th>要点与易错</th></tr>
+<tr><td>有向曲线</td><td>选定方向 → 正向/负向, 负向记为 $C^-$</td><td>曲线本身无方向, 必须先约定</td></tr>
+<tr><td>闭曲线正向</td><td>前进时内部在左方 ⇒ 逆时针</td><td>圈号 ∮<sub>C</sub> 默认取逆时针为正向</td></tr>
+<tr><td>积分定义</td><td>$\int_C f\mathrm{d}z=\lim\limits_{\lambda\to 0}\sum f(\xi_k)\Delta z_k$</td><td>极限须与分法、取点无关</td></tr>
+<tr><td>线积分表示</td><td>$\int_C f\mathrm{d}z=\int_C u\mathrm{d}x-v\mathrm{d}y+\mathrm{i}\int_C v\mathrm{d}x+u\mathrm{d}y$</td><td>化归为实的第二类曲线积分</td></tr>
+<tr><td>参数化计算</td><td>$\int_C f(z)\mathrm{d}z=\int_\alpha^\beta f[z(t)]z'(t)\mathrm{d}t$</td><td><b>最常用的计算方法</b></td></tr>
+<tr><td>重要结论</td><td>$\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{(z-z_0)^{n+1}}=\begin{cases}2\pi\mathrm{i},&n=0\\0,&n\neq0\end{cases}$</td><td>与圆心、半径无关</td></tr>
+<tr><td>路径相关性</td><td>$\bar z$ 的积分与路径有关 (一个 $\mathrm{i}$, 一个 $0$)</td><td>因 $\bar z$ 处处不解析</td></tr>
+<tr><td>基本性质</td><td>线性性、可加性、反向变号</td><td>与实变定积分类似</td></tr>
+<tr><td>估值不等式</td><td>$\left|\int_C f\mathrm{d}z\right|\le ML$</td><td>以估计代替计算的核心工具</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 关于简单闭曲线的正向, 正确的规定是?</div>
+<label class="quiz-opt">A. 顺时针方向</label>
+<label class="quiz-opt" data-ok="1">B. 沿此前时, 曲线内部始终在前进方向的左方</label>
+<label class="quiz-opt">C. 与坐标轴正方向一致</label>
+<label class="quiz-opt">D. 由起点与终点决定</label>
+<div class="quiz-explain"><b>解析:</b> 简单闭曲线的正向规定为"内部在左手边", 这等价于逆时针方向. 对圆周 $|z-z_0|=r$, 正向即逆时针.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 计算复积分最基本、最常用的方法是?</div>
+<label class="quiz-opt">A. 直接用积分定义求和式的极限</label>
+<label class="quiz-opt" data-ok="1">B. 把曲线参数化, 用公式 $\int_\alpha^\beta f[z(t)]z'(t)\mathrm{d}t$</label>
+<label class="quiz-opt">C. 用柯西积分公式</label>
+<label class="quiz-opt">D. 直接比较被积函数的模</label>
+<div class="quiz-explain"><b>解析:</b> 参数化方法是复积分计算的基础. 做法是: 写出 $z(t)$ → 求 $\mathrm{d}z=z'(t)\mathrm{d}t$ → 化为关于实参数 $t$ 的积分.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. $\oint_{|z-1|=3}\frac{\mathrm{d}z}{z-1}=?$</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">C. $\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. 与半径有关, 无法确定</label>
+<div class="quiz-explain"><b>解析:</b> 这是 $n=0$ 的情形, 等于 $2\pi\mathrm{i}$. 注意结论与半径 ($3$) 无关, 只取决于被积函数的奇点 $z=1$ 是否在闭曲线内部.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. $\oint_{|z|=2}\frac{\mathrm{d}z}{z^3}=?$</div>
+<label class="quiz-opt">A. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt" data-ok="1">B. $0$</label>
+<label class="quiz-opt">C. $\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $\frac{2\pi\mathrm{i}}{3}$</label>
+<div class="quiz-explain"><b>解析:</b> $\frac{1}{z^3}=\frac{1}{(z-0)^{2+1}}$ 对应 $n=2\neq0$, 故积分值为 $0$. 只有形如 $\frac{1}{z-z_0}$ 的项绕一圈积分为 $2\pi\mathrm{i}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 估值不等式中 $\left|\int_C f(z)\mathrm{d}z\right|\le ML$ 的 $M$ 与 $L$ 分别是?</div>
+<label class="quiz-opt">A. $M$ 是 $|f|$ 的最小值, $L$ 是曲线长度</label>
+<label class="quiz-opt" data-ok="1">B. $M$ 是 $|f|$ 在 $C$ 上的上界, $L$ 是曲线长度</label>
+<label class="quiz-opt">C. $M$ 是 $|f|$ 的最大值, $L$ 是曲线围成的面积</label>
+<label class="quiz-opt">D. $M$ 是积分值, $L$ 是半径</label>
+<div class="quiz-explain"><b>解析:</b> 若在 $C$ 上 $|f(z)|\le M$, 曲线 $C$ 的长为 $L$, 则积分值的模不超过 $ML$. 用"弦长不超过弧长"可证.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 设 $C$ 是从 $0$ 到 $1+\mathrm{i}$ 的直线段, 则 $\int_C \mathrm{d}z=?$</div>
+<label class="quiz-opt" data-ok="1">A. $1+\mathrm{i}$</label>
+<label class="quiz-opt">B. $0$</label>
+<label class="quiz-opt">C. $\sqrt{2}$</label>
+<label class="quiz-opt">D. $2\mathrm{i}$</label>
+<div class="quiz-explain"><b>解析:</b> $\int_C\mathrm{d}z$ 等于终点减起点: $\int_C \mathrm{d}z=\int_0^{1+\mathrm{i}}\mathrm{d}z=[z]_0^{1+\mathrm{i}}=1+\mathrm{i}$. 这与实变函数中 $\int_a^b\mathrm{d}x=b-a$ 完全类似.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 设 $f(z)$ 在 $C$ 上连续, $|f(z)|\le 2$, 曲线 $C$ 的长度为 $5$, 则 $\left|\int_C f(z)\mathrm{d}z\right|$ 的上界是?</div>
+<label class="quiz-opt">A. $5$</label>
+<label class="quiz-opt" data-ok="1">B. $10$</label>
+<label class="quiz-opt">C. $2$</label>
+<label class="quiz-opt">D. $7$</label>
+<div class="quiz-explain"><b>解析:</b> 由估值不等式 $ML=2\times 5=10$. 注意这只是"上界", 实际值可能远小于它.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. $\int_C\bar z\,\mathrm{d}z$ 沿不同路径从 $1$ 到 $\mathrm{i}$ 的结果不同, 这说明?</div>
+<label class="quiz-opt">A. 复积分一定与路径有关</label>
+<label class="quiz-opt" data-ok="1">B. $\bar z$ 处处不解析, 故积分与路径有关</label>
+<label class="quiz-opt">C. 计算过程中出现了错误</label>
+<label class="quiz-opt">D. 积分定义有问题</label>
+<div class="quiz-explain"><b>解析:</b> $\bar z=x-\mathrm{i}y$ 不满足柯西—黎曼方程, 处处不解析. 一般而言, <b>解析性与路径无关性是紧密相连的</b> —— 这正是下一节柯西积分定理的核心内容.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 关于 $\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{(z-z_0)^{n+1}}$, 下列说法正确的是?</div>
+<label class="quiz-opt">A. 积分值与 $r$ 成正比</label>
+<label class="quiz-opt" data-ok="1">B. 积分值只取决于 $n$ 是否为零, 与 $r$、与 $z_0$ 无关</label>
+<label class="quiz-opt">C. 当 $n$ 为正整数时积分值为 $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. 当 $n$ 为负整数时积分值为 $0$</label>
+<div class="quiz-explain"><b>解析:</b> 结论为 $n=0$ 时 $2\pi\mathrm{i}$, $n\neq0$ (无论正负) 时 $0$; 且与中心 $z_0$、半径 $r$ 均无关. 这是一个"拓扑型"的结论.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 设 $C$ 为圆周 $|z|=1$ 的正向, 则 $\oint_C\frac{2z-1}{z}\mathrm{d}z=?$</div>
+<label class="quiz-opt">A. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt" data-ok="1">B. $-2\pi\mathrm{i}$</label>
+<label class="quiz-opt">C. $0$</label>
+<label class="quiz-opt">D. $4\pi\mathrm{i}$</label>
+<div class="quiz-explain"><b>解析:</b> $\frac{2z-1}{z}=2-\frac1z$, 故 $\oint_C\frac{2z-1}{z}\mathrm{d}z=2\oint_C\mathrm{d}z-\oint_C\frac{\mathrm{d}z}{z}=0-2\pi\mathrm{i}=-2\pi\mathrm{i}$. (其中 $\oint_C\mathrm{d}z=0$, 因为 $\mathrm{d}z$ 是恰当微分.)</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位磨坊主, 把"通量"与"环量"写成了数学</h3>
+<div class="hero-sub">他在面粉飞扬的磨坊里自学数学, 四十岁才发表第一篇论文 —— 而那篇论文改变了物理学与数学的走向.</div>
+<div class="hero-quote">
+从平面上的曲线积分到空间的场论, 格林公式把"局部的旋度"与"边界的环量"联系在一起.<br>
+<b>柯西积分定理的黎曼证明, 用的正是格林公式 —— 一个磨坊主的思想, 成了复分析的地基.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 格林: 面粉磨坊里的数学家</div>
+
+<div class="person-card">
+<div class="p-av">格</div>
+<div class="p-main">
+<div class="p-name">乔治·格林 (George Green, 1793—1841)</div>
+<div class="p-meta">英国数学物理学家 · 诺丁汉的磨坊主 · 格林公式与格林函数的发现者 · 仅受过不到两年正规教育</div>
+<p>他一生中的绝大部分时间, 都在父亲经营的风力磨坊里度过. 他只上过大约一年的小学, 之后便再也没有接受过任何正规教育 —— 此后的全部数学, 都是他在磨面粉的间隙里自学的.</p>
+<p>1828 年, 已经 35 岁的格林自费出版了仅有几十页的小册子《论数学分析在电磁理论中的应用》. 这本小书提出了后来以他命名的<b>格林公式</b>与<b>格林函数</b>, 却在当时几乎无人问津 —— 因为它出自一个不知名的磨坊主, 而且印量极少.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 磨坊里的自学少年</h5>
+<p>1793 年 7 月, 格林出生于英国诺丁汉附近的一个小镇. 父亲是个面包师, 后来经营了一座风力磨坊. 格林小时候只在当地一所学校读了不足两年的书 —— 学会了识字与最基本的算术.</p>
+<p>此后, 他就在磨坊里干活. 但磨坊的机械结构 (齿轮、传动、风车叶片) 引起了他对力学与数学的兴趣. 据记载, 他 20 岁前后开始系统自学数学, 从当时的期刊上学习最新的分析学成果 —— 包括拉普拉斯、拉格朗日、泊松等人的工作.</p>
+<p><b>一个磨坊主, 靠阅读学术期刊自学到能与当时一流数学家对话的水平</b> —— 这在 19 世纪的科学史上也是一个异数.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1828: 一本没人读的小册子</h5>
+<p>1828 年, 格林自费出版了《论数学分析在电磁理论中的应用》. 这本书尝试用数学分析的方法系统处理静电学与磁学问题, 其中提出了两个划时代的工具:</p>
+<p><b>(1) 格林公式</b>: 把区域内部的"二阶导数积分"与边界上的"通量积分"联系起来, 即
+<div class="box-formula">$$\iint_G\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)\mathrm{d}\sigma=\oint_C P\,\mathrm{d}x+Q\,\mathrm{d}y.$$</div>
+这实际上是平面上的散度定理 (也常被称为"格林-斯托克斯定理"的二维情形).</p>
+<p><b>(2) 格林函数</b>: 他为求解泊松方程引入了一个"点源响应"函数, 这个思想后来成为整个偏微分方程理论与电动力学的基石.</p>
+<p>可惜这本小册子印刷量极小, 主要在诺丁汉一带流传. 直到 1845 年, 英国数学家<b>汤姆逊 (即开尔文勋爵)</b> 偶然读到它, 才惊为天人, 大力推举 —— 而此时格林已经去世四年.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>大器晚成: 40 岁才上大学</h5>
+<p>1833 年, 40 岁的格林在一位贵族绅士的资助下, 终于进入剑桥大学凯厄斯学院读书. 他成了班上最年长、也最贫穷的学生之一.</p>
+<p>1837 年, 44 岁的他毕业并获得数学荣誉学位考试第<b>四名</b> (Senior Wrangler 之后的最高等级). 此后他留校任教并继续研究, 发表了多篇关于流体力学、声学、光学与弹性理论的论文.</p>
+<p>1839 年, 他当选为剑桥凯厄斯学院的院士. 但健康已经严重恶化, 1841 年 5 月, 他回到诺丁汉, 于当年 5 月 31 日去世, 年仅 47 岁.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>格林的论文在当时极少被人引用, 以至于 1845 年开尔文勋爵在给朋友的信中写道: "我发现了一本不认识的人写的小书, 里面有一个我从未见过的漂亮定理." 他随即设法找到格林的家人, 整理出版了他的全集. 今天, 格林函数遍及电磁学、量子力学、热传导与弹性力学的所有教材 —— <b>而它的作者, 曾在磨坊里和着面粉读完拉普拉斯的巨著.</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 一次"被延迟的承认": 自学者的困境</div>
+<div class="cc-side"><b>当时学术界的态度:</b> 一本匿名出版的、由不知名作者写的小册子, 印刷量极少, 没有经过任何学术圈的"背书" —— 几乎没有数学家会认真去读它.</div>
+<div class="cc-side"><b>格林本人的处境:</b> 他既没有学历、没有师承, 也没有任何机构的支持; 他甚至不知道怎么把自己的成果送到该去的地方. 他的两个女儿在他生前都不识几个字.</div>
+<div class="cc-side"><b>历史的裁决:</b> 十七年后, 开尔文勋爵重新发现了他; 又过了三十年, 格林函数成为物理学的通用语言. <b>真正的成果可能被推迟承认, 但它不会被永久埋没 —— 这是科学共同体最值得信赖的一点.</b></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 本节定理与格林公式的关系</div>
+本节的<b>定理 1.1</b> 告诉我们: 复积分可以拆成两个实变量的第二类曲线积分:
+$$\int_C f(z)\mathrm{d}z=\int_C u\,\mathrm{d}x-v\,\mathrm{d}y+\mathrm{i}\int_C v\,\mathrm{d}x+u\,\mathrm{d}y.$$
+而下一节的<b>柯西积分定理</b> (黎曼证明), 正是把<b>格林公式</b>用到了这两个曲线积分上:
+$$\oint_C u\,\mathrm{d}x-v\,\mathrm{d}y=\iint_G(-v_x-u_y)\mathrm{d}\sigma.$$
+<br>
+当 $f(z)$ 解析 (满足柯西—黎曼方程) 时, 被积的 $(-v_x-u_y)$ 与 $(u_x-v_y)$ <b>恰好都为零</b> —— 于是 $\oint_C f(z)\mathrm{d}z=0$.
+<br><br>
+<b>一个磨坊主发明的公式, 成了"解析函数沿闭路积分为零"这一伟大定理的直接工具.</b> 数学思想的传播, 从来不问出身.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 格林的自述</div>
+在 1828 年那本小册子的引言中, 他极为谦逊地写道:
+"<em>作者并非在数学界成长起来的. 他仅在这个学科上投入了有限的闲暇时间 —— 因此读者不必指望在这篇文章中找到任何出色的表述或精巧的证明.</em>"
+<br>
+但他随即坦率地说明了写作的动机:
+"<em>这项工作中所包含的分析方法, 据我所知尚未有人使用过. 作者之所以把它发表出来, 只是希望它能被那些有能力判断其价值的人看到.</em>"
+<span class="iv-sig">—— 谦虚的背后, 是一个自学者的诚实: 他不确定自己的想法有多重要, 但他知道这个想法是新的, 于是把它交给了世界.</span>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">数学</div>提出格林公式 (平面上的散度定理); 引入格林函数, 开创偏微分方程解的表达理论; 研究椭圆积分与位势理论.</div>
+<div class="legacy-item"><div class="lg-t">物理</div>把数学分析系统应用于电磁学、流体力学、声学与光学; 其方法后来成为电动力学的标准工具.</div>
+<div class="legacy-item"><div class="lg-t">对复分析</div>格林公式被黎曼用于证明柯西积分定理 —— 这是复分析严格化的关键一步, 本节定理的实现路径.</div>
+<div class="legacy-item"><div class="lg-t">精神</div>几乎完全的自学成才; 在没有学术环境的条件下独立达到一流水平; 成果被延迟承认近二十年仍不改其价值.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+格林生活的年代, 正规的学术训练几乎决定了一个人能否进入数学界. 他没有学历、没有职位、没有师承, 甚至连一篇论文的投稿渠道都找不到 —— 只能自费印书.
+<br><br>
+但今天, 我们评判一个人的工作, 依据的是<b>成果本身</b>, 而不是他的出身. 格林的故事之所以动人, 恰恰因为<b>他证明了一件今天依然成立的事: 真正的创造力不依赖条件, 只依赖思考的深度与坚持的长度.</b>
+<br><br>
+当然也别忘了开尔文勋爵 —— 是他让一份被埋没的成果重见天日. <b>在学术共同体中, 看见并推举他人的工作, 同样是一种重要的贡献.</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 格林公式 —— 环量与旋度的对话 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">格林公式说: 边界上的环量 $\oint_C P\mathrm{d}x+Q\mathrm{d}y$ 等于区域内部旋度 $\left(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\right)$ 的面积分. 拖动滑块改变参数, 观察: 当内部旋度处处为零时, 无论边界如何变形, 环量恒为零 —— <b>这正是柯西积分定理的几何原型</b>.</div>
+<canvas id="cvGreen" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>旋度参数 $\lambda$:</label>
+<input type="range" id="grL" min="-1.5" max="1.5" step="0.05" value="0">
+<span class="val-badge" id="grLV">0.00</span>
+<button class="control-btn" id="btnGrAnim">▶ 扫描 λ</button>
+<button class="control-btn" id="btnGrReset">↻ 重置</button>
+</div>
+<div class="readout" id="grReadout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 格林生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1793</span><span class="tl-title">出生于英国诺丁汉, 面包师之子</span></div>
+<div class="tl-body">一生仅上过不足两年学; 此后所有数学知识均为自学.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1800s—1820s</span><span class="tl-title">在父亲的风力磨坊工作, 业余钻研数学</span></div>
+<div class="tl-body">从机械结构产生对力学的兴趣, 系统自学当时最前沿的分析学与位势理论.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1828</span><span class="tl-title">自费出版《论数学分析在电磁理论中的应用》</span></div>
+<div class="tl-body">提出格林公式与格林函数, 但读者极少, 长期未获关注.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1833</span><span class="tl-title">40 岁进入剑桥大学读书</span></div>
+<div class="tl-body">在资助下成为剑桥凯厄斯学院的学生; 1837 年以第四名的成绩毕业.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1839</span><span class="tl-title">当选凯厄斯学院院士</span></div>
+<div class="tl-body">此后发表流体力学、声学、光学与弹性力学的重要论文, 但健康迅速恶化.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1841</span><span class="tl-title">逝世于诺丁汉, 年仅 47 岁</span></div>
+<div class="tl-body">四年后开尔文勋爵重新发现他的工作, 并推动其全集出版 —— 格林的名字从此进入所有物理与工程教材.</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 复积分理论的形成</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1811</span><span class="tl-title">高斯: 关于复数积分的早期思考</span></div>
+<div class="tl-body">高斯在研究椭圆函数与二项式级数时, 已经开始考虑沿复平面上的路径进行积分, 但未公开发表.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1825</span><span class="tl-title">柯西: 复积分理论的开端</span></div>
+<div class="tl-body">柯西在《论积分限为虚数的定积分》中系统研究复积分, 提出积分路径的概念, 并得到闭路积分为零的结论.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1828</span><span class="tl-title">格林: 格林公式问世</span></div>
+<div class="tl-body">把边界积分与内部微分联系起来 —— 这为后来柯西积分定理的严格证明提供了工具.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1846</span><span class="tl-title">黎曼: 用格林公式给出严格证明</span></div>
+<div class="tl-body">黎曼在博士论文中借助格林公式证明柯西积分定理, 把复积分理论建立在严格的实分析基础上.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">今天</span><span class="tl-title">从围道积分到工程计算</span></div>
+<div class="tl-body">复围道积分是留数计算、拉普拉斯逆变换、色散关系与量子场论的核心工具. 本节的重要结论 $\oint\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}$, 则是所有这一切的起点.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 起点往往最简单, 却决定了整座大厦</div>
+本节的"重要结论"看上去只是一个很朴素的积分: $\oint\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}$. 但它告诉我们: <b>闭曲线"感知"到了内部的奇点</b>.
+<br><br>
+正是这个朴素的结论, 支撑起了后面柯西积分公式、高阶导数公式、留数定理等一连串深刻的结果. <b>就像格林那本只有几十页的小册子 —— 简洁的开端, 往往蕴含最长远的影响.</b>
+<br><br>
+这提示我们: 学习时不要轻视那些"看起来很简单"的基础结论. 真正拉开差距的, 往往不是记住了多少技巧, 而是对最基础的东西理解得多深.
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从复积分看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>边界上的积分, 由内部决定</h4>
+<p>格林公式说明: 区域内部的"旋度总量"完全等于边界上的环量. 内部的每一处细节, 都会被边界"汇总"出来.</p>
+<p>本节的积分定义也是同一个道理: <b>沿整条曲线积累的量, 由曲线上每一点的值共同决定</b> —— 整体由局部构成, 又反过来约束局部.</p>
+<div class="pc-math">$\oint_C P\mathrm{d}x+Q\mathrm{d}y$<br>$=\iint_G(Q_x-P_y)\mathrm{d}\sigma$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">内容与形式</div>
+<h4>复积分 ↔ 两个实积分的组合</h4>
+<p>复积分用一套符号 (一个 $\mathrm{d}z$) 表达了两个实曲线积分的信息. 形式上它只是一个"一维积分", 内容上却包含了实部与虚部两套独立的数据.</p>
+<p>这正是复数作为一种<b>高度浓缩的记号系统</b>的价值: 用最简洁的形式承载最丰富的内容.</p>
+<div class="pc-math">$\int_C f\mathrm{d}z$<br>$=\left(\int_C u\mathrm{d}x-v\mathrm{d}y\right)$<br>$+\mathrm{i}\left(\int_C v\mathrm{d}x+u\mathrm{d}y\right)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>分割趋于无穷细, 离散和变成连续积分</h4>
+<p>积分定义本身就是一个"量变引起质变"的过程: 分割数 $n$ 不断增大, 每个小弧段长度趋于零, <b>离散的和式最终"坍缩"为一个连续的极限值</b>.</p>
+<p>而且这个极限与分法、取点方式无关 —— 说明这个极限值是由曲线与被积函数<b>唯一决定</b>的客观量.</p>
+<div class="pc-math">$\sum\limits_{k=1}^{n}f(\xi_k)\Delta z_k$<br>$\xrightarrow{\ \lambda\to 0\ }\ \int_C f(z)\mathrm{d}z$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>路径无关性: 从"一般有关"到"解析时无关"</h4>
+<p>例 1.3 显示: 对 $\bar z$ 这类不解析的函数, 积分<b>与路径有关</b>. 但下一节将证明: 只要函数解析, 积分就<b>与路径无关</b>.</p>
+<p>这不是推翻前面的结论, 而是在更高的层次上给"路径无关"附加了精确的条件 —— <b>真理的适用范围被一步步界定清楚, 这本身就是认识的深化.</b></p>
+<div class="pc-math">$f$ 解析 $\Rightarrow$ $\int_C f\mathrm{d}z$ 只依赖起点与终点</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>曲线长度控制了积分的大小</h4>
+<p>估值不等式 $|\int_C f\mathrm{d}z|\le ML$ 把"复变函数的积分"与两个<b>实数量</b> (函数模的上界、曲线的长度) 联系起来. 一个复杂的复数量, 被两个简单的实数量"框住"了.</p>
+<p>这种"用可估计的实数量控制抽象的复数量"的方法, 是分析学中最常用的策略之一.</p>
+<div class="pc-math">$\left|\int_C f(z)\mathrm{d}z\right|\le M\cdot L$ &nbsp;其中 $|f|\le M$, $L=\text{length}(C)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>一个积分, 探出了一条闭曲线的"拓扑信息"</h4>
+<p>$\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}$ 与半径 $r$ 无关, 与中心 $z_0$ 的具体位置也无关 —— 它只关心一件事: <b>闭曲线是否把 $z_0$ 圈在了里面</b>.</p>
+<p>这是一个纯粹的<b>拓扑</b>结论: 积分"测出"了曲线与点的位置关系. 复积分与拓扑学的深刻联系, 从这一个简单结论开始.</p>
+<div class="pc-math">$\oint_C\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}\cdot n(C,z_0)$ (绕数)</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>定义先行</td><td>先规定曲线方向, 再建立积分概念</td><td>任何理论建构都要先把"对象"定义清楚</td></tr>
+<tr><td>化归转化</td><td>把复积分化为两个实曲线积分, 再用实分析工具</td><td>把陌生问题转化为熟悉问题的组合</td></tr>
+<tr><td>参数化</td><td>用 $z=z(t)$ 把曲线积分化为普通定积分</td><td>把几何问题转为代数问题, 便于计算</td></tr>
+<tr><td>估计法</td><td>用 $|\int f\mathrm{d}z|\le ML$ 估计积分上界</td><td>无法精确计算时, 先给出可靠的界</td></tr>
+<tr><td>特殊化</td><td>用圆周 (最简单的闭曲线) 得到重要结论</td><td>从最简单的情形入手, 提取普遍规律</td></tr>
+<tr><td>反例对照</td><td>用 $\bar z$ 的两种路径结果不同, 说明路径相关性</td><td>用对照实验凸显关键条件的作用</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+曲线先定向, 内部在左手;<br>
+分割取点作和式, 极限无关才可积.<br>
+参数代入求微分, 化成实积好计算;<br>
+闭路积分记圈号, 逆时针为正方向.<br>
+估值不等式要用好, 模积小于 M 乘 L;<br>
+圆上倒数积分奇, 只有 n 零得 2πi.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代数学中的"累积"智慧</div>
+中国古代数学对"由局部累积成整体"的问题有着极为成熟的处理. 《九章算术》中的"<b>粟米</b>""<b>均输</b>"诸章处理了大量沿路程、沿时间的累积问题; 而"<b>盈不足术</b>"则通过反复修正逼近正确值 —— 这些都体现了与积分思想相通的精神.
+<br><br>
+更值得注意的是刘徽的"<b>割圆术</b>": 他用圆内接正多边形不断细分 (分割), 计算其周长或面积 (求和), 再让边数无限增加 (取极限), 从而得到圆周率. <b>这与本章复积分定义中"分割—求和—取极限"的三步结构几乎完全一致</b> —— 只不过刘徽分割的是圆周, 而我们分割的是任意曲线.
+<br><br>
+公元五世纪, 祖冲之把圆周率精确到小数点后七位, 领先世界近千年. 那份<b>用有限步骤逼近无限精确</b>的执着, 与今天我们用 $ML$ 估计积分上界的思路, 在精神上是相通的.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 中国学者在复分析领域的接续</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论领域做出开创性工作; 其中"华氏算子"与"典型域上的调和分析"直接继承了柯西积分理论与格林函数的思想, 并在高维情形下获得了全新的结论.</li>
+<li><b>陈建功</b> (1893—1971): 中国函数论的主要奠基人, 1928 年即在日本《东北数学杂志》发表关于无穷乘积的论文, 是中国最早在国际数学刊物上发表研究论文的学者之一. 他在复变函数与实变函数论上的工作, 为中国分析学奠定了根基.</li>
+<li><b>面向国家重大需求</b>: 复围道积分与格林函数是<b>计算电磁学、天线设计、雷达散射分析</b>的核心工具. 其中"矩量法"、"边界元法"等工程算法的数学基础, 正是由格林公式与格林函数提供的. 本课程后续的<b>留数定理</b>, 则是这些算法得以高效实现的关键.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 出身不能决定贡献, 深度才能</div>
+格林没有学历、没有职位、没有师承, 甚至连发表渠道都要自费解决. 但他做出的格林公式, 至今是物理学与工程学的基础工具, 也是本节与下一节定理的直接依托.
+<br><br>
+他的故事说明: <b>真正决定贡献大小的, 不是你所处的环境, 而是你思考的深度与坚持的长度.</b> 一个人可以在磨坊里读完拉普拉斯, 也可以在任何岗位上把问题想到底.
+<br><br>
+同时也要记住开尔文勋爵 —— 是他在十七年后重新发现了格林. <b>在学术共同体中, 发现并托举他人的工作, 与做出成果同样重要.</b> 这正是我们今天建设良好学术生态的意义所在.
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"作者并非在数学界成长起来的 —— 读者不必指望在本文中找到精巧的证明."<span class="q-src">—— 格林 1828 年小册子引言</span></div>
+<div class="quote-item">"这项工作中所包含的分析方法, 据我所知尚未有人使用过."<span class="q-src">—— 格林, 关于自己的方法</span></div>
+<div class="quote-item">"数学的力量在于: 它能把局部的信息汇总成整体的结论."<span class="q-src">—— 关于格林公式的启示</span></div>
+<div class="quote-item">"割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣."<span class="q-src">—— 刘徽《九章算术注》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"一切科学的抽象, 都更深刻、更正确、更完全地反映着自然."<span class="q-src">—— 列宁</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 一位只上过不足两年学、在磨坊里自学数学的人, 40 岁才进入剑桥读书; 他自费出版的一本小册子提出了格林公式与格林函数, 十七年后才被开尔文勋爵重新发现 —— 而今天, 格林公式正是下一节柯西积分定理的直接工具.<br>
+<b>一个道理:</b> 复积分的定义看上去只是一个"分割—求和—取极限"的过程, 但那个朴素的重要结论 $\oint\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}$ 却"测出"了闭曲线内部的奇点 —— <b>最简单的形式里, 往往藏着最深的结构.</b><br>
+<b>一份责任:</b> 从刘徽"割圆术"的分割求和取极限, 到华罗庚、陈建功在函数论上的开拓, 中华民族在"累积与逼近"这一数学主题上从未缺席. 今天我们学习复积分, 既是在掌握围道积分、格林函数这一工程利器, 也是在接续这份<b>把最基础的问题想到底</b>的精神.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第三章第一节 复变函数积分的概念 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: 积分和式的逼近 =================
+module('cvRiemannSum',function(cv){
+  var n=6;
+  var A=C(0,0), B=C(2,1.6);
+  function pathPt(t){
+    var bx=A.re+(B.re-A.re)*t, by=A.im+(B.im-A.im)*t;
+    var dx=B.re-A.re, dy=B.im-A.im, L=Math.hypot(dx,dy);
+    var nx=-dy/L, ny=dx/L;
+    var s=0.75*Math.sin(Math.PI*t);
+    return C(bx+nx*s, by+ny*s);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // ---- 左: 曲线与分割 ----
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-0.7,2.9,-1.1,2.9);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(var t=0;t<=1.0001;t+=0.005){ var p=pathPt(t);
+      if(t===0) ctx.moveTo(m1.px(p.re),m1.py(p.im)); else ctx.lineTo(m1.px(p.re),m1.py(p.im)); }
+    ctx.stroke();
+    var sum=C(0,0);
+    for(var k=0;k<n;k++){
+      var t0=k/n, t1=(k+1)/n, tm=(t0+t1)/2;
+      var za=pathPt(t0), zb=pathPt(t1), xi=pathPt(tm);
+      var dz=csub(zb,za);
+      var contrib=cmul(xi,dz);
+      sum=cadd(sum,contrib);
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(m1.px(za.re),m1.py(za.im)); ctx.lineTo(m1.px(zb.re),m1.py(zb.im)); ctx.stroke();
+      dot(ctx,m1.px(xi.re),m1.py(xi.im),4.5,'#c62828','#fff');
+    }
+    dot(ctx,m1.px(A.re),m1.py(A.im),7,'#2e7d32','#fff');
+    dot(ctx,m1.px(B.re),m1.py(B.im),7,'#2e7d32','#fff');
+    tlabel(ctx,m1.px(A.re)-24,m1.py(A.im)+18,'A=0','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(B.re)+8,m1.py(B.im)-8,'B=2+1.6i','#2e7d32','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'曲线被分成 '+n+' 段, 红点为各段上的取点 ξₖ','#37474f','bold 13px Segoe UI');
+    // ---- 右: 和式 vs 真值 ----
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.5,1.6,-0.6,4.0);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re','Im');
+    var exact=C((B.re*B.re-B.im*B.im)/2, B.re*B.im);
+    var o2x=m2.px(0), o2y=m2.py(0);
+    ctx.save(); ctx.setLineDash([8,6]);
+    arrow(ctx,o2x,o2y,m2.px(exact.re),m2.py(exact.im),'#2e7d32',2.6,11);
+    ctx.restore();
+    arrow(ctx,o2x,o2y,m2.px(sum.re),m2.py(sum.im),'#e53935',3,12);
+    dot(ctx,m2.px(exact.re),m2.py(exact.im),6,'#2e7d32','#fff');
+    dot(ctx,m2.px(sum.re),m2.py(sum.im),7,'#e53935','#fff');
+    tlabel(ctx,m2.px(exact.re)+9,m2.py(exact.im)-10,'真值 (B²−A²)/2','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(sum.re)+10,m2.py(sum.im)+20,'当前和式','#e53935','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'和式随 n 增大逼近积分真值','#37474f','bold 13px Segoe UI');
+    var err=cabs(csub(sum,exact));
+    setRO('rsReadout',
+      '被积函数 $f(z)=z$ &nbsp;|&nbsp; 分割数 $n='+n+'$<br>'+
+      '和式 $\\sum\\limits_{k=1}^{n}f(\\xi_k)\\Delta z_k='+fmt(sum.re,3)+' '+(sum.im<0?'-':'+')+' '+fmt(Math.abs(sum.im),3)+'\\mathrm{i}$<br>'+
+      '积分真值 $\\int_C z\\,\\mathrm{d}z=\\frac{B^2-A^2}{2}='+fmt(exact.re,3)+' + '+fmt(exact.im,3)+'\\mathrm{i}$<br>'+
+      '误差 $='+hl(fmt(err,4))+'$'+
+      (err<0.01?' &nbsp;→&nbsp; <b>已经非常接近, 极限就是积分值 ✓</b>':' &nbsp;→&nbsp; 继续增大 $n$, 误差将趋于 $0$'));
+  }
+  bindSlider('rsN',function(v){ n=Math.round(v); badge('rsNV',String(n)); draw(); });
+  badge('rsNV',String(n));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnRsAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 自动细化'; return; }
+    anim=true; this.textContent='⏸ 停止'; n=1;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 自动细化'; return false; }
+      n+=1; if(n>60){ return false; }
+      setSlider('rsN',n); badge('rsNV',String(n)); draw(); return true;
+    });
+  });
+  var br=document.getElementById('btnRsReset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; if(ba) ba.textContent='▶ 自动细化';
+    n=6; setSlider('rsN',6); badge('rsNV','6'); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 2: 有向曲线与闭曲线正向 =================
+module('cvCurveDir',function(cv){
+  var mode=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w-24,h-56,-2.6,2.6,-1.9,1.9);
+    ctx.save(); ctx.translate(12,36);
+    grid(ctx,w-24,h-56,m,0.5); axes(ctx,w-24,h-56,m,'x','y');
+    if(mode===1){
+      // 简单弧 A -> B
+      function arc(t){ return C(-1.8+3.6*t, -0.6+1.1*Math.sin(Math.PI*t)); }
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=3.4;
+      ctx.beginPath();
+      for(var t=0;t<=1.0001;t+=0.01){ var p=arc(t);
+        if(t===0) ctx.moveTo(m.px(p.re),m.py(p.im)); else ctx.lineTo(m.px(p.re),m.py(p.im)); }
+      ctx.stroke();
+      for(var s=0.1;s<1.0;s+=0.2){
+        var p1=arc(s), p2=arc(s+0.03);
+        arrow(ctx,m.px(p1.re),m.py(p1.im),m.px(p2.re),m.py(p2.im),'#e53935',2.4,10);
+      }
+      var pa=arc(0), pb=arc(1);
+      dot(ctx,m.px(pa.re),m.py(pa.im),8,'#2e7d32','#fff');
+      dot(ctx,m.px(pb.re),m.py(pb.im),8,'#2e7d32','#fff');
+      tlabel(ctx,m.px(pa.re)-10,m.py(pa.im)+24,'A (起点)','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(pb.re)+10,m.py(pb.im)-14,'B (终点)','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0),m.py(1.5),'正向: A → B ; 反向: B → A (记作 C⁻)','#c62828','bold 13px Segoe UI');
+    } else if(mode===2){
+      // 圆周 正/负向
+      var R=1.3;
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=3.4;
+      ctx.beginPath(); ctx.arc(m.px(0),m.py(0),R*m.s,0,TAU); ctx.stroke();
+      for(var k=0;k<8;k++){
+        var a0=TAU*k/8, a1=a0+0.22;
+        arrow(ctx,m.px(R*Math.cos(a0)),m.py(R*Math.sin(a0)),
+              m.px(R*Math.cos(a1)),m.py(R*Math.sin(a1)),'#2e7d32',2.6,11);
+      }
+      dot(ctx,m.px(0),m.py(0),5,'#37474f');
+      tlabel(ctx,m.px(0)+8,m.py(0)+18,'O','#37474f','bold 12px Georgia');
+      tlabel(ctx,m.px(0),m.py(1.62),'正向 = 逆时针 (内部在左手边)','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0),m.py(-1.75),'负向 = 顺时针, 记作 C⁻','#c62828','bold 13px Segoe UI');
+    } else {
+      // 任意简单闭曲线 (心形/花瓣)
+      function cl(t){ var r=1.0+0.35*Math.cos(3*t); return C(r*Math.cos(t)*1.25, r*Math.sin(t)*1.25); }
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=3.4;
+      ctx.beginPath();
+      for(var t2=0;t2<=TAU+0.01;t2+=0.02){ var p3=cl(t2);
+        if(t2===0) ctx.moveTo(m.px(p3.re),m.py(p3.im)); else ctx.lineTo(m.px(p3.re),m.py(p3.im)); }
+      ctx.stroke();
+      for(var k2=0;k2<12;k2++){
+        var b0=TAU*k2/12, b1=b0+0.2;
+        var q0=cl(b0), q1=cl(b1);
+        arrow(ctx,m.px(q0.re),m.py(q0.im),m.px(q1.re),m.py(q1.im),'#2e7d32',2.4,10);
+      }
+      tlabel(ctx,m.px(0),m.py(1.85),'任意简单闭曲线: 仍是"内部在左手边"','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0),m.py(-1.95),'逆时针为正向','#546e7a','12px Segoe UI');
+    }
+    ctx.restore();
+    var txt={
+      1:'<b>简单弧:</b> 曲线本身没有方向, 一旦指定 $A\\to B$ 为正, 则 $B\\to A$ 即为负向, 记作 $C^-$, 且 $\\int_{C^-}f\\mathrm{d}z=-\\int_C f\\mathrm{d}z$.',
+      2:'<b>圆周:</b> 由"内部在左手边"的规定可知, 圆周的<b>正向是逆时针</b>. 于是 $\\oint_{|z-z_0|=r}$ 默认按逆时针计算.',
+      3:'<b>任意简单闭曲线:</b> 无论形状多复杂, "正向 = 内部在左手边" 这一规定都适用, 等价于逆时针(在无自交的前提下).'
+    }[mode];
+    setRO('cdReadout',txt);
+  }
+  [['cdB1',1],['cdB2',2],['cdB3',3]].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ mode=p[1]; draw(); });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 3: 参数化计算的几何过程 =================
+module('cvParam',function(cv){
+  var tmax=1;
+  var B=C(3,4);
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 曲线
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-0.8,4.0,-1.0,4.6);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(B.re),m1.py(B.im)); ctx.stroke();
+    var pz=C(B.re*tmax, B.im*tmax);
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(pz.re),m1.py(pz.im)); ctx.stroke();
+    dot(ctx,m1.px(pz.re),m1.py(pz.im),7,'#e53935','#fff');
+    tlabel(ctx,m1.px(pz.re)+9,m1.py(pz.im)+16,'z(t)','#e53935','bold 13px Georgia');
+    tlabel(ctx,m1.px(0)-16,m1.py(0)+20,'O','#37474f','bold 12px Georgia');
+    tlabel(ctx,m1.px(B.re)+6,m1.py(B.im)-10,'3+4i','#1565c0','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'C: z(t)=(3+4i)t,  0 ≤ t ≤ 1','#37474f','bold 13px Segoe UI');
+    // 右: 累积值
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.4,1.8,-0.6,2.9);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re','Im');
+    function partial(tt){
+      var z0=C(B.re, B.im);
+      var a=C(B.re*tt, B.im*tt);
+      return cmul(a,C(B.re*tt/2, B.im*tt/2));
+    }
+    ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var t=0;t<=1.0001;t+=0.01){ var v=partial(t);
+      if(t===0) ctx.moveTo(m2.px(v.re),m2.py(v.im)); else ctx.lineTo(m2.px(v.re),m2.py(v.im)); }
+    ctx.stroke();
+    var cur=partial(tmax);
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(cur.re),m2.py(cur.im),'#e53935',2.8,11);
+    dot(ctx,m2.px(cur.re),m2.py(cur.im),7,'#e53935','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'积分沿 t 从 0 累积到 t 的轨迹','#37474f','bold 13px Segoe UI');
+    var full=C((B.re*B.re-B.im*B.im)/2, B.re*B.im);
+    setRO('pmReadout',
+      '参数化: $z(t)=(3+4\\mathrm{i})t$, $z\'(t)=3+4\\mathrm{i}$, $\\mathrm{d}z=(3+4\\mathrm{i})\\mathrm{d}t$<br>'+
+      '当前 $t='+fmt(tmax)+'$: $z(t)='+fmt(B.re*tmax)+'+'+fmt(B.im*tmax)+'\\mathrm{i}$<br>'+
+      '累积积分 $\\int_0^{t}f[z(\\tau)]z\'(\\tau)\\mathrm{d}\\tau='+fmt(cur.re,3)+' '+(cur.im<0?'-':'+')+' '+fmt(Math.abs(cur.im),3)+'\\mathrm{i}$<br>'+
+      '当 $t=1$ 时: $\\int_C z\\mathrm{d}z=\\frac{z^2}{2}\\Big|_0^{3+4\\mathrm{i}}=\\frac{(3+4\\mathrm{i})^2}{2}='+fmt(full.re,2)+' '+(full.im<0?'-':'+')+' '+fmt(Math.abs(full.im),2)+'\\mathrm{i}$');
+  }
+  bindSlider('pmT',function(v){ tmax=v; badge('pmTV',fmt(v)); draw(); });
+  badge('pmTV',fmt(tmax));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnPmAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 沿曲线走一遍'; return; }
+    anim=true; this.textContent='⏸ 停止'; tmax=0;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 沿曲线走一遍'; return false; }
+      tmax+=0.012; if(tmax>1){ tmax=0; }
+      setSlider('pmT',tmax); badge('pmTV',fmt(tmax)); draw(); return true;
+    });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 4: 圆上倒数积分的 n 依赖 =================
+module('cvCircleInt',function(cv){
+  var n=0, r=1.2;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 圆与奇点
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.5,2.5,-2.5,2.5);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),r*m1.s,0,TAU); ctx.stroke();
+    for(var k=0;k<8;k++){
+      var a0=TAU*k/8, a1=a0+0.22;
+      arrow(ctx,m1.px(r*Math.cos(a0)),m1.py(r*Math.sin(a0)),
+            m1.px(r*Math.cos(a1)),m1.py(r*Math.sin(a1)),'#2e7d32',2.4,10);
+    }
+    dot(ctx,m1.px(0),m1.py(0),8,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+11,m1.py(0)+18,'z₀ (奇点)','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0),m1.py(2.25),'|z − z₀| = '+fmt(r),'#1565c0','bold 13px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'积分路径: 圆心 z₀, 半径 r = '+fmt(r)+' 的正向圆周','#37474f','bold 13px Segoe UI');
+    // 右: 积分内部结构 e^{-inθ}
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.4,7.0,-1.5,1.5);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'θ','');
+    var cur=C(0,0);
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6;
+    ctx.beginPath();
+    for(var th=0;th<=TAU+0.001;th+=0.01){
+      var val=Math.cos(n*th);
+      var px=m2.px(th), py=m2.py(val);
+      if(th===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 阴影: 正负面积
+    ctx.globalAlpha=0.22;
+    for(var th2=0;th2<TAU;th2+=0.02){
+      var v=Math.cos(n*th2);
+      ctx.fillStyle=v>=0?'#2e7d32':'#c62828';
+      var x0=m2.px(th2), x1=m2.px(th2+0.02), y0=m2.py(0);
+      ctx.fillRect(x0,Math.min(y0,m2.py(v)),x1-x0,Math.abs(m2.py(v)-y0));
+    }
+    ctx.globalAlpha=1;
+    tlabel(ctx,m2.px(0.2),m2.py(1.3),'被积函数的实部 cos(nθ)','#e65100','bold 12px Segoe UI');
+    ctx.restore();
+    var val=(n===0)?'2\\pi\\mathrm{i}':'0';
+    setRO('ciReadout',
+      '$n='+n+'$ ⇒ 被积函数 $\\frac{1}{(z-z_0)^{n+1}}$<br>'+
+      '此时 $\\oint_{|z-z_0|=r}\\frac{\\mathrm{d}z}{(z-z_0)^{n+1}}='+hl('$'+val+'$')+'$<br>'+
+      (n===0
+        ? '右图中 $\\cos(0\\cdot\\theta)\\equiv 1$, 曲线下的面积恒为 $2\\pi$, 故积分 $=2\\pi\\mathrm{i}$.<br>'
+        : '右图中 $\\cos(n\\theta)$ 在一个周期内<b>正负面积恰好抵消</b>, 故积分 $=0$.<br>')+
+      '注意: 无论 $r='+fmt(r)+'$ 如何变化, 结论完全不变 —— '+hl2('积分值与半径、与圆心位置都无关')+'.');
+  }
+  bindSlider('ciN',function(v){ n=Math.round(v); badge('ciNV',String(n)); draw(); });
+  badge('ciNV',String(n));
+  bindSlider('ciR',function(v){ r=v; badge('ciRV',fmt(v)); draw(); });
+  badge('ciRV',fmt(r));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 估值不等式 ML =================
+module('cvEstimate',function(cv){
+  var tv=0.16;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 曲线 + |f| 分布
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-0.6,3.6,-0.8,4.4);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(3),m1.py(4)); ctx.stroke();
+    // 沿 C 画 |f| 的大小 (用小圆点半径表示)
+    for(var t=0;t<=1.0001;t+=0.04){
+      var x=3*t, y=4*t;
+      var dd=Math.hypot(3*t, 4*t-1);
+      var mval=1/dd;
+      ctx.fillStyle='rgba(230,81,0,'+Math.min(1,mval/2)+')';
+      ctx.beginPath(); ctx.arc(m1.px(x),m1.py(y),Math.min(9,mval*4),0,TAU); ctx.fill();
+    }
+    var zx=3*tv, zy=4*tv;
+    dot(ctx,m1.px(zx),m1.py(zy),7,'#c62828','#fff');
+    tlabel(ctx,m1.px(zx)+9,m1.py(zy)+18,'z('+fmt(tv)+')','#c62828','bold 11px Segoe UI');
+    tlabel(ctx,m1.px(3)+6,m1.py(4)-10,'3+4i','#1565c0','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'曲线 C 上被积函数模的分布 (圆点越大 |f| 越大)','#37474f','bold 13px Segoe UI');
+    // 右: |f| 曲线
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.15,1.15,-0.4,3.2);
+    grid(ctx,halfW,H,m2,0.2); axes(ctx,halfW,H,m2,'t','|f|');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var t2=0;t2<=1.0001;t2+=0.005){
+      var dd2=Math.hypot(3*t2,4*t2-1);
+      var v=1/dd2;
+      if(v>3.2) continue;
+      var px=m2.px(t2), py=m2.py(v);
+      if(t2===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#2e7d32'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m2.px(-0.15),m2.py(5/3)); ctx.lineTo(m2.px(1.15),m2.py(5/3)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m2.px(0.3),m2.py(1.85),'M = 5/3 (最大值)','#2e7d32','bold 12px Segoe UI');
+    var dd3=Math.hypot(3*tv,4*tv-1);
+    dot(ctx,m2.px(tv),m2.py(1/dd3),6.5,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'|f(z(t))| = 1/√(9t²+(4t−1)²) 随 t 的变化','#37474f','bold 13px Segoe UI');
+    var ddv=Math.hypot(3*tv,4*tv-1), mv=1/ddv;
+    setRO('esReadout',
+      '曲线 $C$ 的长 $L=|3+4\\mathrm{i}|=5$<br>'+
+      '当前 $t='+fmt(tv)+'$: $|f|=\\frac{1}{\\sqrt{9t^2+(4t-1)^2}}='+hl(fmt(mv,3))+'$<br>'+
+      '$|f|$ 的最大值 $M=\\frac{5}{3}\\approx 1.667$ (在 $t=4/25$ 处取得)<br>'+
+      '估值不等式: $\\left|\\int_C f\\,\\mathrm{d}z\\right|\\le M\\cdot L=\\frac53\\times 5='+hl2('\\frac{25}{3}')+'\\approx 8.33$');
+  }
+  bindSlider('esT',function(v){ tv=v; badge('esTV',fmt(v)); draw(); });
+  badge('esTV',fmt(tv));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnEsAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 扫描'; return; }
+    anim=true; this.textContent='⏸ 停止'; tv=0;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 扫描'; return false; }
+      tv+=0.008; if(tv>1){ tv=1; }
+      setSlider('esT',tv); badge('esTV',fmt(tv)); draw(); return tv<1;
+    });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 6: 知识图谱树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'有向曲线与定义', c:'#1976d2', leaves:['有向曲线: 选定正方向','负向 $C^-$: 反向变号','闭曲线正向 = 内部在左','闭路积分记号 ∮','定义: 分割·取点·求和·极限','极限与分法取点无关']},
+    {t:'积分的计算', c:'#e65100', leaves:['定理1.1: 拆成两个线积分','参数化: $\\int f[z(t)]z\'(t)\\,\\mathrm{d}t$','$\\mathrm{d}z=z\'(t)\\,\\mathrm{d}t$ 的代入','例1.1: $\\int_C z\\,\\mathrm{d}z$','$\\frac{(3+4\\mathrm{i})^2}{2}$ 的结果','与路径无关 ($f$ 解析)']},
+    {t:'典型结论', c:'#c62828', leaves:['$\\oint\\frac{\\mathrm{d}z}{(z-z_0)^{n+1}}$','$n=0$ 时 $=2\\pi\\mathrm{i}$','$n\\neq 0$ 时 $=0$','与圆心、半径无关','例1.3: $\\bar{z}$ 积分与路径有关','原因: $\\bar{z}$ 在复平面内处处不解析']},
+    {t:'性质与估值', c:'#2e7d32', leaves:['反向变号','线性性 (常数可提出)','可加性 $C=C_1+C_2$','估值不等式 $\\left|\\int f\\,\\mathrm{d}z\\right|\\le\\int|f|\\,\\mathrm{d}s$','$\\left|\\int f\\,\\mathrm{d}z\\right|\\le ML$','例1.4: 上界 $=\\frac{25}{3}$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第三章第一节 · 复变函数积分的概念';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 → 计算 → 典型结论 → 性质与估值; 一句话: <b>把复积分参数化, 就能算; 用估值不等式, 就能估</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 7: 格林公式 (环量与旋度) =================
+module('cvGreen',function(cv){
+  var lam=0;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w-24,h-56,-2.7,2.7,-1.9,1.9);
+    ctx.save(); ctx.translate(12,36);
+    // 区域 G 填充
+    ctx.beginPath(); ctx.ellipse(m.px(0),m.py(0),1.7*m.s,1.3*m.s,0,0,TAU);
+    ctx.fillStyle='rgba(255,241,118,.28)'; ctx.fill();
+    grid(ctx,w-24,h-56,m,0.5); axes(ctx,w-24,h-56,m,'x','y');
+    // 内部旋度场 (箭头环)
+    var N=7;
+    for(var i=0;i<N;i++){
+      for(var j=0;j<N;j++){
+        var x=-1.45+i*0.49, y=-1.05+j*0.35;
+        if((x/1.7)*(x/1.7)+(y/1.3)*(y/1.3)>1) continue;
+        var vx=-y*lam*0.6, vy=x*lam*0.6;
+        var mag=Math.hypot(vx,vy);
+        if(mag<0.02) continue;
+        var sc=0.22;
+        arrow(ctx,m.px(x-vx*sc*0.5),m.py(y-vy*sc*0.5),
+              m.px(x+vx*sc*0.5),m.py(y+vy*sc*0.5),
+              'rgba(198,40,40,'+Math.min(0.85,Math.abs(lam)*0.6+0.15)+')',1.8,7);
+      }
+    }
+    // 边界 C
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3.4;
+    ctx.beginPath(); ctx.ellipse(m.px(0),m.py(0),1.7*m.s,1.3*m.s,0,0,TAU); ctx.stroke();
+    for(var k=0;k<10;k++){
+      var a0=TAU*k/10, a1=a0+0.2;
+      arrow(ctx,m.px(1.7*Math.cos(a0)),m.py(1.3*Math.sin(a0)),
+            m.px(1.7*Math.cos(a1)),m.py(1.3*Math.sin(a1)),'#1565c0',2.4,10);
+    }
+    ctx.restore();
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText('格林公式: 边界环量 = 内部旋度总量',16,26);
+    ctx.font='12.5px Segoe UI'; ctx.fillStyle='#78909c';
+    ctx.fillText('蓝色椭圆 = 区域 G 的边界 C; 红色小箭头 = 内部旋度场',16,48);
+    var area=Math.PI*1.7*1.3;
+    setRO('grReadout',
+      '取 $P=-\\frac{\\lambda y}{2}$ , $Q=\\frac{\\lambda x}{2}$, 则旋度 $\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}='+fmt(lam)+'$<br>'+
+      '边界环量 $\\oint_C P\\mathrm{d}x+Q\\mathrm{d}y='+fmt(lam)+'\\times(\\text{面积})\\approx '+fmt(lam*area,3)+'$<br>'+
+      (Math.abs(lam)<1e-9
+        ? '<b>'+hl('λ = 0: 内部旋度处处为零 ⇒ 沿任意闭曲线的环量必为 0')+'</b><br>这正是解析函数满足柯西—黎曼方程时的情形 —— 柯西积分定理 $\\oint_C f(z)\\mathrm{d}z=0$ 的几何原型.'
+        : 'λ ≠ 0 时环量不为零. 拖动滑块让 λ → 0, 观察内部箭头消失, 环量随之归零.'));
+  }
+  bindSlider('grL',function(v){ lam=v; badge('grLV',fmt(v)); draw(); });
+  badge('grLV',fmt(lam));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnGrAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 扫描 λ'; return; }
+    anim=true; this.textContent='⏸ 停止'; lam=-1.5;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 扫描 λ'; return false; }
+      lam+=0.03; if(lam>1.5){ lam=1.5; }
+      setSlider('grL',lam); badge('grLV',fmt(lam)); draw(); return lam<1.5;
+    });
+  });
+  var br=document.getElementById('btnGrReset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; if(ba) ba.textContent='▶ 扫描 λ';
+    lam=0; setSlider('grL',0); badge('grLV',fmt(0)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  qs=qs.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'格林只上过不足两年学, 在磨坊里自学成才, 40 岁才进剑桥. 他的经历说明"环境"与"成就"之间是什么关系?',
+     hints:['环境会影响"能否被看见", 但不决定"能想到多深" —— 格林的成果被埋没十七年, 并非因为不够好.',
+            '自学成才的关键是: 找到最好的材料 (他读的是拉普拉斯、拉格朗日的原著), 并持续追问.',
+            '十九世纪没有互联网, 他仍能读到前沿期刊; 今天获取知识的成本近乎为零, 差距更多在"是否真的去读".',
+            '可迁移的态度: 不把条件不足当作不开始的理由, 而是先做起来.']},
+    {q:'格林的成果被埋没十七年才被重新发现. 你认为"被承认"和"有价值"是同一件事吗?',
+     hints:['不是同一件事: 价值是客观的, 承认是社会的 —— 两者可能相差几十年.',
+            '同时也要看到开尔文勋爵的作用: 如果没有他, 格林的工作可能被埋没更久.',
+            '在学术共同体中, "发现并推举他人的工作"是一项被低估的重要贡献.',
+            '可迁移的态度: 一方面对自己的判断保持信心, 另一方面也要主动去发现和推荐身边的好工作.']},
+    {q:'本节的"重要结论" ∮dz/(z−z₀)=2πi 与半径、圆心位置都无关. 这种"只依赖拓扑关系"的结论为什么深刻?',
+     hints:['它说明积分的值不被"几何细节" (大小、位置) 决定, 而被"结构关系" (点是否在闭曲线内) 决定.',
+            '这类结论后来发展成复分析中最有力的工具 —— 留数定理, 它把积分变成"数奇点".',
+            '与物理学中的拓扑不变量 (如绕数、量子霍尔电导的整数量子化) 有相通之处.',
+            '可迁移的态度: 当一个结论对"无关变量"不敏感时, 往往意味着它触及了更本质的结构.']},
+    {q:'例 1.3 中, 同一个被积函数沿两条路径积分得到不同结果. 这一"失败"的例子的价值在哪里?',
+     hints:['它用最直接的方式说明了"积分与路径有关"是可能发生的, 从而反衬出"路径无关"的珍贵.',
+            '它为下一节柯西积分定理提供了"反面参照": 只有当函数解析时, 路径无关才成立.',
+            '数学中反例常常比正例更有力 —— 它划定了结论的边界.',
+            '可迁移的态度: 认真对待"不符合预期"的观察, 它往往指出关键条件.']},
+    {q:'结合华罗庚、陈建功的事迹, 谈谈"基础研究"在当代中国科技发展中的位置.',
+     hints:['基础研究的成果往往不能立即转化, 却决定了所有应用技术的上限.',
+            '华罗庚的多复变函数论、陈建功的函数论, 都是在没有先进条件时做出的世界级工作.',
+            '今天的计算电磁学、雷达、天线设计, 底层都依赖格林函数与围道积分这类"纯理论".',
+            '可迁移的态度: 尊重那些"看不见直接产出"的长期工作.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

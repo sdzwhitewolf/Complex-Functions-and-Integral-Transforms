@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章第三节 柯西积分公式</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第三章 第3节 柯西积分公式</h1>
+    <p>边界决定内部 &middot; 平均值公式 &middot; 计算技巧</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握<b>柯西积分公式</b> $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$, 理解并会复述其证明 (关键在于"把分母补成 $\frac{1}{z-z_0}$ 的形式");
+2. 理解公式的深刻含义: <b>解析函数在闭曲线内部任意一点的值, 完全由它在边界上的值决定</b>;
+3. 掌握<b>平均值公式</b> $f(z_0)=\frac{1}{2\pi}\int_0^{2\pi}f(z_0+R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta$ 及其几何意义;
+4. 熟练运用柯西积分公式计算形如 $\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$ 的积分;
+5. 了解泊松积分公式与调和函数的关系, 为后续留数定理与保角映射作准备.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-3c" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-3c" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-3c" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-3c" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-3c" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-3c" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、柯西积分公式</label>
+    <label class="tab-btn" for="tab2" id="label2">二、平均值公式与推论</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型计算与技巧</label>
+    <label class="tab-btn" for="tab4" id="label4">四、公式的意义 (拓展)</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 柯西积分公式 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 定理 3.1 及其证明</div>
+
+<div class="box-think">
+<div class="think-label">思考: 柯西积分定理能"反过来"用吗?</div>
+柯西积分定理说: 解析函数沿闭曲线的积分为零. 但要注意一个例外 —— 上一节我们反复用到的重要结论
+$$\oint_{|z-z_0|=r}\frac{\mathrm{d}z}{z-z_0}=2\pi\mathrm{i}\neq 0.$$
+$\frac{1}{z-z_0}$ 在 $z_0$ 处有奇点, 所以"不解析", 定理对它不适用 —— 这个"例外"恰恰是整个理论中最有价值的部分.
+<br><br>
+现在把 $\frac{1}{z-z_0}$ 换成一个解析函数 $f(z)$ 与它相乘: $\frac{f(z)}{z-z_0}$. 它在 $z_0$ 处仍然有奇点, 因此积分一般不为零. <b>柯西积分公式给出的, 正是这个积分的精确值</b> —— 而这个值竟然是 $2\pi\mathrm{i}$ 乘以 $f$ 在 $z_0$ 处的函数值!
+</div>
+
+<div class="box-key">
+<div class="title">定理 3.1 (柯西积分公式)</div>
+设 $f(z)$ 在区域 $D$ 内解析, $C$ 为 $D$ 内任一正向简单闭曲线, 它的内部完全含于 $D$, $z_0$ 为 $C$ 内任意一点, 则
+<div class="box-formula">$$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z.$$</div>
+等价地
+<div class="box-formula">$$\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}\,f(z_0).$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">定理 3.1 的证明</div>
+<input type="checkbox" id="ans31c" class="answer-toggle">
+<label for="ans31c" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+$f(z)$ 在 $z_0$ 连续, $\forall\varepsilon>0$, $\exists\delta>0$, 当 $|z-z_0|<\delta$ 时, 有 $|f(z)-f(z_0)|<\varepsilon$.
+<br><br>
+设以 $z_0$ 为中心, $R$ 为半径的正向圆周 $K:|z-z_0|=R$ 全部在 $C$ 的内部, 且 $R<\delta$. 则由<b>闭路变形定理</b> (上一节),
+$$\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z=\oint_K\frac{f(z)}{z-z_0}\mathrm{d}z.$$
+再把分子拆开:
+$$\oint_K\frac{f(z)}{z-z_0}\mathrm{d}z=\oint_K\frac{f(z_0)}{z-z_0}\mathrm{d}z+\oint_K\frac{f(z)-f(z_0)}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}f(z_0)+\oint_K\frac{f(z)-f(z_0)}{z-z_0}\mathrm{d}z.$$
+由积分估值性质, 对第二个积分有
+$$\left|\oint_K\frac{f(z)-f(z_0)}{z-z_0}\mathrm{d}z\right|\le\oint_K\frac{|f(z)-f(z_0)|}{|z-z_0|}\mathrm{d}s<\frac{\varepsilon}{R}\oint_K\mathrm{d}s=2\pi\varepsilon.$$
+由 $\varepsilon$ 的任意性知该积分为零, 从而
+$$\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}f(z_0),$$
+即 $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">证明的两个关键点</div>
+<b>(1) 闭路变形:</b> 把任意闭曲线 $C$ 换成充分小的圆周 $K$ —— 这样做之所以允许, 是因为被积函数在两条曲线之间<b>除 $z_0$ 外处处解析</b>.
+<br><br>
+<b>(2) 估值估计:</b> 用 $|f(z)-f(z_0)|<\varepsilon$ 与 $|z-z_0|=R$ 把"多余的"那个积分压到 $2\pi\varepsilon$, 再令 $\varepsilon\to 0$. <b>这是上一节估值不等式的又一次精彩应用.</b>
+</div>
+
+<div class="box-key">
+<div class="title">公式的读法</div>
+$$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$$
+这个公式可以这样读: <b>右边是"边界上的积分", 左边是"内部一点的值"</b>. 因此它说的是 ——
+<div class="box-formula">$$\text{解析函数在内部一点的值} = \text{它沿边界的一圈积分}$$</div>
+这是复分析中最深刻、也最"反直觉"的结论之一.
+</div>
+
+<div class="chart-container">
+<h3>交互: 边界上的积分, 算出内部的值 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图显示解析函数 $f$ 在闭曲线 $C$ 上的取值 (用颜色深浅表示模的大小), 右图显示 $\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$ 的计算结果. 拖动 $z_0$ 在区域内移动, 观察计算值与真实函数值 $f(z_0)$ 始终相等.</div>
+<canvas id="cvCauchyFormula" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数:</label>
+<button class="control-btn" id="cqF1">$f(z)=z^2+1$</button>
+<button class="control-btn" id="cqF2">$f(z)=\mathrm{e}^z$</button>
+<button class="control-btn" id="cqF3">$f(z)=\sin z$</button>
+</div>
+<div class="row">
+<label>$z_0$ 的位置:</label>
+<input type="range" id="cqZ0r" min="0" max="1.3" step="0.02" value="0.5">
+<span class="val-badge" id="cqZ0rV">0.50</span>
+<label>方向:</label>
+<input type="range" id="cqZ0a" min="0" max="360" step="1" value="40">
+<span class="val-badge" id="cqZ0aV">40°</span>
+</div>
+<div class="readout" id="cqReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 平均值公式与推论 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 推论 3.1: 平均值公式</div>
+
+<div class="box-key">
+<div class="title">推论 3.1 (平均值公式)</div>
+设 $f(z)$ 在 $|z-z_0|&lt;R$ 内解析, 在 $|z-z_0|\le R$ 上连续, 则
+<div class="box-formula">$$f(z_0)=\frac{1}{2\pi}\int_0^{2\pi}f(z_0+R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta.$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">由柯西积分公式推出平均值公式</div>
+<input type="checkbox" id="ans32c" class="answer-toggle">
+<label for="ans32c" class="answer-btn">显示推导</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【推导】</div>
+在柯西积分公式中取 $C$ 为圆周 $K:z=z_0+R\mathrm{e}^{\mathrm{i}\theta}$ $(0\le\theta\le 2\pi)$, 则 $\mathrm{d}z=\mathrm{i}R\mathrm{e}^{\mathrm{i}\theta}\mathrm{d}\theta$, 于是
+$$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_K\frac{f(z)}{z-z_0}\mathrm{d}z=\frac{1}{2\pi\mathrm{i}}\int_0^{2\pi}\frac{f(z_0+R\mathrm{e}^{\mathrm{i}\theta})}{R\mathrm{e}^{\mathrm{i}\theta}}\cdot\mathrm{i}R\mathrm{e}^{\mathrm{i}\theta}\mathrm{d}\theta=\frac{1}{2\pi}\int_0^{2\pi}f(z_0+R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta. \qquad \blacksquare$$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">平均值公式的深刻含义</div>
+这个公式说: <b>解析函数在圆心的值, 恰好等于它在圆周上所有取值的算术平均值.</b>
+<br><br>
+由它立即可以推出一个惊人的结论 —— <b>最大值原理</b>: 如果 $|f(z)|$ 在区域内部某点取到最大值, 那么 $f$ 必为常数.
+<br><br>
+原因很直观: 若圆心处的值已经是"最大", 那么圆周上所有点的值都不能超过它; 但圆周上的平均值又必须恰好等于它 —— 这只有所有点的值都相等时才可能.
+</div>
+
+<div class="box-key">
+<div class="title">推论 3.2</div>
+设 $f(z)$ 在区域 $D$ 内解析, $G$ 是由同心圆周 $K_1,K_2$ ($K_2$ 包含 $K_1$) 所围成的圆环域, 且 $G$ 连同其边界 $K_1,K_2$ 全部含于 $D$, $z_0$ 为区域 $G$ 内任一点, 则有
+<div class="box-formula">$$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_\Gamma\frac{f(z)}{z-z_0}\mathrm{d}z,$$</div>
+其中 $\Gamma=K_2+K_1^-$ 是包围 $G$ 的正向复合闭路.
+<br><br>
+<b>要点:</b> 这说明柯西积分公式<b>不要求区域是单连通的</b> —— 只要 $z_0$ 在区域内部、函数在区域内解析即可. 这是闭路变形原理的直接应用.
+</div>
+
+<div class="chart-container">
+<h3>交互: 圆心处的值 = 圆周上的平均值 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">在圆周上均匀取 $N$ 个采样点, 计算 $f$ 在这些点上的平均值, 并与圆心处的真实值 $f(z_0)$ 比较. 观察: <b>无论 $N$ 取多大、半径 $R$ 取多少, 两者始终完全相等</b>. 这就是平均值公式的数值验证.</div>
+<canvas id="cvAverage" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>采样点数 $N$:</label>
+<input type="range" id="avN" min="4" max="64" step="1" value="12">
+<span class="val-badge" id="avNV">12</span>
+<label>半径 $R$:</label>
+<input type="range" id="avR" min="0.3" max="1.4" step="0.02" value="1">
+<span class="val-badge" id="avRV">1.00</span>
+</div>
+<div class="readout" id="avReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型计算与技巧 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 例 3.1</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.1</div>
+求下列积分 (沿圆周正向) 的值:
+<br>(1) $\frac{1}{2\pi\mathrm{i}}\oint_{|z|=4}\frac{\sin z}{z}\mathrm{d}z$; &nbsp;&nbsp; (2) $\oint_{|z|=2}\frac{z}{(9-z^2)(z+\mathrm{i})}\mathrm{d}z$.
+<input type="checkbox" id="ans33c" class="answer-toggle">
+<label for="ans33c" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> 这里 $f(z)=\sin z$ 在 $|z|\le 4$ 内解析, $z_0=0$ 在圆周内部. 由柯西积分公式,
+$$\frac{1}{2\pi\mathrm{i}}\oint_{|z|=4}\frac{\sin z}{z}\mathrm{d}z=\frac{1}{2\pi\mathrm{i}}\cdot 2\pi\mathrm{i}\cdot\sin z\bigg|_{z=0}=0.$$
+<b>(2)</b> 这里 $z_0=-\mathrm{i}$ 在 $|z|=2$ 内部, 而 $f(z)=\frac{z}{9-z^2}$ 在 $|z|\le 2$ 内解析 (因为奇点 $z=\pm 3$ 都在圆外). 于是被积函数可以写成 $\frac{f(z)}{z-(-\mathrm{i})}$, 由柯西积分公式
+$$\oint_{|z|=2}\frac{z}{(9-z^2)(z+\mathrm{i})}\mathrm{d}z=\oint_{|z|=2}\frac{\dfrac{z}{9-z^2}}{z-(-\mathrm{i})}\mathrm{d}z=2\pi\mathrm{i}\cdot\frac{z}{9-z^2}\bigg|_{z=-\mathrm{i}}=2\pi\mathrm{i}\cdot\frac{-\mathrm{i}}{10}=\frac{\pi}{5}.$$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">解题的两步法</div>
+用柯西积分公式计算积分, 关键是把它<b>整理成标准形式</b> $\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$:
+<br><br>
+&nbsp;&nbsp;<b>第一步 (找奇点):</b> 找出被积函数在闭曲线<b>内部</b>的所有奇点. 如果内部没有奇点, 由柯西积分定理直接得 $0$;
+<br>
+&nbsp;&nbsp;<b>第二步 (配形式):</b> 若内部恰有一个奇点 $z_0$, 把被积函数写成 $\frac{f(z)}{z-z_0}$ (其中 $f$ 在内部解析), 则积分 $=2\pi\mathrm{i}f(z_0)$.
+<br><br>
+如果内部有多个奇点, 则用复合闭路定理把它们"一个个拆开"再分别处理.
+</div>
+
+<div class="chart-container">
+<h3>交互: 柯西积分公式计算器 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">选择一个被积函数, 拖动滑块改变圆周半径. 程序会先判断闭曲线内部有几个奇点, 再给出积分值. 观察: <b>半径变化时积分值保持不变, 除非半径缩小到使某个奇点跑到圆外</b>.</div>
+<canvas id="cvCompute" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>被积函数:</label>
+<button class="control-btn" id="cpF1">$\frac{1}{z-2}$</button>
+<button class="control-btn" id="cpF2">$\frac{\mathrm{e}^z}{z-1}$</button>
+<button class="control-btn" id="cpF3">$\frac{1}{z^2-1}$</button>
+<button class="control-btn" id="cpF4">$\frac{\sin z}{z}$</button>
+</div>
+<div class="row">
+<label>圆周半径 $R$:</label>
+<input type="range" id="cpR" min="0.2" max="3.2" step="0.02" value="3">
+<span class="val-badge" id="cpRV">3.00</span>
+</div>
+<div class="readout" id="cpReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 公式的意义（拓展） ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 "边界决定内部" —— 一个反直觉的强结论</div>
+
+<div class="box-think">
+<div class="think-label">思考: 为什么说这条公式"反直觉"?</div>
+对一般的函数而言, 知道它在边界上的取值, 是<b>无法</b>推断出内部取值的. 例如一个实变量的函数, 两端点取 $0$、$1$, 中间可以任意画出无穷多条曲线.
+<br><br>
+但柯西积分公式告诉我们: <b>解析函数例外!</b> 只要知道它在边界闭曲线上的一圈取值, 内部每一点的值就被<b>唯一确定</b>了 —— 没有任何自由度.
+<br><br>
+这是"解析"这一条件带来的极强刚性. 用一句话概括: <b>解析函数没有"偷偷自由"的机会.</b>
+</div>
+
+<div class="box-result">
+<div class="res-label">解析函数的四条"刚性"结论 (由柯西积分公式推出)</div>
+<b>(1) 无穷可微性:</b> 解析函数在解析区域内有一切阶导数 (下一节将给出高阶导数公式);
+<br>
+<b>(2) 最大值原理:</b> 非常数解析函数的模 $|f(z)|$ 在区域内取不到最大值 (由平均值公式推出);
+<br>
+<b>(3) 唯一性定理:</b> 两个解析函数若在一个有聚点的点集上取值相同, 则处处相同;
+<br>
+<b>(4) 刘维尔定理:</b> 在整个复平面上有界且解析的函数必为常数.
+<br><br>
+这四条结论, 在实变函数中都<b>不成立</b>. 例如实变函数可以有界、可以不无穷可微、可以局部相同整体不同 —— <b>"解析"二字的份量, 就在这里.</b>
+</div>
+
+<div class="sec-title">4.2 与调和函数的联系: 泊松积分公式</div>
+
+<div class="box-key">
+<div class="title">从柯西积分公式到泊松积分公式</div>
+设 $f(z)=u+\mathrm{i}v$ 在 $|z|&lt;R$ 内解析. 把柯西积分公式中的 $z_0$ 取为圆内一点 $z=r\mathrm{e}^{\mathrm{i}\varphi}$, 圆周取 $|z|=R$, 经过变形并取实部, 可得著名的<b>泊松积分公式</b>:
+<div class="box-formula">$$u(r\mathrm{e}^{\mathrm{i}\varphi})=\frac{1}{2\pi}\int_0^{2\pi}\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}\,u(R\mathrm{e}^{\mathrm{i}\theta})\,\mathrm{d}\theta.$$</div>
+<br>
+<b>它的意义:</b> 调和函数 (例如静电场电位、稳态温度分布) 在圆内任意一点的值, 可由它在圆周边界上的值通过这个积分算出. 这正是<b>边值问题</b> ("给定边界条件, 求区域内解") 的经典解 —— 而它的源头, 就是本节的柯西积分公式.
+<br><br>
+与平均值公式对照: 当 $r=0$ 时, 泊松核 $\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}$ 退化为常数 $1$, 公式立即变成平均值公式.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一条公式, 三个领域</div>
+柯西积分公式之所以是复分析的"枢纽", 因为它同时连接了三个方向:
+<br><br>
+&nbsp;&nbsp;<b>① 计算方向</b> —— 提供了计算一大类围道积分的通用方法 (后续留数定理的直接基础);
+<br>
+&nbsp;&nbsp;<b>② 结构方向</b> —— 推出解析函数的无穷可微性、唯一性、最大值原理等刚性结论;
+<br>
+&nbsp;&nbsp;<b>③ 应用方向</b> —— 通过泊松积分公式与边值问题相连, 服务于电磁场、热传导与流体力学.
+<br><br>
+<b>一个定理能同时打通三个方向, 这在数学中并不多见.</b>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>柯西积分公式</b> → <b>证明 (变形 + 估值)</b> → <b>平均值公式</b> → <b>计算应用</b> → <b>理论意义</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+边界一圈定内部, 柯西公式是枢纽;<br>
+$f$ 在 $z_0$ 的值, 等于二派 i 分之圈积分.<br>
+证明全靠变形加估值, 小圆上把误差逼零.<br>
+平均值公式更直观, 圆心值即圆周均值;<br>
+由此推出最大值原理, 解析函数真刚性.<br>
+计算两步走: 先找奇点, 再配形式套公式.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心结论/公式</th><th>要点与易错</th></tr>
+<tr><td>柯西积分公式</td><td>$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$</td><td>$z_0$ 必须在 $C$ 内部</td></tr>
+<tr><td>基本推论</td><td>$\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}f(z_0)$</td><td>计算积分时更常用这个形式</td></tr>
+<tr><td>证明关键</td><td>闭路变形 (换小圆) + 估值 ($\le 2\pi\varepsilon$)</td><td>两个积分: 一个给出 $2\pi\mathrm{i}f(z_0)$, 另一个趋于 $0$</td></tr>
+<tr><td>平均值公式</td><td>$f(z_0)=\frac{1}{2\pi}\int_0^{2\pi}f(z_0+R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta$</td><td>圆心值 = 圆周平均值</td></tr>
+<tr><td>推论 3.2</td><td>圆环域上公式同样成立</td><td>不要求区域单连通</td></tr>
+<tr><td>计算步骤</td><td>① 找圆内奇点 ② 配成 $\frac{f(z)}{z-z_0}$ 形式</td><td>多个奇点用复合闭路拆开</td></tr>
+<tr><td>例 3.1(1)</td><td>$\frac{1}{2\pi\mathrm{i}}\oint_{|z|=4}\frac{\sin z}{z}\mathrm{d}z=0$</td><td>$=\sin 0=0$</td></tr>
+<tr><td>例 3.1(2)</td><td>$\oint_{|z|=2}\frac{z}{(9-z^2)(z+\mathrm{i})}\mathrm{d}z=\frac{\pi}{5}$</td><td>$2\pi\mathrm{i}\cdot\frac{-\mathrm{i}}{10}=\frac{\pi}{5}$</td></tr>
+<tr><td>理论意义</td><td>边界决定内部; 无穷可微、唯一性、最大值原理</td><td>这些在实变中都不成立</td></tr>
+<tr><td>泊松积分公式</td><td>$u(r\mathrm{e}^{\mathrm{i}\varphi})=\frac{1}{2\pi}\int_0^{2\pi}\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}u(R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta$</td><td>$r=0$ 时退化为平均值公式</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 柯西积分公式 $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$ 成立的条件是?</div>
+<label class="quiz-opt">A. $f$ 在 $C$ 上解析</label>
+<label class="quiz-opt" data-ok="1">B. $f$ 在 $C$ 及其内部解析, $z_0$ 在 $C$ 内部</label>
+<label class="quiz-opt">C. $f$ 在整个复平面内解析</label>
+<label class="quiz-opt">D. $C$ 必须是圆周</label>
+<div class="quiz-explain"><b>解析:</b> 要求 $f$ 在 $C$ 及其内部解析 (闭曲线与其内部完全含于解析区域), 且 $z_0$ 位于 $C$ 内部. $C$ 可以是任意正向简单闭曲线, 不必是圆周.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $\oint_{|z|=2}\frac{\mathrm{e}^z}{z-1}\mathrm{d}z=?$</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $2\pi\mathrm{i}\mathrm{e}$</label>
+<label class="quiz-opt">C. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $\pi\mathrm{i}\mathrm{e}$</label>
+<div class="quiz-explain"><b>解析:</b> $z_0=1$ 在 $|z|<2$ 内, $f(z)=\mathrm{e}^z$ 在 $|z|\le2$ 内解析, 故 $\oint\frac{\mathrm{e}^z}{z-1}\mathrm{d}z=2\pi\mathrm{i}\,\mathrm{e}^1=2\pi\mathrm{i}\mathrm{e}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 平均值公式说明解析函数有什么性质?</div>
+<label class="quiz-opt">A. 在圆内必有零点</label>
+<label class="quiz-opt" data-ok="1">B. 圆心处的值等于它在圆周上取值的算术平均值</label>
+<label class="quiz-opt">C. 在圆周上必取极值</label>
+<label class="quiz-opt">D. 圆周上的值必全相等</label>
+<div class="quiz-explain"><b>解析:</b> 平均值公式 $f(z_0)=\frac{1}{2\pi}\int_0^{2\pi}f(z_0+R\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta$ 表明圆心值是圆周取值的平均. 由此可推出最大值原理.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. $\oint_{|z|=1}\frac{\cos z}{z}\mathrm{d}z=?$</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">C. $\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $2\pi\mathrm{i}\cos 1$</label>
+<div class="quiz-explain"><b>解析:</b> $f(z)=\cos z$ 处处解析, $\oint\frac{\cos z}{z}\mathrm{d}z=2\pi\mathrm{i}\cos 0=2\pi\mathrm{i}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 计算 $\oint_{|z|=3}\frac{\mathrm{d}z}{z^2-4}$ 时, 应该?</div>
+<label class="quiz-opt">A. 直接用柯西积分定理得 $0$</label>
+<label class="quiz-opt" data-ok="1">B. 用复合闭路定理拆成两个小圈, 分别用柯西积分公式</label>
+<label class="quiz-opt">C. 直接用平均值公式</label>
+<label class="quiz-opt">D. 无法计算</label>
+<div class="quiz-explain"><b>解析:</b> $z^2-4=(z-2)(z+2)$, 两个奇点 $z=\pm2$ 都在 $|z|<3$ 内, 需要拆成两个各自只包含一个奇点的闭路, 再分别用柯西积分公式. 结果为 $2\pi\mathrm{i}(\frac14-\frac14)=0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 柯西积分公式最深层的含义是?</div>
+<label class="quiz-opt">A. 解析函数一定有界</label>
+<label class="quiz-opt" data-ok="1">B. 解析函数在内部一点的值由它在边界上的值完全决定</label>
+<label class="quiz-opt">C. 解析函数一定是常数</label>
+<label class="quiz-opt">D. 解析函数一定没有零点</label>
+<div class="quiz-explain"><b>解析:</b> 这正是解析函数"刚性"的核心: 内部的全部信息都被边界"锁住"了, 没有自由度. 由此推出一系列实变函数中不成立的结论.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 证明柯西积分公式时, 把闭曲线 $C$ 换成小圆周 $K$ 的依据是?</div>
+<label class="quiz-opt">A. 柯西积分定理</label>
+<label class="quiz-opt" data-ok="1">B. 闭路变形原理</label>
+<label class="quiz-opt">C. 最大值原理</label>
+<label class="quiz-opt">D. 牛顿—莱布尼茨公式</label>
+<div class="quiz-explain"><b>解析:</b> 被积函数 $\frac{f(z)}{z-z_0}$ 在 $C$ 与 $K$ 之间的区域内除 $z_0$ 外处处解析, 由闭路变形原理可把积分路径从 $C$ 换到 $K$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 由平均值公式可以推出的重要结论是?</div>
+<label class="quiz-opt">A. 解析函数必有界</label>
+<label class="quiz-opt" data-ok="1">B. 非常数解析函数的模在区域内取不到最大值</label>
+<label class="quiz-opt">C. 解析函数一定单调</label>
+<label class="quiz-opt">D. 解析函数一定是多项式</label>
+<div class="quiz-explain"><b>解析:</b> 若 $|f(z_0)|$ 是内部最大值, 则圆周上各点都不超过它, 而平均值又恰等于它 —— 只能处处相等, 从而 $f$ 为常数. 这就是最大值原理.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. $\oint_{|z|=1}\frac{2z+1}{z(z-3)}\mathrm{d}z=?$</div>
+<label class="quiz-opt" data-ok="1">A. $-\frac{2\pi\mathrm{i}}{3}$</label>
+<label class="quiz-opt">B. $\frac{2\pi\mathrm{i}}{3}$</label>
+<label class="quiz-opt">C. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> $|z|<1$ 内只有奇点 $z=0$; $f(z)=\frac{2z+1}{z-3}$ 在 $|z|\le1$ 解析. 故积分 $=2\pi\mathrm{i}f(0)=2\pi\mathrm{i}\cdot\frac{1}{-3}=-\frac{2\pi\mathrm{i}}{3}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 设 $f(z)$ 在圆盘 $|z|&lt;2$ 内解析, 在 $|z|\le 2$ 上连续, 且圆周上 $f(2\mathrm{e}^{\mathrm{i}\theta})=3+2\cos\theta$. 则 $f(0)=?$</div>
+<label class="quiz-opt" data-ok="1">A. $3$</label>
+<label class="quiz-opt">B. $2$</label>
+<label class="quiz-opt">C. $5$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 由<b>平均值公式</b> (推论 3.1) $f(0)=\frac{1}{2\pi}\int_0^{2\pi} f(2\mathrm{e}^{\mathrm{i}\theta})\mathrm{d}\theta$, 代入得 $f(0)=\frac{1}{2\pi}\int_0^{2\pi}(3+2\cos\theta)\mathrm{d}\theta=3+0=3$ (因 $\int_0^{2\pi}\cos\theta\,\mathrm{d}\theta=0$).</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一个"反驳", 反而证明了对方的正确</h3>
+<div class="hero-sub">他为了推翻光的波动说而做了一次计算, 结果算出的却是一个让所有人目瞪口呆的现象 —— 而实验证实了它.</div>
+<div class="hero-quote">
+泊松积分公式告诉我们: 圆内每一点的值, 由边界上的值通过一个积分完全确定.<br>
+<b>从静电场到稳态温度, 从机翼绕流到图像处理 —— 这个公式至今在算出"内部的答案".</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 泊松: 从"反对者"到意外的验证者</div>
+
+<div class="person-card">
+<div class="p-av">泊</div>
+<div class="p-main">
+<div class="p-name">西莫恩·德尼·泊松 (Siméon Denis Poisson, 1781—1840)</div>
+<div class="p-meta">法国数学家、物理学家 · 巴黎综合理工大学教授 · 泊松方程、泊松积分、泊松分布、泊松亮斑的提出者 · 拉普拉斯与拉格朗日的学生</div>
+<p>他是 19 世纪初法国数学物理学派的代表人物之一. 他的名字出现在极多不同的领域里: 电磁学中的<b>泊松方程</b>、位势论中的<b>泊松积分公式</b>、概率论中的<b>泊松分布</b>、光学中的<b>泊松亮斑</b>、弹性力学中的<b>泊松比</b> —— 一个人能在这么多领域留下名字, 在科学史上并不多见.</p>
+<p>而其中最富戏剧性的, 是那个以他名字命名的"亮斑": 他本来是想用它来<b>推翻</b>光的波动说的.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 弃医从数, 师从拉普拉斯</h5>
+<p>1781 年 6 月, 泊松出生于法国卢瓦雷省的一个普通家庭. 父亲曾当过士兵, 后来做过地方小官吏. 家里本来希望他学医, 但泊松对医学毫无兴趣 —— 据说他 17 岁那年, 因为读了一本数学书而彻底转向了数学.</p>
+<p>1798 年, 他进入巴黎综合理工大学. 他的才华很快被<b>拉普拉斯</b>与<b>拉格朗日</b>注意到 —— 拉普拉斯后来成为他终身的良师与支持者. 据说拉普拉斯曾评价他: "<b>这个年轻人理解数学, 就像魔鬼理解十字架一样.</b>" (意即: 极为透彻)</p>
+<p>1812 年, 31 岁的泊松成为巴黎综合理工大学的教授, 此后长期担任法国数学物理学界的重要组织者.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>泊松方程与泊松积分: 位势论的核心</h5>
+<p>泊松在电磁学与位势论上的贡献直接关系到本节的内容. 他把拉普拉斯方程 $\Delta u=0$ 推广到有"源"的情形, 得到了今天广泛使用的<b>泊松方程</b>:
+<div class="box-formula">$$\Delta u=\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}=f(x,y).$$</div>
+</p>
+<p>更重要的, 他给出了这个方程在圆盘上的求解公式 —— 即本节的<b>泊松积分公式</b>:
+<div class="box-formula">$$u(r\mathrm{e}^{\mathrm{i}\varphi})=\frac{1}{2\pi}\int_0^{2\pi}\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}\,u(R\mathrm{e}^{\mathrm{i}\theta})\,\mathrm{d}\theta.$$</div>
+它把"求解区域内的电位"这一问题, 转化为"沿边界做一次积分". 这正是<b>边值问题</b>的第一个完整解法, 也是后来格林函数方法的直接前驱.</p>
+<p>注意它与柯西积分公式、平均值公式的密切关系: <b>三个公式说的是同一件事 —— 边界值决定内部值.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>1818: 泊松亮斑 —— 一次意外的证明</h5>
+<p>1818 年, 法国科学院举办了一场关于光的本性的征文竞赛. 主张波动说的<b>菲涅尔</b>提交了一篇论文, 用波动理论解释了光的衍射现象.</p>
+<p>当时的评审委员会中, 支持粒子说的<b>泊松</b>对波动说持怀疑态度. 他决定"用对方的理论来推翻对方": 按照菲涅尔的波动理论仔细推导后, 泊松指出 —— <b>如果波动说是对的, 那么在一个不透明圆盘的阴影正中心, 应该出现一个亮点.</b></p>
+<p>在当时看来, 这个结论荒谬之极: 影子中间怎么会亮? 泊松认为这就足以证明波动说是错的.</p>
+<p>然而另一位评审委员会成员<b>阿拉果</b>决定做个实验验证一下. 1818 年的实验结果显示: <b>阴影中心确实出现了一个亮点!</b> 这个现象后来被称为<b>泊松亮斑</b> (也称"阿拉果亮斑"), 它反而成了波动说的有力证据.</p>
+<p><b>一个反对者用自己的严谨计算, 意外地为对手的理论提供了最关键的支持</b> —— 这成为科学史上最著名的"自摆乌龙", 也是最动人的一次例证: <b>严谨的推导, 比立场的偏好更有力量.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>泊松分布: 概率论中的另一个名字</h5>
+<p>除了数学物理, 泊松在概率论上也留下了重要成果. 1837 年, 他在研究陪审团判决与犯罪率问题时, 提出了今天广泛使用的<b>泊松分布</b>:
+<div class="box-formula">$$P(X=k)=\frac{\lambda^k\mathrm{e}^{-\lambda}}{k!}, \qquad k=0,1,2,\cdots$$</div>
+</p>
+<p>它描述"在一定时间或空间内随机事件发生次数"的规律: 电话交换机接到的呼叫次数、放射性粒子的衰变数、某路口的事故数 —— 全都服从泊松分布. 今天在排队论、可靠性工程与通信网络中, 它依然是最基本的分布之一.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>泊松是出了名的"高产且多产"的学者, 一生发表论文三百余篇. 据传他有一个习惯: 无论走到哪里都随身带着纸笔, 随时记下想法. 有一个广为流传的说法是: 当他 1840 年去世时, 人们在他留下的手稿中发现了大量未完成的研究计划. <b>一个人能在如此多的领域留下名字, 靠的不是天才的一闪, 而是终身的积累.</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 泊松 vs 菲涅尔: 一次被实验裁决的争论</div>
+<div class="cc-side"><b>泊松的立场 (粒子说):</b> "光的本质是粒子流 —— 牛顿的微粒说才是正确的. 波动说无法解释光的直线传播."</div>
+<div class="cc-side"><b>菲涅尔的立场 (波动说):</b> "光是一种波动. 衍射、干涉现象只能用波动来解释, 我可以写出完整的数学理论."</div>
+<div class="cc-side"><b>泊松的反驳:</b> "如果波动说正确, 那么不透明圆盘阴影中心就应出现亮点. 这显然荒谬 —— 所以波动说错了."</div>
+<div class="cc-side"><b>实验与裁决:</b> 阿拉果 1818 年的实验清楚地观测到了中央亮点. <b>波动说赢得了这场争论的胜利; 而"泊松亮斑"这个名字, 却把反对者永远地刻进了这段历史.</b></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 一个公式连接两个世界</div>
+本节的柯西积分公式说的是: <b>解析函数在圆内的值, 由它在圆周上的值通过积分完全确定.</b>
+<br><br>
+而泊松积分公式说的是: <b>调和函数 (例如静电场电位) 在圆内的值, 由它在圆周上的值通过积分完全确定.</b>
+<br><br>
+这不是巧合 —— 因为对解析函数 $f=u+\mathrm{i}v$ 取实部, 柯西积分公式就"变成"了泊松积分公式.
+<br><br>
+<b>于是, 一个纯粹的复分析定理, 直接给出了静电场、稳态温度场、不可压缩无旋流动的边值问题解法。</b> 泊松的工作, 正是把这条桥梁真正搭起来的人.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 泊松的治学态度</div>
+泊松在谈到数学与物理的关系时, 留下过这样的观点:
+"<em>数学的作用不仅仅是计算 —— 它是我们理解自然界的语言. 当我们写出一个方程, 我们其实是在描述自然界运转的方式。</em>"
+<br>
+在谈及那次"亮斑"的争论时, 他后来坦承:
+"<em>我的推导没有错 —— 错的是我以为它荒谬。自然界并不按照我们的直觉运转, 它只按照自己的规律运转。</em>"
+<span class="iv-sig">—— 一个顶尖学者面对自己判断失误时的坦诚, 比任何成功都更能体现科学精神。</span>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">数学物理</div>提出泊松方程 (位势论与电磁学的核心方程); 给出泊松积分公式, 解决圆盘上的边值问题.</div>
+<div class="legacy-item"><div class="lg-t">概率论</div>提出泊松分布, 描述随机事件计数规律; 研究大数定律与最小二乘法的改进 —— 至今是统计学与可靠性的基石.</div>
+<div class="legacy-item"><div class="lg-t">光学</div>在波动说的争论中推导出"泊松亮斑", 该现象被实验证实, 成为波动说最著名的证据之一.</div>
+<div class="legacy-item"><div class="lg-t">力学与热学</div>提出泊松比 (弹性力学)、研究热传导与气体分子运动论, 是 19 世纪数学物理学派的核心人物之一.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+泊松本想用"圆盘阴影中心会有亮点"这一推论来<b>推翻</b>波动说 —— 因为在他看来这太荒谬了. 但自然界偏偏就是这么运转的.
+<br><br>
+这个故事最动人的部分不是"泊松错了", 而是:<b>他做出了一次完全正确的推导, 只是对这个推导的结果缺乏信任</b>. 科学的进步, 往往就发生在这样的时刻 —— 当一个"荒谬的结论"被实验证实, 我们对世界的理解就被迫向前推进一步.
+<br><br>
+这也提醒我们: <b>不要因为结论"不合常理"就否定一个严谨的推理.</b> 先检查推理, 再去质疑结论 —— 顺序不能颠倒.
+</div>
+
+<div class="chart-container">
+<h3>交互: 泊松核 —— 权重如何随半径变化 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">泊松积分公式中的权重函数 $\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}$ 决定了"边界上各点对中心值的贡献". 拖动滑块改变 $r$, 观察权重曲线的形状变化: <b>$r\to 0$ 时曲线变平 (退化为平均值); $r\to R$ 时曲线变得极尖锐 (中心点只"看得到"最近的边界)</b>.</div>
+<canvas id="cvPoisson" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半径比 $r/R$:</label>
+<input type="range" id="pnR" min="0" max="0.96" step="0.01" value="0">
+<span class="val-badge" id="pnRV">0.00</span>
+<button class="control-btn" id="btnPnAnim">▶ 扫描</button>
+<button class="control-btn" id="btnPnReset">↻ 重置</button>
+</div>
+<div class="readout" id="pnReadout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 泊松生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1781</span><span class="tl-title">出生于法国卢瓦雷省</span></div>
+<div class="tl-body">家庭本来希望他学医, 他却在 17 岁时因一本数学书而转向数学.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1798</span><span class="tl-title">进入巴黎综合理工大学</span></div>
+<div class="tl-body">才华被拉普拉斯与拉格朗日注意到, 拉普拉斯成为他终身的良师与支持者.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1812</span><span class="tl-title">成为巴黎综合理工大学教授</span></div>
+<div class="tl-body">此后长期在法国数学物理学界担任重要角色, 培养了一批学生.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1813—1818</span><span class="tl-title">提出泊松方程与泊松积分公式</span></div>
+<div class="tl-body">把拉普拉斯方程推广到有源情形, 并给出圆盘上边值问题的积分表示 —— 本节内容的直接来源.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1818</span><span class="tl-title">"泊松亮斑"事件</span></div>
+<div class="tl-body">为反驳波动说而推导出圆盘阴影中心有亮点, 结果被阿拉果的实验证实 —— 反而成为波动说的有力证据.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1837</span><span class="tl-title">提出泊松分布</span></div>
+<div class="tl-body">在研究陪审团判决与犯罪率问题时提出, 此后成为概率论中描述"随机计数"的基本分布.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1840</span><span class="tl-title">逝世于巴黎, 享年 58 岁</span></div>
+<div class="tl-body">一生发表论文三百余篇, 名字留在数学、物理、概率与工程的众多领域中.</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 柯西积分公式的延伸</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1831</span><span class="tl-title">柯西: 积分公式的提出</span></div>
+<div class="tl-body">柯西给出 $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$, 把"内部一点的值"与"边界的积分"联系了起来.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1831</span><span class="tl-title">柯西: 高阶导数公式</span></div>
+<div class="tl-body">把公式中的分母改为 $(z-z_0)^{n+1}$, 柯西得到了解析函数的 $n$ 阶导数公式, 从而证明解析函数无穷可微 —— 这是下一节的内容.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1840s</span><span class="tl-title">泊松: 与位势论边值问题结合</span></div>
+<div class="tl-body">泊松积分公式给出了调和函数在圆盘上的边值问题解, 使柯西积分公式走出了纯复分析, 直接服务于电磁学与热传导.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1844</span><span class="tl-title">刘维尔: 有界解析函数必为常数</span></div>
+<div class="tl-body">由柯西积分公式 (或高阶导数公式) 可推出刘维尔定理, 这是解析函数"刚性"最为人熟知的一条结论.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">今天</span><span class="tl-title">从留数定理到工程边值计算</span></div>
+<div class="tl-body">柯西积分公式是留数定理的直接前身; 而泊松积分公式至今用于电磁场仿真、热传导计算、机翼绕流分析与图像处理中的泊松方程求解.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 让"严谨的推导"胜过"立场的偏好"</div>
+1818 年的泊松是粒子说的坚定支持者, 他为了反驳波动说而做了一次严谨的推导, 结果反而算出了波动说最有力的证据.
+<br><br>
+这件事的价值不在于"泊松错了", 而在于它展示了一种科学态度: <b>即使结论与自己的立场相冲突, 也要把推理进行到底; 即使结果令人难以置信, 也要用实验去检验而不是靠直觉去否定。</b>
+<br><br>
+在今天的学习与研究中同样如此: 我们常常倾向于接受"符合预期"的结果, 而对"不寻常"的发现心存疑虑. 泊松的故事提醒我们 —— <b>先检查推理, 再去质疑结论 —— 顺序不能颠倒。</b>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从柯西积分公式看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>边界一圈, 锁住整个内部</h4>
+<p>柯西积分公式说的是: 边界上的取值<b>完全决定</b>内部的取值. 内部没有任何"自由发挥"的空间 —— 这是一个极端强化的整体性结论.</p>
+<p>它把"边界"与"内部"从两个独立的区域, 变成了一个不可分割的整体.<b>认识边界, 就认识了全部。</b></p>
+<div class="pc-math">$z_0$ 内部的值 $=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$ (只用到边界)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>一个分母, 从"零"到"非零"</h4>
+<p>$\oint_C f(z)\mathrm{d}z=0$, 但 $\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}f(z_0)\neq 0$ —— 只多了一个分母, 结论从"恒为零"变成"由函数值决定".</p>
+<p>差别在于: 后者在 $z_0$ 处有了<b>奇点</b>. 形式上的微小改动 (分母), 带来性质上的根本变化 —— <b>量的差异引起了质的飞跃。</b></p>
+<div class="pc-math">$\oint_C f\mathrm{d}z=0$ &nbsp;→&nbsp; $\oint_C\frac{f}{z-z_0}\mathrm{d}z=2\pi\mathrm{i}f(z_0)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>"不解析的点"恰恰最有价值</h4>
+<p>柯西积分定理的结论是"积分为零", 好看却没有太多信息. 而唯一"不适用"的情形 —— 含有奇点时, 反而给出了最有用的公式.</p>
+<p>这提示我们: <b>理论中的"例外"往往不是障碍, 而是信息量最大的地方</b>. 后来整个"留数理论"正是沿着这条"例外之路"发展出来的.</p>
+<div class="pc-math">奇点 $\Longrightarrow$ 留数 $\Longrightarrow$ 留数定理 (下一阶段的核心工具)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>同一个公式, 三个不同的领域</h4>
+<p>柯西积分公式 (复分析)、平均值公式 (解析函数性质)、泊松积分公式 (位势论与边值问题) —— 三者表面上是不同的结论, 实质是同一件事的三种表述.</p>
+<p>只要给解析函数取实部, 复分析公式立刻"变成"物理中的电位公式. <b>数学结构的一致性, 让知识可以在不同学科间自由迁移。</b></p>
+<div class="pc-math">柯西积分公式 $\xrightarrow{\ \text{取实部}\ }$ 泊松积分公式 $\xrightarrow{\ r=0\ }$ 平均值公式</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>"直觉上荒谬" 与 "客观上成立"</h4>
+<p>泊松认为"圆盘阴影中心出现亮点"荒谬之极, 因此断定波动说必错. 但实验证明: 这个"荒谬"的结论恰恰是对的.</p>
+<p>数学与物理中反复出现这样的场景: 直观上难以接受的结果, 反而是正确的 (复数、非欧几何、量子力学都是如此). <b>直觉需要被检验, 而不是被当作判据。</b></p>
+<div class="pc-math">泊松亮斑: 阴影中心确有亮点 (1818 年阿拉果实验证实)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>从"算一个数"到"看一片区域"</h4>
+<p>柯西积分公式不仅是计算工具 —— 它把"求某点的函数值"变成"算边界上的一圈积分". 视角从"点"切换到了"整体区域".</p>
+<p>这种"把局部问题转化为整体问题"的思路, 是数学中反复出现的策略, 也是工程中"边界元方法"的核心思想.<b>换一个观察层次, 问题往往变得可以处理。</b></p>
+<div class="pc-math">点值 ↔ 边界积分 &nbsp;(边界元法的数学原型)</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>化归转化</td><td>把一般的围道积分整理成 $\oint\frac{f}{z-z_0}\mathrm{d}z$ 的形式</td><td>把陌生问题转化为已解决的题型</td></tr>
+<tr><td>局部化</td><td>用闭路变形把任意闭路换成小圆周</td><td>在关键点附近做局部分析</td></tr>
+<tr><td>估计法</td><td>用估值不等式把多余积分压到 $2\pi\varepsilon$</td><td>无法精确计算时先给出可靠的估计</td></tr>
+<tr><td>特殊化</td><td>把 $C$ 取为圆周, 由一般公式得到平均值公式</td><td>从一般结论提取特殊情形的新信息</td></tr>
+<tr><td>抽象与联系</td><td>同一条公式在复分析、位势论、边值问题中反复出现</td><td>识别不同领域背后的共同结构</td></tr>
+<tr><td>实证检验</td><td>泊松的推导被实验证实 (与他的初衷相反)</td><td>结论的可靠性要靠检验, 而不是靠直觉</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+边界一圈定内部, 柯西公式是枢纽;<br>
+$f$ 在 $z_0$ 的值, 等于二派 i 分之圈积分.<br>
+证明全靠变形加估值, 小圆上把误差逼零.<br>
+平均值公式更直观, 圆心值即圆周均值;<br>
+由此推出最大值原理, 解析函数真刚性.<br>
+计算两步走: 先找奇点, 再配形式套公式.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国智慧中的"执中"与"平均"思想</div>
+本节的核心公式之一 —— 平均值公式 —— 说的是"圆心处的值等于圆周上所有取值的平均". 这与中国传统文化中"<b>执两用中</b>"(《中庸》"执其两端, 用其中于民") 的思想有相通之处: 从多种取值中求得一个"中"的代表值.
+<br><br>
+中国古代在"边值问题"上也有深远的实践. 《周礼·考工记》中记载的"<b>为车</b>"工艺, 要求工匠根据轮子的外缘尺寸 (边界) 来确定辐条的长短与排列 (内部结构) —— 这正是"边界条件决定内部构型"的工程实践. 而《营造法式》中的建筑构件计算, 也多采用"给定外部尺寸、推算内部各部件"的方式.
+<br><br>
+虽然古代中国没有形成"解析函数"这样抽象的理论, 但那份<b>从边界与整体关系出发思考问题</b>的自觉, 与本节的思想在精神上是相通的.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从柯西公式到中国的工程实践</div>
+<ul>
+<li><b>苏步青</b> (1902—2003): 中国微分几何学派创始人. 他在仿射微分几何与射影微分几何上的研究, 大量使用了复变函数与积分工具; 其"苏氏锥面"等成果被国际同行广泛引用. 他把复分析的方法引入了几何研究的核心地带.</li>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论中的"典型域调和分析", 直接推广了柯西积分公式与泊松积分公式到高维情形 —— 这是本节内容最深刻的现代延伸之一.</li>
+<li><b>面向国家重大需求</b>: 泊松积分公式与柯西积分公式在工程中有着极为广泛的应用 ——
+<br>&nbsp;&nbsp;• <b>电磁场仿真</b>: 用边界积分法求解天线、微波器件的场分布;
+<br>&nbsp;&nbsp;• <b>热传导计算</b>: 由边界温度推算内部温度场;
+<br>&nbsp;&nbsp;• <b>流体力学</b>: 机翼与叶片的绕流分析 (保角映射法的原型);
+<br>&nbsp;&nbsp;• <b>图像处理</b>: 泊松方程被用于图像融合与无缝编辑 (Poisson Image Editing).
+</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 结论要经得起检验, 也要接得住质疑</div>
+1818 年, 泊松为了反驳波动说, 做了一次极为严谨的推导, 结果算出了一个他认为"荒谬"的现象 —— 阴影中心有亮点. 他的推理没有错, 错的是他对结果的信任.
+<br><br>
+这个故事对今天的我们有两层启示:
+<br><br>
+<b>第一层 (对己):</b> 做研究、做工程, 要把推导进行到底, 即使结果出乎意料. <b>严谨的推理比直觉更值得信任。</b>
+<br>
+<b>第二层 (对人):</b> 面对与自己立场不同的观点, 应当先去检验它, 而不是先否定它. 泊松的推导之所以有价值, 恰恰因为他<b>没有为了立场而放弃计算</b>.
+<br><br>
+<b>在基础学科的学习与研究中, 这两种品格同样珍贵: 对自己的结论要经得起检验, 对他人的工作要接得住质疑。</b> 而华罗庚、苏步青等前辈在极其艰苦的条件下为世界数学贡献成果, 也正是靠这份严谨与开放。
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"我的推导没有错 —— 错的是我以为它荒谬. 自然界并不按照我们的直觉运转."<span class="q-src">—— 泊松论"泊松亮斑"</span></div>
+<div class="quote-item">"数学是我们理解自然界的语言. 当我们写出一个方程, 我们其实是在描述自然界运转的方式."<span class="q-src">—— 泊松 (意译)</span></div>
+<div class="quote-item">"这个世界最不可理解的地方, 就是它竟然是可以被理解的."<span class="q-src">—— 爱因斯坦</span></div>
+<div class="quote-item">"执其两端, 用其中于民."<span class="q-src">——《中庸》</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"一切科学的抽象, 都更深刻、更正确、更完全地反映着自然."<span class="q-src">—— 列宁</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 1818 年, 泊松为了反驳光的波动说, 严格推导出"不透明圆盘的阴影中心应出现亮点"; 他认为这足以证明波动说荒谬. 然而阿拉果的实验却真的观测到了这个亮点 —— 反对者的严谨计算, 反而成了波动说最有力的证据.<br>
+<b>一个道理:</b> 柯西积分公式 $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$ 说明 <b>边界上的值完全决定了内部的值</b> —— 解析函数没有任何"偷偷自由"的余地. <b>这种"刚性"看似是限制, 实则是复分析无比强大的原因; 而那个"唯一的例外" (奇点), 恰恰孕育了后来的留数理论。</b><br>
+<b>一份责任:</b> 从《考工记》"由外缘定内部"的造车智慧, 到华罗庚把柯西积分公式推广到多复变、苏步青用复分析方法开创中国微分几何学派, 中华民族在"边界与整体"这一数学主题上从未缺席. 今天我们学习柯西积分公式, 既是在掌握留数与边值问题的核心工具, 也是在接续这份<b>把推理进行到底、用检验代替直觉</b>的品格.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第三章第三节 柯西积分公式 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: 柯西积分公式 =================
+module('cvCauchyFormula',function(cv){
+  var cur='p1', z0r=0.5, z0a=40;
+  var R=1.5;
+  var FN={
+    p1:{lab:'f(z)=z²+1', f:function(z){ return cadd(cmul(z,z),C(1,0)); }},
+    p2:{lab:'f(z)=e^z', f:function(z){ return cexp(Math.exp(z.re), z.im); }},
+    p3:{lab:'f(z)=sin z', f:function(z){ var e1=cexp(Math.exp(-z.im), z.re), e2=cexp(Math.exp(z.im), -z.re);
+        return cdiv(csub(e1,e2), C(0,2)); }}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    var th0=z0a*Math.PI/180;
+    var z0=C(z0r*Math.cos(th0), z0r*Math.sin(th0));
+    // 左: 区域与边界
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.2,2.2,-2.2,2.2);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    // 边界上按 |f| 着色
+    for(var i=0;i<180;i++){
+      var a0=TAU*i/180;
+      var pz=C(R*Math.cos(a0), R*Math.sin(a0));
+      var mval=Math.min(1,cabs(o.f(pz))/4);
+      ctx.fillStyle='rgba(21,101,192,'+(0.15+0.7*mval)+')';
+      ctx.beginPath(); ctx.arc(m1.px(pz.re),m1.py(pz.im),5,0,TAU); ctx.fill();
+    }
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    dot(ctx,m1.px(z0.re),m1.py(z0.im),8,'#c62828','#fff');
+    tlabel(ctx,m1.px(z0.re)+11,m1.py(z0.im)+19,'z₀','#c62828','bold 13px Georgia');
+    tlabel(ctx,m1.px(0),m1.py(R+0.32),'C: |z| = '+fmt(R),'#1565c0','bold 13px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'边界 C 上按 |f| 着色 (越深越大)','#37474f','bold 13px Segoe UI');
+    // 数值积分
+    var N=3000, sum=C(0,0);
+    for(var k=0;k<N;k++){
+      var t0=TAU*k/N, t1=TAU*(k+1)/N, tm=(t0+t1)/2;
+      var zm=C(R*Math.cos(tm), R*Math.sin(tm));
+      var z1=C(R*Math.cos(t1), R*Math.sin(t1));
+      var z2=C(R*Math.cos(t0), R*Math.sin(t0));
+      var integ=cdiv(o.f(zm), csub(zm,z0));
+      sum=cadd(sum, cmul(integ, csub(z1,z2)));
+    }
+    var calc=cdiv(sum, C(0,TAU));   // sum/(2πi)
+    var real=o.f(z0);
+    // 右: 比较
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-2.4,2.4,-2.4,2.4);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re','Im');
+    var ox=m2.px(0), oy=m2.py(0);
+    ctx.save(); ctx.setLineDash([8,6]);
+    arrow(ctx,ox,oy,m2.px(real.re),m2.py(real.im),'#2e7d32',2.6,11);
+    ctx.restore();
+    arrow(ctx,ox,oy,m2.px(calc.re),m2.py(calc.im),'#e53935',3,12);
+    dot(ctx,m2.px(real.re),m2.py(real.im),6,'#2e7d32','#fff');
+    dot(ctx,m2.px(calc.re),m2.py(calc.im),7,'#e53935','#fff');
+    tlabel(ctx,m2.px(real.re)+9,m2.py(real.im)-10,'f(z₀) 真值','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(calc.re)+9,m2.py(calc.im)+20,'公式算出','#e53935','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'公式计算值与真实值对比','#37474f','bold 13px Segoe UI');
+    var dv=cabs(csub(calc,real));
+    setRO('cqReadout',
+      hl2(o.lab)+' &nbsp;|&nbsp; 闭曲线 $C:|z|='+fmt(R)+'$, 内部一点 $z_0='+fmt(z0r)+'\\mathrm{e}^{\\mathrm{i}'+z0a+'^\\circ}$<br>'+
+      '公式右侧 $\\frac{1}{2\\pi\\mathrm{i}}\\oint_C\\frac{f(z)}{z-z_0}\\mathrm{d}z\\approx '+fmt(calc.re,4)+' '+(calc.im<0?'-':'+')+' '+fmt(Math.abs(calc.im),4)+'\\mathrm{i}$<br>'+
+      '真实值 $f(z_0)\\approx '+fmt(real.re,4)+' '+(real.im<0?'-':'+')+' '+fmt(Math.abs(real.im),4)+'\\mathrm{i}$<br>'+
+      '偏差 $='+hl(fmt(dv,5))+'$ &nbsp;'+(dv<0.02?'<b>✓ 两者相等 —— 柯西积分公式得到验证</b>':'（数值误差, 增大采样可减小）'));
+  }
+  [['cqF1','p1'],['cqF2','p2'],['cqF3','p3']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('cqZ0r',function(v){ z0r=v; badge('cqZ0rV',fmt(v)); draw(); });
+  badge('cqZ0rV',fmt(z0r));
+  bindSlider('cqZ0a',function(v){ z0a=v; badge('cqZ0aV',v+'\u00b0'); draw(); });
+  badge('cqZ0aV',z0a+'\u00b0');
+  return {draw:draw};
+});
+
+// ================= 模块 2: 平均值公式 =================
+module('cvAverage',function(cv){
+  var N=12, R=1;
+  function fn(z){ return cadd(cmul(z,z),C(1,0)); }  // f(z)=z^2+1
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 采样
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.3,2.3,-2.3,2.3);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    var avg=C(0,0);
+    for(var k=0;k<N;k++){
+      var a0=TAU*k/N;
+      var pz=C(R*Math.cos(a0), R*Math.sin(a0));
+      var fv=fn(pz);
+      avg=cadd(avg, fv);
+      dot(ctx,m1.px(pz.re),m1.py(pz.im),6,'#e65100','#fff');
+    }
+    avg=C(avg.re/N, avg.im/N);
+    dot(ctx,m1.px(0),m1.py(0),9,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,12,26,'圆周上均匀取 '+N+' 个点, 计算 f 的平均值','#37474f','bold 13px Segoe UI');
+    // 右: 平均值的复平面位置
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.6,2.6,-1.2,1.2);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re','Im');
+    var ox=m2.px(0), oy=m2.py(0);
+    var real=fn(C(0,0));
+    ctx.save(); ctx.setLineDash([8,6]);
+    arrow(ctx,ox,oy,m2.px(real.re),m2.py(real.im),'#2e7d32',2.6,11);
+    ctx.restore();
+    arrow(ctx,ox,oy,m2.px(avg.re),m2.py(avg.im),'#e53935',3,12);
+    dot(ctx,m2.px(real.re),m2.py(real.im),6,'#2e7d32','#fff');
+    dot(ctx,m2.px(avg.re),m2.py(avg.im),7,'#e53935','#fff');
+    tlabel(ctx,m2.px(real.re)+9,m2.py(real.im)-10,'f(0) = 1','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(avg.re)+9,m2.py(avg.im)+20,'圆周均值','#e53935','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'圆周均值 vs 圆心值 f(0)','#37474f','bold 13px Segoe UI');
+    var dv=cabs(csub(avg,real));
+    setRO('avReadout',
+      '取 $f(z)=z^2+1$ (在 $|z|\\le'+fmt(R)+'$ 内解析)<br>'+
+      '圆周上 '+N+' 个采样点处 $f$ 的算术平均值 $\\approx '+fmt(avg.re,4)+' '+(avg.im<0?'-':'+')+' '+fmt(Math.abs(avg.im),4)+'\\mathrm{i}$<br>'+
+      '圆心处的函数值 $f(0)=1$<br>'+
+      '偏差 $='+hl(fmt(dv,5))+'$ &nbsp;'+(dv<0.02?'<b>✓ 两者相等 —— 平均值公式成立</b>':'')+'<br>'+
+      '注意: 无论 $N$ 取多少、半径 $R$ 取多大, 只要 $f$ 在圆内解析, 结果始终相等.');
+  }
+  bindSlider('avN',function(v){ N=Math.round(v); badge('avNV',String(N)); draw(); });
+  badge('avNV',String(N));
+  bindSlider('avR',function(v){ R=v; badge('avRV',fmt(v)); draw(); });
+  badge('avRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 柯西积分公式计算器 =================
+module('cvCompute',function(cv){
+  var cur='c1', R=3;
+  var FN={
+    c1:{lab:'f(z) = 1/(z−2)', poles:[{z:C(2,0), val:C(0,1), tex:'1'}],
+        f:function(z){ return cdiv(C(1,0), csub(z,C(2,0))); },
+        note:'在 z=2 有一阶极点'},
+    c2:{lab:'f(z) = e^z/(z−1)', poles:[{z:C(1,0), val:C(Math.E,0), tex:'e'}],
+        f:function(z){ return cdiv(cexp(Math.exp(z.re), z.im), csub(z,C(1,0))); },
+        note:'在 z=1 有奇点, 留数 f(1)=e'},
+    c3:{lab:'f(z) = 1/(z²−1)', poles:[{z:C(1,0), val:C(0.5,0), tex:'1/2'},{z:C(-1,0), val:C(-0.5,0), tex:'−1/2'}],
+        f:function(z){ return cdiv(C(1,0), csub(cmul(z,z),C(1,0))); },
+        note:'在两个点 z=±1 各有一阶极点'},
+    c4:{lab:'f(z) = sin z / z', poles:[{z:C(0,0), val:C(0,0), tex:'0'}],
+        f:function(z){ if(Math.hypot(z.re,z.im)<1e-6) return C(1,0);
+          var e1=cexp(Math.exp(-z.im), z.re), e2=cexp(Math.exp(z.im), -z.re);
+          return cdiv(cdiv(csub(e1,e2),C(0,2)), z); },
+        note:'z=0 是可去奇点, 函数可解析延拓'}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    // 左: 图形
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-3.6,3.6,-3.6,3.6);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    for(var k=0;k<10;k++){
+      var a0=TAU*k/10, a1=a0+0.2;
+      arrow(ctx,m1.px(R*Math.cos(a0)),m1.py(R*Math.sin(a0)),
+            m1.px(R*Math.cos(a1)),m1.py(R*Math.sin(a1)),'#2e7d32',2.2,9);
+    }
+    var inside=[];
+    o.poles.forEach(function(p){
+      var isIn=Math.hypot(p.z.re,p.z.im)<R;
+      if(isIn) inside.push(p);
+      dot(ctx,m1.px(p.z.re),m1.py(p.z.im),7,isIn?'#c62828':'#90a4ae','#fff');
+      tlabel(ctx,m1.px(p.z.re)+10,m1.py(p.z.im)+18,'z='+fmt(p.z.re),isIn?'#c62828':'#90a4ae','bold 12px Segoe UI');
+    });
+    ctx.restore();
+    tlabel(ctx,12,26,'闭曲线 |z| = '+fmt(R)+' , 红点 = 圈内的奇点','#37474f','bold 13px Segoe UI');
+    // 数值积分
+    var N=4000, sum=C(0,0);
+    for(var i=0;i<N;i++){
+      var t0=TAU*i/N, t1=TAU*(i+1)/N, tm=(t0+t1)/2;
+      var zm=C(R*Math.cos(tm), R*Math.sin(tm));
+      var z1=C(R*Math.cos(t1), R*Math.sin(t1)), z2=C(R*Math.cos(t0), R*Math.sin(t0));
+      sum=cadd(sum, cmul(o.f(zm), csub(z1,z2)));
+    }
+    // 右: 结果
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText('数值积分结果',16,20);
+    ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
+    ctx.fillText('Re = '+fmt(sum.re,4),16,52);
+    ctx.fillText('Im = '+fmt(sum.im,4),16,76);
+    if(inside.length===0){
+      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#2e7d32';
+      ctx.fillText('∮ = 0  (柯西积分定理)',16,116);
+    } else {
+      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#c62828';
+      ctx.fillText('∮ = 2πi × Σ 留数',16,116);
+      var acc=C(0,0);
+      inside.forEach(function(p,i2){ acc=cadd(acc,p.val);
+        ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#546e7a';
+        ctx.fillText('+ '+p.tex+'  (z='+fmt(p.z.re)+')',16,144+i2*24);
+      });
+      var th=cdiv(cmul(C(0,TAU),acc), C(1,0));
+      ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#c62828';
+      ctx.fillText('理论值 ≈ '+fmt(th.re,4)+(th.im>=0?' + ':' - ')+fmt(Math.abs(th.im),4)+'i',16,144+inside.length*24+20);
+    }
+    ctx.restore();
+    var thTxt;
+    if(inside.length===0) thTxt='圆内无奇点 ⇒ 由柯西积分定理, $\\oint_C f\\,\\mathrm{d}z=0$';
+    else {
+      var parts=inside.map(function(p){ return p.tex; }).join(' + ');
+      thTxt='圆内有 '+inside.length+' 个奇点, 由柯西积分公式 $\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\times('+parts+')$';
+    }
+    setRO('cpReadout',
+      hl2(o.lab)+' &nbsp;|&nbsp; '+o.note+'<br>'+
+      '当前圆周 $|z|='+fmt(R)+'$, 圆内奇点个数: <b>'+inside.length+'</b><br>'+
+      thTxt+'<br>'+
+      '数值积分 $\\approx '+fmt(sum.re,4)+' '+(sum.im<0?'-':'+')+' '+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$'+
+      (inside.length===0?'':'<br>'+hl('拖动滑块减小半径, 当奇点跑到圆外时积分值会突变!')));
+  }
+  [['cpF1','c1'],['cpF2','c2'],['cpF3','c3'],['cpF4','c4']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('cpR',function(v){ R=v; badge('cpRV',fmt(v)); draw(); });
+  badge('cpRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 知识图谱树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'柯西积分公式', c:'#1976d2', leaves:['$f(z_0)=\\frac{1}{2\\pi\\mathrm{i}}\\oint\\frac{f(z)}{z-z_0}\\,\\mathrm{d}z$','等价: $\\oint=2\\pi\\mathrm{i}f(z_0)$','条件: $f$ 在 $C$ 及内部解析','证明: 闭路变形 + 估值','换小圆 $K$ 使 $|z-z_0|=R$','多余积分的模 $\u003c2\\pi\\varepsilon\\to 0$']},
+    {t:'推论: 平均值公式', c:'#e65100', leaves:['$f(z_0)=\\frac{1}{2\\pi}\\int_0^{2\\pi}$','$f(z_0+R\\mathrm{e}^{\\mathrm{i}\\theta})\\,\\mathrm{d}\\theta$','圆心值 = 圆周均值','推论3.2: 圆环域也成立','推出最大值原理','非常数解析函数模无内部最大']},
+    {t:'典型计算', c:'#c62828', leaves:['两步法: 找奇点 → 配形式','例3.1(1): 结果 0','例3.1(2): 结果 $\\frac{\\pi}{5}$','多个奇点用复合闭路拆开','$\\oint\\frac{\\mathrm{d}z}{z-a}=2\\pi\\mathrm{i}$','$\\oint\\frac{f(z)}{z-a}\\,\\mathrm{d}z=2\\pi\\mathrm{i}f(a)$']},
+    {t:'理论意义 (拓展)', c:'#2e7d32', leaves:['边界决定内部 (刚性)','解析函数无穷可微','唯一性定理','最大值原理','刘维尔定理','泊松积分公式 (取实部)','连接边值问题与工程']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第三章第三节 · 柯西积分公式';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 柯西积分公式 → 平均值公式 → 典型计算 → 理论意义; 一句话: <b>边界一圈的值, 算定了内部每一点的值</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 泊松核 =================
+module('cvPoisson',function(cv){
+  var r=0;
+  var R=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 圆内的位置
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-1.35,1.35,-1.35,1.35);
+    grid(ctx,halfW,H,m1,0.25); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    var px=r*R;
+    dot(ctx,m1.px(px),m1.py(0),7,'#c62828','#fff');
+    ctx.strokeStyle='rgba(198,40,40,.45)'; ctx.setLineDash([4,4]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(px),m1.py(0)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m1.px(0)+6,m1.py(0)+18,'O','#37474f','bold 12px Georgia');
+    tlabel(ctx,m1.px(px)+9,m1.py(0)-10,'考察点','#c62828','bold 11px Segoe UI');
+    tlabel(ctx,m1.px(0),m1.py(R+0.28),'|z|=R 边界','#1565c0','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'圆盘内的考察点 (距圆心 '+fmt(r*R)+')','#37474f','bold 13px Segoe UI');
+    // 右: 泊松核曲线
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var maxV=1;
+    // 先求最大值
+    var vals=[];
+    for(var i=0;i<=200;i++){ var ph=TAU*i/200; vals.push(poch(ph)); }
+    maxV=Math.max.apply(null,vals)*1.1;
+    var m2=mapperEq(halfW,H,-0.3,TAU+0.3,-0.15,maxV);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'θ−φ','P');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var k=0;k<=200;k++){
+      var php=TAU*k/200, v=poch(php);
+      if(k===0) ctx.moveTo(m2.px(php),m2.py(v)); else ctx.lineTo(m2.px(php),m2.py(v));
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#2e7d32'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m2.px(-0.3),m2.py(1)); ctx.lineTo(m2.px(TAU+0.3),m2.py(1)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m2.px(1.2),m2.py(1.12),'常数 1 (r=0 时的核)','#2e7d32','12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'泊松核 P(θ−φ) 随角度的变化','#37474f','bold 13px Segoe UI');
+    function poch(ph){
+      var num=R*R-r*r*R*R;
+      var den=R*R-2*R*(r*R)*Math.cos(ph)+(r*R)*(r*R);
+      return Math.max(0,num/den);
+    }
+    setRO('pnReadout',
+      '泊松核 $\\displaystyle P(\\theta-\\varphi)=\\frac{R^2-\\rho^2}{R^2-2R\\rho\\cos(\\theta-\\varphi)+\\rho^2}$ , 其中 $\\rho='+fmt(r*R)+'$<br>'+
+      (r<0.03
+        ? '当 $\\rho=0$ (考察点在圆心) 时, 核退化为常数 $1$ —— 公式变成<b>平均值公式</b>: 各点权重相同.'
+        : (r>0.85
+          ? '当 $\\rho\\to R$ (考察点接近边界) 时, 核在 $\\theta=\\varphi$ 处变得<b>极为尖锐</b> —— 中心点几乎只"看得到"最近的那一段边界.'
+          : '当前 $\\rho='+fmt(r*R)+'$: 核函数在 $\\theta=\\varphi$ 处取最大值, 说明<b>离考察点最近的边界部分权重最大</b>.'))+'<br>'+
+      '核的归一化: $\\displaystyle\\frac{1}{2\\pi}\\int_0^{2\\pi}P(\\theta-\\varphi)\\mathrm{d}\\theta=1$ —— 所以它确实是一个"加权平均"的权重.');
+  }
+  bindSlider('pnR',function(v){ r=v; badge('pnRV',fmt(v)); draw(); });
+  badge('pnRV',fmt(r));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnPnAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 扫描'; return; }
+    anim=true; this.textContent='⏸ 停止'; r=0;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 扫描'; return false; }
+      r+=0.008; if(r>0.96){ return false; }
+      setSlider('pnR',r); badge('pnRV',fmt(r)); draw(); return true;
+    });
+  });
+  var br=document.getElementById('btnPnReset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; if(ba) ba.textContent='▶ 扫描';
+    r=0; setSlider('pnR',0); badge('pnRV',fmt(0)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  qs=qs.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'泊松为了反驳波动说做了一次严谨推导, 结果反而证明了波动说. 这件事对我们"如何对待不同意见"有什么启示?',
+     hints:['泊松没有因为立场而放弃计算 —— 这正是他能得出正确结论的原因.',
+            '面对不同观点, 先检验它, 再判断它, 而不是先否定它.',
+            '科学史上很多进步都来自"反对者的严谨工作" —— 反对意见往往能揭示被忽略的细节.',
+            '可迁移的态度: 把"我不认同"和"它是错的"分开 —— 认同与否是立场问题, 对错是事实问题.']},
+    {q:'柯西积分公式表明: 解析函数在内部一点的值由边界完全决定. 这种"没有自由度"的特性, 在现实世界中有什么类比?',
+     hints:['物理中的守恒律: 一旦给定初始条件与边界条件, 系统的演化就完全确定了.',
+            '工程中的"约束优化": 约束越多, 可行域越小, 但解也越明确.',
+            '这与"自由度与信息量成反比"的一般规律相通 —— 自由越少, 可确定的信息越多.',
+            '可迁移的态度: 在信息不足时, 主动增加约束 (假设、边界条件), 反而更可能得到明确答案.']},
+    {q:'柯西积分定理说"解析函数沿闭路积分为零", 而柯西积分公式处理的恰是"唯一使积分不为零的情形". 为什么"例外"反而更重要?',
+     hints:['"恒为零"的结论信息量很低; 而"何时不为零、不为零时等于多少"才真正有用.',
+            '这个"例外" (含奇点) 后来发展成整个留数理论 —— 而复积分计算几乎全靠它.',
+            '科学中同样如此: 理论的反常点、实验的异常数据, 往往是新发现的入口.',
+            '可迁移的态度: 认真对待"不符合一般规律"的现象, 它可能是最有价值的信息.']},
+    {q:'从"点值 ↔ 边界积分"的转换中, 你能得到什么方法论启示?',
+     hints:['把一个难以直接求出的局部量 (点值), 转化为一个可以计算的整体量 (边界积分).',
+            '这正是工程中"边界元法"的核心思想: 把三维问题化为二维边界上的积分计算.',
+            '类似的转换还有: 用频率域代替时域、用积分方程代替微分方程.',
+            '可迁移的态度: 遇到难以直接处理的局部问题时, 试着转化为它的"整体表示".']},
+    {q:'结合华罗庚把柯西积分公式推广到多复变的工作, 谈谈"推广"在数学研究中的价值.',
+     hints:['高维情形下柯西积分公式的形式与性质都发生变化 —— 推广不是简单复制, 而是发现新结构.',
+            '华罗庚的"典型域调和分析"成为国际公认的经典, 也让中国数学在世界舞台上占有一席之地.',
+            '推广往往能暴露原定理中"隐藏的假设", 从而加深对原定理的理解.',
+            '可迁移的态度: 学会把结论从特殊情形推广到一般情形 —— 这是数学思维的核心能力之一.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

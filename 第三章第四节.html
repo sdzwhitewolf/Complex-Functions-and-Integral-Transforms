@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章第四节 解析函数的高阶导数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第三章 第4节 解析函数的高阶导数</h1>
+    <p>无穷可微 &middot; 柯西不等式 &middot; 刘维尔定理</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握<b>高阶导数公式</b> $f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$, 理解它是柯西积分公式的自然推广;
+2. 理解公式的逆向用法 —— <b>"不在于通过积分求导, 而在于通过求导求积分"</b>, 并熟练用它计算形如 $\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$ 的积分;
+3. 理解<b>解析函数无穷可微</b>这一惊人结论, 并知道它与实变函数的根本差别;
+4. 了解由此推出的<b>柯西不等式</b>与<b>刘维尔定理</b>, 理解解析函数"刚性"的深度;
+5. 会处理多奇点情形 (先用复合闭路定理拆分, 再逐圈套用公式).
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-3d" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-3d" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-3d" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-3d" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-3d" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-3d" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、高阶导数公式</label>
+    <label class="tab-btn" for="tab2" id="label2">二、公式的证明</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型例题</label>
+    <label class="tab-btn" for="tab4" id="label4">四、重要推论 (拓展)</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 高阶导数公式 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 问题的提出</div>
+
+<div class="box-think">
+<div class="think-label">思考: 解析函数有高阶导数吗?</div>
+在实变函数中, 一个函数可导, 并不意味着它二阶可导. 例如 $f(x)=|x|x$ 在 $x=0$ 处一阶可导, 但二阶导数不存在.
+<br><br>
+那么在复变函数中呢? 我们知道柯西积分公式
+$$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$$
+表示 $f(z_0)$ 是"边界积分". 如果形式地对 $z_0$ <b>求导</b> (把 $z_0$ 看作变量), 分母 $z-z_0$ 的幂次就会增加一次:
+$$\frac{\mathrm{d}}{\mathrm{d}z_0}\left(\frac{1}{z-z_0}\right)=\frac{1}{(z-z_0)^2}.$$
+<br>
+这个形式上的"操作"能否被严格证明? <b>答案是肯定的 —— 而且这是复分析中最惊人的结论之一: 解析函数不但有任意阶导数, 而且每一阶导数都是解析函数.</b>
+</div>
+
+<div class="box-key">
+<div class="title">定理 4.1 (高阶导数公式)</div>
+解析函数 $f(z)$ 的导数仍为解析函数, 它在 $z_0$ 的 $n$ 阶导数为
+<div class="box-formula">$$f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z \qquad (n=1,2,\cdots).$$</div>
+其中 $C$ 为 $f(z)$ 的解析区域 $D$ 内围绕 $z_0$ 的任一条正向简单闭曲线, 而且它的内部完全属于 $D$.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">定理的重点: 反过来用!</div>
+这个定理的公式有两种用法. 如果把它当"求导数的公式"来看, 并不实用 (用积分算导数显然更麻烦).
+<br><br>
+<b>真正有用的方向是反过来读:</b>
+<div class="box-formula">$$\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z=\frac{2\pi\mathrm{i}}{n!}f^{(n)}(z_0).$$</div>
+它把一类看起来很复杂的围道积分, 变成了"求某点的 $n$ 阶导数"这一简单的微分运算.
+<br><br>
+<b>定理的本意: 不在于通过积分来求导, 而在于通过求导来求积分.</b>
+</div>
+
+<div class="box-result">
+<div class="res-label">与柯西积分公式的对照</div>
+<table class="value-table">
+<tr><th>公式</th><th>被积函数的分母</th><th>结果</th></tr>
+<tr><td>柯西积分公式 ($n=0$ 情形)</td><td>$z-z_0$</td><td>$2\pi\mathrm{i}\cdot\frac{f^{(0)}(z_0)}{0!}=2\pi\mathrm{i}f(z_0)$</td></tr>
+<tr><td>高阶导数公式 ($n=1$)</td><td>$(z-z_0)^2$</td><td>$2\pi\mathrm{i}\cdot\frac{f'(z_0)}{1!}=2\pi\mathrm{i}f'(z_0)$</td></tr>
+<tr><td>高阶导数公式 ($n=2$)</td><td>$(z-z_0)^3$</td><td>$2\pi\mathrm{i}\cdot\frac{f''(z_0)}{2!}=\pi\mathrm{i}f''(z_0)$</td></tr>
+<tr><td>一般情形 ($n$)</td><td>$(z-z_0)^{n+1}$</td><td>$\frac{2\pi\mathrm{i}}{n!}f^{(n)}(z_0)$</td></tr>
+</table>
+可见柯西积分公式正是 $n=0$ 的特殊情形, 两者完全统一.
+</div>
+
+<div class="chart-container">
+<h3>交互: 分母的幂次与导数的阶数 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动滑块改变 $n$, 观察被积函数 $\frac{f(z)}{(z-z_0)^{n+1}}$ 在 $z_0$ 附近<b>发散的速度</b>如何随 $n$ 变化. 右侧给出对应的积分值 $\frac{2\pi\mathrm{i}}{n!}f^{(n)}(z_0)$ (取 $f(z)=\sin z$, $z_0=0$ 为例).</div>
+<div class="fig-caps">
+<div class="fc" id="cvHighDerivCap"></div>
+</div>
+<canvas id="cvHighDeriv" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>阶数 $n$:</label>
+<input type="range" id="hdN" min="0" max="6" step="1" value="0">
+<span class="val-badge" id="hdNV">0</span>
+<button class="control-btn" id="btnHdAnim">▶ 逐阶演示</button>
+</div>
+<div class="readout" id="hdReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 公式的证明 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 先证 $n=1$ 的情形</div>
+
+<div class="box-example">
+<div class="ex-label">$n=1$ 情形的证明</div>
+设 $z$ 为 $D$ 内任意一点, 证明 $f'(z)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)}{(\zeta-z)^2}\mathrm{d}\zeta$.
+<input type="checkbox" id="ans41" class="answer-toggle">
+<label for="ans41" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+根据导数定义,
+$$f'(z)=\lim\limits_{\Delta z\to 0}\frac{f(z+\Delta z)-f(z)}{\Delta z}.$$
+从柯西积分公式得
+$$f(z+\Delta z)-f(z)=\frac{1}{2\pi\mathrm{i}}\oint_C f(\zeta)\left[\frac{1}{\zeta-z-\Delta z}-\frac{1}{\zeta-z}\right]\mathrm{d}\zeta=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{\Delta z\,f(\zeta)}{(\zeta-z-\Delta z)(\zeta-z)}\mathrm{d}\zeta.$$
+于是
+$$\frac{f(z+\Delta z)-f(z)}{\Delta z}-\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)}{(\zeta-z)^2}\mathrm{d}\zeta=\frac{1}{2\pi\mathrm{i}}\oint_C f(\zeta)\left[\frac{1}{(\zeta-z-\Delta z)(\zeta-z)}-\frac{1}{(\zeta-z)^2}\right]\mathrm{d}\zeta$$
+$$=\frac{\Delta z}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)\,\mathrm{d}\zeta}{(\zeta-z-\Delta z)(\zeta-z)^2}.$$
+设 $d$ 为从 $z$ 到曲线 $C$ 上各点的最短距离, 并取 $|\Delta z|<\frac{d}{2}$. 由于 $f(\zeta)$ 在 $C$ 上解析 (从而连续), 故存在 $M>0$ 使 $|f(\zeta)|\le M$ 在 $C$ 上成立. 于是对 $C$ 上任一点 $\zeta$ 有
+$$|\zeta-z|\ge d, \qquad |\zeta-z-\Delta z|\ge d-|\Delta z|>\frac{d}{2}.$$
+因此
+$$\left|\frac{\Delta z}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)\,\mathrm{d}\zeta}{(\zeta-z-\Delta z)(\zeta-z)^2}\right|\le\frac{|\Delta z|}{2\pi}\cdot\frac{M\cdot L}{d^2\cdot\frac{d}{2}}=\frac{|\Delta z|ML}{\pi d^3}\ \xrightarrow{\ \Delta z\to 0\ }\ 0,$$
+其中 $L$ 是 $C$ 的长度. 从而
+$$f'(z)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)}{(\zeta-z)^2}\mathrm{d}\zeta. \qquad \blacksquare$$
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">由数学归纳法推广到一般 $n$</div>
+$n=1$ 的情形证明后, 用<b>数学归纳法</b>可证明对任意的正整数 $n$ 都成立:
+<div class="box-formula">$$f^{(n)}(z)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)}{(\zeta-z)^{n+1}}\mathrm{d}\zeta.$$</div>
+归纳步骤的思路与 $n=1$ 完全相同: 写出 $\frac{f^{(n)}(z+\Delta z)-f^{(n)}(z)}{\Delta z}$ 的积分表示, 再用估值不等式证明多余的项趋于零.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个惊人的推论: 解析函数无穷可微</div>
+定理 4.1 说明: 只要 $f(z)$ 在区域内解析, 它就<b>具有任意阶导数</b>, 而且这些高阶导数<b>仍然是解析函数</b>.
+<br><br>
+这与实变函数形成鲜明对比:
+<br><br>
+&nbsp;&nbsp;• 实变函数可以一阶可导而二阶不可导 (如 $f(x)=|x|x$ 在 $0$ 处);
+<br>
+&nbsp;&nbsp;• 实变函数甚至可以处处可导而导数处处不连续 (如 Volterra 函数);
+<br>
+&nbsp;&nbsp;• 而在复变函数中, <b>"可导" 直接等价于 "无穷可微"</b>.
+<br><br>
+<b>这是"解析"二字份量的最直观体现 —— 要求高, 回报也大.</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 估值估计 —— 多余项如何消失 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">证明的关键是估计 $\left|\frac{\Delta z}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)\mathrm{d}\zeta}{(\zeta-z-\Delta z)(\zeta-z)^2}\right|\le\frac{|\Delta z|ML}{\pi d^3}$. 拖动滑块改变 $|\Delta z|/d$ 的比值, 观察这个上界如何随 $|\Delta z|\to 0$ 而趋于零.</div>
+<div class="fig-caps">
+<div class="fc">上界 $\propto |\Delta z|\cdot\frac{ML}{\pi d^3}$ 随 $|\Delta z|$ 的变化</div>
+</div>
+<canvas id="cvEst2" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>比值 $|\Delta z|/d$:</label>
+<input type="range" id="e2R" min="0.01" max="0.9" step="0.01" value="0.5">
+<span class="val-badge" id="e2RV">0.50</span>
+<button class="control-btn" id="btnE2Anim">▶ 收缩到 0</button>
+</div>
+<div class="readout" id="e2Readout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型例题 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 例 4.1</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.1</div>
+求下列积分的值, 其中 $C$ 为圆周正向 $|z|=r>1$:
+<br>(1) $\oint_C\frac{\cos\pi z}{(z-1)^5}\mathrm{d}z$; &nbsp;&nbsp; (2) $\oint_C\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z$.
+<input type="checkbox" id="ans42" class="answer-toggle">
+<label for="ans42" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> 函数 $\frac{\cos\pi z}{(z-1)^5}$ 在 $C$ 内 $z=1$ 处不解析, 但 $\cos\pi z$ 在 $C$ 内处处解析. 由高阶导数公式 (取 $n=4$, $z_0=1$, $f(z)=\cos\pi z$):
+$$\oint_C\frac{\cos\pi z}{(z-1)^5}\mathrm{d}z=\frac{2\pi\mathrm{i}}{(5-1)!}\left(\cos\pi z\right)^{(4)}\bigg|_{z=1}.$$
+计算 $(\cos\pi z)^{(4)}=\pi^4\cos\pi z$, 在 $z=1$ 处取值 $\pi^4\cos\pi=-\pi^4$, 故
+$$\oint_C\frac{\cos\pi z}{(z-1)^5}\mathrm{d}z=\frac{2\pi\mathrm{i}}{24}\cdot(-\pi^4)=-\frac{\pi^5\mathrm{i}}{12}.$$
+<b>(2)</b> 函数 $\frac{\mathrm{e}^z}{(z^2+1)^2}$ 在 $C$ 内 $z=\pm\mathrm{i}$ 处不解析. 在 $C$ 内作互不相交的正向圆周 $C_1,C_2$ 分别只包含 $\mathrm{i},-\mathrm{i}$. 由复合闭路定理
+$$\oint_C\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z=\oint_{C_1}\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z+\oint_{C_2}\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z.$$
+对 $C_1$ (含 $z=\mathrm{i}$): 把分母写作 $(z-\mathrm{i})^2(z+\mathrm{i})^2$, 取 $n=1$, $f(z)=\frac{\mathrm{e}^z}{(z+\mathrm{i})^2}$ (在 $C_1$ 内解析):
+$$\oint_{C_1}\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z=\frac{2\pi\mathrm{i}}{1!}\left[\frac{\mathrm{e}^z}{(z+\mathrm{i})^2}\right]'\bigg|_{z=\mathrm{i}}=\frac{(1-\mathrm{i})\mathrm{e}^{\mathrm{i}}}{2}\pi.$$
+同理对 $C_2$ (含 $z=-\mathrm{i}$):
+$$\oint_{C_2}\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z=\frac{-(1+\mathrm{i})\mathrm{e}^{-\mathrm{i}}}{2}\pi.$$
+所以
+$$\oint_C\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z=\frac{(1-\mathrm{i})\mathrm{e}^{\mathrm{i}}}{2}\pi+\frac{-(1+\mathrm{i})\mathrm{e}^{-\mathrm{i}}}{2}\pi=\frac{\pi}{2}(1-\mathrm{i})(\mathrm{e}^{\mathrm{i}}-\mathrm{i}\mathrm{e}^{-\mathrm{i}}).$$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">多奇点情形的处理要点</div>
+当被积函数在闭曲线内有<b>多个奇点</b>时, 标准流程是:
+<br><br>
+&nbsp;&nbsp;<b>第一步:</b> 作互不相交、互不包含的小圆周, 每个只包围一个奇点;
+<br>
+&nbsp;&nbsp;<b>第二步:</b> 用<b>复合闭路定理</b>把大圈上的积分拆成各小圈上积分之和;
+<br>
+&nbsp;&nbsp;<b>第三步:</b> 在每个小圈上, 把被积函数整理成 $\frac{f(z)}{(z-z_0)^{n+1}}$ 的形式 (其中 $f$ 在该小圈内解析), 再套用高阶导数公式.
+<br><br>
+<b>注意:</b> 整理形式时, $f(z)$ 必须包含"除 $(z-z_0)^{n+1}$ 之外的全部因子", 并且要在该小圈内解析.
+</div>
+
+<div class="chart-container">
+<h3>交互: 高阶导数公式计算器 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">选择一个被积函数, 程序会自动识别形如 $\frac{f(z)}{(z-z_0)^{n+1}}$ 的结构, 给出 $z_0$、$n$ 与计算结果. 拖动滑块改变圆周半径, 观察当奇点被"排除在外"时积分值如何突变为零.</div>
+<canvas id="cvHighCalc" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>被积函数:</label>
+<button class="control-btn" id="hcF1">$\frac{\mathrm{e}^z}{(z-1)^3}$</button>
+<button class="control-btn" id="hcF2">$\frac{\sin z}{z^4}$</button>
+<button class="control-btn" id="hcF3">$\frac{1}{(z-2)^2}$</button>
+<button class="control-btn" id="hcF4">$\frac{\mathrm{i}z}{(z+1)^2}$</button>
+</div>
+<div class="row">
+<label>圆周半径 $R$:</label>
+<input type="range" id="hcR" min="0.3" max="4" step="0.02" value="4">
+<span class="val-badge" id="hcRV">4.00</span>
+</div>
+<div class="readout" id="hcReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 重要推论（拓展） ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 柯西不等式</div>
+
+<div class="box-key">
+<div class="title">柯西不等式</div>
+设 $f(z)$ 在 $|z-z_0|&lt;R$ 内解析, 在 $|z-z_0|\le R$ 上连续, 且 $|f(z)|\le M$ 在 $|z-z_0|=R$ 上成立, 则
+<div class="box-formula">$$\left|f^{(n)}(z_0)\right|\le\frac{n!\,M}{R^n} \qquad (n=1,2,\cdots).$$</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">柯西不等式的推导</div>
+<input type="checkbox" id="ans43" class="answer-toggle">
+<label for="ans43" class="answer-btn">显示推导</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【推导】</div>
+在高阶导数公式中取 $C$ 为圆周 $|z-z_0|=R$, 并用估值不等式:
+$$\left|f^{(n)}(z_0)\right|=\left|\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z\right|\le\frac{n!}{2\pi}\cdot\frac{M}{R^{n+1}}\cdot 2\pi R=\frac{n!\,M}{R^n}. \qquad \blacksquare$$
+<br>
+<b>要点:</b> 分母上是 $R^{n+1}$ (被积函数的模的上界), 乘以周长 $2\pi R$, 恰好剩下 $\frac{n!M}{R^n}$.
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">柯西不等式的意义</div>
+这个不等式给出了"解析函数在某点的各阶导数的增长速度"的<b>上界</b>: 阶数越高, 上界越大 (因为 $n!$ 增长很快), 但同时被 $R^n$ 削弱.
+<br><br>
+它看似只是一个技术性估计, 却是通往刘维尔定理的关键一步 —— 因为它把"函数有界"这一几何条件, 转化成了"导数受控"这一分析结论.
+</div>
+
+<div class="sec-title">4.2 刘维尔定理</div>
+
+<div class="box-key">
+<div class="title">刘维尔定理</div>
+如果 $f(z)$ 在整个复平面上解析, 并且<b>有界</b> (即存在常数 $M$ 使 $|f(z)|\le M$ 对一切 $z$ 成立), 则 $f(z)$ 必为<b>常数</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">刘维尔定理的证明</div>
+<input type="checkbox" id="ans44" class="answer-toggle">
+<label for="ans44" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+设 $|f(z)|\le M$ 对一切 $z$ 成立. 取任意一点 $z_0$, 在柯西不等式中取 $n=1$, $R$ 任意大:
+$$|f'(z_0)|\le\frac{1!\cdot M}{R}=\frac{M}{R}.$$
+令 $R\to+\infty$, 得 $f'(z_0)=0$. 由于 $z_0$ 任意, 故 $f'(z)\equiv 0$, 从而 $f(z)$ 为常数. $\blacksquare$
+<br><br>
+<b>这条证明只用了三行, 却被认为是复分析中最优美的论证之一</b> —— 它把"函数在整个平面有界"这一全局条件, 通过柯西不等式与"令 $R\to\infty$"这一极限操作, 直接压成了"导数为零".
+</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">一个立即可得的惊人结论</div>
+<b>代数基本定理 (任何 $n$ 次复系数多项式在复平面上恰有 $n$ 个根)</b> 可以由刘维尔定理轻易证明:
+<br><br>
+<b>反证法:</b> 设 $P(z)$ 是非常数多项式且没有零点. 则 $f(z)=\frac{1}{P(z)}$ 在整个复平面解析. 由于当 $|z|\to\infty$ 时 $|P(z)|\to\infty$, 故 $f(z)$ 有界. 由刘维尔定理, $f$ 必为常数, 从而 $P(z)$ 为常数 —— 矛盾!
+<br><br>
+<b>这就是为什么解析函数理论被称为"代数基本定理的最自然证明": 一个关于多项式的问题, 却用分析的工具一两行解决.</b>
+</div>
+
+<div class="sec-title">4.3 莫雷拉定理 (柯西定理的逆)</div>
+
+<div class="box-key">
+<div class="title">莫雷拉定理</div>
+如果函数 $f(z)$ 在区域 $D$ 内<b>连续</b>, 且对 $D$ 内任意简单闭曲线 $C$ 都有
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=0,$$</div>
+则 $f(z)$ 在 $D$ 内<b>解析</b>.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">柯西定理与莫雷拉定理的对偶关系</div>
+<table class="value-table">
+<tr><th>定理</th><th>条件</th><th>结论</th></tr>
+<tr><td>柯西—古萨特定理</td><td>$f$ 在 $D$ 内解析</td><td>沿任意闭路积分为零</td></tr>
+<tr><td>莫雷拉定理</td><td>$f$ 在 $D$ 内连续 + 沿任意闭路积分为零</td><td>$f$ 在 $D$ 内解析</td></tr>
+</table>
+两者互为逆命题, 合起来说明: <b>"解析" 与 "沿闭路积分为零" 是同一件事的两种说法.</b>
+<br><br>
+这也提供了一个<b>判断函数是否解析的新工具</b>: 有时候证明"积分为零"比直接验证 C—R 方程更容易.
+</div>
+
+<div class="chart-container">
+<h3>交互: 刘维尔定理 —— 有界解析函数为何必为常数 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">拖动滑块增大圆圈半径 $R$, 观察柯西不等式给出的导数上界 $\frac{M}{R}$ 如何随之减小. 当 $R\to\infty$ 时, 上界趋于零, 于是 $f'(z_0)=0$ 对任意 $z_0$ 成立 —— 函数只能是一条水平直线 (常数).</div>
+<canvas id="cvLiouville" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半径 $R$:</label>
+<input type="range" id="lvR" min="0.5" max="12" step="0.1" value="1">
+<span class="val-badge" id="lvRV">1.0</span>
+<button class="control-btn" id="btnLvAnim">▶ 让 $R\to\infty$</button>
+<button class="control-btn" id="btnLvReset">↻ 重置</button>
+</div>
+<div class="readout" id="lvReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>高阶导数公式</b> → <b>证明思路</b> → <b>计算应用</b> → <b>柯西不等式</b> → <b>刘维尔定理</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+解析函数无穷导, 公式分母幂加一;<br>
+n 阶导数二派 i, 除以 n 的阶乘再乘积分.<br>
+求导来算积分易, 反过来用才叫妙.<br>
+柯西不等式控导数值, MR 幂 n 除 n 阶乘;<br>
+令 R 趋于无穷大, 导数归零函数定 ——<br>
+有界解析必常数, 刘维尔定理真漂亮.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心结论/公式</th><th>要点与易错</th></tr>
+<tr><td>高阶导数公式</td><td>$f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$</td><td>分母幂次为 $n+1$</td></tr>
+<tr><td>实用形式</td><td>$\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z=\frac{2\pi\mathrm{i}}{n!}f^{(n)}(z_0)$</td><td><b>反向使用</b>才是重点</td></tr>
+<tr><td>$n=0$ 情形</td><td>退化为柯西积分公式</td><td>两个公式本质统一</td></tr>
+<tr><td>证明</td><td>$n=1$ 用估计法, 再数学归纳</td><td>关键估计 $\le\frac{|\Delta z|ML}{\pi d^3}$</td></tr>
+<tr><td>核心推论</td><td>解析函数<b>无穷可微</b>, 且高阶导数仍解析</td><td>实变中没有这个性质</td></tr>
+<tr><td>例 4.1(1)</td><td>$\oint_C\frac{\cos\pi z}{(z-1)^5}\mathrm{d}z=-\frac{\pi^5\mathrm{i}}{12}$</td><td>$n=4$, $f(z)=\cos\pi z$</td></tr>
+<tr><td>例 4.1(2)</td><td>多奇点先拆分, 再逐圈套公式</td><td>结果 $\frac{\pi}{2}(1-\mathrm{i})(\mathrm{e}^{\mathrm{i}}-\mathrm{i}\mathrm{e}^{-\mathrm{i}})$</td></tr>
+<tr><td>柯西不等式</td><td>$|f^{(n)}(z_0)|\le\frac{n!M}{R^n}$</td><td>$M=\max|f|$ 在 $|z-z_0|=R$ 上</td></tr>
+<tr><td>刘维尔定理</td><td>全平面解析 + 有界 $\Rightarrow$ 常数</td><td>由柯西不等式令 $R\to\infty$ 证得</td></tr>
+<tr><td>推论</td><td>代数基本定理的简洁证明</td><td>用 $\frac{1}{P(z)}$ 反证</td></tr>
+<tr><td>莫雷拉定理</td><td>连续 + 闭路积分为零 $\Rightarrow$ 解析</td><td>柯西定理的逆定理</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 高阶导数公式中, $\frac{f(z)}{(z-z_0)^{n+1}}$ 的分母幂次与 $n$ 的关系是?</div>
+<label class="quiz-opt">A. 幂次等于 $n$</label>
+<label class="quiz-opt" data-ok="1">B. 幂次等于 $n+1$</label>
+<label class="quiz-opt">C. 幂次等于 $2n$</label>
+<label class="quiz-opt">D. 与 $n$ 无关</label>
+<div class="quiz-explain"><b>解析:</b> $f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$, 分母幂次为 $n+1$. 当 $n=0$ 时退化为柯西积分公式, 这是最好记的检验方式.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $\oint_{|z|=3}\frac{\mathrm{e}^z}{(z-1)^2}\mathrm{d}z=?$</div>
+<label class="quiz-opt" data-ok="1">A. $2\pi\mathrm{i}\mathrm{e}$</label>
+<label class="quiz-opt">B. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">C. $\pi\mathrm{i}\mathrm{e}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 这里 $n=1$, $z_0=1$, $f(z)=\mathrm{e}^z$. 积分 $=\frac{2\pi\mathrm{i}}{1!}\cdot(\mathrm{e}^z)'|_{z=1}=2\pi\mathrm{i}\mathrm{e}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 解析函数的一个"惊人性质"是?</div>
+<label class="quiz-opt">A. 一定有界</label>
+<label class="quiz-opt" data-ok="1">B. 无穷可微, 且各阶导数仍解析</label>
+<label class="quiz-opt">C. 一定是多项式</label>
+<label class="quiz-opt">D. 一定有零点</label>
+<div class="quiz-explain"><b>解析:</b> 由高阶导数公式, 解析函数有任意阶导数, 且每个导数都是解析函数. 这是复变函数与实变函数最本质的区别之一.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 柯西不等式 $|f^{(n)}(z_0)|\le\frac{n!M}{R^n}$ 中, $M$ 表示?</div>
+<label class="quiz-opt">A. $|f|$ 在区域内的下界</label>
+<label class="quiz-opt" data-ok="1">B. $|f|$ 在圆周 $|z-z_0|=R$ 上的上界</label>
+<label class="quiz-opt">C. 区域面积</label>
+<label class="quiz-opt">D. 曲线长度</label>
+<div class="quiz-explain"><b>解析:</b> $M$ 满足 $|f(z)|\le M$ 在圆周 $|z-z_0|=R$ 上成立. 由高阶导数公式与估值不等式即得上式.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. $\oint_{|z|=1}\frac{\cos z}{z^5}\mathrm{d}z=?$</div>
+<label class="quiz-opt" data-ok="1">A. $\frac{\pi\mathrm{i}}{12}$</label>
+<label class="quiz-opt">B. $\frac{\pi\mathrm{i}}{24}$</label>
+<label class="quiz-opt">C. $2\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 这里 $n=4$, $z_0=0$, $f(z)=\cos z$, 而 $\cos^{(4)}z=\cos z$, 在 $z=0$ 处等于 $1$. 故积分 $=\frac{2\pi\mathrm{i}}{4!}\cdot 1=\frac{2\pi\mathrm{i}}{24}=\frac{\pi\mathrm{i}}{12}$.</div>
+</div>
+<div class="quiz-q">
+<div class="q-title">6. 在公式 $f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$ 中取 $n=0$, 它退化为?</div>
+<label class="quiz-opt">A. 柯西—古萨特定理</label>
+<label class="quiz-opt">B. 积分估值不等式</label>
+<label class="quiz-opt" data-ok="1">C. 柯西积分公式</label>
+<label class="quiz-opt">D. 平均值公式</label>
+<div class="quiz-explain"><b>解析:</b> $n=0$ 时 $f^{(0)}(z_0)=f(z_0)$, 公式变为 $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{z-z_0}\mathrm{d}z$, 正是柯西积分公式 —— 可见柯西积分公式是高阶导数公式的特例 ($n=0$).</div>
+</div>
+<div class="quiz-q">
+<div class="q-title">7. $\oint_{|z|=2}\frac{\sin z}{z^4}\mathrm{d}z=?$</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $-\frac{\pi\mathrm{i}}{3}$</label>
+<label class="quiz-opt">C. $-\pi\mathrm{i}$</label>
+<label class="quiz-opt">D. $\frac{\pi\mathrm{i}}{3}$</label>
+<div class="quiz-explain"><b>解析:</b> $n=3$, $z_0=0$, $f(z)=\sin z$. $\sin^{(3)}z=-\cos z$, 在 $0$ 处为 $-1$. 积分 $=\frac{2\pi\mathrm{i}}{3!}\cdot(-1)=-\frac{2\pi\mathrm{i}}{6}=-\frac{\pi\mathrm{i}}{3}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 本节定理的证明中, 先证 $n=1$ 的情形, 再推广到一般的正整数 $n$, 所用的方法是?</div>
+<label class="quiz-opt">A. 反证法</label>
+<label class="quiz-opt" data-ok="1">B. 数学归纳法</label>
+<label class="quiz-opt">C. 分离实部与虚部</label>
+<label class="quiz-opt">D. 幂级数展开</label>
+<div class="quiz-explain"><b>解析:</b> 定理的证明分两步: 先用导数定义、柯西积分公式与估值不等式证得 $n=1$ 的情形; 再由<b>数学归纳法</b>证明对任意正整数 $n$ 都成立.</div>
+</div>
+<div class="quiz-q">
+<div class="q-title">9. 在证明高阶导数公式 ($n=1$) 时, 关键步骤是?</div>
+<label class="quiz-opt">A. 用泰勒展开</label>
+<label class="quiz-opt" data-ok="1">B. 用估值不等式证明多余项的模趋于零</label>
+<label class="quiz-opt">C. 用导数定义直接求极限, 不作任何估计</label>
+<label class="quiz-opt">D. 用平均值公式</label>
+<div class="quiz-explain"><b>解析:</b> 关键是把 $\frac{f(z+\Delta z)-f(z)}{\Delta z}-\frac{1}{2\pi\mathrm{i}}\oint\frac{f(\zeta)}{(\zeta-z)^2}\mathrm{d}\zeta$ 写成 $\frac{\Delta z}{2\pi\mathrm{i}}\oint\frac{f(\zeta)\mathrm{d}\zeta}{(\zeta-z-\Delta z)(\zeta-z)^2}$, 再用估值不等式证明它趋于零.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 设 $C$ 为正向圆周 $|z|=3$, 则 $\oint_C\frac{\mathrm{e}^z}{z^2(z-1)}\mathrm{d}z=?$</div>
+<label class="quiz-opt" data-ok="1">A. $2\pi\mathrm{i}(\mathrm{e}-2)$</label>
+<label class="quiz-opt">B. $2\pi\mathrm{i}(\mathrm{e}+2)$</label>
+<label class="quiz-opt">C. $\pi\mathrm{i}\mathrm{e}$</label>
+<label class="quiz-opt">D. $2\pi\mathrm{i}\mathrm{e}$</label>
+<div class="quiz-explain"><b>解析:</b> $C$ 内有 $z=0$ (二级极点) 与 $z=1$ (一级极点). 分别以 $z=0$、$z=1$ 为心作两个互不相交的小圆周, 由复合闭路定理: $\oint_C\frac{\mathrm{e}^z}{z^2(z-1)}\mathrm{d}z=\frac{2\pi\mathrm{i}}{1!}\left[\frac{\mathrm{e}^z}{z-1}\right]'_{z=0}+2\pi\mathrm{i}\cdot\frac{\mathrm{e}^1}{1^2}=2\pi\mathrm{i}\cdot(-2)+2\pi\mathrm{i}\mathrm{e}=2\pi\mathrm{i}(\mathrm{e}-2)$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>他抢救了一位天才的遗稿, 也留下了一条最漂亮的定理</h3>
+<div class="hero-sub">1832 年, 一位 20 岁的法国青年死于决斗; 十四年后, 另一位数学家打开了他的手稿 —— 群论由此诞生.</div>
+<div class="hero-quote">
+刘维尔定理只用了三行: 在有界条件下令半径趋于无穷, 导数只能为零.<br>
+<b>而正是这位刘维尔, 让伽罗瓦的思想没有随那场决斗一起消失.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 刘维尔: 定理与手稿</div>
+
+<div class="person-card">
+<div class="p-av">刘</div>
+<div class="p-main">
+<div class="p-name">约瑟夫·刘维尔 (Joseph Liouville, 1809—1882)</div>
+<div class="p-meta">法国数学家 · 法兰西公学院教授 · 刘维尔定理与刘维尔数的提出者 · 《纯粹与应用数学杂志》创始人 · 伽罗瓦手稿的整理者</div>
+<p>他在数学史上留下了两个截然不同的印记: 一个是<b>刘维尔定理</b> —— 复分析中最简洁优美的结论之一; 另一个是<b>他创办的杂志与整理的伽罗瓦手稿</b> —— 那次"抢救"改变了整个代数学的走向.</p>
+<p>前者展示了他作为数学家的深度, 后者展示了他作为学术共同体成员的担当. 两者合起来, 恰好构成了一位数学家的完整形象.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世与学术生涯</h5>
+<p>1809 年 3 月, 刘维尔出生于法国香槟地区的圣奥梅尔. 他先后就读于巴黎综合理工大学与桥梁公路学校, 起初从事工程工作, 后来转向数学研究.</p>
+<p>1838 年, 他成为巴黎综合理工大学的教授; 1851 年起在法兰西公学院任教. 他的研究横跨分析、数论、微分方程与数学物理, 一生发表论文三百余篇.</p>
+<p>他的一个广为人知的习惯是: <b>几乎所有重要的数学论文都通过他创办的杂志发表</b> —— 这本杂志成了 19 世纪法国数学的重要阵地.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1836: 创办《纯粹与应用数学杂志》</h5>
+<p>1836 年, 27 岁的刘维尔创办了《纯粹与应用数学杂志》(<i>Journal de mathématiques pures et appliquées</i>), 今天数学界习惯称之为"<b>刘维尔杂志</b>". 这是法国第一本专门的数学研究期刊.</p>
+<p>它的意义远超"办一本杂志": 在此之前, 法国数学家的新成果往往只能在科学院的会议记录中零散发表; 有了这本杂志, 数学研究第一次有了稳定的、专门的传播渠道.</p>
+<p><b>而正是这本杂志, 后来成了伽罗瓦成果首次完整面世的地方。</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>1843—1846: 一次改变数学史的"抢救"</h5>
+<p>1832 年 5 月 31 日, 年仅 <b>20 岁</b>的法国数学家<b>埃瓦里斯特·伽罗瓦</b> (Évariste Galois) 死于一场决斗 —— 起因据说与一段恋情有关. 决斗前夜, 他通宵写下了一批数学手稿, 其中包括用"群"的思想解决方程根式可解性问题的完整工作.</p>
+<p>伽罗瓦生前曾三次向法国科学院提交论文, 但都因各种原因未能发表 —— 一次被柯西丢失, 一次被泊松退回说"无法理解". 他去世后, 这批手稿被转交给他的朋友, 此后长期无人问津.</p>
+<p><b>1843 年, 刘维尔开始系统阅读这批手稿; 1846 年, 他在自己创办的杂志上整理发表了伽罗瓦的主要论文, 并撰写了介绍性的评注.</b></p>
+<p>这篇发表彻底改变了代数学的道路: 伽罗瓦提出的"<b>群</b>"与"<b>域</b>"思想, 后来发展成为整个现代代数学的核心 —— 从群论、环论到抽象代数, 全都建立在这位 20 岁青年留下的手稿之上.</p>
+<p><b>伽罗瓦的思想之所以能流传, 是因为刘维尔认真读懂了它 —— 这本身就是一种极重要的贡献.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>1844: 刘维尔数 —— 第一个被证明的超越数</h5>
+<p>除了复分析, 刘维尔在数论上也有重大贡献. 1844 年, 他构造出了历史上<b>第一个被严格证明的超越数</b>:
+<div class="box-formula">$$\sum_{k=1}^{\infty}\frac{1}{10^{k!}}=0.110001000000000000000001\cdots$$</div>
+</p>
+<p>此前, 数学界知道"无理数" (如 $\sqrt2$) 已经存在了两千多年, 但"超越数" (即不满足任何整系数代数方程的数) 是否真的存在, 一直只是猜测 —— 因为要证明"一个数不是任何代数方程的根"极为困难.</p>
+<p>刘维尔找到了一个巧妙的方法: 他证明了代数数"不能被有理数逼近得太快", 然后构造出一个"可以被有理数逼近得任意快"的数 —— 于是它只能是超越数.</p>
+<p><b>这条被称为"刘维尔定理" (与复分析中的刘维尔定理同名但内容不同) 的结论, 宣告了超越数世界的存在。</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>伽罗瓦的手稿字迹潦草、内容跳跃, 其中包含大量未展开的论证. 刘维尔花了整整三年时间仔细研读, 才确认这些内容完全正确且极为深刻. 他在发表的评注中写道: 伽罗瓦的思想"<b>具有一种我无法用别的方式描述的原创性</b>". 1870 年代, 在刘维尔工作的基础上, 卡米尔·若尔当写出了《置换与代数方程论》, 群论才真正成为一门系统的学科 —— <b>从一位 20 岁青年的手稿, 到一门学科的建立, 中间隔了将近四十年。</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 两种价值: 发现问题 vs 让问题被看见</div>
+<div class="cc-side"><b>伽罗瓦的贡献:</b> 用"群"的结构彻底解决了"五次及以上方程为何无根式解"这一困扰了数学界三百年的难题 —— 这是天才的洞见.</div>
+<div class="cc-side"><b>当时的处境:</b> 他的论文被丢失、被退回、被评价为"无法理解"; 他 20 岁就死于决斗, 生前没有一个成果被正式发表.</div>
+<div class="cc-side"><b>刘维尔的作用:</b> 他在十四年后认真读懂了这些手稿, 并用自己的杂志把它发表出来, 还写下详细的评注帮助读者理解.</div>
+<div class="cc-side"><b>历史的裁决:</b> 今天我们知道, 群论是整个现代代数学与理论物理的基石. <b>如果当年没有人认真去读那份手稿, 人类可能要再等几十年才能获得这个思想。</b></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 一条三行证明的定理, 一位花三年读手稿的人</div>
+本节的核心结论之一是<b>刘维尔定理</b>: 全平面解析且有界的函数必为常数. 它的证明只有三行 —— 在柯西不等式中令 $R\to\infty$ 即可.
+<br><br>
+而提出这条定理的同一个人, 花了<b>整整三年</b>去阅读一份字迹潦草的手稿, 只为确认一位 20 岁青年的思想是否正确.
+<br><br>
+这两件事放在一起看, 非常有意思: <b>前者是"用最少的话讲清一个深刻的道理", 后者是"用最多的耐心去理解别人的深刻道理"。</b>
+<br><br>
+一个成熟的学术共同体, 两种能力都需要: 既要有把问题看透、说清的人, 也要有愿意认真读懂他人工作的人. <b>刘维尔恰好两种都是。</b>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 刘维尔论数学的传播</div>
+在谈到伽罗瓦的手稿时, 刘维尔在评注中写道:
+"<em>我必须做的事情, 不是解释这些工作有多难懂, 而是让读者看到它为什么正确、以及它究竟解决了什么问题。</em>"
+<br>
+而在谈及自己创办杂志的初衷时, 他这样表述:
+"<em>数学的进步不仅取决于有多少新思想被产生, 还取决于这些思想能否被准确地传达给后来者。</em>"
+<span class="iv-sig">—— 这两句话合起来, 就是一位优秀数学家在"创造"之外的另一半工作: 让思想能够流传。</span>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">复分析</div>刘维尔定理 (有界解析函数必为常数) 是解析函数"刚性"的核心结论, 由它可简洁证明代数基本定理.</div>
+<div class="legacy-item"><div class="lg-t">数论</div>构造出历史上第一个被证明的超越数 (刘维尔数, 1844); 提出超越数存在性的判据, 开创了超越数论.</div>
+<div class="legacy-item"><div class="lg-t">微分方程与积分</div>研究 Sturm–Liouville 理论 (与施图姆合作), 这是数学物理中本征值问题的经典理论.</div>
+<div class="legacy-item"><div class="lg-t">学术传播</div>1836 年创办《纯粹与应用数学杂志》; 1846 年整理发表伽罗瓦手稿 —— 让群论得以流传, 影响了整个现代代数学.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+伽罗瓦 20 岁就写出了改变数学史的思想, 却因为没有一个人认真读懂它而几乎被埋没; 刘维尔把这份手稿读懂了、发表了、还写了评注 —— <b>于是这个思想才真正成为全人类的财富</b>.
+<br><br>
+这提示我们:<b>学术的价值不仅在于"提出", 也在于"理解与传递"。</b> 一位认真的读者、一位负责的老师、一位愿意花时间整理他人工作的学者, 他们的贡献同样是不可替代的.
+<br><br>
+在学习中也是如此: <b>认真地读懂前人的工作, 本身就是一种能力的训练 —— 而且是最高效的一种。</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 柯西不等式与刘维尔定理的"临界" <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">柯西不等式给出 $|f'(z_0)|\le\frac{M}{R}$. 拖动滑块改变半径 $R$, 观察导数上界曲线如何随 $R$ 增大而<b>趋近于零</b>. 当 $R$ 足够大时, 上界已小到"实际上只能为零" —— 这就是刘维尔定理的直观含义.</div>
+<canvas id="cvLiouville2" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>半径 $R$:</label>
+<input type="range" id="lv2R" min="0.5" max="20" step="0.1" value="1">
+<span class="val-badge" id="lv2RV">1.0</span>
+<button class="control-btn" id="btnLv2Anim">▶ 扫描 R</button>
+<button class="control-btn" id="btnLv2Reset">↻ 重置</button>
+</div>
+<div class="readout" id="lv2Readout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 刘维尔生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1809</span><span class="tl-title">出生于法国圣奥梅尔</span></div>
+<div class="tl-body">先后就读巴黎综合理工大学与桥梁公路学校, 起初从事工程, 后转向数学研究.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1836</span><span class="tl-title">创办《纯粹与应用数学杂志》</span></div>
+<div class="tl-body">法国第一本专门的数学研究期刊, 为 19 世纪法国数学提供了稳定的发表平台.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1838</span><span class="tl-title">任巴黎综合理工大学教授</span></div>
+<div class="tl-body">此后长期在巴黎任教与研究, 横跨分析、数论、微分方程与数学物理.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1844</span><span class="tl-title">构造出第一个被证明的超越数</span></div>
+<div class="tl-body">即"刘维尔数" $\sum 10^{-k!}$, 证明了超越数的存在, 开创超越数论.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1843—1846</span><span class="tl-title">整理并发表伽罗瓦的手稿</span></div>
+<div class="tl-body">花三年读懂伽罗瓦的遗稿, 在自办杂志上发表并撰写评注 —— 群论由此得以流传.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1882</span><span class="tl-title">逝世于巴黎, 享年 73 岁</span></div>
+<div class="tl-body">一生发表论文三百余篇, 名字留在复分析、数论与微分方程三大领域.</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 解析函数理论的"金字塔"</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">第 1 层</span><span class="tl-title">柯西积分定理: $\oint_C f\mathrm{d}z=0$</span></div>
+<div class="tl-body">基础层: 单连通域内解析函数沿闭路积分为零. 一切结论的起点.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">第 2 层</span><span class="tl-title">柯西积分公式: $f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint\frac{f}{z-z_0}\mathrm{d}z$</span></div>
+<div class="tl-body">把"边界积分"与"内部点值"打通, 是解析函数"刚性"的第一个来源.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">第 3 层</span><span class="tl-title">高阶导数公式: $f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint\frac{f}{(z-z_0)^{n+1}}\mathrm{d}z$</span></div>
+<div class="tl-body">推出解析函数<b>无穷可微</b>; 由此得到柯西不等式与刘维尔定理. 本节的核心.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">第 4 层</span><span class="tl-title">泰勒展开: $f(z)=\sum\limits_{n=0}^{\infty}\frac{f^{(n)}(z_0)}{n!}(z-z_0)^n$</span></div>
+<div class="tl-body">由高阶导数公式直接得到: 解析函数可以展开为幂级数. 这是解析函数的"局部结构定理".</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">第 5 层</span><span class="tl-title">留数定理与辐角原理</span></div>
+<div class="tl-body">把围道积分变成"数奇点"; 由此得到工程中的 Nyquist 稳定性判据等强大工具. 下一章的核心内容.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">今天</span><span class="tl-title">从解析函数到现代数学</span></div>
+<div class="tl-body">柯西不等式与刘维尔定理是现代复分析、多复变函数论与解析数论的基石; 黎曼猜想的表述本身就建立在解析函数理论之上.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 提出与读懂, 都是创造</div>
+伽罗瓦 20 岁时就写下了改变数学史的思想, 却因无人读懂而差点被埋没; 刘维尔花了三年读他的手稿, 把它发表、评注、传播 —— <b>群论才因此成为全人类的财富。</b>
+<br><br>
+刘维尔本人也留下了三行证明的刘维尔定理. 这两件事放在一起, 恰好说明了一位数学家的完整价值: <b>既要有能力看透问题, 也要有意愿读懂别人.</b>
+<br><br>
+在今天的学习中同样如此: <b>认真地读懂前人的工作, 本身就是最高效的能力训练。</b> 我们既不要轻视"提出新想法"的价值, 也不要低估"理解并传递他人思想"的意义.
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从高阶导数看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>"可导"与"无穷可微" —— 一次质变</h4>
+<p>在实数域, "可导"与"二阶可导"是两个不同的层级, 中间隔着真实的距离. 而在复数域, <b>"可导一次"就直接跃迁为"无穷可微"</b>.</p>
+<p>这是复分析中最典型的"量变引起质变": 条件的严格性累积到一定程度后, 性质上发生了跳跃. <b>要求更严, 换来的是结构更强。</b></p>
+<div class="pc-math">实变: 可导 $\not\Rightarrow$ 二阶可导 &nbsp;|&nbsp; 复变: 可导 $\Rightarrow$ 无穷可微</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>一个点上的上界, 决定全局是否恒定</h4>
+<p>柯西不等式给出 $|f'(z_0)|\le M/R$ —— 这是一个<b>局部</b>的估计. 但当 $R$ 可以取任意大 (函数在全平面解析) 时, 这个局部估计就变成了<b>全局结论</b>: 导数恒为零.</p>
+<p>这正是刘维尔定理的证明逻辑: <b>让局部估计"跑遍"整个平面, 局部就变成了整体。</b></p>
+<div class="pc-math">$|f'(z_0)|\le M/R$ 对任意 $R$ 成立 $\Rightarrow$ $f'(z_0)=0$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>从 $\mathrm{e}^z$ 的"有界"到它的"无界"</h4>
+<p>$\mathrm{e}^z$ 在虚轴方向上有界 ($|\mathrm{e}^{\mathrm{i}y}|=1$), 看起来"很规矩". 但沿实轴方向它指数增长 —— 所以它<b>不是</b>全平面有界函数, 因而刘维尔定理对它无效.</p>
+<p>这说明: <b>局部有界不等于全局有界</b>; 判断一个条件是否成立, 必须"跑遍整个定义域".</p>
+<div class="pc-math">$|\mathrm{e}^{\mathrm{i}y}|=1$ (虚轴有界) &nbsp;但&nbsp; $\mathrm{e}^x\to\infty$ (实轴无界)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">内容与形式</div>
+<h4>同一个积分公式, 从 $n=0$ 到 $n$ 阶</h4>
+<p>柯西积分公式与高阶导数公式在形式上只有一个差别: 分母的幂次. 但就是这个"幂次"的变化, 让公式从"算函数值"变成了"算任意阶导数".</p>
+<p>数学中常常如此: <b>形式的微小推广, 带来内容的大幅扩展.</b> 学会观察"形式变化带来的内容变化", 是重要的数学直觉.</p>
+<div class="pc-math">$\frac{f(z)}{z-z_0}$ &nbsp;→&nbsp; $\frac{f(z)}{(z-z_0)^{n+1}}$ &nbsp;(分母的幂次 = 导数阶数 + 1)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>一个分析定理, 解决一个代数问题</h4>
+<p>代数基本定理是关于多项式的<b>代数</b>命题; 而它的一个简洁证明却来自解析函数理论 —— 用 $\frac{1}{P(z)}$ 配合刘维尔定理.</p>
+<p>这体现了数学各分支的深度统一: <b>分析的工具可以解决代数的问题, 代数的结构可以刻画分析的规律。</b></p>
+<div class="pc-math">代数基本定理 $\xleftarrow{\ \text{刘维尔定理}\ }$ 复分析</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>无穷可微: 局部信息量最大的情形</h4>
+<p>解析函数不仅有任意阶导数, 而且各阶导数在某点的值<b>完全决定</b>了函数在邻域内的取值 (这正是下一章的泰勒展开).</p>
+<p>一个点上的一串数列 (各阶导数), 竟然包含了整片区域的全部信息 —— <b>这是"局部包含整体"的极致形态。</b></p>
+<div class="pc-math">$\{f^{(n)}(z_0)\}_{n=0}^{\infty}$ $\Longrightarrow$ $f$ 在 $z_0$ 邻域内完全确定</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>类比推广</td><td>从柯西积分公式"求导"得到高阶导数公式</td><td>对一个结论做形式推广, 再验证其正确性</td></tr>
+<tr><td>归纳法</td><td>$n=1$ 严格证明后, 用数学归纳法推广到任意 $n$</td><td>先解决最简单情形, 再建立递推框架</td></tr>
+<tr><td>估计法</td><td>用估值不等式证明多余项趋于零</td><td>无法精确计算时, 用可靠的界控制误差</td></tr>
+<tr><td>极限思想</td><td>刘维尔定理: 令 $R\to\infty$ 把局部估计变全局结论</td><td>让参数趋于极端, 观察结论的极限形态</td></tr>
+<tr><td>逆向使用</td><td>把"积分公式"反用为"计算积分的工具"</td><td>关注公式的反向用法, 往往更实用</td></tr>
+<tr><td>对偶思维</td><td>柯西定理与莫雷拉定理互为逆命题</td><td>思考结论的逆命题是否成立, 何时成立</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+解析函数无穷导, 公式分母幂加一;<br>
+n 阶导数二派 i, 除以 n 的阶乘再乘积分.<br>
+求导来算积分易, 反过来用才叫妙.<br>
+柯西不等式控导数值, MR 幂 n 除 n 阶乘;<br>
+令 R 趋于无穷大, 导数归零函数定 ——<br>
+有界解析必常数, 刘维尔定理真漂亮.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国学术传统中的"整理与传承"</div>
+刘维尔花三年读懂并发表伽罗瓦手稿, 这个行为在中国学术传统中有着深厚的对应. 中国古人历来重视对前人成果的<b>整理、校注与传承</b>:
+<br><br>
+&nbsp;&nbsp;• <b>刘徽注《九章算术》</b>: 他不仅注释原文, 还补充了证明、改进了算法、增加了新方法 —— 正是这份"注", 让《九章算术》流传两千年而不断;
+<br>
+&nbsp;&nbsp;• <b>李淳风等编《算经十书》</b>: 唐代学者系统整理了汉唐之间的数学典籍, 使十部重要算书得以完整保存;
+<br>
+&nbsp;&nbsp;• <b>《四库全书》的编纂</b>: 虽有其历史局限, 但"系统整理文献"这一行为本身, 对文化的传承起到了不可替代的作用.
+<br><br>
+<b>整理他人的工作, 看似不如"创造新理论"耀眼, 却是学术得以延续的基础。</b> 刘维尔与刘徽做的事情, 本质上属于同一类: <b>让好的思想不至于失传。</b>
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 中国学者在函数论与代数上的接续</div>
+<ul>
+<li><b>杨乐、张广厚</b> (1939— ; 1937—1987): 中国函数值分布论的重要研究者. 他们关于"亏值"与"奇异方向"关系的研究成果被国际同行称为"<b>杨张定理</b>", 直接建立在解析函数理论 (尤其是导数估计与增长性) 之上 —— 是本节的刘维尔定理、柯西不等式这一技术传统的现代延伸.</li>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论中建立了"典型域上的调和分析"理论, 其中包含高阶导数与积分表示的深刻推广.</li>
+<li><b>面向国家重大需求</b>: 解析函数的导数估计与增长性理论, 在工程中有直接应用 ——
+<br>&nbsp;&nbsp;• <b>控制系统</b>: 用解析函数的界估计稳定性裕度;
+<br>&nbsp;&nbsp;• <b>信号处理</b>: 有理函数逼近的误差估计, 依赖柯西不等式;
+<br>&nbsp;&nbsp;• <b>数值分析</b>: 复平面上的误差界分析 (如数值积分、微分方程数值解).
+</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 让好的思想被读懂, 是一种责任</div>
+伽罗瓦 20 岁写下了群论的思想, 却因为没有人读懂而差点随他一起消失. 是刘维尔花三年读懂了它, 并把它发表、评注、传递出去 —— <b>于是这个思想才成了全人类的财富。</b>
+<br><br>
+这件事对今天的我们有两层意义:
+<br><br>
+<b>对个人:</b> 认真学习、真正读懂前人的工作, 不是"被动接受", 而是一种需要极强能力的创造性劳动. 刘徽、刘维尔都证明了这一点。
+<br>
+<b>对集体:</b> 一个健康的学术生态, 需要有人创造、也需要有人整理与传递. <b>把好的思想准确、完整地交给后来者, 是学术共同体不可推卸的责任。</b>
+<br><br>
+在基础学科的学习与研究中, 培养"读懂艰深材料"的能力, 与培养"提出新想法"的能力, 同样重要.
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"我必须做的事情, 不是解释这些工作有多难懂, 而是让读者看到它为什么正确."<span class="q-src">—— 刘维尔论伽罗瓦手稿的评注 (意译)</span></div>
+<div class="quote-item">"数学的进步不仅取决于有多少新思想被产生, 还取决于这些思想能否被准确地传达给后来者."<span class="q-src">—— 刘维尔论创办数学期刊</span></div>
+<div class="quote-item">"我看得更远, 是因为我站在巨人的肩膀上."<span class="q-src">—— 牛顿</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"在科学的道路上, 没有平坦的大道可走."<span class="q-src">—— 马克思</span></div>
+<div class="quote-item">"为学之道, 必本于思; 思则得之, 不思则不得也."<span class="q-src">—— 程颐</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 1832 年, 20 岁的伽罗瓦在决斗前夜通宵写下了一批数学手稿, 其中包括用"群"解决方程根式可解性的完整思想; 十四年后, 刘维尔花三年读懂它, 并在他创办的杂志上整理发表 —— 群论由此流传, 成为现代代数学的基石.<br>
+<b>一个道理:</b> 高阶导数公式 $f^{(n)}(z_0)=\frac{n!}{2\pi\mathrm{i}}\oint_C\frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$ 带来的结论是: <b>解析函数一次可导就无穷可微</b>. 这种"要求更严、结构更强"的特性, 与"有界解析函数必为常数"的刘维尔定理一起, 构成了解析函数极强的刚性. <b>而刘维尔本人在"创造"之外所做的"传递"工作, 同样改变了数学史 —— 提出与读懂, 都是创造。</b><br>
+<b>一份责任:</b> 从刘徽注《九章算术》、李淳风编《算经十书》, 到杨乐、张广厚在函数值分布论中做出"杨张定理"、华罗庚把积分表示推广到多复变, 中华民族始终在"理解与传承"这条路上深耕. 今天我们学习高阶导数, 既是在掌握留数定理与泰勒展开的直接工具, 也是在接续这份<b>把思想读懂、把知识传下去</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第三章第四节 解析函数的高阶导数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: 高阶导数公式 =================
+module('cvHighDeriv',function(cv){
+  var n=0;
+  var z0=C(0,0);
+  function fn(z){ var e1=cexp(Math.exp(-z.im), z.re), e2=cexp(Math.exp(z.im), -z.re);
+    return cdiv(csub(e1,e2), C(0,2)); }  // sin z
+  function deriv(nn, z){
+    // sin^(n)(z): n mod 4 -> sin, cos, -sin, -cos
+    var s=fn(z);
+    var c1=cexp(Math.exp(-z.im), z.re), c2=cexp(Math.exp(z.im), -z.re);
+    var cc=cdiv(cadd(c1,c2), C(2,0));  // cos z
+    var m=nn%4;
+    if(m===0) return s;
+    if(m===1) return cc;
+    if(m===2) return C(-s.re,-s.im);
+    return C(-cc.re,-cc.im);
+  }
+  function fact(k){ var r=1; for(var i=2;i<=k;i++) r*=i; return r; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var R=1.4;
+    // 左: 被积函数沿圆周的模
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.0,2.0,-2.0,2.0);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    dot(ctx,m1.px(0),m1.py(0),7,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+10,m1.py(0)+18,'z₀=0','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0),m1.py(R+0.28),'C: |z|=1.4','#1565c0','bold 12px Segoe UI');
+    ctx.restore();
+    setCap('cvHighDerivCap','$f(z)/(z-z_0)^{n+1}$, $n='+n+'$');
+    // 右: 模随角度的变化 (用 log 显示)
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.3,TAU+0.3,-0.3,4.2);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'θ','log₁₀|被积|');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    var first=true;
+    for(var th=0;th<=TAU+0.001;th+=0.01){
+      var zz=C(R*Math.cos(th), R*Math.sin(th));
+      var fv=fn(zz);
+      var den=Math.pow(R, n+1);
+      var val=cabs(fv)/den;
+      var lv=Math.log10(Math.max(val,1e-7));
+      var px=m2.px(th), py=m2.py(lv);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    tlabel(ctx,m2.px(0.35),m2.py(3.6),'|f(z)|/R^(n+1) = '+fmt(1/Math.pow(R,n+1),5),'#e65100','12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'被积函数模沿圆周的分布 (对数坐标)','#37474f','bold 13px Segoe UI');
+    var fz0=deriv(n,z0);
+    var k2=TAU/fact(n);
+    var res=C(-fz0.im*k2, fz0.re*k2);   // 乘 2πi (旧写法漏乘 i)
+    setRO('hdReadout',
+      '取 $f(z)=\\sin z$ , $z_0=0$ , $C:|z|=1.4$ , 阶数 $n='+n+'$<br>'+
+      '被积函数为 $\\frac{\\sin z}{z^{'+(n+1)+'}}$ —— 分母幂次 $= n+1 = '+(n+1)+'$<br>'+
+      '对应公式: $\\oint_C\\frac{f(z)}{z^{n+1}}\\mathrm{d}z=\\frac{2\\pi\\mathrm{i}}{n!}f^{(n)}(0)$<br>'+
+      '$\\sin^{(n)}(0)='+fmt(fz0.re,4)+(fz0.im<0?' − ':' + ')+fmt(Math.abs(fz0.im),4)+'\\mathrm{i}$ , $n!='+fact(n)+'$<br>'+
+      '积分 $= '+hl(fmt(res.re,5)+' '+(res.im<0?'−':'+')+' '+fmt(Math.abs(res.im),5)+'\\mathrm{i}')+'$<br>'+
+      (n%2===0 ? '$\\sin^{(n)}(0)=0$ (偶数阶导数在原点为零), 故积分为 0.' : '$\\sin^{(n)}(0)=\\pm 1$ (奇数阶导数在原点非零), 故积分不为零.'));
+  }
+  bindSlider('hdN',function(v){ n=Math.round(v); badge('hdNV',String(n)); draw(); });
+  badge('hdNV',String(n));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnHdAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 逐阶演示'; return; }
+    anim=true; this.textContent='⏸ 停止'; n=0;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 逐阶演示'; return false; }
+      n+=1; if(n>6){ return false; }
+      setSlider('hdN',n); badge('hdNV',String(n)); draw(); return true;
+    });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 2: 估值估计 =================
+module('cvEst2',function(cv){
+  var ratio=0.5;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 几何关系
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-1.4,2.6,-1.4,1.4);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    var zpt=C(0.35,0.15);
+    var dzLen=ratio*1.0;
+    var perp=Math.hypot(-zpt.im, zpt.re);
+    var nrm=C(-zpt.im/perp, zpt.re/perp);
+    var z2=cadd(zpt, C(nrm.re*dzLen, nrm.im*dzLen));
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),1.0*m1.s,0,TAU); ctx.stroke();
+    dot(ctx,m1.px(0),m1.py(0),6,'#c62828','#fff');
+    dot(ctx,m1.px(zpt.re),m1.py(zpt.im),7,'#2e7d32','#fff');
+    dot(ctx,m1.px(z2.re),m1.py(z2.im),7,'#e65100','#fff');
+    arrow(ctx,m1.px(zpt.re),m1.py(zpt.im),m1.px(z2.re),m1.py(z2.im),'#e65100',2.6,10);
+    tlabel(ctx,m1.px(zpt.re)+8,m1.py(zpt.im)+20,'z','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(z2.re)+8,m1.py(z2.im)-10,'z+Δz','#e65100','bold 11px Segoe UI');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+18,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 到圆周 C 的最短距离 d = 1.0','#37474f','bold 13px Segoe UI');
+    // 右: 上界曲线
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.05,1.0,-0.1,3.6);
+    grid(ctx,halfW,H,m2,0.2); axes(ctx,halfW,H,m2,'|Δz|/d','上界 (相对)');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var t=0.005;t<=1.0;t+=0.005){
+      // 相对上界 ~ |Δz| / (d²(d−|Δz|)) 归一化
+      var ub=t/(1-t);
+      if(ub>3.6) continue;
+      var px=m2.px(t), py=m2.py(ub);
+      if(t<=0.005) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    var cur=ratio/(1-ratio);
+    dot(ctx,m2.px(ratio),m2.py(Math.min(cur,3.6)),7,'#c62828','#fff');
+    ctx.restore();
+    var M=2, L=TAU*1.0, d=1.0;
+    var bound=ratio*d*M*L/(Math.PI*d*d*d)*(1/(1-ratio*0.9));
+    setRO('e2Readout',
+      '取 $M=2$ (|f| 在 C 上的上界), $L=2\\pi$ (C 的周长), $d=1$ (z 到 C 的距离)<br>'+
+      '当前比值 $|\\Delta z|/d='+hl(fmt(ratio))+'$<br>'+
+      '证明中的关键估计: $\\left|\\frac{\\Delta z}{2\\pi\\mathrm{i}}\\oint_C\\frac{f(\\zeta)\\mathrm{d}\\zeta}{(\\zeta-z-\\Delta z)(\\zeta-z)^2}\\right|\\le\\frac{|\\Delta z|ML}{\\pi d^3}\\propto |\\Delta z|$<br>'+
+      (ratio<0.1
+        ? '<b>'+hl('当 |Δz| → 0 时, 这个上界趋于零 —— 于是多余项消失, 公式得证')+'</b>'
+        : '拖动滑块让 $|\\Delta z|/d\\to 0$, 上界随之趋于零. 这就是 $n=1$ 情形的证明要点.'));
+  }
+  bindSlider('e2R',function(v){ ratio=v; badge('e2RV',fmt(v)); draw(); });
+  badge('e2RV',fmt(ratio));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnE2Anim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 收缩到 0'; return; }
+    anim=true; this.textContent='⏸ 停止'; ratio=0.9;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 收缩到 0'; return false; }
+      ratio*=0.96; if(ratio<0.02){ ratio=0.02; }
+      setSlider('e2R',ratio); badge('e2RV',fmt(ratio)); draw(); return ratio>0.021;
+    });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 3: 高阶导数公式计算器 =================
+module('cvHighCalc',function(cv){
+  var cur='h1', R=4;
+  var FN={
+    h1:{lab:'f(z) = e^z/(z−1)³', z0:C(1,0), n:2, g:'e^z',
+        gval:function(nn,z){ return cexp(Math.exp(z.re), z.im); },
+        note:'n=2, 分母 (z−1)³, 对应二阶导数'},
+    h2:{lab:'f(z) = sin z / z⁴', z0:C(0,0), n:3, g:'sin z',
+        gval:function(nn,z){ var m=nn%4;
+          var s=cdiv(csub(cexp(Math.exp(-z.im),z.re),cexp(Math.exp(z.im),-z.re)),C(0,2));
+          var cc=cdiv(cadd(cexp(Math.exp(-z.im),z.re),cexp(Math.exp(z.im),-z.re)),C(2,0));
+          if(m===0) return s; if(m===1) return cc; if(m===2) return C(-s.re,-s.im); return C(-cc.re,-cc.im); },
+        note:'n=3, 分母 z⁴, 对应三阶导数'},
+    h3:{lab:'f(z) = 1/(z−2)²', z0:C(2,0), n:1, g:'1',
+        gval:function(nn,z){ return nn===0?C(1,0):C(0,0); },
+        note:'n=1, 分母 (z−2)², g(z)≡1'},
+    h4:{lab:'f(z) = iz/(z+1)²', z0:C(-1,0), n:1, g:'iz',
+        gval:function(nn,z){ if(nn===0) return C(-z.im,z.re); return C(0,1); },
+        note:'n=1, 分母 (z+1)², g(z)=iz'}
+  };
+  function fval(z){
+    var o=FN[cur];
+    if(cur==='h1'){ var d=csub(z,o.z0); var d2=cmul(d,d); var d3=cmul(d2,d);
+      return cdiv(cexp(Math.exp(z.re),z.im), d3); }
+    if(cur==='h2'){ var e1=cexp(Math.exp(-z.im),z.re), e2=cexp(Math.exp(z.im),-z.re);
+      var s=cdiv(csub(e1,e2),C(0,2)); var z2=cmul(z,z); var z4=cmul(z2,z2);
+      return cdiv(s,z4); }
+    if(cur==='h3'){ var d0=csub(z,o.z0); var dd=cmul(d0,d0); return cdiv(C(1,0),dd); }
+    if(cur==='h4'){ var d1=csub(z,o.z0); var dd1=cmul(d1,d1);
+      return cdiv(C(-z.im,z.re), dd1); }
+    return C(0,0);
+  }
+  function fact(k){ var r=1; for(var i=2;i<=k;i++) r*=i; return r; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    // 左: 图形
+    ctx.save(); ctx.translate(12,42);
+    var lim=Math.max(3.4, R*1.25);
+    var m1=mapperEq(halfW,H,-lim,lim,-lim*(H/halfW),lim*(H/halfW));
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    var inside=Math.hypot(o.z0.re,o.z0.im)<R;
+    if(inside){
+      dot(ctx,m1.px(o.z0.re),m1.py(o.z0.im),8,'#c62828','#fff');
+      tlabel(ctx,m1.px(o.z0.re)+11,m1.py(o.z0.im)+19,'z₀','#c62828','bold 13px Georgia');
+    } else {
+      dot(ctx,m1.px(o.z0.re),m1.py(o.z0.im),8,'#90a4ae','#fff');
+      tlabel(ctx,m1.px(o.z0.re)+11,m1.py(o.z0.im)+19,'z₀ (在圆外)','#78909c','bold 12px Segoe UI');
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'闭曲线 |z| = '+fmt(R)+'   '+(inside?'(奇点在圆内)':'(奇点在圆外)'),'#37474f','bold 13px Segoe UI');
+    // 数值积分
+    var N=4000, sum=C(0,0);
+    if(inside){
+      for(var i=0;i<N;i++){
+        var t0=TAU*i/N, t1=TAU*(i+1)/N, tm=(t0+t1)/2;
+        var zm=C(R*Math.cos(tm), R*Math.sin(tm));
+        var z1=C(R*Math.cos(t1), R*Math.sin(t1)), z2=C(R*Math.cos(t0), R*Math.sin(t0));
+        sum=cadd(sum, cmul(fval(zm), csub(z1,z2)));
+      }
+    }
+    // 右: 结果
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText('数值积分结果',16,20);
+    ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
+    ctx.fillText('Re = '+fmt(sum.re,4),16,52);
+    ctx.fillText('Im = '+fmt(sum.im,4),16,76);
+    if(inside){
+      var g0=o.gval(o.n, o.z0);
+      var k2=TAU/fact(o.n);
+      var th=C(-g0.im*k2, g0.re*k2);   // 乘 2πi: (a+bi)·2πi = −2πb + 2πa·i
+      ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#c62828';
+      ctx.fillText('理论 ≈ '+fmt(th.re,4)+(th.im>=0?' + ':' - ')+fmt(Math.abs(th.im),4)+'i',16,116);
+    } else {
+      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#2e7d32';
+      ctx.fillText('∮ = 0',16,116);
+    }
+    ctx.restore();
+    setRO('hcReadout',
+      hl2(o.lab)+' &nbsp;|&nbsp; '+o.note+'<br>'+
+      '当前圆周 $|z|='+fmt(R)+'$ &nbsp;|&nbsp; 奇点 $z_0='+fmt(o.z0.re)+'$ '+(inside?'<b style="color:#c62828">在圆内</b>':'<b style="color:#2e7d32">在圆外</b>')+'<br>'+
+      (inside
+        ? '由高阶导数公式 (取 $n='+o.n+'$, $g(z)='+o.g+'$):<br>$\\oint_C\\frac{g(z)}{(z-z_0)^{n+1}}\\mathrm{d}z=\\frac{2\\pi\\mathrm{i}}{n!}g^{('+o.n+')}(z_0)$<br>数值积分 $\\approx '+fmt(sum.re,4)+(sum.im<0?' − ':' + ')+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$'
+        : '奇点在圆外 ⇒ 被积函数在圆内解析 ⇒ 由柯西积分定理, '+hl('积分为 0')+'<br>(拖动滑块增大半径, 让奇点回到圆内, 积分值会突变!)'));
+  }
+  [['hcF1','h1'],['hcF2','h2'],['hcF3','h3'],['hcF4','h4']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('hcR',function(v){ R=v; badge('hcRV',fmt(v)); draw(); });
+  badge('hcRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 刘维尔定理 =================
+module('cvLiouville',function(cv){
+  var R=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var M=1;
+    // 左: 圆与 |f| 上界
+    ctx.save(); ctx.translate(12,42);
+    var lim=12.5;
+    var m1=mapperEq(halfW,H,-lim,lim,-lim*(H/halfW),lim*(H/halfW));
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    // 圆周上 |f| <= M 的示意
+    for(var k=0;k<48;k++){
+      var a0=TAU*k/48;
+      var pz=C(R*Math.cos(a0), R*Math.sin(a0));
+      ctx.fillStyle='rgba(46,125,50,.55)';
+      ctx.beginPath(); ctx.arc(m1.px(pz.re),m1.py(pz.im),3.5,0,TAU); ctx.fill();
+    }
+    dot(ctx,m1.px(0),m1.py(0),7,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+12,m1.py(0)+18,'z₀','#c62828','bold 12px Georgia');
+    tlabel(ctx,m1.px(0),m1.py(R*0.72),'|f| ≤ M = 1','#2e7d32','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'圆 |z−z₀| = R 上 |f| ≤ M (绿点)','#37474f','bold 13px Segoe UI');
+    // 右: 上界 M/R
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-0.5,12.5,-0.1,1.15);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'R','|f′(z₀)| 上界');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    for(var r2=0.1;r2<=12.5;r2+=0.05){
+      var ub=M/Math.max(r2,0.08);
+      if(ub>1.15) continue;
+      var px=m2.px(r2), py=m2.py(ub);
+      if(r2<=0.11) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    var cur=M/R;
+    if(cur<=1.15) dot(ctx,m2.px(R),m2.py(cur),7,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'柯西不等式: |f′(z₀)| ≤ M/R','#37474f','bold 13px Segoe UI');
+    setRO('lvReadout',
+      '设 $|f(z)|\\le M=1$ 在全平面成立 (有界解析函数)<br>'+
+      '柯西不等式 ($n=1$): $|f\'(z_0)|\\le\\frac{M}{R}=\\frac{1}{'+fmt(R)+'}='+hl(fmt(1/R,4))+'$<br>'+
+      (1/R<0.1
+        ? '<b>'+hl('上界已小于 0.1 —— 当 $R\\to\\infty$ 时它趋于 0, 故 $f\'(z_0)=0$')+'</b><br>由于 $z_0$ 任意, $f\'\\equiv 0$, 所以 $f$ 必为常数. 这就是刘维尔定理!'
+        : '继续增大 $R$, 观察上界如何趋近于零.<br>令 $R\\to\\infty$ 即可得 $f\'(z_0)=0$ —— 这正是刘维尔定理的证明.'));
+  }
+  bindSlider('lvR',function(v){ R=v; badge('lvRV',fmt(v)); draw(); });
+  badge('lvRV',fmt(R));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnLvAnim');
+  function lvBtnLabel(){ if(!ba) return; ba.innerHTML='▶ 让 $R\\to\\infty$';
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([ba]).catch(function(){}); }catch(e){} } }
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; lvBtnLabel(); return; }
+    anim=true; this.textContent='⏸ 停止'; R=1;
+    stopFn=animLoop(function(){
+      if(!anim){ lvBtnLabel(); return false; }
+      R*=1.06; if(R>12){ R=12; }
+      setSlider('lvR',R); badge('lvRV',fmt(R)); draw(); return R<11.9;
+    });
+  });
+  var br=document.getElementById('btnLvReset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; lvBtnLabel();
+    R=1; setSlider('lvR',1); badge('lvRV',fmt(1)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'高阶导数公式', c:'#1976d2', leaves:['$f^{(n)}(z_0)=\\frac{n!}{2\\pi\\mathrm{i}}\\oint\\frac{f}{(z-z_0)^{n+1}}\\,\\mathrm{d}z$','$n=0$ 时退化为柯西公式','分母幂次 = 阶数 + 1','实用方向: 由求导求积分','$\\oint\\frac{f}{(z-z_0)^{n+1}}\\,\\mathrm{d}z=\\frac{2\\pi\\mathrm{i}}{n!}f^{(n)}(z_0)$','解析函数无穷可微']},
+    {t:'公式的证明', c:'#e65100', leaves:['先证 $n=1$ 的情形','关键: 估计多余积分','|多余项| $\\le\\frac{|\\Delta z|ML}{\\pi d^3}\\to 0$','取 $d$ 与 $\\Delta z$ 的关系 $|\\Delta z|\u003cd/2$','再用数学归纳法推广','每一步都依赖估值不等式']},
+    {t:'典型应用', c:'#c62828', leaves:['例4.1(1): 结果 $-\\frac{\\pi^5\\mathrm{i}}{12}$','($n=4$, $f=\\cos\\pi z$)','例4.1(2): 两个奇点','先用复合闭路拆成两个小圈','再各自套用高阶导数公式','结果 $\\frac{\\pi}{2}(1-\\mathrm{i})(\\mathrm{e}^{\\mathrm{i}}-\\mathrm{i}\\mathrm{e}^{-\\mathrm{i}})$']},
+    {t:'重要推论 (拓展)', c:'#2e7d32', leaves:['柯西不等式 $|f^{(n)}(z_0)|\\le\\frac{n!M}{R^n}$','刘维尔定理: 有界解析 $\\Rightarrow$ 常数','证明: 令 $R\\to\\infty$','推论: 代数基本定理','莫雷拉定理 (柯西定理的逆)','解析 $\\iff$ 闭路积分为零']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第三章第四节 · 解析函数的高阶导数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 高阶导数公式 → 证明 → 典型应用 → 重要推论; 一句话: <b>分母加一次幂, 导数加一阶; 而"无穷可微"是解析函数最惊人的性质</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 6: 刘维尔定理的临界 (思政栏) =================
+module('cvLiouville2',function(cv){
+  var R=1;
+  var M=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    // 左: 复平面上的大圆
+    ctx.save(); ctx.translate(12,42);
+    var lim=20.5;
+    var m1=mapperEq(halfW,H,-lim,lim,-lim*(H/halfW),lim*(H/halfW));
+    grid(ctx,halfW,H,m1,5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
+    ctx.fillStyle='rgba(46,125,50,.09)';
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.fill();
+    dot(ctx,m1.px(0),m1.py(0),6,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+10,m1.py(0)+18,'z₀','#c62828','bold 12px Georgia');
+    tlabel(ctx,m1.px(0),m1.py(R+1.6),'R = '+fmt(R,1),'#1565c0','bold 13px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'半径 R 可以取得任意大 (f 在全平面解析)','#37474f','bold 13px Segoe UI');
+    // 右: 上界柱状
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText('柯西不等式给出的上界 M/R',16,20);
+    var ub=M/R;
+    var barH=Math.min(H-120, 260);
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.4;
+    ctx.strokeRect(40,60,60,barH);
+    var fill=Math.min(barH, barH*Math.min(1, ub/1.0));
+    ctx.fillStyle=ub<0.15?'#2e7d32':'#e65100';
+    ctx.fillRect(40,60+barH-fill,60,fill);
+    ctx.font='bold 15px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
+    ctx.fillText('M/R = '+fmt(ub,5),120,60+barH/2);
+    ctx.font='13px Segoe UI'; ctx.fillStyle='#78909c';
+    ctx.fillText('当 R → ∞ 时, 该上界 → 0',120,60+barH/2+26);
+    if(ub<0.05){
+      ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#2e7d32';
+      ctx.fillText('⇒ 只能有 f′(z₀) = 0',120,60+barH/2+52);
+    }
+    ctx.restore();
+    setRO('lv2Readout',
+      '设 $f$ 在全平面解析且 $|f|\\le M='+fmt(M)+'$ (有界)<br>'+
+      '柯西不等式 ($n=1$): $|f\'(z_0)|\\le\\frac{M}{R}=\\frac{'+fmt(M)+'}{'+fmt(R,1)+'}='+hl(fmt(ub,5))+'$<br>'+
+      (ub<0.05
+        ? '<b>'+hl('上界已趋近于零 ⇒ f′(z₀) = 0')+'</b><br>由于 $z_0$ 是任意的, 故 $f\'\\equiv 0$, 于是 $f$ 为常数 —— 这就是刘维尔定理.'
+        : '继续增大 $R$, 上界随之减小. 它的极限是 $0$ —— 这正是刘维尔定理证明的全部内容.')+'<br>'+
+      '对比: $\\mathrm{e}^z$ 在虚轴上有界 ($|\\mathrm{e}^{\\mathrm{i}y}|=1$), 但沿实轴 $|\\mathrm{e}^x|\\to\\infty$, 所以它<b>不是</b>全平面有界函数, 刘维尔定理对它无效.');
+  }
+  bindSlider('lv2R',function(v){ R=v; badge('lv2RV',fmt(v)); draw(); });
+  badge('lv2RV',fmt(R));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnLv2Anim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 扫描 R'; return; }
+    anim=true; this.textContent='⏸ 停止'; R=0.5;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 扫描 R'; return false; }
+      R*=1.05; if(R>20){ R=20; }
+      setSlider('lv2R',R); badge('lv2RV',fmt(R)); draw(); return R<19.9;
+    });
+  });
+  var br=document.getElementById('btnLv2Reset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; if(ba) ba.textContent='▶ 扫描 R';
+    R=1; setSlider('lv2R',1); badge('lv2RV',fmt(1)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  qs=qs.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'刘维尔花三年读懂并发表伽罗瓦的手稿. 这种"整理与传递"的工作, 为什么同样重要?',
+     hints:['一个思想如果没人能读懂, 就等于没有产生 —— 伽罗瓦的手稿被退回两次, 差点永远消失.',
+            '刘维尔不仅发表了手稿, 还写了详细评注, 帮助读者理解 —— 这是"降低理解门槛"的关键工作.',
+            '学术史上, 整理、校注、教科书编写这类工作, 往往是知识得以延续的实际载体.',
+            '可迁移的态度: 不要只追求"提出新想法", 也要有耐心去真正读懂前人的工作.']},
+    {q:'在实数域"可导"不蕴含"二阶可导", 而在复数域"可导"直接蕴含"无穷可微". 这种差别说明了什么?',
+     hints:['复变函数的可导要求更强 (差商沿任意路径的极限都相同), 要求的严格带来了结构的丰富.',
+            '这提示: 一个理论的性质, 很大程度上由它"定义时的严格程度"决定.',
+            '类似的情形在物理中也存在: 约束越强的系统, 往往有越多的对称性与守恒律.',
+            '可迁移的态度: 不要怕"定义太严" —— 严格性可能是获得强结论的前提.']},
+    {q:'刘维尔定理用"令 R → ∞"这一极限操作, 把局部估计变成了全局结论. 这种思路在别处也能见到吗?',
+     hints:['微积分中求无穷级数的和、求极限分布, 都是"让参数趋于极端"的做法.',
+            '物理中把系统推到热力学极限 (粒子数趋于无穷) 才能定义相变 —— 同样是极限操作.',
+            '工程中常用"渐近分析"处理大规模问题: 让规模趋于无穷来看主导项.',
+            '可迁移的态度: 当直接分析困难时, 试试让某个参数趋于极端, 结构往往会浮现出来.']},
+    {q:'刘维尔定理断言"全平面有界解析函数必为常数". 而 $\\mathrm{e}^z$ 看起来"很规矩", 为什么它不违反这条定理?',
+     hints:['$\\mathrm{e}^z$ 只在虚轴方向有界 ($|\\mathrm{e}^{\\mathrm{i}y}|=1$), 沿实轴方向 $|\\mathrm{e}^x|\\to\\infty$.',
+            '所以它不满足"全平面有界"这一前提 —— 定理对它自然无效.',
+            '这提醒我们: 应用任何定理前, 必须逐条核对前提条件是否满足.',
+            '可迁移的态度: 不要把"局部成立"误认为"全局成立".']},
+    {q:'从本章"柯西定理 → 柯西公式 → 高阶导数 → 泰勒展开 → 留数定理"的链条中, 你能得到什么关于"知识结构"的启示?',
+     hints:['每一层都以前一层为基础, 又为下一层提供工具 —— 这是典型的"金字塔式"知识结构.',
+            '第 1 层只有一行 (∮f dz = 0), 却支撑起了整座大厦.',
+            '学习时如果能看清这种结构, 就不必死记每个结论 —— 记住"从哪里长出来的"更有用.',
+            '可迁移的态度: 学习任何领域, 都先尝试画出它的"依赖关系图".']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

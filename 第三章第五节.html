@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章第五节 解析函数与调和函数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第三章 第5节 解析函数与调和函数</h1>
+    <p>拉普拉斯方程 &middot; 共轭调和函数 &middot; 偏积分法</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解<b>调和函数</b>的定义 (有二阶连续偏导数且满足拉普拉斯方程 $\Delta u=0$), 会验证给定函数是否为调和函数;
+2. 掌握<b>定理 5.1</b>: 解析函数的实部与虚部都是调和函数 —— 这是复分析与物理中的位势论之间的桥梁;
+3. 理解<b>共轭调和函数</b>的定义, 明确"$v$ 是 $u$ 的共轭调和函数"与"$u+\mathrm{i}v$ 解析"的等价关系;
+4. 掌握由已知调和函数求共轭调和函数从而构造解析函数的<b>两种方法</b>: <b>偏积分法</b>与<b>原函数法</b>;
+5. 理解调和函数在静电学、热传导与流体力学中的应用背景.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-3e" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-3e" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-3e" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-3e" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-3e" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-3e" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、调和函数的概念</label>
+    <label class="tab-btn" for="tab2" id="label2">二、与解析函数的关系</label>
+    <label class="tab-btn" for="tab3" id="label3">三、偏积分法</label>
+    <label class="tab-btn" for="tab4" id="label4">四、原函数法与方法对比</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 调和函数的概念 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 定义 5.1</div>
+
+<div class="box-think">
+<div class="think-label">思考: 复分析为什么要研究实值函数?</div>
+前面四节我们研究的都是复变函数. 但如果在复变函数 $f(z)=u+\mathrm{i}v$ 中<b>只看实部或虚部</b>, 就得到了两个二元实函数 $u(x,y)$ 与 $v(x,y)$.
+<br><br>
+有趣的是, 当 $f$ 解析时, $u$ 与 $v$ 并不是任意的实函数 —— 它们必须满足一个非常经典的偏微分方程: <b>拉普拉斯方程</b>. 而这个方程恰好是<b>静电场、稳态温度场、不可压缩无旋流动</b>共同遵循的方程.
+<br><br>
+于是, 复分析与整个数学物理搭建起了桥梁: <b>解析函数理论成了求解这些物理问题的天然工具.</b>
+</div>
+
+<div class="box-key">
+<div class="title">定义 5.1 (调和函数)</div>
+如果二元实函数 $\varphi(x,y)$ 在区域 $D$ 内有<b>二阶连续偏导数</b>, 且满足二维<b>拉普拉斯 (Laplace) 方程</b>
+<div class="box-formula">$$\frac{\partial^2\varphi}{\partial x^2}+\frac{\partial^2\varphi}{\partial y^2}=0,$$</div>
+则称 $\varphi(x,y)$ 为区域 $D$ 内的<b>调和函数</b>.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">记号与背景</div>
+拉普拉斯方程常简记为 $\Delta\varphi=0$, 其中
+<div class="box-formula">$$\Delta=\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}$$</div>
+称为<b>拉普拉斯算子</b>.
+<br><br>
+<b>物理背景:</b> 在无源区域中, 静电场的电位、稳态温度场的温度、不可压缩无旋流体的速度势, 都满足 $\Delta\varphi=0$. 因此调和函数有时也被称为"<b>位势函数</b>".
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.1</div>
+验证 $u(x,y)=y^3-3x^2y$ 为调和函数.
+<input type="checkbox" id="ans51" class="answer-toggle">
+<label for="ans51" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由于
+$$\frac{\partial u}{\partial x}=-6xy, \qquad \frac{\partial^2 u}{\partial x^2}=-6y,$$
+$$\frac{\partial u}{\partial y}=3y^2-3x^2, \qquad \frac{\partial^2 u}{\partial y^2}=6y,$$
+从而有
+$$\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=-6y+6y=0,$$
+故 $u(x,y)$ 为调和函数.
+<br><br>
+<span style="color:#c62828"><b>观察:</b></span> 这个 $u$ 恰好是 $f(z)=\mathrm{i}z^3$ 的实部 (稍后会看到 $f(z)=u+\mathrm{i}v$ 中的 $v=x^3-3xy^2+C$). 这不是巧合 —— 下一节的定理将说明, <b>解析函数的实部必然是调和函数</b>.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 验证拉普拉斯方程 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">选择不同的二元函数, 程序自动计算 $u_{xx}$ 与 $u_{yy}$, 并显示它们的和. <b>绿色</b>表示 $\Delta u=0$ (调和函数), <b>红色</b>表示不满足. 拖动探针查看任意点处的检验结果.</div>
+<canvas id="cvLaplaceCheck" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数:</label>
+<button class="control-btn" id="lcF1">$u=y^3-3x^2y$</button>
+<button class="control-btn" id="lcF2">$u=x^2-y^2$</button>
+<button class="control-btn" id="lcF3">$u=x^2+y^2$</button>
+<button class="control-btn" id="lcF4">$u=\mathrm{e}^x\sin y$</button>
+</div>
+<div class="readout" id="lcReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 与解析函数的关系 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 定理 5.1</div>
+
+<div class="box-key">
+<div class="title">定理 5.1</div>
+设函数 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 在区域 $D$ 内解析, 则 $f(z)$ 的实部 $u(x,y)$ 和虚部 $v(x,y)$ 都是区域 $D$ 内的<b>调和函数</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">证明</div>
+<input type="checkbox" id="ans52" class="answer-toggle">
+<label for="ans52" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+因 $f(z)$ 在区域 $D$ 内解析, 所以有 C—R 方程
+$$\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}, \qquad \frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}.$$
+且 $f(z)$ 在 $D$ 内有任意阶导数 (上一节的高阶导数公式), 从而 $u$ 与 $v$ 具有任意阶连续偏导数. 再对上述两式分别求偏导:
+$$\frac{\partial^2 u}{\partial x^2}=\frac{\partial^2 v}{\partial y\partial x}, \qquad \frac{\partial^2 u}{\partial y^2}=-\frac{\partial^2 v}{\partial x\partial y}.$$
+因 $\frac{\partial^2 v}{\partial y\partial x}=\frac{\partial^2 v}{\partial x\partial y}$ (二阶偏导连续时混合偏导相等), 于是
+$$\frac{\partial^2 u}{\partial x^2}+\frac{\partial^2 u}{\partial y^2}=0.$$
+同理
+$$\frac{\partial^2 v}{\partial x^2}+\frac{\partial^2 v}{\partial y^2}=0.$$
+因此, $u(x,y)$ 和 $v(x,y)$ 都是区域 $D$ 内的调和函数. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">证明的逻辑链条</div>
+这个证明清晰地串联了前面几节的内容:
+<br><br>
+&nbsp;&nbsp;<b>① 解析</b> $\Rightarrow$ C—R 方程成立;
+<br>
+&nbsp;&nbsp;<b>② 解析</b> $\Rightarrow$ 无穷可微 (上一节高阶导数公式) $\Rightarrow$ 二阶混合偏导可交换次序;
+<br>
+&nbsp;&nbsp;<b>③ C—R 方程 + 混合偏导可交换</b> $\Rightarrow$ $\Delta u=0$ 与 $\Delta v=0$.
+<br><br>
+<b>如果 $f$ 只"可导"而不"解析", 这条链条就断了</b> —— 因为那不能保证二阶偏导存在. 这再次体现了"解析"这一条件的力量.
+</div>
+
+<div class="sec-title">2.2 共轭调和函数</div>
+
+<div class="box-key">
+<div class="title">定义 5.2 (共轭调和函数)</div>
+设 $u(x,y)$ 为区域 $D$ 内给定的调和函数, 使 $u+\mathrm{i}v$ 在 $D$ 内构成<b>解析函数</b>的调和函数 $v(x,y)$ 称为 $u(x,y)$ 的<b>共轭调和函数</b>.
+<br><br>
+<b>注:</b> 区域 $D$ 内的解析函数的虚部为实部的共轭调和函数.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">三个必须注意的要点</div>
+<b>(1) "共轭"是有方向的:</b> $v$ 是 $u$ 的共轭调和函数, 但 $-u$ 才是 $v$ 的共轭调和函数 —— <b>不能随便交换顺序!</b>
+<br><br>
+原因: $u+\mathrm{i}v$ 解析, 而 $v+\mathrm{i}u$ 一般不解析 (除非 $f$ 为常数). 因为 $v+\mathrm{i}u=-\mathrm{i}(u+\mathrm{i}v)$, 乘 $-\mathrm{i}$ 会改变解析函数的性质.
+<br><br>
+<b>(2) 等价刻画:</b> "$v$ 是 $u$ 的共轭调和函数" $\iff$ "$u$ 与 $v$ 在 $D$ 内满足 C—R 方程" $\iff$ "$u+\mathrm{i}v$ 在 $D$ 内解析".
+<br><br>
+<b>(3) 存在性:</b> 在<b>单连通域</b>内, 给定调和函数 $u$, 它的共轭调和函数 $v$ 一定存在 (相差一个常数).
+</div>
+
+<div class="chart-container">
+<h3>交互: 由一阶偏导构造共轭调和函数 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">给定 $u(x,y)$, 程序按偏积分法的步骤: ① 由 $v_y=u_x$ 积分得 $v$ 的表达式 (含待定函数); ② 用 $v_x=-u_y$ 定出待定函数. 拖动滑块控制积分"走过的路径", 观察 $v$ 的等值线如何随 $u$ 的等值线一起构成正交网.</div>
+<canvas id="cvConjugate" data-h="440"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数 $u$:</label>
+<button class="control-btn" id="cjF1">$u=y^3-3x^2y$</button>
+<button class="control-btn" id="cjF2">$u=x^2-y^2$</button>
+<button class="control-btn" id="cjF3">$u=\mathrm{e}^x\cos y$</button>
+</div>
+<div class="row">
+<label>常数 $C$:</label>
+<input type="range" id="cjC" min="-2" max="2" step="0.1" value="0">
+<span class="val-badge" id="cjCV">0.0</span>
+</div>
+<div class="readout" id="cjReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 偏积分法 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 方法介绍</div>
+
+<div class="box-key">
+<div class="title">偏积分法</div>
+如果已知一个调和函数 $u$, 可用柯西—黎曼方程求得它的共轭调和函数 $v$, 从而构成一个解析函数 $u+\mathrm{i}v$. 这种方法称为<b>偏积分法</b>.
+<br><br>
+<b>操作步骤:</b>
+<br>&nbsp;&nbsp;<b>第一步:</b> 由 $\frac{\partial v}{\partial y}=\frac{\partial u}{\partial x}$ 对 $y$ 积分, 得 $v=\int\frac{\partial u}{\partial x}\mathrm{d}y+g(x)$, 其中 $g(x)$ 是待定的函数 (因为对 $y$ 积分时, $x$ 视作常数);
+<br>
+&nbsp;&nbsp;<b>第二步:</b> 把上式对 $x$ 求偏导, 代入 $\frac{\partial v}{\partial x}=-\frac{\partial u}{\partial y}$, 解出 $g'(x)$;
+<br>
+&nbsp;&nbsp;<b>第三步:</b> 积分得 $g(x)$, 从而得到 $v(x,y)$;
+<br>
+&nbsp;&nbsp;<b>第四步:</b> 写出 $f(z)=u+\mathrm{i}v$, 并尽量整理为 $z$ 的表达式.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.2</div>
+求例 5.1 中函数 $u(x,y)=y^3-3x^2y$ 的共轭调和函数 $v(x,y)$ 和由它们构成的解析函数.
+<input type="checkbox" id="ans53" class="answer-toggle">
+<label for="ans53" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由 $\frac{\partial v}{\partial y}=\frac{\partial u}{\partial x}=-6xy$ 得
+$$v=-6\int xy\,\mathrm{d}y=-3xy^2+g(x),$$
+于是
+$$\frac{\partial v}{\partial x}=-3y^2+g'(x).$$
+由 $\frac{\partial v}{\partial x}=-\frac{\partial u}{\partial y}=-3y^2+3x^2$ 得
+$$-3y^2+g'(x)=-3y^2+3x^2 \implies g'(x)=3x^2,$$
+故
+$$g(x)=\int 3x^2\mathrm{d}x=x^3+C \qquad (C \text{ 为任意常数}).$$
+因此共轭调和函数为
+$$v(x,y)=-3xy^2+x^3+C,$$
+从而解析函数为
+$$w=u+\mathrm{i}v=y^3-3x^2y+\mathrm{i}(x^3-3xy^2+C).$$
+整理为 $z$ 的表达式:
+$$w=f(z)=\mathrm{i}(x^3-3xy^2+\mathrm{i}\cdot 3x^2y-\mathrm{i}\,y^3+C)=\mathrm{i}(z^3+\mathrm{i}C)=\mathrm{i}z^3+iC.$$
+（验证: $z^3=x^3+3\mathrm{i}x^2y-3xy^2-\mathrm{i}y^3$, 故 $\mathrm{i}z^3=\mathrm{i}x^3-3x^2y-3\mathrm{i}xy^2+y^3$, 实部与虚部恰好对上.）
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.3</div>
+已知一调和函数 $v(x,y)=\mathrm{e}^x(y\cos y+x\sin y)+x+y$, 求一解析函数 $f(z)=u+\mathrm{i}v$, 使 $f(0)=0$.
+<input type="checkbox" id="ans54" class="answer-toggle">
+<label for="ans54" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+因为
+$$\frac{\partial v}{\partial x}=\mathrm{e}^x(y\cos y+x\sin y+\sin y)+1,$$
+$$\frac{\partial v}{\partial y}=\mathrm{e}^x(\cos y-y\sin y+x\cos y)+1.$$
+由 $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}=\mathrm{e}^x(\cos y-y\sin y+x\cos y)+1$, 对 $x$ 积分得
+$$u=\int\left[\mathrm{e}^x(\cos y-y\sin y+x\cos y)+1\right]\mathrm{d}x=\mathrm{e}^x(x\cos y-y\sin y)+x+g(y).$$
+由 $\frac{\partial v}{\partial x}=-\frac{\partial u}{\partial y}$ 得
+$$\frac{\partial v}{\partial x}=\mathrm{e}^x(y\cos y+x\sin y+\sin y)+1=\mathrm{e}^x(x\sin y+y\cos y+\sin y)-g'(y),$$
+故 $g'(y)=-1$, 从而 $g(y)=-y+C$ ($C$ 为任意实常数). 因此
+$$u=\mathrm{e}^x(x\cos y-y\sin y)+x-y+C.$$
+于是
+$$f(z)=u+\mathrm{i}v=\mathrm{e}^x(x\cos y-y\sin y)+x-y+C+\mathrm{i}\left[\mathrm{e}^x(y\cos y+x\sin y)+x+y\right].$$
+注意到
+$$(x+\mathrm{i}y)\mathrm{e}^x\mathrm{e}^{\mathrm{i}y}+(x+\mathrm{i}y)(1+\mathrm{i})+C=z\mathrm{e}^z+(1+\mathrm{i})z+C,$$
+故
+$$f(z)=z\mathrm{e}^z+(1+\mathrm{i})z+C.$$
+由 $f(0)=0$ 得 $C=0$, 从而所求解析函数为
+$$f(z)=z\mathrm{e}^z+(1+\mathrm{i})z.$$
+</div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">偏积分法的两个细节</div>
+<b>(1) "待定函数"是函数不是常数:</b> 由 $\frac{\partial v}{\partial y}=$ 某式 对 $y$ 积分时, 要注意"积分常数"其实可以是 $x$ 的<b>函数</b> $g(x)$ —— 因为对 $y$ 求偏导时 $g(x)$ 会被消掉.
+<br><br>
+<b>(2) 整理为 $z$ 的形式:</b> 得到 $f(z)=u+\mathrm{i}v$ 后, 通常还要把它写成 $z$ 的表达式 (如 $\mathrm{i}z^3$、$z\mathrm{e}^z$). 一个技巧是: <b>把 $x$ 换成 $\frac{z+\bar z}{2}$, $y$ 换成 $\frac{z-\bar z}{2\mathrm{i}}$ 后, 再令 $\bar z=0$</b> (因为解析函数中不含 $\bar z$).
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 原函数法与方法对比 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 原函数法</div>
+
+<div class="box-key">
+<div class="title">原函数法的原理</div>
+解析函数 $f(z)=u+\mathrm{i}v$ 的导数 $f'(z)$ 仍为解析函数, 且
+<div class="box-formula">$$f'(z)=u_x+\mathrm{i}v_x=u_x-\mathrm{i}u_y=v_y+\mathrm{i}v_x.$$</div>
+把 $u_x-\mathrm{i}u_y$ 与 $v_y+\mathrm{i}v_x$ 表示成自变量 $z$ 的函数:
+$$f'(z)=u_x-\mathrm{i}u_y=U(z), \qquad f'(z)=v_y+\mathrm{i}v_x=V(z),$$
+然后<b>求原函数</b>:
+<div class="box-formula">$$f(z)=\int U(z)\mathrm{d}z+C, \quad \text{其中 } C \text{ 为任意纯虚数};$$</div>
+<div class="box-formula">$$f(z)=\int V(z)\mathrm{d}z+C, \quad \text{其中 } C \text{ 为任意实常数}.$$</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">为什么常数 $C$ 有"纯虚"与"实"之分?</div>
+这是因为 $U(z)$ 与 $V(z)$ 的来源不同:
+<br><br>
+&nbsp;&nbsp;• 用 $U=u_x-\mathrm{i}u_y$ 积分时, 得到的是 $f$ 的表达式, 而 $u$ 已知 (实部已定), 所以只能通过加一个<b>纯虚数</b>来改变虚部 —— 故 $C$ 为纯虚数;
+<br>
+&nbsp;&nbsp;• 用 $V=v_y+\mathrm{i}v_x$ 积分时, $v$ 已知 (虚部已定), 只能通过加一个<b>实数</b>来改变实部 —— 故 $C$ 为实常数.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.4 (用原函数法解例 5.2)</div>
+已知 $u(x,y)=y^3-3x^2y$, 用原函数法求解析函数 $f(z)$.
+<input type="checkbox" id="ans55" class="answer-toggle">
+<label for="ans55" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+因为 $u(x,y)=y^3-3x^2y$, 故 $u_x=-6xy$, $u_y=3y^2-3x^2$. 于是
+$$f'(z)=U(z)=u_x-\mathrm{i}u_y=-6xy-\mathrm{i}(3y^2-3x^2)=3\mathrm{i}(x^2+2xy\mathrm{i}-y^2)=3\mathrm{i}z^2.$$
+这里用到了 $z^2=(x+\mathrm{i}y)^2=x^2+2xy\mathrm{i}-y^2$.
+<br><br>
+从而
+$$f(z)=\int 3\mathrm{i}z^2\mathrm{d}z=\mathrm{i}z^3+C_1, \qquad C_1 \text{ 为任意纯虚数}.$$
+故
+$$f(z)=\mathrm{i}(z^3+C), \qquad C \text{ 为任意实常数}, \ \mathrm{i}C=C_1.$$
+与此前偏积分法的结果一致.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.5 (用原函数法解例 5.3)</div>
+已知 $v(x,y)=\mathrm{e}^x(y\cos y+x\sin y)+x+y$, 用原函数法求解析函数 $f(z)$.
+<input type="checkbox" id="ans56" class="answer-toggle">
+<label for="ans56" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+因为 $v(x,y)=\mathrm{e}^x(y\cos y+x\sin y)+x+y$, 故
+$$f'(z)=v_y+\mathrm{i}v_x=\mathrm{e}^x(\cos y-y\sin y+x\cos y)+1+\mathrm{i}\left[\mathrm{e}^x(y\cos y+x\sin y+\sin y)+1\right]$$
+$$=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)+\mathrm{i}(x+\mathrm{i}y)\mathrm{e}^x\sin y+(x+\mathrm{i}y)\mathrm{e}^x\cos y+1+\mathrm{i}$$
+$$=\mathrm{e}^{x+\mathrm{i}y}+(x+\mathrm{i}y)\mathrm{e}^{x+\mathrm{i}y}+1+\mathrm{i}=\mathrm{e}^z+z\mathrm{e}^z+1+\mathrm{i}.$$
+于是
+$$f(z)=\int(\mathrm{e}^z+z\mathrm{e}^z+1+\mathrm{i})\mathrm{d}z=z\mathrm{e}^z+(1+\mathrm{i})z+C,$$
+其中 $C$ 为任意实常数. 与偏积分法结果一致.
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.2 两种方法的对比</div>
+
+<div class="box-result">
+<div class="res-label">偏积分法 vs 原函数法</div>
+<table class="value-table">
+<tr><th>比较项</th><th>偏积分法</th><th>原函数法</th></tr>
+<tr><td>核心工具</td><td>C—R 方程 + 偏积分</td><td>导数公式 + 求原函数</td></tr>
+<tr><td>主要步骤</td><td>积分 → 定待定函数 $g(x)$ → 得 $v$</td><td>写出 $f'(z)$ → 积分得 $f(z)$</td></tr>
+<tr><td>优点</td><td>过程直观, 不易出错; 适合初学者</td><td>步骤少, 计算快; 直接得到 $z$ 的表达式</td></tr>
+<tr><td>难点</td><td>要多算一次偏导以定 $g(x)$</td><td>需要熟练地把 $U(z)$ 整理成 $z$ 的函数</td></tr>
+<tr><td>常数</td><td>积分常数 $C$ 为实常数</td><td>用 $U$ 时 $C$ 为纯虚数; 用 $V$ 时 $C$ 为实常数</td></tr>
+<tr><td>适用</td><td>两个方向都可以 (已知 $u$ 或 $v$)</td><td>两个方向都可以</td></tr>
+</table>
+<b>建议:</b> 初学时先用偏积分法把步骤走通; 熟练之后可以试用原函数法, 计算量更小.
+</div>
+
+<div class="chart-container">
+<h3>交互: 两种方法的路径对比 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">点击"播放"可以看到两条路径的对比: 偏积分法走"积分 → 求导 → 定系数 → 再积分"; 原函数法走"求偏导 → 组合成 $f'(z)$ → 一次积分". 拖动滑块控制动画进度.</div>
+<canvas id="cvMethod" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>动画进度:</label>
+<input type="range" id="mtP" min="0" max="1" step="0.01" value="1">
+<span class="val-badge" id="mtPV">1.00</span>
+<button class="control-btn" id="btnMtAnim">▶ 播放对比</button>
+<button class="control-btn" id="btnMtReset">↻ 重置</button>
+</div>
+<div class="readout" id="mtReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>调和函数定义</b> → <b>解析函数与调和函数</b> → <b>共轭调和函数</b> → <b>偏积分法</b> → <b>原函数法</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+二阶偏导连续且, 拉普拉斯等于零;<br>
+此即调和函数定义, 位势场中常见它.<br>
+解析函数实虚部, 必是调和函数俩;<br>
+共轭调节有方向, v 是 u 的不能反.<br>
+偏积分法求共轭, 先积后导再配方;<br>
+原函数法更简洁, 求导拼成 f′ 一积分.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心结论/公式</th><th>要点与易错</th></tr>
+<tr><td>调和函数</td><td>$\varphi_{xx}+\varphi_{yy}=0$</td><td>需有二阶连续偏导数</td></tr>
+<tr><td>定理 5.1</td><td>$f=u+\mathrm{i}v$ 解析 $\Rightarrow$ $u,v$ 都是调和函数</td><td>证明用 C—R + 混合偏导相等</td></tr>
+<tr><td>反命题</td><td><b>不成立!</b> $u,v$ 调和 $\not\Rightarrow$ $u+\mathrm{i}v$ 解析</td><td>还需满足 C—R 方程</td></tr>
+<tr><td>共轭调和函数</td><td>$v$ 是 $u$ 的共轭调和函数 $\iff$ $u+\mathrm{i}v$ 解析</td><td>方向不能交换 ($-u$ 才是 $v$ 的)</td></tr>
+<tr><td>例 5.1</td><td>$u=y^3-3x^2y$ 是调和函数</td><td>$\Delta u=-6y+6y=0$</td></tr>
+<tr><td>例 5.2 (偏积分)</td><td>$v=-3xy^2+x^3+C$, $f=\mathrm{i}z^3+\mathrm{i}C$</td><td>注意待定函数 $g(x)$</td></tr>
+<tr><td>例 5.3 (偏积分)</td><td>$f=z\mathrm{e}^z+(1+\mathrm{i})z$</td><td>由 $f(0)=0$ 定常数</td></tr>
+<tr><td>例 5.4 (原函数)</td><td>$f'(z)=3\mathrm{i}z^2\Rightarrow f=\mathrm{i}z^3+C_1$</td><td>$C_1$ 为纯虚数</td></tr>
+<tr><td>例 5.5 (原函数)</td><td>$f'(z)=\mathrm{e}^z+z\mathrm{e}^z+1+\mathrm{i}\Rightarrow f=z\mathrm{e}^z+(1+\mathrm{i})z+C$</td><td>$C$ 为实常数</td></tr>
+<tr><td>物理意义</td><td>静电势、稳态温度、无旋流速度势</td><td>边值问题与泊松积分公式</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 调和函数的定义中, 要求函数满足?</div>
+<label class="quiz-opt">A. 一阶偏导连续</label>
+<label class="quiz-opt" data-ok="1">B. 二阶偏导连续且 $u_{xx}+u_{yy}=0$</label>
+<label class="quiz-opt">C. $u_x=u_y$</label>
+<label class="quiz-opt">D. $u_{xx}-u_{yy}=0$</label>
+<div class="quiz-explain"><b>解析:</b> 调和函数要求有二阶连续偏导数, 且满足拉普拉斯方程 $u_{xx}+u_{yy}=0$. 注意是"加"而不是"减".</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 关于解析函数的实部与虚部, 正确的是?</div>
+<label class="quiz-opt">A. 实部是调和函数, 虚部一般不是</label>
+<label class="quiz-opt" data-ok="1">B. 实部与虚部都是调和函数</label>
+<label class="quiz-opt">C. 二者都不一定是调和函数</label>
+<label class="quiz-opt">D. 虚部是实部的共轭, 但不一定调和</label>
+<div class="quiz-explain"><b>解析:</b> 定理 5.1: $f=u+\mathrm{i}v$ 解析 $\Rightarrow$ $u$ 与 $v$ 都是调和函数. 证明用 C—R 方程与混合偏导相等.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 反过来, 若 $u,v$ 都是调和函数, 则 $u+\mathrm{i}v$ 一定解析吗?</div>
+<label class="quiz-opt">A. 一定解析</label>
+<label class="quiz-opt" data-ok="1">B. 不一定, 还需 $u,v$ 满足 C—R 方程</label>
+<label class="quiz-opt">C. 一定不解析</label>
+<label class="quiz-opt">D. 只在单连通域内解析</label>
+<div class="quiz-explain"><b>解析:</b> 定理 5.1 的逆命题不成立! 例如 $u=x$, $v=y$ 都是调和函数, 但 $u+\mathrm{i}v=z$ 解析 (满足 C—R); 而 $u=x$, $v=-y$ 也调和, 但 $u+\mathrm{i}v=\bar z$ <b>不解析</b> (不满足 C—R). 可见还需要 C—R 条件.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 若 $v$ 是 $u$ 的共轭调和函数, 则 $u$ 是 $v$ 的共轭调和函数吗?</div>
+<label class="quiz-opt">A. 是</label>
+<label class="quiz-opt" data-ok="1">B. 不是, $-u$ 才是 $v$ 的共轭调和函数</label>
+<label class="quiz-opt">C. 只有 $u$ 为常数时才是</label>
+<label class="quiz-opt">D. 无法判断</label>
+<div class="quiz-explain"><b>解析:</b> $v$ 是 $u$ 的共轭调和函数意味着 $u+\mathrm{i}v$ 解析. 但要 $u$ 成为 $v$ 的共轭调和函数需要 $v+\mathrm{i}u$ 解析, 而 $v+\mathrm{i}u=-\mathrm{i}(u+\mathrm{i}v)$ 一般不解析. 实际上是 $v+\mathrm{i}(-u)$ 解析. 所以 $-u$ 是 $v$ 的共轭调和函数. <b>方向不能交换!</b></div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. $u(x,y)=x^2+y^2$ 是调和函数吗?</div>
+<label class="quiz-opt">A. 是</label>
+<label class="quiz-opt" data-ok="1">B. 不是, $\Delta u=2+2=4\neq 0$</label>
+<label class="quiz-opt">C. 只在原点处是</label>
+<label class="quiz-opt">D. 无法判断</label>
+<div class="quiz-explain"><b>解析:</b> $u_{xx}=2$, $u_{yy}=2$, 故 $\Delta u=4\neq0$, 不是调和函数. 对比: $u=x^2-y^2$ 满足 $\Delta u=2-2=0$, 是调和函数 (它是 $z^2$ 的实部).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 用偏积分法由 $u$ 求 $v$ 时, 第一步 $\int\frac{\partial u}{\partial x}\mathrm{d}y$ 得到的"积分常数"应该是?</div>
+<label class="quiz-opt">A. 一个常数 $C$</label>
+<label class="quiz-opt" data-ok="1">B. 一个待定的函数 $g(x)$</label>
+<label class="quiz-opt">C. 一个待定的函数 $g(y)$</label>
+<label class="quiz-opt">D. 不需要常数</label>
+<div class="quiz-explain"><b>解析:</b> 对 $y$ 积分时 $x$ 视为常数, 所以"积分常数"可以是 $x$ 的任意函数 $g(x)$ —— 因为对 $y$ 求偏导时 $g(x)$ 会消失.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 若 $u=y^3-3x^2y$, 则 $\frac{\partial v}{\partial y}=?$</div>
+<label class="quiz-opt">A. $3y^2-3x^2$</label>
+<label class="quiz-opt" data-ok="1">B. $-6xy$</label>
+<label class="quiz-opt">C. $6xy$</label>
+<label class="quiz-opt">D. $3y^2$</label>
+<div class="quiz-explain"><b>解析:</b> 由 C—R 方程 $\frac{\partial v}{\partial y}=\frac{\partial u}{\partial x}$. 而 $u_x=\frac{\partial}{\partial x}(y^3-3x^2y)=-6xy$. 故答案为 $-6xy$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 已知 $u=x^2-y^2$, 则它的共轭调和函数 $v=?$</div>
+<label class="quiz-opt">A. $x^2+y^2+C$</label>
+<label class="quiz-opt" data-ok="1">B. $2xy+C$</label>
+<label class="quiz-opt">C. $-2xy+C$</label>
+<label class="quiz-opt">D. $y^2-x^2+C$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $v_y=u_x=2x$ 得 $v=2xy+g(x)$; 再由 $v_x=-u_y=2y$ 得 $2y+g'(x)=2y$, 故 $g'(x)=0$, $g(x)=C$. 所以 $v=2xy+C$, 对应解析函数 $f=z^2+\mathrm{i}C$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 用原函数法时, $f'(z)=u_x-\mathrm{i}u_y$, 积分后所得的常数 $C$ 应为?</div>
+<label class="quiz-opt">A. 任意实常数</label>
+<label class="quiz-opt" data-ok="1">B. 任意纯虚数</label>
+<label class="quiz-opt">C. 任意复数</label>
+<label class="quiz-opt">D. 只能是零</label>
+<div class="quiz-explain"><b>解析:</b> 用 $U(z)=u_x-\mathrm{i}u_y$ 积分时, 实部 $u$ 已经确定, 只能通过加一个纯虚数来改变虚部, 故 $C$ 为纯虚数. 若用 $V(z)=v_y+\mathrm{i}v_x$ 则以虚部为准, $C$ 为实常数.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 设 $u(x,y)=\mathrm{e}^x\cos y$, 用<b>原函数法</b>求解析函数 $f(z)$ 时, $f'(z)=u_x-\mathrm{i}u_y$ 等于?</div>
+<label class="quiz-opt" data-ok="1">A. $\mathrm{e}^z$</label>
+<label class="quiz-opt">B. $\mathrm{e}^{\bar z}$</label>
+<label class="quiz-opt">C. $\mathrm{e}^x$</label>
+<label class="quiz-opt">D. $\mathrm{i}\mathrm{e}^z$</label>
+<div class="quiz-explain"><b>解析:</b> $u_x=\mathrm{e}^x\cos y$, $u_y=-\mathrm{e}^x\sin y$, 故 $f'(z)=u_x-\mathrm{i}u_y=\mathrm{e}^x\cos y+\mathrm{i}\mathrm{e}^x\sin y=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)=\mathrm{e}^z$. 再积分得 $f(z)=\mathrm{e}^z+C$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>我不需要那个假设</h3>
+<div class="hero-sub">当皇帝问他为什么著作里没有提到上帝时, 他给出了科学史上最著名的一句回答.</div>
+<div class="hero-quote">
+拉普拉斯方程 $\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}=0$ 至今刻画着静电场、温度场与流场.<br>
+<b>而它在复分析中的化身 —— "解析函数的实部与虚部都是调和函数" —— 正是本节的核心结论.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 拉普拉斯: 从农家子弟到"法国的牛顿"</div>
+
+<div class="person-card">
+<div class="p-av">拉</div>
+<div class="p-main">
+<div class="p-name">皮埃尔-西蒙·拉普拉斯 (Pierre-Simon Laplace, 1749—1827)</div>
+<div class="p-meta">法国数学家、天文学家、物理学家 · 法兰西科学院院士 · 《天体力学》作者 · 拉普拉斯方程与拉普拉斯变换的提出者 · 概率论的奠基者之一</div>
+<p>他出生在诺曼底一个普通的农家, 父亲是个小农场主兼苹果酒商. 没有人预料到, 这个乡村少年会成为 19 世纪初法国科学界的领袖人物, 被时人称为"<b>法国的牛顿</b>".</p>
+<p>他的名字被用来命名的东西极多: <b>拉普拉斯方程</b> (本节的核心)、<b>拉普拉斯变换</b> (工程数学的支柱)、<b>拉普拉斯算子</b>、<b>拉普拉斯分布</b>、<b>拉普拉斯展开</b> (行列式)、<b>拉普拉斯妖</b> (决定论的著名思想实验)…… 一个人的名字能在这么多领域留下印记, 在科学史上屈指可数.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 农家子弟的数学之路</h5>
+<p>1749 年 3 月, 拉普拉斯出生于法国诺曼底地区的一个小村庄. 家境并不富裕, 但他从小显示出极强的计算才能. 一位邻居乡绅发现了他的天赋, 资助他进入卡昂大学学习.</p>
+<p>1768 年, 19 岁的拉普拉斯带着一封推荐信来到巴黎, 求见当时已经大名鼎鼎的<b>达朗贝尔</b>. 据说达朗贝尔起初并未重视这个年轻人, 随手出了一道题打发他. 拉普拉斯当晚就把题目完美解出, 第二天再访, 达朗贝尔大为惊叹, 当场决定为他谋得巴黎军事学校的教职 —— <b>这是拉普拉斯科学道路的真正起点.</b></p>
+<p>有趣的是: 本课程第二章第一节介绍的达朗贝尔, 正是这位拉普拉斯的"伯乐". 数学史上这样的师承链条, 往往比想象中更紧密.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>《天体力学》: 用数学写完整个太阳系</h5>
+<p>拉普拉斯最重要的著作是五卷本的《天体力学》(<i>Traité de mécanique céleste</i>, 1799—1825). 在这部巨著中, 他试图<b>用数学完整地解释太阳系的运动</b>: 行星的轨道、月球的运动、潮汐、行星形状、摄动理论……</p>
+<p>其中最著名的一个成果是: 他证明了<b>太阳系的稳定性</b> —— 行星轨道的长轴只有周期性变化, 不会无限增大或减小. 这在当时是一个悬而未决的大问题.</p>
+<p>他还提出了著名的"<b>星云假说</b>", 认为太阳系是由一团旋转的星云凝聚而成的 —— 这个思想深刻影响了 19 世纪的天文学与自然观.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>拉普拉斯方程: 位势论的核心</h5>
+<p>1782 年前后, 拉普拉斯在研究引力势与静电势时, 得到了那个描述"无源场"的偏微分方程:
+<div class="box-formula">$$\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}+\frac{\partial^2u}{\partial z^2}=0.$$</div>
+</p>
+<p>他发现: 在<b>没有质量源或电荷源</b>的区域里, 引力势与静电势都满足这个方程. 后人把满足该方程的函数称为"<b>调和函数</b>"(harmonic function) —— 本节的全部内容, 都建立在拉普拉斯的这个方程之上.</p>
+<p>后来泊松把方程推广到"有源"的情形 ($\Delta u=f$), 得到了<b>泊松方程</b>. 二者合起来, 构成了整个位势论的基础.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>那次著名的回答</h5>
+<p>拉普拉斯与拿破仑有一段广为流传的对话. 拿破仑翻阅了《天体力学》后, 问他:</p>
+<p><b>"拉普拉斯先生, 你在书中写了宇宙的体系, 却一次都没有提到宇宙的创造者 —— 这是为什么?"</b></p>
+<p>据记载, 拉普拉斯挺直身子, 回答道:</p>
+<p><b>"陛下, 我不需要那个假设。"</b> (Sire, je n'avais pas besoin de cette hypothèse.)</p>
+<p>这句话后来成了科学史上最著名的宣言之一 —— 它表达的不是对信仰的轻视, 而是<b>一种方法论的自觉: 在科学解释中, 应当只使用必要的假设。</b></p>
+<p>传说拿破仑把这件事告诉了拉格朗日, 拉格朗日说: "啊! 那是上帝的一个漂亮假设, 它可以解释很多东西." 拉普拉斯则回答: "<b>这个假设确实可以解释任何东西, 但正因如此, 它什么也预言不了。</b>"</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>拉普拉斯在政治上极为"灵活" —— 他先后在路易十六、法国大革命、拿破仑帝国与波旁复辟四个政权下都获得了高位. 这让他在后世评价中颇受争议. 但无论政治立场如何, 他的数学与天文学贡献始终无可动摇. <b>这提醒我们: 评价一位学者的工作, 应当与他的人生选择分开来看 —— 前者属于人类共同的知识财富, 后者属于时代与个人。</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 一场关于世界的对话: 决定论 vs 自由意志</div>
+<div class="cc-side"><b>拉普拉斯的立场 (决定论):</b> 他在《概率的哲学导论》中提出了著名的"<b>拉普拉斯妖</b>"思想实验: 如果有一个智慧体知道宇宙中所有粒子的当前位置与速度, 它就能用牛顿定律推算出宇宙的全部过去与未来 —— 一切都是确定的.</div>
+<div class="cc-side"><b>反对的声音:</b> 这一图景意味着自由意志只是幻觉. 而且它假设了"无限精度"的测量能力.</div>
+<div class="cc-side"><b>科学的后来发展:</b> 20 世纪的量子力学从根本上挑战了决定论 (测不准原理); 混沌理论也证明: 即使规律完全确定, 初始条件的微小差异也会导致长期行为的完全不可预测.</div>
+<div class="cc-side"><b>历史结论:</b> 拉普拉斯的决定论在物理上被修正了, 但它<b>作为科学方法论的样板意义深远</b> —— 它代表了一种信念: 世界是可以被理性理解的. 而正是这种信念, 推动了整个近代科学的发展.</div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 一条方程如何连接数学与物理</div>
+本节的定理 5.1 说: <b>解析函数的实部与虚部都是调和函数</b>.
+<br><br>
+而拉普拉斯方程 $\Delta u=0$ 说的是: <b>在无源区域中, 电位、温度、速度势都满足它</b>.
+<br><br>
+把两者连起来, 就得到一个强大的方法: <b>要解一个静电场的边值问题, 可以去找一个解析函数, 把它的实部或虚部当作电位</b>.
+<br><br>
+这种"<b>把物理问题转化为复分析问题</b>"的思路, 在工程中极为有效 —— 例如用<b>保角映射</b>把复杂的几何区域"变"成简单的圆盘或上半平面, 在那里求解后再映射回来. 这正是机翼绕流分析 (儒科夫斯基变换)、电场计算与热传导分析中的经典方法.
+<br><br>
+<b>一条 18 世纪写下的方程, 至今仍在为 21 世纪的工程问题提供解法。</b>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 拉普拉斯论科学方法</div>
+在《概率的哲学导论》的开篇, 他写下了科学史上最著名的一段关于决定论的表述:
+"<em>我们应该把宇宙的现状看作它过去的结果和未来的原因. 一个足够的智慧, 如果能够知道所有自然界的力以及所有物体的位置, 就能用一个公式概括宇宙中最大物体与最微小原子的运动; 对它来说, 没有什么是不确定的, 未来与过去同样清晰地呈现在眼前.</em>"
+<br>
+而在谈到科学与假设的关系时, 他表达了另一种更重要的态度:
+"<em>在科学中, 我们应当只引入必要的假设 —— 因为每一个多余的假设都会削弱理论的解释力。</em>"
+<span class="iv-sig">—— 后一句话比他更著名的决定论思想, 对今天的科研工作更有指导意义。</span>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">数学物理</div>提出拉普拉斯方程 (位势论的核心) 与拉普拉斯算子; 拉普拉斯变换则是工程数学与信号处理的基本工具.</div>
+<div class="legacy-item"><div class="lg-t">天文学</div>五卷本《天体力学》系统用数学解释太阳系; 证明太阳系的稳定性; 提出星云假说.</div>
+<div class="legacy-item"><div class="lg-t">概率论</div>《概率的分析理论》把概率论系统化、分析化; 提出拉普拉斯分布、拉普拉斯展开 (行列式); 给出中心极限定理的重要早期形式.</div>
+<div class="legacy-item"><div class="lg-t">科学方法</div>"我不需要那个假设"成为科学方法论的标志性表述; 关于"假设应尽量减少"的观点至今指导着理论构建.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+拉普拉斯出身农家, 靠一道题的解答获得了达朗贝尔的赏识, 从此走上科学道路; 而他的拉普拉斯方程, 又成了 19 世纪位势论与复分析交汇的枢纽.
+<br><br>
+两件事合起来说明一个道理: <b>知识的影响是沿着"人"与"思想"两条线索同时传播的.</b> 达朗贝尔发现拉普拉斯, 拉普拉斯写出影响两百年的方程; 而本节又把这条方程与复分析连在一起 —— <b>学科之间的桥梁, 正是由这样一代代的接力搭建起来的。</b>
+<br><br>
+这也提示我们: 在学习时, 不妨留意知识之间的"人物线索" —— 谁影响了谁, 谁又把哪两个领域连了起来. 这往往比孤立地记忆定理更有收获.
+</div>
+
+<div class="chart-container">
+<h3>交互: 调和函数的平均值性质 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">调和函数有一个重要性质 (与解析函数的平均值公式相通): <b>它在圆心的值等于它在圆周上的平均值</b>. 拖动滑块改变圆周半径, 观察圆心值与圆周平均值始终相等. 这正是拉普拉斯方程"平滑性"的体现 —— 调和函数不能在内部取到极值.</div>
+<canvas id="cvHarmMean" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数 $u$:</label>
+<button class="control-btn" id="hmF1">$u=x^2-y^2$</button>
+<button class="control-btn" id="hmF2">$u=\mathrm{e}^x\cos y$</button>
+<button class="control-btn" id="hmF3">$u=\ln\sqrt{x^2+y^2}$</button>
+</div>
+<div class="row">
+<label>半径 $R$:</label>
+<input type="range" id="hmR" min="0.2" max="1.6" step="0.02" value="1">
+<span class="val-badge" id="hmRV">1.00</span>
+</div>
+<div class="readout" id="hmReadout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 拉普拉斯生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1749</span><span class="tl-title">出生于法国诺曼底, 农家子弟</span></div>
+<div class="tl-body">得到乡绅资助进入卡昂大学, 显示出极强的计算才能.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1768</span><span class="tl-title">19 岁赴巴黎, 获达朗贝尔赏识</span></div>
+<div class="tl-body">据说他当晚解出了达朗贝尔出的难题, 从而获得巴黎军事学校的教职 —— 科学生涯的起点.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1782</span><span class="tl-title">提出拉普拉斯方程</span></div>
+<div class="tl-body">在研究引力势与静电势时得到 $\Delta u=0$, 成为位势论与调和函数理论的基础.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1799—1825</span><span class="tl-title">出版五卷本《天体力学》</span></div>
+<div class="tl-body">用数学系统解释太阳系运动, 证明太阳系的稳定性, 提出星云假说.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1812</span><span class="tl-title">出版《概率的分析理论》</span></div>
+<div class="tl-body">把概率论系统化、分析化, 提出拉普拉斯变换等强大工具.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1827</span><span class="tl-title">逝世于巴黎, 享年 77 岁</span></div>
+<div class="tl-body">临终前留下那句著名的话: "我们所知甚少, 而未知的却是无限."</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 调和函数理论的现代延伸</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1782—1813</span><span class="tl-title">拉普拉斯与泊松: 位势论建立</span></div>
+<div class="tl-body">拉普拉斯方程与泊松方程成为静电学、引力论与热传导的共同基础.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1851</span><span class="tl-title">黎曼: 用复分析研究调和函数</span></div>
+<div class="tl-body">黎曼把调和函数与解析函数的实虚部对应起来, 并用保角映射求解边值问题 (狄利克雷原理).</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">19 世纪末</span><span class="tl-title">调和函数的极值原理与边值问题</span></div>
+<div class="tl-body">调和函数不能在内部取到极值 (最大值原理); 狄利克雷问题 (给定边界值求内部解) 成为位势论的核心问题.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">20 世纪</span><span class="tl-title">调和分析: 从调和函数到傅里叶分析</span></div>
+<div class="tl-body">"调和分析"这一学科名称正来自"调和函数"; 傅里叶级数、傅里叶变换与调和函数有着深刻的联系 —— 这是本课程后半部分的内容.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">今天</span><span class="tl-title">从电磁仿真到图像处理</span></div>
+<div class="tl-body">调和函数与拉普拉斯方程用于电磁场仿真、热传导计算、流体力学、图像修复 (inpainting) 与机器学习中的图拉普拉斯算子.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 只引入必要的假设</div>
+拉普拉斯那句"我不需要那个假设", 常被理解为对宗教的挑战. 但从科学方法论的角度看, 它表达的是一种极为重要的原则: <b>在构建理论时, 应当只引入必要的假设 —— 因为每一个多余的假设都会削弱理论的解释力。</b>
+<br><br>
+这与前几节的主题一脉相承: 古萨去掉了柯西定理中多余的"$f'$ 连续"假设; 而柯西—黎曼方程用两条偏微分关系刻画了"可导"这一强要求. <b>数学的进步, 常常就是"把假设减到最少"的过程。</b>
+<br><br>
+在学习与研究中, 这提示我们: <b>当你能说清一个结论"究竟依赖哪些条件"时, 你才真正掌握了它。</b>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从调和函数看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>实部与虚部: 一对互相规定的伙伴</h4>
+<p>由定理 5.1 与共轭调和函数的定义: $u$ 与 $v$ 都是调和函数, 而且它们通过 C—R 方程互相规定 —— 知道 $u$ 就能求出 $v$ (相差常数), 反之亦然.</p>
+<p>这正是<b>对立面相互依存、相互规定</b>的数学写照: 两者缺一不可, 合起来才构成一个解析函数.</p>
+<div class="pc-math">$u$ 与 $v$ 互为共轭调和函数 $\iff$ $u+\mathrm{i}v$ 解析</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>圆心值 = 圆周均值: 局部的"不可突出"</h4>
+<p>调和函数有一个重要性质: 圆心处的值等于圆周上的平均值. 由此立即推出<b>最大值原理</b> —— 调和函数在内部取不到极值, 极值只能出现在边界上.</p>
+<p>这是<b>局部无法超越整体</b>的体现, 也是狄利克雷问题"边界条件决定内部解"的根本原因.</p>
+<div class="pc-math">$u(z_0)=\frac{1}{2\pi}\int_0^{2\pi}$<br>$u(z_0+R\mathrm{e}^{\mathrm{i}\theta})\,\mathrm{d}\theta$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>一条方程, 三个物理领域</h4>
+<p>拉普拉斯方程 $\Delta u=0$ 同时描述: 无源区域的静电场电位、稳态温度场的温度、不可压缩无旋流动的速度势.</p>
+<p>三个领域的物理机制完全不同, 却共享同一个数学结构. <b>识别出共同结构, 就能把一个领域的方法迁移到另外两个领域。</b></p>
+<div class="pc-math">静电场 · 稳态温度 · 无旋流 &nbsp;$\longleftarrow$&nbsp; $\Delta u=0$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>定理 5.1 的逆命题为什么不成立?</h4>
+<p>定理说"解析 $\Rightarrow$ 实虚部调和", 但反过来"实虚部调和 $\Rightarrow$ 解析"<b>不成立</b> —— 还需要 C—R 方程.</p>
+<p>反例: $u=x$, $v=-y$ 都是调和函数, 但 $u+\mathrm{i}v=\bar z$ 不解析.</p>
+<p>这提醒我们: <b>必要条件不等于充分条件</b>; 想把结论反过来用, 必须补上缺失的条件.</p>
+<div class="pc-math">$u,v$ 调和 $\not\Rightarrow$ $u+\mathrm{i}v$ 解析 &nbsp;(还需 C—R)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">内容与形式</div>
+<h4>两种方法, 同一结果</h4>
+<p>偏积分法与原函数法在思路上完全不同 (一个从 C—R 方程出发积分, 一个从导数公式出发求原函数), 但得到的解析函数完全相同.</p>
+<p>这体现了数学的<b>内在一致性</b>: 不同的路径通向同一个客观结果. 也正因为如此, 我们可以选择计算量更小的那条路.</p>
+<div class="pc-math">偏积分法 $\to$ $f$ &nbsp;&nbsp;|&nbsp;&nbsp; 原函数法 $\to$ $f$ &nbsp;(结果相同)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>边界条件决定内部解</h4>
+<p>由泊松积分公式 (上一节), 调和函数在圆内的值完全由边界值决定; 而由最大值原理, 极值只能在边界上取得.</p>
+<p>这说明: <b>求解区域内的物理场, 关键在把握边界条件 —— 这正是所有边值问题数值方法 (有限元、边界元) 的核心思想。</b></p>
+<div class="pc-math">边值问题: 给定 $\partial D$ 上的值 $\Rightarrow$ 唯一确定 $D$ 内的解</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>条件分析</td><td>精确指出定理 5.1 是单向的, 逆命题需要补充条件</td><td>明确每个结论的充分性与必要性</td></tr>
+<tr><td>约束求解</td><td>由 C—R 方程把 $v$ 部分确定, 再用条件定出待定函数</td><td>在多约束条件下逐一定出未知量</td></tr>
+<tr><td>逆向构造</td><td>从 $u_x-\mathrm{i}u_y$ 出发"倒推"出 $f(z)$</td><td>从导数信息重建原函数 (积分方程的思想)</td></tr>
+<tr><td>多法对比</td><td>偏积分法与原函数法对照, 选择更简洁的</td><td>同一问题准备多条解法, 择优使用</td></tr>
+<tr><td>类比迁移</td><td>用"电位""温度""速度势"理解调和函数</td><td>借用熟悉的物理图像理解抽象数学对象</td></tr>
+<tr><td>模型化</td><td>把物理边值问题转化为复分析问题</td><td>跨学科建模; 把陌生问题映射到熟悉框架</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+二阶偏导连续且, 拉普拉斯等于零;<br>
+此即调和函数定义, 位势场中常见它.<br>
+解析函数实虚部, 必是调和函数俩;<br>
+共轭调节有方向, v 是 u 的不能反.<br>
+偏积分法求共轭, 先积后导再配方;<br>
+原函数法更简洁, 求导拼成 f′ 一积分.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧中的"势"与"平衡"</div>
+拉普拉斯方程刻画的是"<b>平衡态</b>"—— 无源区域中, 电位、温度、水面高度都会自然趋于一种"最平缓"的分布. 这与道家"<b>损有余而补不足</b>"(老子《道德经》"天之道, 损有余而补不足") 的思想有奇妙的形式相似: <b>任何局部的"突出"都会被周围"抹平"</b> —— 这正是调和函数最大值原理的直观含义.
+<br><br>
+中国古代对"势"的认识也极为深刻: 兵法中的"<b>势</b>"(《孙子兵法》有《势篇》)、中医里的"气机升降"、风水学中的"地势", 都强调"势"在空间中的分布与流动. 虽然这些都不是严格的数学理论, 但它们与位势论所描述的对象有着相同的直觉来源: <b>某种"量"在空间中的分布, 及其在平衡状态下的形态。</b>
+<br><br>
+而《九章算术》"<b>衰分</b>"章按比例分配总量、刘徽"<b>割圆术</b>"用无穷逼近处理连续量, 则体现了中国古人在"连续量的分布与平均"上的精密计算能力 —— 与调和函数的平均值性质所依赖的直觉相通.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从位势论到中国工程实践</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 在多复变函数论中的"典型域调和分析", 正是把调和函数理论推广到高维的经典工作. 他建立了"华氏算子"理论, 系统地研究了高维调和函数的积分表示 —— 这是本节内容最深刻的现代延伸.</li>
+<li><b>苏步青</b> (1902—2003): 中国微分几何学派创始人. 他在仿射与射影微分几何中大量使用调和函数与复分析工具; 其研究为"用分析工具研究几何结构"提供了重要范例.</li>
+<li><b>彭桓武、周光召等</b>: 在中国核武器与两弹一星的攻关中, 电磁场、流体力学与热传导的数值计算是关键技术之一 —— 而这些计算的数学基础, 正是拉普拉斯方程与泊松方程的求解方法.</li>
+<li><b>面向国家重大需求</b>: 调和函数与拉普拉斯方程今天有着极为广泛的应用 ——
+<br>&nbsp;&nbsp;• <b>电磁仿真</b>: 天线设计、微波器件、芯片寄生参数提取;
+<br>&nbsp;&nbsp;• <b>热管理</b>: 芯片散热、电池热失控分析;
+<br>&nbsp;&nbsp;• <b>流体力学</b>: 机翼、叶片与高速列车的气动分析;
+<br>&nbsp;&nbsp;• <b>图像处理</b>: 泊松方程用于图像无缝融合、图像修复 (inpainting);
+<br>&nbsp;&nbsp;• <b>机器学习</b>: 图拉普拉斯算子用于图神经网络与半监督学习.
+</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 学科的桥梁, 靠一代代人的接力搭建</div>
+达朗贝尔发现了 19 岁的拉普拉斯, 拉普拉斯写出了影响两百年的方程, 而本节又把这条方程与复分析连在了一起 —— <b>本节与前四节知识之间的桥梁, 正是由一代代人的接力搭建起来的。</b>
+<br><br>
+这提示我们: <b>基础学科的价值, 往往体现在它与其他领域的"连接能力"上。</b> 一条拉普拉斯方程, 同时服务于静电学、热学、流体力学与现代机器学习 —— 这种"跨领域的穿透力", 只有在对数学结构有深刻理解时才能获得.
+<br><br>
+在学习中, 与其孤立地记住一个个公式, 不如有意识地追问: <b>这个结论和前面哪个内容有关? 它在别的领域能解决什么问题?</b> 这种"构建联系"的习惯, 正是把知识变成本事的关键.
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"陛下, 我不需要那个假设."<span class="q-src">—— 拉普拉斯答拿破仑</span></div>
+<div class="quote-item">"这个假设确实可以解释任何东西, 但正因如此, 它什么也预言不了."<span class="q-src">—— 拉普拉斯论"上帝假设"</span></div>
+<div class="quote-item">"我们所知甚少, 而未知的却是无限."<span class="q-src">—— 拉普拉斯临终遗言</span></div>
+<div class="quote-item">"在科学中, 我们应当只引入必要的假设."<span class="q-src">—— 拉普拉斯的科学方法论</span></div>
+<div class="quote-item">"天之道, 损有余而补不足."<span class="q-src">——《道德经》</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 农家出身的拉普拉斯 19 岁时靠一道题的解答获得达朗贝尔赏识, 从此走上科学道路; 他写出了影响两百年的拉普拉斯方程, 也在拿破仑问他"为何书中不提上帝"时答出那句著名的话 —— "陛下, 我不需要那个假设."<br>
+<b>一个道理:</b> 定理 5.1 说"解析函数的实部与虚部都是调和函数", 而拉普拉斯方程 $\Delta u=0$ 同时刻画着静电场、温度场与流场. <b>一个抽象条件 (解析性) 与一条物理方程 (平衡态) 就这样被连接起来 —— 数学的价值, 常常体现在它连接不同领域的能力上。而"只引入必要的假设", 则是这一切能够成立的方法论前提。</b><br>
+<b>一份责任:</b> 从《道德经》"损有余而补不足"的平衡智慧、《九章算术》"衰分"的比例分配, 到华罗庚在多复变函数论中的"典型域调和分析"、彭桓武等在两弹一星攻关中的场论计算, 中华民族在"分布与平衡"这一数学主题上既有古老的直觉, 也有现代的贡献. 今天我们学习调和函数, 既是在掌握电磁仿真、热管理与气动分析的核心工具, 也是在接续这份<b>把不同领域连接起来、把必要的问题想到底</b>的精神.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第三章第五节 解析函数与调和函数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tsub(ctx,x,y,main,sub,tail,color,font,subFont){
+  ctx.font=font; ctx.fillStyle=color; ctx.fillText(main,x,y);
+  var w1=ctx.measureText(main).width;
+  ctx.font=subFont||font.replace(/([\d.]+)px/,function(_,p){ return (parseFloat(p)*0.72)+'px'; });
+  ctx.fillText(sub,x+w1+0.5,y+3);
+  if(tail){ var w2=ctx.measureText(sub).width; ctx.font=font; ctx.fillText(tail,x+w1+w2+1.5,y); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: 调和函数检验器 =================
+module('cvLaplaceCheck',function(cv){
+  var cur='l1';
+  var FN={
+    l1:{lab:'u = y³ − 3x²y', kind:'ok',
+      u:function(x,y){ return y*y*y-3*x*x*y; },
+      uxx:function(x,y){ return -6*y; }, uyy:function(x,y){ return 6*y; },
+      d:'它是 $\\mathrm{i}z^3$ 的实部, 满足 $\\Delta u=0$ ⇒ <b>调和函数 ✓</b>'},
+    l2:{lab:'u = x² − y²', kind:'ok',
+      u:function(x,y){ return x*x-y*y; },
+      uxx:function(x,y){ return 2; }, uyy:function(x,y){ return -2; },
+      d:'它是 $z^2$ 的实部, $\\Delta u=2-2=0$ ⇒ <b>调和函数 ✓</b>'},
+    l3:{lab:'u = x² + y²', kind:'bad',
+      u:function(x,y){ return x*x+y*y; },
+      uxx:function(x,y){ return 2; }, uyy:function(x,y){ return 2; },
+      d:'$\\Delta u=2+2=4\\neq0$ ⇒ <b>不是调和函数 ✗</b> (它是 $|z|^2$, 对应不解析的函数)'},
+    l4:{lab:'u = eˣ sin y', kind:'ok',
+      u:function(x,y){ return Math.exp(x)*Math.sin(y); },
+      uxx:function(x,y){ return Math.exp(x)*Math.sin(y); },
+      uyy:function(x,y){ return -Math.exp(x)*Math.sin(y); },
+      d:'它是 $\\mathrm{i}\\mathrm{e}^z$ 的实部, $\\Delta u=\\mathrm{e}^x\\sin y-\\mathrm{e}^x\\sin y=0$ ⇒ <b>调和函数 ✓</b>'}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    // 左: Δu 的分布
+    ctx.save(); ctx.translate(12,42);
+    var R=2.0;
+    var m1=mapperEq(halfW,H,-R,R,-R*(H/halfW),R*(H/halfW));
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    var step=0.09, maxV=0.001;
+    var vals=[];
+    for(var x=-R;x<=R;x+=step){ for(var y=-R;y<=R;y+=step){ vals.push(Math.abs(o.uxx(x,y)+o.uyy(x,y))); } }
+    maxV=Math.max.apply(null, vals) || 1;
+    for(var x2=-R;x2<=R;x2+=step){
+      for(var y2=-R;y2<=R;y2+=step){
+        var px=m1.px(x2),py=m1.py(y2);
+        if(px<0||px>halfW||py<0||py>H) continue;
+        var lap=o.uxx(x2,y2)+o.uyy(x2,y2);
+        var mag=Math.min(1, Math.abs(lap)/maxV);
+        if(Math.abs(lap)<1e-9){ ctx.fillStyle='rgba(46,125,50,.55)'; }
+        else { ctx.fillStyle='rgba(198,40,40,'+(0.15+0.7*mag)+')'; }
+        ctx.beginPath(); ctx.arc(px,py,2.4,0,TAU); ctx.fill();
+      }
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'Δu 在平面上的分布 (绿 = 零, 红 = 非零)','#37474f','bold 13px Segoe UI');
+    // 右: 数值
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText('二阶偏导数',16,20);
+    var x0=0.8, y0=0.6;
+    var a1=o.uxx(x0,y0), a2=o.uyy(x0,y0);
+    ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#546e7a';
+    tsub(ctx,16,52,'u','xx',' = '+fmt(a1,4),'#546e7a','13px Consolas, Segoe UI');
+    tsub(ctx,16,76,'u','yy',' = '+fmt(a2,4),'#546e7a','13px Consolas, Segoe UI');
+    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(16,90); ctx.lineTo(200,90); ctx.stroke();
+    ctx.font='bold 14px Consolas, Segoe UI';
+    ctx.fillStyle=(Math.abs(a1+a2)<1e-9)?'#2e7d32':'#c62828';
+    ctx.fillText('Δu = '+fmt(a1+a2,4),16,114);
+    ctx.font='bold 15px Segoe UI';
+    ctx.fillText(Math.abs(a1+a2)<1e-9?'⇒ 调和函数 ✓':'⇒ 不是调和函数 ✗',16,150);
+    ctx.font='12.5px Segoe UI'; ctx.fillStyle='#78909c';
+    ctx.fillText('(在点 ('+fmt(x0)+', '+fmt(y0)+') 处取值)',16,176);
+    ctx.restore();
+    setRO('lcReadout',
+      hl2(o.lab)+'<br>'+
+      '$u_{xx}='+fmt(o.uxx(0.8,0.6),4)+'$ , $u_{yy}='+fmt(o.uyy(0.8,0.6),4)+'$ ⇒ $\\Delta u='+hl(fmt(o.uxx(0.8,0.6)+o.uyy(0.8,0.6),4))+'$<br>'+
+      o.d+'<br>'+
+      '注意: 左边的点阵表示 $\\Delta u$ 在每一点的取值. 恒为绿色 (零) 才说明是调和函数.');
+  }
+  [['lcF1','l1'],['lcF2','l2'],['lcF3','l3'],['lcF4','l4']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 2: 共轭调和函数与正交等值线 =================
+module('cvConjugate',function(cv){
+  var cur='j1', Cc=0;
+  var FN={
+    j1:{lab:'u = y³ − 3x²y',
+      u:function(x,y){ return y*y*y-3*x*x*y; },
+      v:function(x,y){ return x*x*x-3*x*y*y; },
+      vTex:'v = x³ − 3xy² + C',
+      fTex:'f(z) = i z³ + iC'},
+    j2:{lab:'u = x² − y²',
+      u:function(x,y){ return x*x-y*y; },
+      v:function(x,y){ return 2*x*y; },
+      vTex:'v = 2xy + C',
+      fTex:'f(z) = z² + iC'},
+    j3:{lab:'u = eˣ cos y',
+      u:function(x,y){ return Math.exp(x)*Math.cos(y); },
+      v:function(x,y){ return Math.exp(x)*Math.sin(y); },
+      vTex:'v = eˣ sin y + C',
+      fTex:'f(z) = e^z + iC'}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    // 左: u 的等值线
+    ctx.save(); ctx.translate(12,42);
+    var R=1.6;
+    var m1=mapperEq(halfW,H,-R,R,-R*(H/halfW),R*(H/halfW));
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    drawContour(ctx,m1,halfW,H,o.u,-R,R,'rgba(21,101,192,.75)',0.06);
+    ctx.restore();
+    tlabel(ctx,12,26,'u 的等值线 (蓝色)','#37474f','bold 13px Segoe UI');
+    // 右: v 的等值线 + 叠加
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW,H,-R,R,-R*(H/halfW),R*(H/halfW));
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'x','y');
+    drawContour(ctx,m2,halfW,H,o.u,-R,R,'rgba(21,101,192,.75)',0.06);
+    drawContour(ctx,m2,halfW,H,function(x,y){ return o.v(x,y)-Cc; },-R,R,'rgba(230,81,0,.75)',0.06);
+    ctx.restore();
+    tlabel(ctx,sx,26,'u 与 v 的等值线叠放 (处处正交)','#37474f','bold 13px Segoe UI');
+    setRO('cjReadout',
+      hl2(o.lab)+' &nbsp;⇒&nbsp; 共轭调和函数 '+o.vTex+' (当前 $C='+fmt(Cc)+'$)<br>'+
+      '对应的解析函数: $'+o.fTex+'$<br>'+
+      '验证 C—R 方程: $v_y=u_x$ ✓ , $v_x=-u_y$ ✓<br>'+
+      '<b>'+hl('u 与 v 的等值线处处正交')+'</b> —— 这是因为 $\\nabla u\\cdot\\nabla v=0$ (由 C—R 方程可证).<br>'+
+      '物理意义: 若 $u$ 是电位, 则等值线是等位线, $v$ 的等值线就是电力线 —— 等位线与电力线恒垂直.');
+  }
+  function drawContour(ctx,m,wpx,hpx,fn,xmin,xmax,col,thr){
+    var N=110;
+    var step=(xmax-xmin)/N;
+    var ymax=step*N*(hpx/wpx);
+    ctx.fillStyle=col;
+    for(var i=0;i<N;i++){
+      for(var j=0;j<Math.round(N*hpx/wpx);j++){
+        var x=xmin+i*step, y=-ymax/2+j*step;
+        var val=fn(x,y);
+        var gx=(fn(x+step*0.5,y)-fn(x-step*0.5,y))/(step);
+        var gy=(fn(x,y+step*0.5)-fn(x,y-step*0.5))/(step);
+        var grad=Math.hypot(gx,gy);
+        if(grad<1e-6) continue;
+        var dist=Math.abs(val)/grad;   // 到等值线的近似距离
+        // 只画"接近整数倍层"的点
+        var level=Math.round(val/0.5)*0.5;
+        var d2=Math.abs(val-level)/grad;
+        if(d2<thr*1.1){
+          var px=m.px(x),py=m.py(y);
+          if(px<0||px>wpx||py<0||py>hpx) continue;
+          ctx.beginPath(); ctx.arc(px,py,2.1,0,TAU); ctx.fill();
+        }
+      }
+    }
+  }
+  [['cjF1','j1'],['cjF2','j2'],['cjF3','j3']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('cjC',function(v){ Cc=v; badge('cjCV',fmt(v)); draw(); });
+  badge('cjCV',fmt(Cc));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 两种方法对比 =================
+module('cvMethod',function(cv){
+  var p=1;
+  var STEP_A=[
+    {t:'① 由 ∂v/∂y = ∂u/∂x 对 y 积分', s:'v = −3xy² + g(x)'},
+    {t:'② 对 x 求偏导', s:'∂v/∂x = −3y² + g′(x)'},
+    {t:'③ 代入 ∂v/∂x = −∂u/∂y 定 g′', s:'g′(x) = 3x²'},
+    {t:'④ 积分得 g(x) 与 v', s:'v = x³ − 3xy² + C'},
+    {t:'⑤ 写出 f = u + iv 并整理', s:'f(z) = i z³ + iC'}
+  ];
+  var STEP_B=[
+    {t:'① 求偏导 (u_x, u_y)', s:'u_x = −6xy ,  u_y = 3y² − 3x²'},
+    {t:'② 组合成 f′(z) = u_x − i u_y', s:'f′(z) = 3i(x² + 2xyi − y²)'},
+    {t:'③ 整理为 z 的函数', s:'f′(z) = 3i z²'},
+    {t:'④ 求原函数', s:'f(z) = i z³ + C₁  (C₁ 为纯虚数)'}
+  ];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-36)/2, H=h-72;
+    function col(x0,steps,col0,label){
+      // 标题
+      ctx.fillStyle=col0;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x0,14,halfW,34,8); else ctx.rect(x0,14,halfW,34);
+      ctx.fill();
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#fff';
+      ctx.fillText(label,x0+halfW/2,31);
+      // 步骤
+      var shown=Math.ceil(steps.length*p);
+      steps.forEach(function(st,i){
+        if(i>=shown) return;
+        var y=60+i*68;
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(x0,y,halfW,58,8); else ctx.rect(x0,y,halfW,58);
+        ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle=col0; ctx.lineWidth=1.8; ctx.stroke();
+        ctx.fillStyle=col0;
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(x0,y,6,58,3); else ctx.rect(x0,y,6,58);
+        ctx.fill();
+        ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.font='bold 12.5px Segoe UI'; ctx.fillStyle=col0;
+        ctx.fillText(st.t,x0+16,y+20);
+        ctx.font='12.5px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
+        ctx.fillText(st.s,x0+16,y+42);
+      });
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    }
+    col(12,STEP_A,'#1976d2','偏积分法 (由 C—R 方程出发)');
+    col(halfW+24,STEP_B,'#e65100','原函数法 (由导数公式出发)');
+    // 底部结论
+    if(p>0.95){
+      ctx.fillStyle='#2e7d32';
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(12,h-42,w-24,32,8); else ctx.rect(12,h-42,w-24,32);
+      ctx.fill();
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#fff';
+      ctx.fillText('两条路径的结果完全一致:  f(z) = i z³ + iC',w/2,h-26);
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    }
+    setRO('mtReadout',
+      hl2('两种方法对比')+' (以 $u=y^3-3x^2y$ 为例)<br>'+
+      '<b>偏积分法:</b> 从 C—R 方程出发, 积分 → 求偏导定待定函数 → 再积分, 共 <b>5 步</b>;<br>'+
+      '<b>原函数法:</b> 求偏导 → 拼成 $f\'(z)$ → 整理为 $z$ 的函数 → 求原函数, 共 <b>4 步</b>.<br>'+
+      '两者的结果相同: $f(z)=\\mathrm{i}z^3+\\mathrm{i}C$. <b>原函数法步骤更少, 但需要熟练的"整理为 $z$"技巧.</b>');
+  }
+  bindSlider('mtP',function(v){ p=v; badge('mtPV',fmt(v)); draw(); });
+  badge('mtPV',fmt(p));
+  var anim=false,stopFn=null;
+  var ba=document.getElementById('btnMtAnim');
+  if(ba) ba.addEventListener('click',function(){
+    if(anim){ if(stopFn)stopFn(); anim=false; this.textContent='▶ 播放对比'; return; }
+    anim=true; this.textContent='⏸ 停止'; p=0;
+    var self=this;
+    stopFn=animLoop(function(){
+      if(!anim){ self.textContent='▶ 播放对比'; return false; }
+      p+=0.01; if(p>1){ p=1; }
+      setSlider('mtP',p); badge('mtPV',fmt(p)); draw(); return p<1;
+    });
+  });
+  var br=document.getElementById('btnMtReset');
+  if(br) br.addEventListener('click',function(){
+    if(stopFn)stopFn(); anim=false; if(ba) ba.textContent='▶ 播放对比';
+    p=1; setSlider('mtP',1); badge('mtPV',fmt(1)); draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 4: 知识图谱树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'调和函数', c:'#1976d2', leaves:['二阶偏导连续 + $\\Delta u=0$','$\\Delta=\\frac{\\partial^2}{\\partial x^2}+\\frac{\\partial^2}{\\partial y^2}$','例5.1: $u=y^3-3x^2y$','物理: 电位·温度·速度势','称为位势函数','无源区域的平衡态']},
+    {t:'与解析函数的关系', c:'#e65100', leaves:['定理5.1: 解析 $\\Rightarrow u,v$ 调和','证明: C—R + 混合偏导相等','逆命题不成立!','需再满足 C—R 方程','定义5.2: 共轭调和函数','方向不能交换']},
+    {t:'偏积分法', c:'#c62828', leaves:['由 $v_y=u_x$ 对 $y$ 积分','得 $v=\\cdots+g(x)$','由 $v_x=-u_y$ 定 $g\'(x)$','积分得 $v(x,y)$','例5.2: $v=x^3-3xy^2+C$','例5.3: $f=z\\mathrm{e}^z+(1+\\mathrm{i})z$']},
+    {t:'原函数法', c:'#2e7d32', leaves:['$f\'(z)=u_x-\\mathrm{i}u_y=U(z)$','或 $f\'(z)=v_y+\\mathrm{i}v_x$','整理为 $z$ 的函数','求原函数得 $f(z)$','用 $U$ 时 $C$ 为纯虚数','例5.4/5.5 结果一致']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第三章第五节 · 解析函数与调和函数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 调和函数 → 与解析函数的关系 → 偏积分法 → 原函数法; 一句话: <b>解析函数的实虚部都是调和函数, 且互为共轭调和函数</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 调和函数的平均值性质 (思政栏) =================
+module('cvHarmMean',function(cv){
+  var cur='m1', R=1;
+  var z0=C(0.5,0.3);
+  var FN={
+    m1:{lab:'u = x² − y²',
+      u:function(x,y){ return x*x-y*y; }},
+    m2:{lab:'u = eˣ cos y',
+      u:function(x,y){ return Math.exp(x)*Math.cos(y); }},
+    m3:{lab:'u = ln√(x²+y²)',
+      u:function(x,y){ return 0.5*Math.log(x*x+y*y+1e-12); }}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-30)/2, H=h-72;
+    var o=FN[cur];
+    // 左: 圆周与采样
+    ctx.save(); ctx.translate(12,42);
+    var m1=mapperEq(halfW,H,-2.2,2.2,-2.2*(H/halfW),2.2*(H/halfW));
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.arc(m1.px(z0.re),m1.py(z0.im),R*m1.s,0,TAU); ctx.stroke();
+    var N=24, avg=0;
+    for(var k=0;k<N;k++){
+      var a0=TAU*k/N;
+      var x=z0.re+R*Math.cos(a0), y=z0.im+R*Math.sin(a0);
+      avg+=o.u(x,y);
+      dot(ctx,m1.px(x),m1.py(y),4.5,'#e65100','#fff');
+    }
+    avg/=N;
+    dot(ctx,m1.px(z0.re),m1.py(z0.im),8,'#c62828','#fff');
+    tlabel(ctx,m1.px(z0.re)+10,m1.py(z0.im)+18,'z₀','#c62828','bold 12px Georgia');
+    ctx.restore();
+    tlabel(ctx,12,26,'圆心 z₀ 与圆周上 '+N+' 个采样点','#37474f','bold 13px Segoe UI');
+    // 右: u 沿圆周的分布
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,42);
+    var vals=[], vmax=-1e9, vmin=1e9;
+    for(var i=0;i<=200;i++){ var a=TAU*i/200;
+      var xx=z0.re+R*Math.cos(a), yy=z0.im+R*Math.sin(a);
+      var vv=o.u(xx,yy); vals.push(vv);
+      vmax=Math.max(vmax,vv); vmin=Math.min(vmin,vv);
+    }
+    if(vmax-vmin<1e-6){ vmax=vmin+1; vmin-=1; }
+    var cur0=o.u(z0.re,z0.im);
+    var pad=(vmax-vmin)*0.2;
+    var m2=mapperEq(halfW,H,-0.3,TAU+0.3,vmin-pad,vmax+pad);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'θ','u');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6;
+    ctx.beginPath();
+    for(var j=0;j<=200;j++){
+      var px=m2.px(TAU*j/200), py=m2.py(vals[j]);
+      if(j===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#c62828'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m2.px(-0.3),m2.py(cur0)); ctx.lineTo(m2.px(TAU+0.3),m2.py(cur0)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle='#2e7d32'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m2.px(-0.3),m2.py(avg)); ctx.lineTo(m2.px(TAU+0.3),m2.py(avg)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m2.px(1.6),m2.py(cur0)-7,'f(z₀)','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(1.6),m2.py(avg)+16,'圆周均值','#2e7d32','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'u 沿圆周的取值与平均值','#37474f','bold 13px Segoe UI');
+    var dv=Math.abs(avg-cur0);
+    setRO('hmReadout',
+      hl2(o.lab)+' &nbsp;|&nbsp; 圆心 $z_0='+fmt(z0.re)+'+'+fmt(z0.im)+'\\mathrm{i}$ , 半径 $R='+fmt(R)+'$<br>'+
+      '圆心处的值 $u(z_0)='+hl(fmt(cur0,5))+'$<br>'+
+      '圆周 '+N+' 点的算术平均值 $\\approx '+hl2(fmt(avg,5))+'$<br>'+
+      '偏差 $='+fmt(dv,6)+'$ &nbsp;'+(dv<0.01?'<b>✓ 两者相等 —— 调和函数的平均值性质成立</b>':'')+'<br>'+
+      '这正是调和函数"<b>最大值原理</b>"的来源: 若圆心处的值是极大值, 则圆周上各点都不超过它, 而平均值又恰等于它 —— 只能处处相等, 故函数为常数.');
+  }
+  [['hmF1','m1'],['hmF2','m2'],['hmF3','m3']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('hmR',function(v){ R=v; badge('hmRV',fmt(v)); draw(); });
+  badge('hmRV',fmt(R));
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  qs=qs.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'拉普拉斯说"我不需要那个假设". 在科学研究中, 这种"减少假设"的做法为什么重要?',
+     hints:['每一个多余的假设都会削弱理论的解释力与可检验性.',
+            '假设越少, 理论的适用范围越广 —— 这正是数学定理追求"弱条件、强结论"的原因.',
+            '之前几节也体现了这一点: 古萨去掉了柯西定理中多余的"f′ 连续"假设.',
+            '可迁移的态度: 构建任何理论或方案时, 先问"这个前提真的必要吗".']},
+    {q:'定理 5.1 说"解析 ⇒ 实虚部调和", 但逆命题不成立. 为什么"必要条件不等于充分条件"这件事如此重要?',
+     hints:['必要条件只能"筛选", 不能"判定" —— 用它判定会犯错.',
+            '反例: $u=x$, $v=-y$ 都调和, 但 $u+\\mathrm{i}v=\\bar z$ 不解析.',
+            '在工程中, 把必要条件当充分条件使用, 往往会导致误判 (例如把"信号满足某条件"当作"信号合法").',
+            '可迁移的态度: 使用任何"判据"前, 先确认它是充分的还是仅必要的.']},
+    {q:'拉普拉斯方程同时描述静电场、温度场与流场. 这种"跨领域共享同一结构"的现象, 说明了什么?',
+     hints:['不同物理机制背后可能存在相同的数学结构 —— 这是数学建模最有力的地方.',
+            '一旦识别出共同结构, 就可以把一个领域的方法迁移到其他领域.',
+            '历史上, 正因如此, 位势论才能同时服务于电磁学、热学与流体力学.',
+            '可迁移的态度: 学习时主动寻找"不同问题背后的共同结构".']},
+    {q:'调和函数的平均值性质 (圆心值 = 圆周均值) 与前面学过的解析函数的平均值公式有什么关系?',
+     hints:['解析函数的平均值公式: $f(z_0)=\\frac{1}{2\\pi}\\int_0^{2\\pi}f(z_0+R\\mathrm{e}^{\\mathrm{i}\\theta})\\mathrm{d}\\theta$.',
+            '对解析函数取实部, 就得到了调和函数的平均值性质 —— 两者是同一件事.',
+            '这说明: 复分析与位势论之间的桥梁, 就是"取实部"这个简单操作.',
+            '可迁移的态度: 学会"降维观察"—— 从复函数退到实函数, 常常能发现与物理的直接联系.']},
+    {q:'从本章"柯西定理 → 柯西公式 → 高阶导数 → 调和函数"的链条中, 你最深的体会是什么?',
+     hints:['整个体系从最基础的一条 (∮f dz = 0) 生长出来, 层层递进, 每一层都以前一层为工具.',
+            '同时它又不断向外连接: 数论 (代数基本定理)、物理 (电位与温度)、工程 (电磁仿真与图像处理).',
+            '这种"内部严密 + 外部开放"的结构, 是数学既深刻又有用的根本原因.',
+            '可迁移的态度: 学习一个领域时, 既要注意其内部逻辑, 也要留意它与其他领域的接口.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

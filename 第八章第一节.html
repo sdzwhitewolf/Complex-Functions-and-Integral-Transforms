@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第八章第一节 拉普拉斯变换的概念</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 220px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第八章 第1节 拉普拉斯变换的概念</h1>
+    <p>拉氏变换的定义 &middot; 与傅里叶变换的关系 &middot; 存在定理与收敛半平面 &middot; 典型例题与象函数</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解为什么要引入<b>拉普拉斯变换</b>: 傅里叶变换要求 $f(t)$ 绝对可积, 这个条件太强, 使 $1,\ \sin kt,\ \mathrm{e}^{kt}$ 等常见函数都"不达标", 而拉氏变换通过乘上衰减因子 $\mathrm{e}^{-\beta t}$ 把条件放松;
+2. 掌握<b>定义 8.1</b>: $F(s)=\mathscr{L}[f(t)]=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$, 其中 $s=\beta+\mathrm{i}\omega$ 是<b>复参变量</b>; 记住象函数、象原函数与拉氏逆变换 $f(t)=\mathscr{L}^{-1}[F(s)]$ 的记号;
+3. 理解 $f(t)$ 的拉氏变换就是 $f(t)u(t)\mathrm{e}^{-\beta t}$ 的<b>傅里叶变换</b>, 即 $\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]=F(\beta+\mathrm{i}\omega)$, 并会用"乘衰减因子 $\rightarrow$ 取傅氏变换 $\rightarrow$ 解析延拓"这三步说明两者的联系;
+4. 会求一批基本函数的拉氏变换: $\mathscr{L}[1]=\frac{1}{s}$, $\mathscr{L}[\mathrm{e}^{kt}]=\frac{1}{s-k}$, $\mathscr{L}[\sin kt]=\frac{k}{s^2+k^2}$, $\mathscr{L}[\cos kt]=\frac{s}{s^2+k^2}$, $\mathscr{L}[t^m]=\frac{m!}{s^{m+1}}$ 以及 $\mathscr{L}[\delta(t)]=1$;
+5. 掌握<b>存在定理 8.1</b>: 当 $f(t)$ 在 $t\ge0$ 上分段连续且满足 $|f(t)|\le M\mathrm{e}^{ct}$ (增长指数 $c$) 时, $F(s)$ 在<b>半平面 $\operatorname{Re}s&gt;c$ 上存在且解析</b>, 并会说明收敛半平面 $\operatorname{Re}s&gt;\beta$ 的几何意义.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-8a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-8a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-8a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-8a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-8a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-8a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、拉普拉斯变换的定义</label>
+    <label class="tab-btn" for="tab2" id="label2">二、与傅里叶变换的关系</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型例题</label>
+    <label class="tab-btn" for="tab4" id="label4">四、拉普拉斯变换的存在定理</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 拉普拉斯变换的定义 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 从傅里叶变换的困难说起</div>
+
+<div class="box-key">
+<div class="title">傅氏变换的"门槛"太高了</div>
+傅里叶变换是把信号搬到"频域"去看的利器, 但它对函数提出了一个不轻的要求 —— <b>绝对可积</b>:
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\left|f(t)\right|\mathrm{d}t&lt;+\infty.$$</div>
+可惜许多最常见的函数偏偏"不合格": 直流信号 $f(t)=1$、正弦信号 $f(t)=\sin kt$、指数增长信号 $f(t)=\mathrm{e}^{kt}$ ($k&gt;0$), 它们的积分都发散, 因而严格的傅氏变换并不存在.
+<br><br>
+问题出在"时间轴太长"上. 若在积分前先乘上一个<b>衰减因子</b> $\mathrm{e}^{-\beta t}$ ($\beta&gt;0$), 让远处的高峰被压低, 积分就"收敛"了 —— 这正是拉普拉斯变换的出发点.
+</div>
+
+<div class="box-key">
+<div class="title">定义 8.1 (拉普拉斯变换)</div>
+设 $f(t)$ 是定义在 $[0,+\infty)$ 上的实值函数. 对<b>复参数</b>
+<div class="box-formula">$$s=\beta+\mathrm{i}\omega,$$</div>
+若积分
+<div class="box-formula">$$F(s)=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$$</div>
+在 $s$ 平面的某个区域内收敛, 则称 $F(s)$ 为 $f(t)$ 的<b>拉普拉斯变换</b> (简称拉氏变换), 记为
+<div class="box-formula">$$F(s)=\mathscr{L}[f(t)].$$</div>
+相应地, 称 $f(t)$ 为 $F(s)$ 的<b>拉普拉斯逆变换</b> (简称拉氏逆变换), 记为
+<div class="box-formula">$$f(t)=\mathscr{L}^{-1}[F(s)].$$</div>
+并称 $F(s)$ 与 $f(t)$ 分别为<b>象函数</b>与<b>象原函数</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">记号与存在域</div>
+注意三点:<br><br>
+<span style="color:#c62828"><b>(1)</b></span> 积分下限是 $0$ (严格说常取 $0^-$), 时间从"接通"那一刻算起, 这正是 $u(t)$ 隐含在其中;<br>
+<span style="color:#c62828"><b>(2)</b></span> $s=\beta+\mathrm{i}\omega$ 是<b>复参变量</b>, 所以 $F(s)$ 是一个复变函数, 而不是实变量的函数;<br>
+<span style="color:#c62828"><b>(3)</b></span> 让积分收敛的那些 $s$ 构成一个<b>收敛半平面</b>
+<div class="box-formula">$$\operatorname{Re}s&gt;\beta,$$</div>
+也就是复平面上直线 $\operatorname{Re}s=\beta$ 右侧的整个半平面. 例 1.1 将算出 $\mathscr{L}[1]=\frac{1}{s}$, 它恰好在 $\operatorname{Re}s&gt;0$ 上存在.
+</div>
+
+<div class="chart-container">
+<h3>交互: 衰减因子 $\mathrm{e}^{-\beta t}$ 与积分可积性 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图画出原信号 $f(t)=1$ (灰虚线) 与衰减因子 $\mathrm{e}^{-\beta t}$ (蓝实线); 右图画出被积函数 $f(t)\mathrm{e}^{-\beta t}=\mathrm{e}^{-\beta t}$ 及其下方的面积. 拖动滑块改变 $\beta$: 当 $\beta&gt;0$ 时曲线迅速压低, 积分 $\int_0^{+\infty}\mathrm{e}^{-\beta t}\mathrm{d}t=\frac{1}{\beta}$ 收敛; 当 $\beta\le0$ 时曲线不再衰减, 面积发散 —— 于是收敛半平面从 $\operatorname{Re}s&gt;0$ 变成空集.</div>
+<div class="fig-caps">
+<div class="fc">原信号 $f(t)=1$ (灰虚线) 与衰减因子 $\mathrm{e}^{-\beta t}$ (蓝)</div>
+<div class="fc">被积函数 $f(t)\mathrm{e}^{-\beta t}=\mathrm{e}^{-\beta t}$ 及其下的面积</div>
+</div>
+<canvas id="cvLaplace" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>衰减指数 $\beta$:</label>
+<input type="range" id="lapB" min="-1" max="2" step="0.1" value="0.5">
+<span class="val-badge" id="lapBV">0.5</span>
+</div>
+<div class="readout" id="lapReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">为什么是"半平面"而不是"一条线"</div>
+积分 $\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$ 能否收敛, 只取决于实部 $\operatorname{Re}s=\beta$: 因为
+<div class="box-formula">$$\left|\mathrm{e}^{-st}\right|=\left|\mathrm{e}^{-\beta t}\right|=\mathrm{e}^{-\beta t}.$$</div>
+虚部 $\omega$ 只改变振荡的快慢, 不影响衰减的快慢. 所以"收敛"这件事在整个竖直直线 (固定的 $\beta$) 上是一致的 —— 收敛的点必然是半个平面.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 与傅里叶变换的关系 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 把 $u(t)$ 与衰减因子补进傅氏变换</div>
+
+<div class="box-key">
+<div class="title">推导: 拉氏变换就是"加了权的傅氏变换"</div>
+把 $s=\beta+\mathrm{i}\omega$ 拆开, 并利用 $\int_0^{+\infty}(\cdots)\mathrm{d}t=\int_{-\infty}^{+\infty}(\cdots)u(t)\mathrm{d}t$, 得
+<div class="box-formula">$$\begin{aligned}
+\mathscr{L}[f(t)]&=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t=\int_0^{+\infty}f(t)\mathrm{e}^{-\beta t}\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t\\
+&=\int_{-\infty}^{+\infty}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t\\
+&=\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big],
+\end{aligned}$$</div>
+其中 $u(t)$ 是单位阶跃函数:
+<div class="box-formula">$$u(t)=\begin{cases}0,&t&lt;0,\\ 1,&t&gt;0.\end{cases}$$</div>
+可见: <b>$f(t)$ 的拉氏变换, 就是 $f(t)u(t)\mathrm{e}^{-\beta t}$ 的傅氏变换</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">核心关系</div>
+把上式写成简洁形式:
+<div class="box-formula">$$\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]=F(\beta+\mathrm{i}\omega),$$</div>
+也就是说, 拉氏变换的象函数 $F(s)$ 在虚轴 $\beta=0$ 附近的值, 恰好对应一个被"截断并压扁"后的信号的连续频谱. 当 $\beta=0$ 且 $f$ 满足绝对可积时, 两者就完全吻合.
+</div>
+
+<div class="box-key">
+<div class="title">三个数学过程: 乘衰减因子 $\rightarrow$ 取傅氏变换 $\rightarrow$ 解析延拓</div>
+把上面这条关系拆成三步, 就得到由傅氏变换"改造"出拉氏变换的完整流程:
+<div class="box-formula">$$f(t)\ \longrightarrow\ u(t)\ \longrightarrow\ f(t)u(t)\ \longrightarrow\ \mathrm{e}^{-\beta t}\ \longrightarrow\ \text{傅氏变换}\ \longrightarrow\ \mathscr{L}[f(t)]$$</div>
+<span style="color:#c62828"><b>(1) 乘衰减因子.</b></span> 先给 $f(t)$ 补上 $u(t)$ 把 $t&lt;0$ 的部分"清零", 再乘 $\mathrm{e}^{-\beta t}$ 把远处的量压到可积 —— 这一步让原本不收敛的积分变收敛.<br><br>
+<span style="color:#c62828"><b>(2) 取傅氏变换.</b></span> 对新的函数 $f(t)u(t)\mathrm{e}^{-\beta t}$ 做傅氏变换, 得到的是 $\omega$ 的函数 $F(\beta+\mathrm{i}\omega)$.<br><br>
+<span style="color:#c62828"><b>(3) 解析延拓.</b></span> 让 $\beta$ 由实数"放宽"为可动参数, 把这一族 $\omega$ 的函数拼起来, 看作复变量 $s=\beta+\mathrm{i}\omega$ 的函数 $F(s)$ —— 这一步把"频谱"升格成"复变函数".
+</div>
+
+<div class="chart-container">
+<h3>交互: $f(t)$、衰减后的函数与它的频谱 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图同时画出原信号 $f(t)=u(t)$ (灰虚线) 与衰减后的 $f(t)\mathrm{e}^{-\beta t}$ (蓝实线); 右图画出 $\left|F(\beta+\mathrm{i}\omega)\right|$ 随 $\omega$ 的分布, 它正是衰减后信号的频谱 (实轴零点附近的值对应 $F(\beta)$, 并与拉氏变换在 $\operatorname{Re}s=\beta$ 上的取值一致). 拖动滑块改变 $\beta$: 衰减越强, 时域包络越"矮胖", 频域主瓣越"宽" —— 这正是"时域越窄、频域越宽"的雏形.</div>
+<div class="fig-caps">
+<div class="fc">$f(t)=u(t)$ (灰虚线) 与 $f(t)\mathrm{e}^{-\beta t}$ (蓝)</div>
+</div>
+<canvas id="cvRelation" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>衰减指数 $\beta$:</label>
+<input type="range" id="relB" min="0.2" max="2" step="0.05" value="0.8">
+<span class="val-badge" id="relBV">0.80</span>
+</div>
+<div class="readout" id="relReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">存在条件: 拉氏比傅氏"宽松"在哪里</div>
+傅氏变换要求 $f(t)$ <b>绝对可积</b>; 而拉氏变换只要求 $f(t)u(t)\mathrm{e}^{-\beta t}$ 绝对可积, 也就是
+<div class="box-formula">$$\int_0^{+\infty}\left|f(t)\right|\mathrm{e}^{-\beta t}\mathrm{d}t&lt;+\infty.$$</div>
+多出来的 $\mathrm{e}^{-\beta t}$ 相当于"给函数一个指数衰减的帽子": 只要 $f$ 的增长速度不超过某个指数函数, 就总能选到足够大的 $\beta$ 把它压住, 积分便收敛. 因此<b>拉氏变换的存在条件比傅氏变换弱得多</b> —— 一旦这个帽子被取下 ($\beta\to0$), 拉氏变换就退化为傅氏变换.
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型例题 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 四个基本例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1</div>
+求 $f(t)=1$ 的拉氏变换.
+<input type="checkbox" id="c8ans1" class="answer-toggle">
+<label for="c8ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<div class="box-formula">$$F(s)=\int_0^{+\infty}1\cdot\mathrm{e}^{-st}\mathrm{d}t=\left.-\dfrac{1}{s}\mathrm{e}^{-st}\right|_0^{+\infty}.$$</div>
+设 $s=\beta+\mathrm{i}\omega$, 当 $\operatorname{Re}s=\beta&gt;0$ 时
+<div class="box-formula">$$\left|\mathrm{e}^{-st}\right|=\left|\mathrm{e}^{-\beta t}\mathrm{e}^{-\mathrm{i}\omega t}\right|=\mathrm{e}^{-\beta t}\xrightarrow[\ t\to+\infty\ ]{}0,$$</div>
+故
+<div class="box-formula">$$\mathscr{L}[1]=\dfrac{1}{s}\qquad(\operatorname{Re}s&gt;0).$$</div>
+同样地 $\mathscr{L}[u(t)]=\frac{1}{s}$ ($\operatorname{Re}s&gt;0$).
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.2</div>
+求指数函数 $f(t)=\mathrm{e}^{kt}$ ($k$ 为实数) 的拉氏变换.
+<input type="checkbox" id="c8ans2" class="answer-toggle">
+<label for="c8ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<div class="box-formula">$$\begin{aligned}
+\mathscr{L}[\mathrm{e}^{kt}]&=\int_0^{+\infty}\mathrm{e}^{kt}\mathrm{e}^{-st}\mathrm{d}t=\int_0^{+\infty}\mathrm{e}^{-(s-k)t}\mathrm{d}t\\
+&=\left.-\dfrac{1}{s-k}\mathrm{e}^{-(s-k)t}\right|_0^{+\infty}=\dfrac{1}{s-k}\qquad(\operatorname{Re}s&gt;k).
+\end{aligned}$$</div>
+注意收敛域是 $\operatorname{Re}s&gt;k$ —— 增长指数 $k$ 越高, 收敛半平面就越往右移.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.3</div>
+求正弦函数 $f(t)=\sin kt$ 与余弦函数 $f(t)=\cos kt$ 的拉氏变换.
+<input type="checkbox" id="c8ans3" class="answer-toggle">
+<label for="c8ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由分部积分 (两次)
+<div class="box-formula">$$\begin{aligned}
+\mathscr{L}[\sin kt]&=\int_0^{+\infty}\sin kt\,\mathrm{e}^{-st}\mathrm{d}t\\
+&=\left.\dfrac{\mathrm{e}^{-st}}{s^2+k^2}\big(-s\sin kt-k\cos kt\big)\right|_0^{+\infty}\\
+&=\dfrac{k}{s^2+k^2}\qquad(\operatorname{Re}s&gt;0).
+\end{aligned}$$</div>
+同理可得
+<div class="box-formula">$$\mathscr{L}[\cos kt]=\dfrac{s}{s^2+k^2}\qquad(\operatorname{Re}s&gt;0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.4</div>
+求幂函数 $f(t)=t^m$ ($m$ 为正整数, $m\ge1$) 的拉氏变换, 并求单位冲激函数 $\delta(t)$ 的拉氏变换.
+<input type="checkbox" id="c8ans4" class="answer-toggle">
+<label for="c8ans4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+先做一次分部积分 (把 $\mathrm{e}^{-st}\mathrm{d}t$ 凑成 $-\frac{1}{s}\mathrm{d}\mathrm{e}^{-st}$):
+<div class="box-formula">$$\begin{aligned}
+\mathscr{L}[t^m]&=\int_0^{+\infty}t^m\mathrm{e}^{-st}\mathrm{d}t=-\dfrac{1}{s}\int_0^{+\infty}t^m\,\mathrm{d}\mathrm{e}^{-st}\\
+&=\left.-\dfrac{1}{s}t^m\mathrm{e}^{-st}\right|_0^{+\infty}+\dfrac{m}{s}\int_0^{+\infty}t^{m-1}\mathrm{e}^{-st}\mathrm{d}t\\
+&=\dfrac{m}{s}\mathscr{L}\left[t^{m-1}\right]\qquad(\operatorname{Re}s&gt;0).
+\end{aligned}$$</div>
+这是一个<b>递推公式</b>. 由 $\mathscr{L}[1]=\frac{1}{s}$ 逐次递推, 得
+<div class="box-formula">$$\mathscr{L}[t^m]=\dfrac{m!}{s^{m+1}}\qquad(\operatorname{Re}s&gt;0).$$</div>
+再求单位冲激函数. 利用 $\delta(t)$ 的"筛选性质", 把积分下限取到 $0^-$:
+<div class="box-formula">$$\mathscr{L}[\delta(t)]=\int_{0^-}^{+\infty}\delta(t)\mathrm{e}^{-st}\mathrm{d}t=\int_{-\infty}^{+\infty}\delta(t)\mathrm{e}^{-st}\mathrm{d}t=\left.\mathrm{e}^{-st}\right|_{t=0}=1.$$</div>
+可见 $\delta(t)$ 的拉氏变换在<b>整个 $s$ 平面</b>上都等于 $1$.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 不同 $f(t)$ 的象函数 $\left|F(s)\right|$ 在 $s$ 平面上的分布 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">拖动滑块切换原函数 $f(t)$, 图中用颜色深浅表示象函数的模 $\left|F(s)\right|$ 在 $s$ 平面上的大小 (越亮越大), 竖直虚线标出<b>收敛半平面</b>的边界 $\operatorname{Re}s=c$. 注意: $1,\ t^m,\ \sin kt,\ \cos kt$ 的边界都是 $\operatorname{Re}s=0$; $\mathrm{e}^{kt}$ 的边界随 $k$ 平移; 而 $\delta(t)$ 的象函数恒为 $1$, 处处有定义.</div>
+<canvas id="cvExamples" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>原函数 $f(t)$:</label>
+<input type="range" id="exSel" min="0" max="5" step="1" value="0">
+<span class="val-badge" id="exSelV">1</span>
+</div>
+<div class="readout" id="exReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">一张小表: 记住这五个"基本砖块"</div>
+<table>
+<tr><th>原函数 $f(t)$</th><th>象函数 $F(s)$</th><th>收敛域</th></tr>
+<tr><td>$1$</td><td>$\frac{1}{s}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$t^m\ (m\ge1)$</td><td>$\frac{m!}{s^{m+1}}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\mathrm{e}^{kt}$</td><td>$\frac{1}{s-k}$</td><td>$\operatorname{Re}s&gt;k$</td></tr>
+<tr><td>$\sin kt$</td><td>$\frac{k}{s^2+k^2}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\cos kt$</td><td>$\frac{s}{s^2+k^2}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\delta(t)$</td><td>$1$</td><td>全平面</td></tr>
+</table>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 存在定理 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 哪些函数才有拉氏变换</div>
+
+<div class="box-key">
+<div class="title">两个问题</div>
+<span style="color:#c62828"><b>(1)</b></span> 拉氏变换的存在条件虽比傅氏变换弱得多, 但究竟哪些类型的函数一定存在拉氏变换?<br>
+<span style="color:#c62828"><b>(2)</b></span> 由上面的例题可见, $f(t)$ 的拉氏变换作为一个复变函数, 只有当复变量 $s$ 落在一定范围内时才有意义 —— 这个<b>收敛范围</b>到底有多大?
+<br><br>
+下面这条定理同时回答这两个问题.
+</div>
+
+<div class="box-key">
+<div class="title">定理 8.1 (拉普拉斯变换存在定理)</div>
+设函数 $f(t)$ 满足下列两个条件:
+<br><br>
+<span style="color:#c62828"><b>(1)</b></span> 在 $t\ge0$ 的任一有限区间上<b>分段连续</b>;<br>
+<span style="color:#c62828"><b>(2)</b></span> 当 $t\to+\infty$ 时, $f(t)$ 的增长速度不超过某一指数函数, 即存在常数 $M&gt;0$ 与 $c&gt;0$, 使
+<div class="box-formula">$$\left|f(t)\right|\le M\mathrm{e}^{ct},\qquad 0\le t&lt;+\infty.$$</div>
+则 $f(t)$ 的拉氏变换 $F(s)$ 在半平面
+<div class="box-formula">$$\operatorname{Re}s&gt;c$$</div>
+上一定存在, 并且在该半平面内是<b>解析</b>的. 常数 $c$ 称为 $f(t)$ 的<b>增长指数</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">证明要点</div>
+设 $s=\beta+\mathrm{i}\omega$, 由条件 (2) 有
+<div class="box-formula">$$\left|\mathrm{e}^{-st}\right|=\left|\mathrm{e}^{-\beta t}\mathrm{e}^{-\mathrm{i}\omega t}\right|=\mathrm{e}^{-\beta t}.$$</div>
+于是对被积函数估计:
+<div class="box-formula">$$\left|F(s)\right|=\left|\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t\right|\le\int_0^{+\infty}\left|f(t)\right|\mathrm{e}^{-\beta t}\mathrm{d}t\le M\int_0^{+\infty}\mathrm{e}^{-( \beta-c)t}\mathrm{d}t.$$</div>
+当 $\operatorname{Re}s=\beta&gt;c$, 即 $\beta-c&gt;0$ 时, 右端的积分收敛:
+<div class="box-formula">$$M\int_0^{+\infty}\mathrm{e}^{-(\beta-c)t}\mathrm{d}t=\dfrac{M}{\beta-c}&lt;+\infty.$$</div>
+所以积分<b>绝对收敛</b>, $F(s)$ 在 $\operatorname{Re}s&gt;c$ 上存在.
+<br><br>
+至于<b>解析性</b>: 对含参变量的积分求导后, $\frac{\partial}{\partial s}\big(f(t)\mathrm{e}^{-st}\big)=-tf(t)\mathrm{e}^{-st}$ 仍满足同样的指数衰减估计, 故可在积分号下求导; 这说明 $F(s)$ 在 $\operatorname{Re}s&gt;c$ 上处处可导 (复可导), 因而是解析的. 更完整的解析性论证涉及较深的复变函数理论, 这里从略.
+<br><br>
+<b>一个常用推论:</b> 若 $\sigma_0$ 是使 $F(s)$ 收敛的所有 $\beta$ 的下确界, 则 $F(s)$ 在 $\operatorname{Re}s&gt;\sigma_0$ 上存在. 例如 $\mathscr{L}[1]=\frac{1}{s}$ 的 $\sigma_0=0$, 收敛半平面即右半平面.
+</div>
+
+<div class="chart-container">
+<h3>交互: 增长指数 $c$ 与收敛半平面 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图画出信号 $\left|f(t)\right|$ (蓝) 与它的指数上界包络 $M\mathrm{e}^{ct}$ (红虚线), 满足 $\left|f(t)\right|\le M\mathrm{e}^{ct}$; 右图标出 $s$ 平面上的收敛半平面 $\operatorname{Re}s&gt;c$ (浅色区域) 与边界直线 $\operatorname{Re}s=c$. 拖动滑块改变增长指数 $c$: 信号增长越快, 边界直线越往右移, 收敛半平面越窄 —— 但只要 $c$ 有限, 就总能靠右取足够大的 $\operatorname{Re}s$ 让积分收敛.</div>
+<div class="fig-caps">
+<div class="fc">$\left|f(t)\right|$ (蓝) 与指数上界 $M\mathrm{e}^{ct}$ (红虚线), $M=1$</div>
+</div>
+<canvas id="cvExist" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>增长指数 $c$:</label>
+<input type="range" id="extC" min="0" max="2" step="0.1" value="0.8">
+<span class="val-badge" id="extCV">0.8</span>
+</div>
+<div class="readout" id="extReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">条件 (2) 说的是什么</div>
+条件 (2) 是一条"增长不许太快"的约束: 只要 $f(t)$ 的增长速度不高于某个指数函数, 拉氏变换就一定存在. 它排除了像 $\mathrm{e}^{t^2}$ 这样"增长过猛"的函数, 却容纳了多项式、指数、三角、冲激等几乎全部"常用函数".
+<br><br>
+这也解释了为什么拉氏变换在工程中如此好用: <b>实际信号和系统响应大多满足这条增长约束</b>.
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>傅氏变换的困难</b> → <b>拉氏变换的定义</b> → <b>与傅氏变换的关系</b> → <b>典型例题 (象函数)</b> → <b>存在定理与收敛半平面</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>原函数 $f(t)$</th><th>象函数 $F(s)=\mathscr{L}[f(t)]$</th><th>收敛域</th></tr>
+<tr><td>$1$</td><td>$\frac{1}{s}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$t^m\ (m\ \text{为正整数},\ m\ge1)$</td><td>$\frac{m!}{s^{m+1}}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\mathrm{e}^{kt}$</td><td>$\frac{1}{s-k}$</td><td>$\operatorname{Re}s&gt;k$</td></tr>
+<tr><td>$\sin kt$</td><td>$\frac{k}{s^2+k^2}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\cos kt$</td><td>$\frac{s}{s^2+k^2}$</td><td>$\operatorname{Re}s&gt;0$</td></tr>
+<tr><td>$\delta(t)$</td><td>$1$</td><td>全平面</td></tr>
+</table>
+
+<div class="box-result">
+<div class="res-label">一句话记牢</div>
+拉氏变换 $F(s)=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$ 就是 $f(t)u(t)\mathrm{e}^{-\beta t}$ 的傅氏变换; 只要 $f(t)$ 的增长指数 $c$ 有限, 它就在半平面 $\operatorname{Re}s&gt;c$ 上存在且解析. 常见象函数 $\frac{1}{s},\ \frac{1}{s-k},\ \frac{k}{s^2+k^2},\ \frac{s}{s^2+k^2},\ \frac{m!}{s^{m+1}},\ 1$ 要记到"条件反射".
+</div>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 拉普拉斯变换的定义式中, 复参变量 $s$ 等于?</div>
+<label class="quiz-opt">A. $s=\beta-\mathrm{i}\omega$</label>
+<label class="quiz-opt" data-ok="1">B. $s=\beta+\mathrm{i}\omega$</label>
+<label class="quiz-opt">C. $s=\omega+\mathrm{i}\beta$</label>
+<label class="quiz-opt">D. $s$ 是实数</label>
+<div class="quiz-explain"><b>解析:</b> 定义 8.1 中复参数取 $s=\beta+\mathrm{i}\omega$, 其中 $\beta=\operatorname{Re}s$ 决定衰减快慢, $\omega=\operatorname{Im}s$ 决定振荡快慢.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 求 $f(t)=3$ 的拉氏变换 $\mathscr{L}[3]$.</div>
+<label class="quiz-opt">A. $\frac{1}{3s}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{3}{s}$</label>
+<label class="quiz-opt">C. $\frac{3}{s^2}$</label>
+<label class="quiz-opt">D. $3s$</label>
+<div class="quiz-explain"><b>解析:</b> 由线性性质 $\mathscr{L}[3]=3\mathscr{L}[1]=3\cdot\frac{1}{s}=\frac{3}{s}$, 收敛域 $\operatorname{Re}s&gt;0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 指数函数 $\mathscr{L}\big[\mathrm{e}^{-2t}\big]$ 等于?</div>
+<label class="quiz-opt">A. $\frac{1}{s-2}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{s+2}$</label>
+<label class="quiz-opt">C. $\frac{2}{s^2+4}$</label>
+<label class="quiz-opt">D. $\frac{s}{s^2+4}$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[\mathrm{e}^{kt}]=\frac{1}{s-k}$, 取 $k=-2$ 得 $\frac{1}{s-(-2)}=\frac{1}{s+2}$, 收敛域 $\operatorname{Re}s&gt;-2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 正弦函数 $\mathscr{L}[\sin 2t]$ 等于?</div>
+<label class="quiz-opt">A. $\frac{s}{s^2+4}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{2}{s^2+4}$</label>
+<label class="quiz-opt">C. $\frac{1}{s^2+4}$</label>
+<label class="quiz-opt">D. $\frac{2}{s^2-4}$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[\sin kt]=\frac{k}{s^2+k^2}$, 取 $k=2$ 得 $\frac{2}{s^2+4}$; 而 $\frac{s}{s^2+4}$ 是 $\mathscr{L}[\cos 2t]$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 幂函数 $\mathscr{L}\big[t^3\big]$ 等于?</div>
+<label class="quiz-opt">A. $\frac{3}{s^4}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{6}{s^4}$</label>
+<label class="quiz-opt">C. $\frac{1}{s^4}$</label>
+<label class="quiz-opt">D. $\frac{6}{s^3}$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[t^m]=\frac{m!}{s^{m+1}}$, 取 $m=3$ 得 $\frac{3!}{s^{4}}=\frac{6}{s^4}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 单位冲激函数 $\mathscr{L}[\delta(t)]$ 等于?</div>
+<label class="quiz-opt">A. $\frac{1}{s}$</label>
+<label class="quiz-opt">B. $s$</label>
+<label class="quiz-opt" data-ok="1">C. $1$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 由筛选性 $\mathscr{L}[\delta(t)]=\left.\mathrm{e}^{-st}\right|_{t=0}=1$, 在整个 $s$ 平面上都成立.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 拉氏变换与傅氏变换的关系是?</div>
+<label class="quiz-opt">A. $\mathscr{L}[f(t)]=\mathscr{F}[f(t)]$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]=F(\beta+\mathrm{i}\omega)$</label>
+<label class="quiz-opt">C. $\mathscr{L}[f(t)]=\mathscr{F}[f(t)]\mathrm{e}^{-\beta t}$</label>
+<label class="quiz-opt">D. 两者毫无关系</label>
+<div class="quiz-explain"><b>解析:</b> 由推导 $\mathscr{L}[f(t)]=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t=\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]$, 即拉氏变换是"截断并衰减"后的傅氏变换.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 关于拉氏变换的收敛半平面, 下列说法正确的是?</div>
+<label class="quiz-opt">A. 收敛域一定是一条直线</label>
+<label class="quiz-opt">B. 收敛域一定是一个圆</label>
+<label class="quiz-opt" data-ok="1">C. 收敛域是直线 $\operatorname{Re}s=c$ 右侧的半平面 $\operatorname{Re}s&gt;c$</label>
+<label class="quiz-opt">D. 收敛域与 $f(t)$ 无关</label>
+<div class="quiz-explain"><b>解析:</b> 收敛只取决于 $\operatorname{Re}s=\beta$ (因为 $\left|\mathrm{e}^{-st}\right|=\mathrm{e}^{-\beta t}$), 虚部不影响收敛, 故收敛域是半个平面 $\operatorname{Re}s&gt;c$, 并且 $c$ 由 $f(t)$ 的增长指数决定.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 函数 $\mathscr{L}[\cos 3t]$ 的收敛域是?</div>
+<label class="quiz-opt">A. $\operatorname{Re}s&gt;3$</label>
+<label class="quiz-opt" data-ok="1">B. $\operatorname{Re}s&gt;0$</label>
+<label class="quiz-opt">C. $\operatorname{Re}s&gt;-3$</label>
+<label class="quiz-opt">D. 全平面</label>
+<div class="quiz-explain"><b>解析:</b> $\mathscr{L}[\cos kt]=\frac{s}{s^2+k^2}$ 的收敛域为 $\operatorname{Re}s&gt;0$, 与 $k$ 无关. 只有形如 $\mathrm{e}^{kt}$ 的指数增长因子才会把边界推到 $\operatorname{Re}s&gt;k$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 拉普拉斯变换存在定理中, 保证 $F(s)$ 存在且解析的条件是?</div>
+<label class="quiz-opt">A. $f(t)$ 必须处处连续且绝对可积</label>
+<label class="quiz-opt" data-ok="1">B. $f(t)$ 分段连续且 $\left|f(t)\right|\le M\mathrm{e}^{ct}$ (增长指数有限)</label>
+<label class="quiz-opt">C. $f(t)$ 必须单调递增</label>
+<label class="quiz-opt">D. $f(t)$ 必须有界</label>
+<div class="quiz-explain"><b>解析:</b> 定理 8.1 的两个条件是: (1) $f$ 在 $t\ge0$ 上分段连续; (2) 存在 $M&gt;0,\ c&gt;0$ 使 $\left|f(t)\right|\le M\mathrm{e}^{ct}$. 满足时 $F(s)$ 在半平面 $\operatorname{Re}s&gt;c$ 上存在且解析. 注意并不要求"有界"或"绝对可积" —— 这正是比傅氏变换弱的地方.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位"把时间翻到频率"的数学家</h3>
+<div class="hero-sub">他从天体运行的轨道里读出了方程的秩序, 又在赌博与人口的概率里发现了"生成函数"的威力; 他留下的名言"只要知道初始条件, 宇宙的过去与未来都能算出来", 把 18 世纪的自信推到了顶点.</div>
+<div class="hero-quote">
+拿破仑曾问他: 你的《天体力学》讲遍了宇宙, 为什么书里一次也没提到上帝? 拉普拉斯答道: "<em>陛下, 我不需要那个假设.</em>"<br>
+他用来征服方程的那件工具 —— 把函数化为含参变量的积分 —— 后来被命名为<b>拉普拉斯变换</b>, 成为整个工程控制与信号分析的数学起点.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 拉普拉斯: 用变换把"时间"翻到"频率"</div>
+
+<div class="person-card">
+<div class="p-av">拉</div>
+<div class="p-main">
+<div class="p-name">皮埃尔-西蒙·拉普拉斯 (Pierre-Simon Laplace, 1749—1827)</div>
+<div class="p-meta">法国数学家 · 天文学家 · 物理学家 · 概率论的奠基者之一 · 法兰西科学院院士 · "拉普拉斯变换"与"拉普拉斯方程"的冠名者</div>
+<p>他出生在法国诺曼底一个普通农家, 父亲做苹果酒生意; 靠着聪慧与惊人的计算力, 他从地方教会学校一路考到巴黎, 二十岁出头就被达朗贝尔赏识、进入军事学院任教. 此后半个世纪, 他用数学系统地"称量"了整个太阳系, 写下了五卷本《<b>天体力学</b>》.</p>
+<p>本节所讲的"把函数化为复参变量 $s$ 的积分"这一工具, 在拉普拉斯那里并不是专为电学或控制而造, 而是他从<b>概率论</b>与<b>差分方程</b>的研究中自然生长出来的思想. 这段故事告诉我们: <b>把一个问题"换个变量看", 往往能让最难的方程变得简单.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从诺曼底少年到《天体力学》的作者</h5>
+<p>1749 年, 拉普拉斯生于法国诺曼底博蒙昂奥热的一个普通家庭. 他早年就读于当地教会学校, 青年时带着一封推荐信前往巴黎, 凭着一手过硬的数学功底赢得了数学家<b>达朗贝尔</b>的认可, 被推荐到巴黎军事学院任教. 不久, 他的一系列关于天体运动的论文就让他在法兰西科学院站稳了脚跟.</p>
+<p>他的毕生事业是<b>天体力学</b>: 用牛顿的万有引力定律去解释行星如何运动、太阳系是否稳定. 他证明了行星的长期摄动存在周期性而非永久性偏差 —— 也就是说, 太阳系在长时间尺度上是"稳定"的. 这项工作既是物理, 也是纯粹的数学, 而支撑它的, 正是一整套处理微分方程的新方法.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>从概率到"生成函数": 变换思想的源头</h5>
+<p>1812 年, 拉普拉斯出版《<b>概率的分析理论</b>》, 把概率论从"赌博游戏的计算"提升为一门系统的数学学科. 在这本书里, 他大量使用了一种聪明的技巧: 把一整列数 (比如某随机变量的各阶矩) 打包成一个"函数", 让关于数列的复杂运算, 变成关于这个函数的<b>代数运算</b>.</p>
+<p>这类方法后来被称为<b>生成函数</b>与<b>母函数</b>方法, 今天的<b>$z$ 变换</b>、<b>概率母函数</b>都脱胎于它. 而拉普拉斯变换 $F(s)=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$, 正是同一思想在连续情形下的版本: <b>用积分把"函数 $f$"变成一个"函数 $F$", 从而把微分运算变成代数运算.</b></p>
+<p>这正是本节的核心动机: 一个"积分变换"之所以有用, 是因为它擅长把难啃的运算变成好啃的运算.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>拉普拉斯方程与"势"的普遍语言</h5>
+<p>在引力与静电的研究中, 拉普拉斯导出并以他命名的<b>拉普拉斯方程</b>
+<div class="box-formula">$$\dfrac{\partial^2 u}{\partial x^2}+\dfrac{\partial^2 u}{\partial y^2}+\dfrac{\partial^2 u}{\partial z^2}=0,$$</div>
+它描述了一切"稳定场" (引力势、静电场、稳态温度场) 的普遍规律. 满足这一方程的函数称为<b>调和函数</b>, 它有一个极为优雅的性质: 函数在某点的值等于它在球面上邻域的平均值 —— 也就是"<b>没有局部的极大极小值</b>".</p>
+<p>从拉普拉斯方程出发, 后人发展出"势论""位函数"一整套语言, 而本节里的复变函数方法 (解析函数、共形映射) 也正是求解它的有力工具. <b>拉普拉斯把"看不见的力"写成"看得见的方程", 这份对普遍规律的追求, 是他一生数学风格的底色.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>"决定论"的名言与拿破仑的故事</h5>
+<p>拉普拉斯最广为人知的一段话, 是他关于"<b>智者</b>" (后世称"拉普拉斯妖") 的著名设想: 假如有一个智慧能在某一瞬间洞悉自然界的全部力与全部物体的位置, 并且有能力计算这一切, 那么对它而言, <b>没有什么是不确定的, 未来会像过去一样清晰地展现在它眼前</b>. 这就是机械决定论的经典表述.</p>
+<p>另一个流传甚广的故事是: 拿破仑读了他的《天体力学》后问他, 为什么全书从没提到造物主? 拉普拉斯回答:"<em>陛下, 我不需要那个假设.</em>" 这句话既是他对自然规律自洽性的自信, 也把<b>"让数学自己说话"</b>这一科学态度表达得淋漓尽致.</p>
+<p>今天看来, 决定论在混沌与量子力学面前已被大大修正, 但拉普拉斯那句话背后对<b>规律与计算</b>的信念, 仍然激励着一代代用方程描绘世界的人.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>百年回响: 从"势"到"控制系统"</h5>
+<p>拉普拉斯当年研究的"势"与"变换", 今天成了工程世界的通用语言: 电路里分析暂态过程要用拉氏变换, 自动控制里设计调节器要用传递函数, 信号处理里研究系统特性要用 $s$ 域方法. 一套 18—19 世纪为天体与概率而生的工具, 最终成了现代工程最基础的一课.</p>
+<p>更有意思的是: 拉普拉斯变换把"时间里的微分方程"翻译成"$s$ 域里的代数方程", 让求一个系统响应从"解方程"变成"做除法". <b>越是洞察结构的工具, 越是经得起时间的检验.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>拉普拉斯的性格常被后人议论. 他在政治上<b>屡次转换立场</b>: 大革命中他曾参与度量衡改革, 拿破仑时期做过内政部长、被封为伯爵, 复辟时期又转而支持波旁王朝. 有人因此批评他"见风使舵", 也有人替他辩解: 在那个动荡年代, 一位科学家若想让研究不被打断、让科学机构得以存续, 常常不得不在夹缝中求全. 与此形成鲜明对照的是他在<b>数学上的固执</b>: 无论外部风云如何变幻, 他每天仍长时间伏案计算, 把《天体力学》一遍遍修订完善. 人们说, 他一生真正忠诚的, 只有<b>那些算得出来的东西</b>.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 拉普拉斯式的信念</div>
+在拉普拉斯那里, 宇宙是可以"算出来"的, 而数学就是那支用来计算的笔. 他关于决定论的设想流传至今:
+<br>
+"<em>我们应当把宇宙的现状看作它过去的结果和未来的原因.</em>"
+<br>
+他也留下了这样一句掷地有声的回答:
+<br>
+"<em>陛下, 我不需要那个假设.</em>"
+<span class="iv-sig">—— 这种"把规律交给方程、把结论交给计算"的态度, 正是本节从 $\mathscr{L}[f(t)]=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$ 一路走到"$s$ 域代数化"的思想底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">换一个变量</div>
+<h4>换个"坐标系", 难题就变简单</h4>
+<p>同一个函数, 在"时间 $t$"的坐标里可能是一个难解的微分方程, 换到"复参变量 $s$"的坐标里就变成了一道代数题. 变的是视角, 不变的是对象本身.</p>
+<p>这提醒我们: 遇到难题, 先问"有没有更合适的坐标系", 而不是一味硬算.</p>
+<div class="pc-math">$f(t)\ \xrightarrow{\ \mathscr{L}\ }\ F(s)$: 微分运算 $\to$ 代数运算</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">限制与自由</div>
+<h4>加一个衰减因子, 换来整片天地</h4>
+<p>傅氏变换要求函数绝对可积, 这个"限制"太硬, 把一堆常见函数挡在门外. 拉氏变换主动"加限制" (乘 $\mathrm{e}^{-\beta t}$), 却因此换来了对更多函数的普适性.</p>
+<p>有时候, 主动接受一个恰当的限制, 反而能获得更大的发挥空间.</p>
+<div class="pc-math">$\int_0^{+\infty}\left|f\right|\mathrm{e}^{-\beta t}\mathrm{d}t&lt;+\infty$ $\Rightarrow$ 可积性被"救活"</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>收敛域是半个平面, 而不是一个点</h4>
+<p>$F(s)$ 是否有意义, 不看某个孤立的 $s$, 而要看它落在哪半边平面. 收敛性由实部 $\beta$ 决定, 虚部 $\omega$ 只负责振荡.</p>
+<p>判断一件事"成不成", 常常要看"处在哪一类条件里", 而不是纠结于个别情形.</p>
+<div class="pc-math">$\left|\mathrm{e}^{-st}\right|=\mathrm{e}^{-\beta t}$: 收敛只由 $\operatorname{Re}s$ 决定</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">连续与离散</div>
+<h4>从生成函数到积分变换</h4>
+<p>拉普拉斯在概率论里用"生成函数"打包一列数, 而拉氏变换用积分打包一个函数. 离散与连续, 是同一个思想的两副面孔, 正如 $z$ 变换与拉氏变换互为对照.</p>
+<p>发现两种看似不同的方法"其实是一回事", 是数学中最让人惊喜的时刻之一.</p>
+<div class="pc-math">$\sum a_n z^n$ (离散) $\longleftrightarrow$ $\int f(t)\mathrm{e}^{-st}\mathrm{d}t$ (连续)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">确定与不确定</div>
+<h4>"智者"的设想: 规律与边界</h4>
+<p>拉普拉斯相信, 只要知道初始条件, 未来就能全部算出. 这个"决定论"的设想极其壮美, 但后来的混沌与量子理论告诉我们: 现实并不总是可精确预测的.</p>
+<p>这提醒我们: 对规律要敬畏, 对结论要谦逊 —— 模型总有它的边界.</p>
+<div class="pc-math">决定论的雄心 $\longleftrightarrow$ 混沌与不确定的边界</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">基础与应用</div>
+<h4>为天体而生的工具, 撑起了工程</h4>
+<p>拉普拉斯当年为研究行星和概率而发展的变换方法, 两百年后成了电路、控制、信号领域的基石. 他从未想过自己的工具会被工程师天天使用.</p>
+<p>越是基础的工具, 适用的范围往往越广. "无用"的数学, 常常在很久以后变成"最有用"的数学.</p>
+<div class="pc-math">天体力学 / 概率 $\longrightarrow$ 拉氏变换 $\longrightarrow$ 传递函数 $\longrightarrow$ 自动控制</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 从"天元术"到"正负开方术" —— 把问题代数化、算法化</div>
+中国传统数学最鲜明的特色, 是<b>把问题化为等式、再用算法一步步求出答案</b>. 这与"把微分方程化为代数方程"的拉氏变换思想, 神韵相通.
+<br><br>
+最典型的代表是宋元时期的"<b>天元术</b>": 数学家<b>李冶</b>在《测圆海镜》中, 规定"<b>立天元一为某某</b>", 也就是<b>设未知量</b>, 把题目中的数量关系写成"天元式" (相当于今天的方程), 再以固定的程序消元、求解. 这种"设元 —— 列式 —— 消元 —— 求根"的路数, 正是把复杂问题<b>翻译成符号与方程</b>, 再交给算法去处理 —— 与拉氏变换"换一个变量、把运算变简单"的动机, 如出一辙.
+<br><br>
+而早在《<b>九章算术</b>》里, 中国古代就已发展出成熟的<b>算法化传统</b>: 每一种问题都对应一套可执行的步骤 (如"方程术""盈不足术"), 讲究"术"即算法、可复现、能推广. 南宋数学家<b>秦九韶</b>在《数书九章》中更提出了"<b>正负开方术</b>", 给出求解高次方程数值根的完整算法 (即后世的"秦九韶算法"/霍纳法), 至今仍是计算多项式值的标准方法.
+<br><br>
+从"立天元一"的设未知量, 到"正负开方"的迭代求根, 中国古人一直在做同一件事: <b>把纷繁的问题变成清晰的方程, 再把方程交给可靠的算法.</b> 这与本节"用变换把微分方程变为代数方程"的思想, 是同一个数学精神在不同时代的回响.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 拉氏变换撑起的工业与航天</div>
+<ul>
+<li><b>自动控制: 传递函数的语言.</b> 在经典控制理论中, 系统的输入输出关系被写成<b>传递函数</b> $H(s)=\frac{Y(s)}{X(s)}$, 它正是由拉氏变换把微分方程"翻译"到 $s$ 域后得到的比值. 比例-积分-微分 (PID) 调节器、稳定性判据 (如劳斯判据、奈奎斯特判据), 都建立在这套 $s$ 域语言之上. 今天工厂里的温度、压力、转速控制, 背后都是同一个 $H(s)$.</li>
+<li><b>电路分析: 把暂态过程变成代数题.</b> 含电感、电容的动态电路, 用基尔霍夫定律列出的是微分方程; 一旦做拉氏变换, 电感变成 $Ls$、电容变成 $\frac{1}{Cs}$, 整个电路立刻化为熟悉的"复阻抗"代数网络, 求解暂态响应 (如合闸浪涌、滤波器阶跃响应) 变得手到擒来.</li>
+<li><b>航天器控制: 从长征火箭到北斗卫星.</b> 运载火箭的姿态控制、卫星的<b>姿态稳定与轨道保持</b>, 都要对姿控回路做频域设计: 用传递函数刻画执行机构与敏感器的动态, 再设计校正环节保证系统的稳定裕度与抗扰能力. 北斗卫星长期在轨稳定运行、长征系列火箭高可靠发射, 其控制回路的设计与验证, 处处是拉氏变换与传递函数方法的身影.</li>
+<li><b>工业自动化: DCS 与数控机床.</b> 集散控制系统 (DCS) 里调节回路的参数整定, 数控机床里伺服进给系统的动态补偿, 都离不开频域分析. 我国在工业自动化、数控技术与高端装备上的持续攻关, 本质上是在<b>把控制理论的数学, 变成稳定可靠的工程</b>.</li>
+<li><b>数学的接力.</b> 从把拉氏变换、$z$ 变换引入国内课堂并编写教材的前辈学者, 到今天在控制、信号与航天工程一线工作的科研人员, 中国科学工作者一直在做同一件事: <b>把基础数学工具, 牢牢握在自己手里, 用到国家最需要的地方.</b></li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 基础理论, 是国家的"控制回路"</div>
+一条"把函数化为积分"的变换, 两百年后成了电路分析、自动控制、航天器姿态设计的数学底座. 从李冶的"立天元一", 到秦九韶的"正负开方术", 再到今天的 PID 调节与北斗姿控 —— 中国人一直在同一个数学精神上前行: <b>把问题化为方程, 把方程交给算法, 把算法用到强国需要之处.</b>
+<br><br>
+这件事的价值在于: <b>越是基础的理论, 越能撑起国家最需要的地方.</b> 一节课上的拉氏变换, 可以只是一道积分题, 也可以是一枚火箭的数学地基 —— 区别在于我们是否愿意把基础打牢、把工具握在自己手里.
+<br><br>
+可以说: <b>把"变换"看懂了, 才能把微分方程化开, 也才能把大国重器控得稳、飞得准.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"我们应当把宇宙的现状看作它过去的结果和未来的原因."<span class="q-src">—— 拉普拉斯</span></div>
+<div class="quote-item">"陛下, 我不需要那个假设."<span class="q-src">—— 拉普拉斯答拿破仑 (论《天体力学》为何不提上帝)</span></div>
+<div class="quote-item">"对自然的深入研究, 是数学发现最丰富的源泉."<span class="q-src">—— 傅里叶</span></div>
+<div class="quote-item">"立天元一为某某."<span class="q-src">—— 李冶《测圆海镜》(天元术设未知量)</span></div>
+<div class="quote-item">"正负开方, 以术御繁."<span class="q-src">—— 秦九韶《数书九章》(高次方程数值解法)</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 拉普拉斯从诺曼底的一个普通农家走出, 用数学为整个太阳系"称重", 写下《天体力学》与《概率的分析理论》; 他为研究天体与概率而发展的"把函数化为积分"的方法, 后来被命名为拉普拉斯变换, 成为电路分析、自动控制与航天器姿态设计的数学起点. 本节讲的 $\mathscr{L}[f(t)]=\int_0^{+\infty}f(t)\mathrm{e}^{-st}\mathrm{d}t$ 与传递函数思想, 正是这件事的数学内核.<br>
+<b>一个道理:</b> 从"傅氏变换要求绝对可积"的困难, 到"乘上衰减因子 $\mathrm{e}^{-\beta t}$"的破局, 我们看到了一个朴素而深刻的策略: <b>换一个变量、加一个恰当的限制, 就能把难题变成易题.</b> 拉氏变换把微分方程化为 $s$ 域的代数方程, 而存在定理又告诉我们: 只要增长指数有限, 象函数就在半平面 $\operatorname{Re}s&gt;c$ 上存在且解析. 这说明: <b>看清一件事的适用范围与适用条件, 往往和求出答案同样重要.</b><br>
+<b>一份责任:</b> 从李冶"立天元一"的设未知量、秦九韶"正负开方术"的算法迭代, 到拉普拉斯的积分变换与传递函数; 从长征火箭的姿态控制、北斗卫星的长期在轨稳定, 到 DCS 与数控机床的伺服调节 —— 同一种"把问题化为方程、把方程交给算法"的精神贯穿古今中外. 今天我国在自动控制、航天工程与高端装备上不断走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习拉普拉斯变换, 既是在为后续的运算性质与逆变换打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第八章第一节 拉普拉斯变换的概念 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// 局部绘图小工具: 按步长 step 画坐标轴与刻度 (用于范围较大的 s 平面 / 时间轴)
+function axStep(ctx,w,h,m,lx,ly,step){
+  var x0=m.px(0), y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(w,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,0); ctx.lineTo(x0,h); ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(lx||'',w-28,y0-8);
+  if(x0+6<w) ctx.fillText(ly||'',x0+6,16);
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.85)';
+  var lo=Math.ceil(m.ix(0)), hi=m.ix(w);
+  for(var x=lo;x<=hi;x++){
+    if(x===0) continue;
+    if(x%step!==0) continue;
+    ctx.beginPath(); ctx.moveTo(m.px(x),y0-4); ctx.lineTo(m.px(x),y0+4);
+    ctx.strokeStyle='#546e7a'; ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-6,y0+16);
+  }
+  ctx.restore();
+}
+
+// ================= 模块 1: 衰减因子 e^{-βt} 与积分可积性 =================
+module('cvLaplace',function(cv){
+  var B=0.5, TM=6;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-64;
+    var ymax=1.35;
+    // ---- 左: f(t)=1 与 e^{-βt} ----
+    ctx.save(); ctx.translate(12,34);
+    var m1=mapperEq(halfW,H,0,TM,-0.25,ymax);
+    grid(ctx,halfW,H,m1,1); axStep(ctx,halfW,H,m1,'t','',1);
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(1)); ctx.lineTo(m1.px(TM),m1.py(1)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var y=Math.exp(-B*tt), px=m1.px(tt), py=m1.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // ---- 右: 被积函数 e^{-βt} 与面积 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,34);
+    var m2=mapperEq(halfW,H,0,TM,0,ymax);
+    grid(ctx,halfW,H,m2,1); axStep(ctx,halfW,H,m2,'t','',1);
+    ctx.beginPath(); ctx.moveTo(m2.px(0),m2.py(0));
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){ ctx.lineTo(m2.px(tt),m2.py(Math.exp(-B*tt))); }
+    ctx.lineTo(m2.px(TM),m2.py(0)); ctx.closePath();
+    ctx.fillStyle=(B>0)?'rgba(21,101,192,.22)':'rgba(198,40,40,.22)';
+    ctx.fill();
+    ctx.strokeStyle=(B>0)?'#1565c0':'#c62828'; ctx.lineWidth=2.8; ctx.beginPath();
+    first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var y2=Math.exp(-B*tt), px2=m2.px(tt), py2=m2.py(y2);
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    var txt;
+    if(B>0){
+      txt='衰减指数 $\\beta='+fmt(B,1)+'$: '+hl('$\\int_0^{+\\infty}\\mathrm{e}^{-\\beta t}\\mathrm{d}t=\\frac{1}{\\beta}='+fmt(1/B,3)+'$ 收敛')+' —— 被积函数迅速压低, 面积为有限值.<br>'+
+        '$f(t)=1$ 的拉氏变换 $F(s)=\\frac{1}{s}$ 只在 '+hl2('$\\operatorname{Re}s&gt;0$')+' 上成立; 当 $\\operatorname{Re}s=\\beta&gt;0$ 时 $\\left|\\mathrm{e}^{-st}\\right|=\\mathrm{e}^{-\\beta t}\\to0\\ (t\\to+\\infty)$, 积分收敛.';
+    }else if(B===0){
+      txt='衰减指数 $\\beta=0$: 被积函数恒为 $1$, '+hl('$\\int_0^{+\\infty}1\\,\\mathrm{d}t$ 发散')+' —— 处于收敛边界的临界情形.<br>'+
+        hl2('$\\operatorname{Re}s&gt;0$ 是收敛半平面, 而 $\\operatorname{Re}s=0$ (虚轴) 本身不属于收敛域.');
+    }else{
+      txt='衰减指数 $\\beta='+fmt(B,1)+'&lt;0$: 被积函数 $\\mathrm{e}^{-\\beta t}$ 反而指数增长, '+hl('积分 $\\int_0^{+\\infty}\\mathrm{e}^{-\\beta t}\\mathrm{d}t$ 发散')+'.<br>'+
+        hl2('此时找不到任何收敛的 $\\beta$, 收敛半平面为空 —— 这正是「衰减因子必须足够强」的含义.');
+    }
+    setRO('lapReadout',txt);
+  }
+  bindSlider('lapB',function(v){ B=v; badge('lapBV',fmt(v,1)); draw(); });
+  badge('lapBV',fmt(B,1));
+  return {draw:draw};
+});
+
+// ================= 模块 2: f(t) / 衰减后的函数 / 其频谱 =================
+module('cvRelation',function(cv){
+  var B=0.8, TM=6, WM=6;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-64;
+    // ---- 左: 阶跃 u(t) 与衰减后的 u(t)e^{-βt} ----
+    ctx.save(); ctx.translate(12,34);
+    var m1=mapperEq(halfW,H,0,TM,-0.2,1.25);
+    grid(ctx,halfW,H,m1,1); axStep(ctx,halfW,H,m1,'t','',1);
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(1)); ctx.lineTo(m1.px(TM),m1.py(1)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(1)); ctx.lineTo(m1.px(0),m1.py(0)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var y=Math.exp(-B*tt), px=m1.px(tt), py=m1.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // ---- 右: |F(β+iω)| = 1/√(β²+ω²) 随 ω 的分布 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,34);
+    var m2=mapperEq(halfW,H,-WM,WM,-0.05,1/Math.max(B,0.05)*1.08);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'ω','|F|');
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.8; ctx.beginPath();
+    first=true;
+    for(tt=-WM;tt<=WM+1e-9;tt+=0.01){
+      var mag=1/Math.sqrt(B*B+tt*tt), px2=m2.px(tt), py2=m2.py(mag);
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    dot(ctx,m2.px(0),m2.py(1/B),5,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,22,'频谱 |F(β+iω)|: 峰值 1/β 落在 ω=0','#37474f','bold 12.5px Segoe UI');
+    setRO('relReadout',
+      '$\\mathscr{F}\\big[f(t)u(t)\\mathrm{e}^{-\\beta t}\\big]=F(\\beta+\\mathrm{i}\\omega)$: 衰减指数 $\\beta='+fmt(B,2)+'$ 时, 频谱为 '+hl('$\\left|F(\\beta+\\mathrm{i}\\omega)\\right|=\\frac{1}{\\sqrt{\\beta^2+\\omega^2}}$')+', 峰值 $F('+fmt(B,2)+')='+fmt(1/B,3)+'$ 落在 $\\omega=0$.<br>'+
+      '三步: '+hl2('乘衰减因子 $\\mathrm{e}^{-\\beta t}$ &rarr; 取傅氏变换 &rarr; 解析延拓到复变量 $s$')+'.<br>'+
+      '$\\beta$ 越小 (衰减越弱), 时域包络越「扁平」, 频域主瓣越「尖锐」; 反之 $\\beta$ 越大, 时域越「瘦」, 频域越「胖」 —— 这正是「时域越窄, 频域越宽」.');
+  }
+  bindSlider('relB',function(v){ B=v; badge('relBV',fmt(v,2)); draw(); });
+  badge('relBV',fmt(B,2));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 不同 f(t) 的 |F(s)| 在 s 平面上的分布 =================
+module('cvExamples',function(cv){
+  var sel=0;
+  var FN=[
+    {plain:'1',      c:0,  tex:'$1$',            fs:'$\\frac{1}{s}$',          F:function(s){ return cdiv(C(1,0),s); }},
+    {plain:'t',      c:0,  tex:'$t$',            fs:'$\\frac{1}{s^2}$',        F:function(s){ return cdiv(C(1,0),cmul(s,s)); }},
+    {plain:'e⁻ᵗ',    c:-1, tex:'$\\mathrm{e}^{-t}$', fs:'$\\frac{1}{s+1}$',    F:function(s){ return cdiv(C(1,0),cadd(s,C(1,0))); }},
+    {plain:'sin2t',  c:0,  tex:'$\\sin 2t$',     fs:'$\\frac{2}{s^2+4}$',      F:function(s){ return cdiv(C(2,0),cadd(cmul(s,s),C(4,0))); }},
+    {plain:'cos2t',  c:0,  tex:'$\\cos 2t$',     fs:'$\\frac{s}{s^2+4}$',      F:function(s){ return cdiv(s,cadd(cmul(s,s),C(4,0))); }},
+    {plain:'δ(t)',   c:-9, tex:'$\\delta(t)$',   fs:'$1$',                      F:function(s){ return C(1,0); }}
+  ];
+  function heatColor(u){
+    u=u<0?0:(u>1?1:u);
+    var hue=225-225*u, l=20+44*u;
+    return 'hsl('+hue.toFixed(0)+',85%,'+l.toFixed(0)+'%)';
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var xmin=-2, xmax=3, ymin=-3, ymax=3;
+    var L=36,R=20,TOP=36,BOT=30;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    var nx=76, ny=76, i, j;
+    var fn=FN[sel];
+    function X(b){ return L+(b-xmin)/(xmax-xmin)*iw; }
+    function Y(om){ return TOP+(ymax-om)/(ymax-ymin)*ih; }
+    // 预扫描求模的最大值
+    var vmax=0, vals=[];
+    for(j=0;j<ny;j++){
+      vals[j]=[];
+      for(i=0;i<nx;i++){
+        var bx=xmin+(i+0.5)/nx*(xmax-xmin);
+        var om=ymax-(j+0.5)/ny*(ymax-ymin);
+        var v=cabs(fn.F(C(bx,om)));
+        vals[j][i]=v;
+        if(v>vmax) vmax=v;
+      }
+    }
+    var lg=Math.log(1+vmax)+1e-9;
+    var cw=iw/nx+1, chh=ih/ny+1;
+    for(j=0;j<ny;j++) for(i=0;i<nx;i++){
+      var u=Math.log(1+vals[j][i])/lg;
+      ctx.fillStyle=heatColor(u);
+      ctx.fillRect(L+i*iw/nx, TOP+j*ih/ny, cw, chh);
+    }
+    // 坐标轴
+    ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(X(0),TOP); ctx.lineTo(X(0),TOP+ih); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(L+iw,Y(0)); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='italic 13px Georgia';
+    ctx.fillText('Re s', L+iw-40, Y(0)-6);
+    ctx.fillText('Im s', X(0)+6, TOP+14);
+    ctx.font='11px Segoe UI';
+    for(i=-2;i<=3;i++){ if(i===0) continue; ctx.fillText(String(i),X(i)-4,Y(0)+15); }
+    for(j=-3;j<=3;j++){ if(j===0) continue; ctx.fillText(String(j),X(0)-18,Y(j)+4); }
+    // 收敛半平面边界 Re s = c
+    if(fn.c>-9){
+      ctx.strokeStyle='#ffeb3b'; ctx.lineWidth=3; ctx.setLineDash([9,6]);
+      ctx.beginPath(); ctx.moveTo(X(fn.c),TOP); ctx.lineTo(X(fn.c),TOP+ih); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#ffeb3b'; ctx.font='bold 12.5px Segoe UI';
+      ctx.fillText('Re s = '+fmt(fn.c,0), X(fn.c)+7, TOP+18);
+    }else{
+      ctx.fillStyle='#ffeb3b'; ctx.font='bold 12.5px Segoe UI';
+      ctx.fillText('全平面收敛', X(1.0), TOP+18);
+    }
+    tlabel(ctx,L,24,'f(t)='+fn.plain+' 的象函数 |F(s)| 在 s 平面上的分布 (越亮越大)','#37474f','bold 12.5px Segoe UI');
+    var extra='';
+    if(fn.c>-9){
+      extra='收敛半平面为 '+hl('$\\operatorname{Re}s&gt;'+fmt(fn.c,0)+'$')+' (边界 $\\operatorname{Re}s='+fmt(fn.c,0)+'$ 用黄虚线标出).';
+    }else{
+      extra=hl('$\\mathscr{L}[\\delta(t)]=1$ 在整个 $s$ 平面上收敛')+', 没有收敛边界.';
+    }
+    setRO('exReadout',
+      '当前 $f(t)='+fn.tex.replace(/\$/g,'')+'$, 象函数 $F(s)='+fn.fs.replace(/\$/g,'')+'$.<br>'+extra+'<br>'+
+      hl2('注意图中「亮斑」的位置: 它是 $F(s)$ 的极点所在, 也正是收敛边界的由来.'));
+  }
+  bindSlider('exSel',function(v){ sel=Math.round(v); badge('exSelV',FN[sel].plain); draw(); });
+  badge('exSelV',FN[sel].plain);
+  return {draw:draw};
+});
+
+// ================= 模块 4: 增长指数 c 与收敛半平面 =================
+module('cvExist',function(cv){
+  var Cc=0.8, TM=3, M=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-64;
+    // ---- 左: |f(t)| 与指数上界包络 M e^{ct} ----
+    var topv=M*Math.exp(Cc*TM);
+    ctx.save(); ctx.translate(12,34);
+    var m1=mapperEq(halfW,H,0,TM,-0.05*topv,topv*1.08);
+    grid(ctx,halfW,H,m1,1); axStep(ctx,halfW,H,m1,'t','',1);
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.4; ctx.setLineDash([8,5]); ctx.beginPath();
+    var tt, first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var env=M*Math.exp(Cc*tt), px=m1.px(tt), py=m1.py(env);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    first=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.02){
+      var y=Math.exp(Cc*tt)*(0.7+0.3*Math.sin(4*tt)), px2=m1.px(tt), py2=m1.py(y);
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // ---- 右: s 平面上的收敛半平面 Re s > c ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,34);
+    var xmin=-1, xmax=3, ymin=-3, ymax=3;
+    var m2=mapperEq(halfW,H,xmin,xmax,ymin,ymax);
+    // 阴影区 Re s > c
+    var xc=m2.px(Cc);
+    ctx.fillStyle='rgba(46,125,50,.16)';
+    ctx.fillRect(xc,0,halfW-xc,H);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'ω','Re s');
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3; ctx.setLineDash([9,6]);
+    ctx.beginPath(); ctx.moveTo(xc,0); ctx.lineTo(xc,H); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#c62828'; ctx.font='bold 12.5px Segoe UI';
+    ctx.fillText('Re s = '+fmt(Cc,1), xc+6, 18);
+    ctx.fillStyle='#2e7d32'; ctx.font='bold 13px Segoe UI';
+    ctx.fillText('收敛半平面', xc+12, H-14);
+    ctx.restore();
+    tlabel(ctx,sx,22,'s 平面: 收敛半平面 Re s > c (绿色区域)','#37474f','bold 12.5px Segoe UI');
+    setRO('extReadout',
+      '增长指数 $c='+fmt(Cc,1)+'$: 信号满足 '+hl('$\\left|f(t)\\right|\\le M\\mathrm{e}^{ct}$')+', 于是 '+hl2('$F(s)$ 在 $\\operatorname{Re}s&gt;'+fmt(Cc,1)+'$ 上存在且解析')+'.<br>'+
+      '证明估计: $\\left|F(s)\\right|\\le M\\int_0^{+\\infty}\\mathrm{e}^{-(\\beta-c)t}\\mathrm{d}t=\\frac{M}{\\beta-c}\\,&lt;+\\infty\\quad(\\beta&gt;c)$.<br>'+
+      '$c$ 越大, 红色边界线 $\\operatorname{Re}s=c$ 越靠右, 绿色收敛半平面越窄; 但只要 $c$ 有限, 总能取足够大的 $\\operatorname{Re}s$ 使积分绝对收敛.');
+  }
+  bindSlider('extC',function(v){ Cc=v; badge('extCV',fmt(v,1)); draw(); });
+  badge('extCV',fmt(Cc,1));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'拉氏变换的定义', c:'#1976d2', leaves:['傅氏变换要求绝对可积, 条件太强','$f(t)$: $[0,+\\infty)$ 上的实值函数','$F(s)=\\int_0^{+\\infty}f(t)\\mathrm{e}^{-st}\\,\\mathrm{d}t$','$s=\\beta+\\mathrm{i}\\omega$','$F(s)=\\mathscr{L}[f(t)]$','$f(t)=\\mathscr{L}^{-1}[F(s)]$','$F(s)$ 象函数, $f(t)$ 象原函数','收敛半平面 $\\operatorname{Re}s>\\beta$']},
+    {t:'与傅氏变换的关系', c:'#e65100', leaves:['$\\mathscr{L}[f]=\\int_0^{+\\infty}f(t)$','$\\mathrm{e}^{-\\beta t}\\mathrm{e}^{-\\mathrm{i}\\omega t}\\,\\mathrm{d}t$','$=\\mathscr{F}[f(t)u(t)\\mathrm{e}^{-\\beta t}]$','$u(t)=0\\ (t\u003c0),\\ 1\\ (t>0)$','三步: 乘衰减因子→傅氏变换→解析延拓','存在条件比傅氏变换弱得多','$\\beta\\to 0$ 时退化为傅氏变换']},
+    {t:'典型例题 · 象函数', c:'#c62828', leaves:['$\\mathscr{L}[1]=\\frac{1}{s}\\ (\\operatorname{Re}s>0)$','$\\mathscr{L}[\\mathrm{e}^{kt}]=\\frac{1}{s-k}\\ (\\operatorname{Re}s>k)$','$\\mathscr{L}[\\sin kt]=\\frac{k}{s^2+k^2}$','$\\mathscr{L}[\\cos kt]=\\frac{s}{s^2+k^2}$','$\\mathscr{L}[t^m]=\\frac{m!}{s^{m+1}}$','$\\mathscr{L}[\\delta(t)]=1$ (全平面)']},
+    {t:'存在定理 · 收敛域', c:'#2e7d32', leaves:['(1) $t\\ge 0$ 有限区间上分段连续','(2) $|f(t)|\\le M\\mathrm{e}^{ct}$ (增长指数 $c$)','$\\mathscr{L}[f]$ 在半平面 $\\operatorname{Re}s>c$ 存在','$F(s)$ 在 $\\operatorname{Re}s>c$ 上解析','$M\\int_0^{+\\infty}\\mathrm{e}^{-(\\beta-c)t}\\,\\mathrm{d}t=\\frac{M}{\\beta-c}$','$c$ 有限 ⇒ 积分绝对收敛']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第八章第一节 · 拉普拉斯变换的概念';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 → 与傅氏变换的关系 → 典型例题 → 存在定理; 一句话: <b>$F(s)=\\mathscr{L}[f(t)]=\\int_0^{+\\infty}f(t)\\mathrm{e}^{-st}\\mathrm{d}t$, 其中 $s=\\beta+\\mathrm{i}\\omega$; $F(s)$ 是象函数, $f(t)$ 是象原函数, 且 $\\mathscr{F}\\big[f(t)u(t)\\mathrm{e}^{-\\beta t}\\big]=F(\\beta+\\mathrm{i}\\omega)$; 只要增长指数 $c$ 有限, $F(s)$ 就在半平面 $\\operatorname{Re}s&gt;c$ 上存在且解析</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'傅里叶变换要求函数绝对可积, 拉普拉斯变换则靠乘上衰减因子 e^{−βt} 放松了这一条件. 为什么说这是「主动加限制, 换来更大自由」?',
+     hints:['傅氏变换的绝对可积要求把 1、sin kt、e^{kt} 这类常见信号挡在门外, 门槛太高.',
+            '拉氏变换先把时间轴截断 (乘 u(t)), 再乘 e^{−βt} 压低远处的量, 让积分收敛.',
+            '代价是需要 β 足够大 (即 s 落在收敛半平面 Re s > c 内); 回报是几乎全部实际信号都能被处理.',
+            '可迁移的态度: 主动接受一个清晰、可控的限制, 往往比强行追求「无条件成立」更实用.']},
+    {q:'拉氏变换把「时间里的微分方程」翻译成「s 域里的代数方程」. 这种「换变量把难题变简单」的思路, 在你学过的数学或生活中有类似的例子吗?',
+     hints:['对数把乘法变加法, 极坐标把圆的方程变简单, 拉氏变换把微分方程变代数方程 —— 都是「换坐标系」.',
+            '在求解电路暂态时, 电感变成 Ls、电容变成 1/(Cs), 整张电路立刻变成熟悉的复阻抗网络.',
+            '关键是找到让「难运算」变成「易运算」的那类变换, 并能来回穿梭 (正变换与逆变换).',
+            '可迁移的态度: 遇到难啃的问题, 先别急着硬算, 先问「有没有更合适的表示方式」.']},
+    {q:'存在定理要求 f(t) 的增长指数 c 有限. 这个条件排除了哪些函数? 为什么它对工程来说并不苛刻?',
+     hints:['它排除的是增长比任何指数函数都快的函数, 如 e^{t²}; 这类函数在实际中几乎不会出现.',
+            '多项式、指数、三角函数、单位冲激等常见函数都满足 |f(t)| ≤ M e^{ct}, 增长指数有限.',
+            '工程中的信号与系统响应能量有限、增长受控, 天然满足这条约束, 所以拉氏变换才被广泛使用.',
+            '可迁移的态度: 一个好工具的标志, 不是「什么都能处理」, 而是「实际要处理的都能处理」.']},
+    {q:'拉普拉斯相信「知道初始条件就能算出未来」, 但后来的混沌与量子理论修正了这种决定论. 这对你理解「数学模型的边界」有何启发?',
+     hints:['决定论要求初始条件可以被精确获知并精确计算, 而现实中测量总有误差、计算总有舍入.',
+            '混沌系统对初值极端敏感, 微小误差会被迅速放大, 使长期预测失效 —— 这不是数学错了, 而是模型的适用范围有限.',
+            '数学给出的是「在假设之下的必然结论」, 用得好不好, 取决于是否清楚假设的边界.',
+            '可迁移的态度: 对规律要信任, 对结论要谦逊; 说「模型说」之前, 先想清楚「模型假设了什么」.']},
+    {q:'从李冶「立天元一」设未知量、秦九韶「正负开方术」, 到今天的传递函数与 PID 控制: 你如何理解「把问题化为方程、把方程交给算法」这一传统的贯通?',
+     hints:['天元术的核心是「设未知量、列方程、消元求解」, 正是把复杂问题符号化、算法化.',
+            '秦九韶的正负开方术给出高次方程数值求根的完整算法, 至今仍是计算多项式的标准方法.',
+            '传承到现代: 拉氏变换把微分方程代数化, 传递函数 H(s)=Y(s)/X(s) 把系统关系化简为比值, PID 又把调节规则写成可执行的算法.',
+            '可迁移的态度: 基础数学思想没有时代之分, 谁把它用得透、落到工程实处, 谁就能走到前面.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='sz8Ans'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

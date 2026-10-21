@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第八章第三节 拉普拉斯逆变换</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 部分分式分解模块 (左侧流程 HTML + 右侧曲线 canvas) ===== */
+.method-flex { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.mf-left { flex: 0 0 38%; min-width: 220px; }
+.mf-right { flex: 1 1 320px; min-width: 0; }
+.mf-right canvas { width: 100%; display: block; }
+.mf-box { border: 1.5px solid rgba(21,101,192,.30); background: rgba(21,101,192,.06);
+  border-radius: 8px; padding: 10px 15px 12px; }
+.mf-title { color: #0d47a1; font-weight: 700; font-size: 1.02em; margin-bottom: 9px; }
+.mf-fs { color: #37474f; font-weight: 700; margin-bottom: 10px; }
+.mf-item { margin-bottom: 9px; }
+.mf-p { color: #455a74; font-weight: 600; }
+.mf-i { margin-left: 16px; font-weight: 700; }
+.mf-sum { color: #2e7d32; font-weight: 700; margin-top: 8px; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第八章 第3节 拉普拉斯逆变换</h1>
+    <p>反演积分公式 &middot; 用留数计算逆变换 &middot; 典型例题 &middot; 三种方法对照与练习</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解拉氏逆变换的问题: 已知象函数 $F(s)$, 求象原函数 $f(t)=\mathscr{L}^{-1}[F(s)]$; 会由<b>傅氏逆变换</b>出发, 对 $f(t)u(t)\mathrm{e}^{-\beta t}$ 使用傅氏积分定理, 再令 $s=\beta+\mathrm{i}\omega$, 导出<b>反演积分公式</b> $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s\ (t&gt;0)$;
+2. 理解反演积分是一条沿竖直直线 $\operatorname{Re}s=\beta$ 的<b>复变函数积分</b>, 认识它与第五章"留数"的直接衔接;
+3. 掌握<b>定理 3.1</b>: 当 $F(s)$ 只有有限个孤立奇点、且 $s\to\infty$ 时 $F(s)\to0$ (适当条件) 时, $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$; 牢记"找奇点 $\rightarrow$ 判断类型 $\rightarrow$ 求留数"的计算步骤;
+4. 熟练用留数法求逆变换, 掌握一级极点、二级极点以及两者并存的典型例题;
+5. 会比较<b>部分分式分解 + 查表</b>、<b>留数法 (反演积分)</b>、<b>卷积定理</b>三种方法, 知道何时用哪一种, 并会做综合练习.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-8c" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-8c" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-8c" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-8c" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-8c" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-8c" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、逆变换的引入与反演积分公式</label>
+    <label class="tab-btn" for="tab2" id="label2">二、用留数计算反演积分</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型例题</label>
+    <label class="tab-btn" for="tab4" id="label4">四、常用方法对照与练习</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 逆变换的引入与反演积分公式 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 什么是拉氏逆变换</div>
+
+<div class="box-key">
+<div class="title">问题: 已知象函数, 求象原函数</div>
+上一节我们解决的是"由 $f(t)$ 求 $F(s)$". 本节要反过来: 已知象函数 $F(s)$, 求它的象原函数 $f(t)$, 这就是<b>拉普拉斯逆变换</b>的问题, 记为
+<div class="box-formula">$$f(t)=\mathscr{L}^{-1}[F(s)].$$</div>
+关键的事实是: 由拉氏变换的定义, <b>对 $f(t)$ 作拉氏变换, 实质上就是对 $f(t)u(t)\mathrm{e}^{-\beta t}$ 作傅氏变换</b>:
+<div class="box-formula">$$\mathscr{F}\big[f(t)u(t)\mathrm{e}^{-\beta t}\big]=F(\beta+\mathrm{i}\omega)=\int_{-\infty}^{+\infty}f(t)u(t)\mathrm{e}^{-\beta t}\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t.$$</div>
+既然正变换是傅氏变换, 那么逆变换自然应当从<b>傅氏逆变换</b>那里"接手".
+</div>
+
+<div class="box-key">
+<div class="title">推导: 由傅氏逆变换导出反演积分公式</div>
+当 $f(t)u(t)\mathrm{e}^{-\beta t}$ 满足<b>傅氏积分定理</b>的条件时, 在 $f(t)\,(t&gt;0)$ 的连续点有
+<div class="box-formula">$$f(t)u(t)\mathrm{e}^{-\beta t}=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\beta+\mathrm{i}\omega)\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega.$$</div>
+两边同乘 $\mathrm{e}^{\beta t}$, 并注意 $t&gt;0$ 时 $u(t)=1$:
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\beta+\mathrm{i}\omega)\mathrm{e}^{(\beta+\mathrm{i}\omega)t}\mathrm{d}\omega.$$</div>
+现在作变量替换: 令
+<div class="box-formula">$$s=\beta+\mathrm{i}\omega,\qquad \mathrm{d}s=\mathrm{i}\,\mathrm{d}\omega\qquad(\beta\ \text{固定}).$$</div>
+当 $\omega$ 由 $-\infty$ 变到 $+\infty$ 时, $s$ 沿竖直直线 $\operatorname{Re}s=\beta$ 由 $\beta-\mathrm{i}\infty$ 变到 $\beta+\mathrm{i}\infty$; 又 $\mathrm{d}\omega=\frac{\mathrm{d}s}{\mathrm{i}}$, 于是
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\dfrac{\mathrm{d}s}{\mathrm{i}}=\dfrac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s.$$</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">反演积分公式</div>
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s\qquad(t&gt;0).$$</div>
+它的积分路径是 $s$ 平面上与虚轴平行的一条直线 $\operatorname{Re}s=\beta$. 这条直线处于 $F(s)$ 的存在域中, 而 $F(s)$ 在存在域内解析, 因此<b>这条直线的右方不含 $F(s)$ 的奇点</b>.
+</div>
+
+<div class="box-key">
+<div class="title">为什么说这是一条"复变函数积分"</div>
+反演积分公式的右端, 是一个沿<b>复平面上一条直线</b>的复变函数积分: 被积函数 $F(s)\mathrm{e}^{st}$ 是复变量 $s$ 的函数, 路径是竖直直线 $\operatorname{Re}s=\beta$. 这正是第五章"复变函数积分与留数"的直接应用场景 —— <b>只要把这条直线补成一条闭曲线, 就能用留数定理把积分算出来</b>. 这就是下一小节"用留数计算反演积分"的全部出发点.
+</div>
+
+<div class="chart-container">
+<h3>交互: $s$ 平面上的 Bromwich 积分路径 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">图中画出 $s$ 平面 (横轴 $\operatorname{Re}s$, 纵轴 $\operatorname{Im}s$)、若干奇点 (用叉号标出), 以及反演积分的路径 —— 竖直直线 $\operatorname{Re}s=\beta$. 拖动滑块改变 $\beta$: 当 $\beta$ 大于所有奇点的实部时, 这条直线位于全部奇点的右方, 直线右方是 $F(s)$ 的解析区 (绿色阴影), 反演积分有定义; 若 $\beta$ 落到某奇点实部的左边, 则"直线右方无奇点"的前提被破坏.</div>
+<canvas id="cvInvPath" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>路径位置 $\beta$:</label>
+<input type="range" id="iveB" min="0.3" max="3.5" step="0.1" value="2.6">
+<span class="val-badge" id="iveBV">2.6</span>
+</div>
+<div class="readout" id="iveBReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 用留数计算反演积分 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 定理 3.1: 用留数计算反演积分</div>
+
+<div class="box-key">
+<div class="title">定理 3.1 (用留数计算拉氏逆变换)</div>
+设 $F(s)$ 在有限复平面内只有有限个孤立奇点
+<div class="box-formula">$$s_1,\ s_2,\ \cdots,\ s_n,$$</div>
+实数 $\beta$ 使这些奇点<b>全在 $\operatorname{Re}s&lt;\beta$ 的半平面内</b>, 并且当 $s\to\infty$ 时 $F(s)\to0$, 则
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s=\sum_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]\qquad(t&gt;0).$$</div>
+也就是说: <b>反演积分等于被积函数 $F(s)\mathrm{e}^{st}$ 在 $F(s)$ 全部奇点处的留数之和</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">适用条件与计算步骤</div>
+<span style="color:#c62828"><b>(1) 适用条件.</b></span> $F(s)$ 只有有限个孤立奇点; 能取到足够大的 $\beta$ 把所有奇点推到直线 $\operatorname{Re}s=\beta$ 的左侧; 当 $s\to\infty$ 时 $F(s)$ 一致地趋于 $0$ (例如 $F(s)$ 为有理函数且分母次数高于分子).
+<br><br>
+<span style="color:#c62828"><b>(2) 计算步骤.</b></span> <b>找奇点 $\rightarrow$ 判断类型 $\rightarrow$ 求留数 $\rightarrow$ 相加</b>:
+<ul>
+<li><b>第一步:</b> 求出 $F(s)$ 的全部奇点 $s_1,s_2,\cdots,s_n$;</li>
+<li><b>第二步:</b> 判断每个奇点是几级极点 (或在极点处是否为本性奇点);</li>
+<li><b>第三步:</b> 按留数计算准则 1/2/3, 逐个求 $\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$;</li>
+<li><b>第四步:</b> 把各留数相加, 即得 $f(t)\ (t&gt;0)$.</li>
+</ul>
+</div>
+
+<div class="box-key">
+<div class="title">注: 为什么可以补上大圆弧 (保证圆弧积分为零的条件)</div>
+留数定理要求积分沿<b>闭曲线</b>, 而反演积分的路径只是一条竖直线, 并不闭合. 于是我们在 $\operatorname{Re}s&lt;\beta$ 一侧补上一段半径 $R$ 的大圆弧 $C_R$, 与竖直直线一起围成闭曲线. 只要
+<div class="box-formula">$$\lim\limits_{R\to\infty}\int_{C_R}F(s)\mathrm{e}^{st}\mathrm{d}s=0\qquad(t&gt;0),$$</div>
+这段圆弧上的积分就在极限中"消失", 反演积分便等于"直线 + 圆弧"整个闭曲线上的积分, 再由留数定理化为各奇点留数之和.
+<br><br>
+在实践中, 只要当 $s\to\infty$ 时 $F(s)$ 一致地趋于 $0$ (例如 $F$ 是有理函数且分母比分子至少高一次), 这一条件就自动满足 —— 因为有估计
+<div class="box-formula">$$\left|\int_{C_R}F(s)\mathrm{e}^{st}\mathrm{d}s\right|\le \pi R\cdot\max_{s\in C_R}\left|F(s)\right|\cdot\mathrm{e}^{\beta t}\xrightarrow[\ R\to\infty\ ]{}0,$$</div>
+其中对 $t&gt;0$, 在左侧的大圆弧上有 $\left|\mathrm{e}^{st}\right|=\mathrm{e}^{t\operatorname{Re}s}\le\mathrm{e}^{\beta t}$ 有界. 这就是"适当条件"的具体含义.
+</div>
+
+<div class="chart-container">
+<h3>交互: 大圆弧 $C_R$ 上的积分随 $R\to\infty$ 趋于零 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">把竖直直线 $\operatorname{Re}s=\beta$ 在左侧用半径 $R$ 的大圆弧闭合成闭曲线. 拖动滑块改变 $R$: 圆弧越大, 奇点被围得越"干净"; 而圆弧上 $\left|F(s)\right|$ 的典型大小按 $\frac{1}{R^{m}}$ 衰减 ($m$ 为分母与分子的次数差), 于是 $\pi R\cdot\left|F\right|$ 随 $R\to\infty$ 趋于 $0$ —— 这正是圆弧上积分"消失"的原因.</div>
+<canvas id="cvResArc" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>圆弧半径 $R$:</label>
+<input type="range" id="iveR" min="3" max="9" step="0.5" value="4.5">
+<span class="val-badge" id="iveRV">4.5</span>
+</div>
+<div class="readout" id="iveRReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型例题 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 例 3.1: 一级极点与二级极点并存</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.1</div>
+已知 $F(s)=\frac{1}{(s-2)(s-1)^2}$, 求 $f(t)=\mathscr{L}^{-1}[F(s)]$.
+<input type="checkbox" id="c8invAns1" class="answer-toggle">
+<label for="c8invAns1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由于 $s_1=2$ 是 $F(s)$ 的<b>一级极点</b>, $s_2=1$ 是<b>二级极点</b>, 由留数计算准则, 有
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},2\right]=\lim\limits_{s\to 2}(s-2)\dfrac{\mathrm{e}^{st}}{(s-2)(s-1)^2}=\left.\dfrac{\mathrm{e}^{st}}{(s-1)^2}\right|_{s=2}=\mathrm{e}^{2t},$$</div>
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},1\right]=\dfrac{1}{(2-1)!}\lim\limits_{s\to 1}\dfrac{\mathrm{d}}{\mathrm{d}s}\left[\dfrac{\mathrm{e}^{st}}{s-2}\right]=\lim\limits_{s\to 1}\dfrac{t\mathrm{e}^{st}(s-2)-\mathrm{e}^{st}}{(s-2)^2}=-\mathrm{e}^{t}(1+t).$$</div>
+从而
+<div class="box-formula">$$f(t)=\operatorname{Res}\left[F(s)\mathrm{e}^{st},2\right]+\operatorname{Res}\left[F(s)\mathrm{e}^{st},1\right]=\mathrm{e}^{2t}-\mathrm{e}^{t}(1+t)\qquad(t&gt;0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.2 (自编, 一级极点)</div>
+已知 $F(s)=\frac{s+3}{(s+1)(s+2)}$, 求 $f(t)=\mathscr{L}^{-1}[F(s)]$.
+<input type="checkbox" id="c8invAns2" class="answer-toggle">
+<label for="c8invAns2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$s_1=-1,\ s_2=-2$ 都是 $F(s)$ 的一级极点, 由一级极点的留数准则 (准则 3),
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},-1\right]=\left.\dfrac{s+3}{s+2}\right|_{s=-1}\mathrm{e}^{-t}=2\mathrm{e}^{-t},$$</div>
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},-2\right]=\left.\dfrac{s+3}{s+1}\right|_{s=-2}\mathrm{e}^{-2t}=-\mathrm{e}^{-2t}.$$</div>
+故
+<div class="box-formula">$$f(t)=2\mathrm{e}^{-t}-\mathrm{e}^{-2t}\qquad(t&gt;0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.3 (自编, 二级极点)</div>
+已知 $F(s)=\frac{1}{(s-1)^2}$, 求 $f(t)=\mathscr{L}^{-1}[F(s)]$.
+<input type="checkbox" id="c8invAns3" class="answer-toggle">
+<label for="c8invAns3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$s=1$ 是 $F(s)$ 的二级极点, 由二级极点的留数准则,
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},1\right]=\dfrac{1}{(2-1)!}\lim\limits_{s\to 1}\dfrac{\mathrm{d}}{\mathrm{d}s}\left[(s-1)^2\dfrac{\mathrm{e}^{st}}{(s-1)^2}\right]=\lim\limits_{s\to 1}\dfrac{\mathrm{d}}{\mathrm{d}s}\mathrm{e}^{st}=\lim\limits_{s\to 1}t\mathrm{e}^{st}=t\mathrm{e}^{t}.$$</div>
+故
+<div class="box-formula">$$f(t)=t\mathrm{e}^{t}\qquad(t&gt;0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">留数计算准则 (复习)</div>
+记被积函数为 $\Phi(s)=F(s)\mathrm{e}^{st}$.
+<br><br>
+<span style="color:#c62828"><b>准则 1 (一级极点).</b></span> 若 $s_0$ 是 $F(s)$ 的一级极点, 则
+<div class="box-formula">$$\operatorname{Res}\left[\Phi(s),s_0\right]=\lim\limits_{s\to s_0}(s-s_0)F(s)\mathrm{e}^{st}.$$</div>
+<span style="color:#c62828"><b>准则 2 ($m$ 级极点).</b></span> 若 $s_0$ 是 $F(s)$ 的 $m$ 级极点, 则
+<div class="box-formula">$$\operatorname{Res}\left[\Phi(s),s_0\right]=\dfrac{1}{(m-1)!}\lim\limits_{s\to s_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}s^{m-1}}\left[(s-s_0)^mF(s)\mathrm{e}^{st}\right].$$</div>
+<span style="color:#c62828"><b>准则 3 ($F=\frac{P}{Q}$ 的一级极点).</b></span> 若 $F(s)=\frac{P(s)}{Q(s)}$, $P,Q$ 在 $s_0$ 解析, $P(s_0)\ne0$, $Q(s_0)=0$, $Q'(s_0)\ne0$, 则
+<div class="box-formula">$$\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_0\right]=\dfrac{P(s_0)}{Q'(s_0)}\mathrm{e}^{s_0t}.$$</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 不同 $F(s)$ 的极点分布与留数贡献的"叠加" <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $s$ 平面上的极点分布 (叉号; 重数用标签标出); 右图是 $t$ 轴上各极点留数所对应的"分量曲线"(虚线) 以及它们的<b>总和</b> $f(t)$ (实线). 拖动滑块切换 $F(s)$, 可以看到 $f(t)$ 正是若干"指数型分量"的叠加 —— 这正是留数法"化整为零、再相加"的直观含义.</div>
+<canvas id="cvInvEx" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>象函数 $F(s)$:</label>
+<input type="range" id="iveSel" min="0" max="2" step="1" value="0">
+<span class="val-badge" id="iveSelV">$\frac{1}{(s-1)(s+2)}$</span>
+</div>
+<div class="readout" id="iveSelReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 常用方法对照与练习 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 三种求逆变换的方法对照</div>
+
+<table>
+<tr><th>方法</th><th>适用情形与条件</th><th>关键步骤</th><th>特点</th></tr>
+<tr>
+<td>反演积分公式</td>
+<td>理论上普遍适用; 路径为直线 $\operatorname{Re}s=\beta$, 且直线右方无 $F(s)$ 的奇点</td>
+<td>由傅氏逆变换导出: $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$</td>
+<td>一切方法的"源头"; 直接计算通常较难</td>
+</tr>
+<tr>
+<td>留数法</td>
+<td>$F(s)$ 只有有限个孤立奇点; 可取 $\beta$ 使奇点全在 $\operatorname{Re}s&lt;\beta$ 内; $s\to\infty$ 时 $F(s)\to0$</td>
+<td>找奇点 $\rightarrow$ 判类型 $\rightarrow$ 求留数 $\rightarrow$ 求和: $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$</td>
+<td>通法, 机械可执行; 需准确判断极点阶数</td>
+</tr>
+<tr>
+<td>部分分式分解 + 查表</td>
+<td>$F(s)$ 为有理函数, 且分母能分解为一次、二次因式</td>
+<td>先约简 (假分式先做多项式除法), 再分解为 $\sum\frac{A_k}{s-a_k}$ 一类的简单分式, 逐项查基本变换表</td>
+<td>最快、最直观; 依赖分解与查表的熟练度</td>
+</tr>
+<tr>
+<td>卷积定理</td>
+<td>$F(s)=F_1(s)F_2(s)$ 是"两个已知象函数"的乘积</td>
+<td>由 $f_1=\mathscr{L}^{-1}[F_1],\ f_2=\mathscr{L}^{-1}[F_2]$ 作卷积 $f_1*f_2=\int_0^t f_1(\tau)f_2(t-\tau)\mathrm{d}\tau$</td>
+<td>适合"乘积型"问题; 卷积积分有时较繁</td>
+</tr>
+</table>
+
+<div class="box-result">
+<div class="res-label">何时用哪一种</div>
+<span style="color:#c62828"><b>(1)</b></span> <b>先查表.</b> 若 $F(s)$ 能拆成基本象函数的线性组合, 用"部分分式分解 + 查表"最快, 这也是工程里的首选;<br>
+<span style="color:#c62828"><b>(2)</b></span> <b>查不到用留数.</b> 若 $F(s)$ 是有理函数但不易分解, 或含有高于一次的极点, 用<b>留数法</b>稳稳拿下 —— 它是通用手段;<br>
+<span style="color:#c62828"><b>(3)</b></span> <b>乘积用卷积.</b> 若 $F(s)$ 恰好是两个已知象函数的乘积 $F_1F_2$, 用<b>卷积定理</b>把问题化为时域卷积, 往往能绕开复杂的分解;<br>
+<span style="color:#c62828"><b>(4)</b></span> 三种方法<b>殊途同归</b>: 同一个 $f(t)$ 无论走哪条路都应得到一致结果, 这既是检验算错的工具, 也是数学自洽性的体现.
+</div>
+
+<div class="chart-container">
+<h3>交互: 切换 $F(s)$, 显示部分分式分解与逆变换 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左栏给出当前 $F(s)$ 的<b>部分分式分解</b> (把复杂的有理分式拆成若干简单分式之和); 右栏给出每个简单分式对应的<b>逆变换分量</b>(虚线) 以及它们的总和 $f(t)$ (实线). 拖动滑块切换 $F(s)$: 无论是 $1/(s(s+1))$ 还是 $1/(s^2(s+1))$, 都能"拆开 $\rightarrow$ 逐项查表 $\rightarrow$ 相加".</div>
+<div class="method-flex">
+<div class="mf-left" id="methodDec"></div>
+<div class="mf-right"><canvas id="cvMethod" data-h="320"></canvas></div>
+</div>
+<div class="control-panel">
+<div class="row">
+<label>象函数 $F(s)$:</label>
+<input type="range" id="iveM" min="0" max="2" step="1" value="0">
+<span class="val-badge" id="iveMV">$\frac{1}{s(s+1)}$</span>
+</div>
+<div class="readout" id="iveMReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.2 综合练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.1</div>
+求 $F(s)=\frac{1}{s(s+1)}$ 的拉氏逆变换 $f(t)$.
+<input type="checkbox" id="c8invAns4" class="answer-toggle">
+<label for="c8invAns4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+先作部分分式分解. 设
+<div class="box-formula">$$\dfrac{1}{s(s+1)}=\dfrac{A}{s}+\dfrac{B}{s+1},$$</div>
+通分比较, 由 $1=A(s+1)+Bs$ 得 $A=1,\ B=-1$, 即
+<div class="box-formula">$$\dfrac{1}{s(s+1)}=\dfrac{1}{s}-\dfrac{1}{s+1}.$$</div>
+逐项查表: $\mathscr{L}^{-1}\left[\frac{1}{s}\right]=1,\ \mathscr{L}^{-1}\left[\frac{1}{s+1}\right]=\mathrm{e}^{-t}$, 故
+<div class="box-formula">$$f(t)=1-\mathrm{e}^{-t}\qquad(t&gt;0).$$</div>
+（用留数法核对: 极点 $s=0,-1$ 均为一级极点, 留数之和为 $\frac{\mathrm{e}^{0}}{1}+\frac{\mathrm{e}^{-t}}{-1}=1-\mathrm{e}^{-t}$, 结果一致.）
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.2</div>
+求 $F(s)=\frac{s+3}{(s+1)(s+2)}$ 的拉氏逆变换 $f(t)$.
+<input type="checkbox" id="c8invAns5" class="answer-toggle">
+<label for="c8invAns5" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+分解为
+<div class="box-formula">$$\dfrac{s+3}{(s+1)(s+2)}=\dfrac{A}{s+1}+\dfrac{B}{s+2}.$$</div>
+用"遮盖法": $A=\left.\frac{s+3}{s+2}\right|_{s=-1}=2$, $\ B=\left.\frac{s+3}{s+1}\right|_{s=-2}=-1$, 于是
+<div class="box-formula">$$\dfrac{s+3}{(s+1)(s+2)}=\dfrac{2}{s+1}-\dfrac{1}{s+2}.$$</div>
+逐项查表, 得
+<div class="box-formula">$$f(t)=2\mathrm{e}^{-t}-\mathrm{e}^{-2t}\qquad(t&gt;0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.3</div>
+求 $F(s)=\frac{1}{s^2(s+1)}$ 的拉氏逆变换 $f(t)$.
+<input type="checkbox" id="c8invAns6" class="answer-toggle">
+<label for="c8invAns6" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设
+<div class="box-formula">$$\dfrac{1}{s^2(s+1)}=\dfrac{A}{s}+\dfrac{B}{s^2}+\dfrac{C}{s+1}.$$</div>
+通分后 $1=As(s+1)+B(s+1)+Cs^2$. 取 $s=0$ 得 $B=1$; 取 $s=-1$ 得 $C=1$; 比较 $s^2$ 项系数得 $A+C=0$, 故 $A=-1$. 于是
+<div class="box-formula">$$\dfrac{1}{s^2(s+1)}=-\dfrac{1}{s}+\dfrac{1}{s^2}+\dfrac{1}{s+1}.$$</div>
+逐项查表: $\mathscr{L}^{-1}\left[-\frac{1}{s}\right]=-1,\ \mathscr{L}^{-1}\left[\frac{1}{s^2}\right]=t,\ \mathscr{L}^{-1}\left[\frac{1}{s+1}\right]=\mathrm{e}^{-t}$, 故
+<div class="box-formula">$$f(t)=t-1+\mathrm{e}^{-t}\qquad(t&gt;0).$$</div>
+（用留数法核对: $s=0$ 是二级极点, $s=-1$ 是一级极点, 二者留数之和为 $(t-1)+\mathrm{e}^{-t}$, 结果一致.）
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>逆变换的引入</b> $\rightarrow$ <b>反演积分公式</b> $\rightarrow$ <b>用留数计算反演积分</b> $\rightarrow$ <b>典型例题</b> $\rightarrow$ <b>三种方法对照</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>方法</th><th>适用与条件</th><th>关键步骤 / 结果</th></tr>
+<tr>
+<td>反演积分公式</td>
+<td>路径为直线 $\operatorname{Re}s=\beta$, 其右方无 $F(s)$ 的奇点</td>
+<td>$f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s\ (t&gt;0)$</td>
+</tr>
+<tr>
+<td>留数法</td>
+<td>有限个孤立奇点; 奇点全在 $\operatorname{Re}s&lt;\beta$ 内; $s\to\infty$ 时 $F(s)\to0$</td>
+<td>找奇点 $\rightarrow$ 判类型 $\rightarrow$ 求留数 $\rightarrow$ 求和: $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$</td>
+</tr>
+<tr>
+<td>部分分式法</td>
+<td>有理函数, 分母可分解为一次、二次因式</td>
+<td>假分式先做多项式除法 $\rightarrow$ 分解为简单分式 $\rightarrow$ 逐项查基本变换表</td>
+</tr>
+<tr>
+<td>卷积法</td>
+<td>$F(s)=F_1(s)F_2(s)$, 且 $F_1,F_2$ 的逆变换已知</td>
+<td>$\mathscr{L}^{-1}[F_1F_2]=\int_0^t f_1(\tau)f_2(t-\tau)\mathrm{d}\tau$</td>
+</tr>
+</table>
+
+<div class="box-result">
+<div class="res-label">一句话记牢</div>
+拉氏逆变换由<b>反演积分公式</b> $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$ 给出; 在"有限个孤立奇点 + $s\to\infty$ 时 $F(s)\to0$"的条件下, 它化为<b>留数之和</b> $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]\ (t&gt;0)$. 常见的有理象函数, 既可以用<b>部分分式分解 + 查表</b>快速求解, 也可以交给<b>留数法</b>稳妥处理; 遇到"乘积型"的象函数, 别忘了<b>卷积定理</b>. 三条路, 一个答案.
+</div>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 拉氏逆变换的反演积分公式是?</div>
+<label class="quiz-opt">A. $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$</label>
+<label class="quiz-opt" data-ok="1">B. $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$</label>
+<label class="quiz-opt">C. $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{0}^{+\infty}F(s)\mathrm{e}^{-st}\mathrm{d}s$</label>
+<label class="quiz-opt">D. $f(t)=\int_{0}^{+\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$</label>
+<div class="quiz-explain"><b>解析:</b> 由傅氏逆变换令 $s=\beta+\mathrm{i}\omega$ ($\mathrm{d}\omega=\mathrm{d}s/\mathrm{i}$) 得 $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$. 选项 A 是傅氏逆变换的形式, 选项 C、D 的积分路径与指数符号都不对.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 反演积分的积分路径是 $s$ 平面上的?</div>
+<label class="quiz-opt">A. 单位圆 $|s|=1$</label>
+<label class="quiz-opt" data-ok="1">B. 与虚轴平行的竖直线 $\operatorname{Re}s=\beta$</label>
+<label class="quiz-opt">C. 正实轴 $0\to+\infty$</label>
+<label class="quiz-opt">D. 以原点为心、半径为 $R$ 的圆</label>
+<div class="quiz-explain"><b>解析:</b> 令 $s=\beta+\mathrm{i}\omega$ 且 $\beta$ 固定, 则 $\omega$ 由 $-\infty$ 变到 $+\infty$ 时 $s$ 沿竖直直线 $\operatorname{Re}s=\beta$ 移动, 即从 $\beta-\mathrm{i}\infty$ 到 $\beta+\mathrm{i}\infty$. 这条直线处于 $F(s)$ 的存在域中, 其右方不含奇点.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 若 $F(s)$ 只有有限个孤立奇点, 且当 $s\to\infty$ 时 $F(s)\to0$, 则 $f(t)$ 等于?</div>
+<label class="quiz-opt">A. $f(t)=\displaystyle\lim\limits_{s\to\infty}F(s)\mathrm{e}^{st}$</label>
+<label class="quiz-opt" data-ok="1">B. $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$</label>
+<label class="quiz-opt">C. $f(t)=\frac{1}{2\pi}\sum\limits_{k=1}^{n}F(s_k)$</label>
+<label class="quiz-opt">D. $f(t)=F(t)$</label>
+<div class="quiz-explain"><b>解析:</b> 这正是定理 3.1: 反演积分等于被积函数 $F(s)\mathrm{e}^{st}$ 在 $F(s)$ 全部奇点处留数之和, 其中 $t&gt;0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 求 $\mathscr{L}^{-1}\left[\frac{1}{(s-1)^2}\right]$.</div>
+<label class="quiz-opt">A. $\mathrm{e}^{t}$</label>
+<label class="quiz-opt" data-ok="1">B. $t\mathrm{e}^{t}$</label>
+<label class="quiz-opt">C. $\frac{1}{2}t^2\mathrm{e}^{t}$</label>
+<label class="quiz-opt">D. $t\mathrm{e}^{-t}$</label>
+<div class="quiz-explain"><b>解析:</b> $s=1$ 是二级极点, $\operatorname{Res}\left[F(s)\mathrm{e}^{st},1\right]=\lim\limits_{s\to 1}\frac{\mathrm{d}}{\mathrm{d}s}\mathrm{e}^{st}=\lim\limits_{s\to 1}t\mathrm{e}^{st}=t\mathrm{e}^{t}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 求 $\mathscr{L}^{-1}\left[\frac{1}{s-3}\right]$.</div>
+<label class="quiz-opt">A. $\mathrm{e}^{-3t}$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathrm{e}^{3t}$</label>
+<label class="quiz-opt">C. $3\mathrm{e}^{3t}$</label>
+<label class="quiz-opt">D. $t\mathrm{e}^{3t}$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[\mathrm{e}^{kt}]=\frac{1}{s-k}$, 取 $k=3$ 得 $\frac{1}{s-3}$, 故逆变换为 $\mathrm{e}^{3t}$. 也可视为一级极点 $s=3$ 处的留数 $\mathrm{e}^{3t}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 求 $\mathscr{L}^{-1}\left[\frac{1}{s^2+4}\right]$.</div>
+<label class="quiz-opt">A. $\sin 2t$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{2}\sin 2t$</label>
+<label class="quiz-opt">C. $2\sin 2t$</label>
+<label class="quiz-opt">D. $\frac{1}{2}\cos 2t$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{L}[\sin kt]=\frac{k}{s^2+k^2}$, 取 $k=2$ 得 $\frac{2}{s^2+4}$. 故 $\frac{1}{s^2+4}=\frac{1}{2}\cdot\frac{2}{s^2+4}$, 逆变换为 $\frac{1}{2}\sin 2t$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 求 $\mathscr{L}^{-1}\left[\frac{1}{s(s+1)}\right]$.</div>
+<label class="quiz-opt">A. $1+\mathrm{e}^{-t}$</label>
+<label class="quiz-opt" data-ok="1">B. $1-\mathrm{e}^{-t}$</label>
+<label class="quiz-opt">C. $\mathrm{e}^{-t}-1$</label>
+<label class="quiz-opt">D. $t-\mathrm{e}^{-t}$</label>
+<div class="quiz-explain"><b>解析:</b> 部分分式分解 $\frac{1}{s(s+1)}=\frac{1}{s}-\frac{1}{s+1}$, 逆变换为 $1-\mathrm{e}^{-t}$. 用留数法 (极点 $0,-1$ 均为一级) 亦得 $1-\mathrm{e}^{-t}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 求 $\mathscr{L}^{-1}\left[\frac{s+3}{(s+1)(s+2)}\right]$.</div>
+<label class="quiz-opt">A. $\mathrm{e}^{-t}-\mathrm{e}^{-2t}$</label>
+<label class="quiz-opt" data-ok="1">B. $2\mathrm{e}^{-t}-\mathrm{e}^{-2t}$</label>
+<label class="quiz-opt">C. $2\mathrm{e}^{-t}+\mathrm{e}^{-2t}$</label>
+<label class="quiz-opt">D. $\mathrm{e}^{-2t}-2\mathrm{e}^{-t}$</label>
+<div class="quiz-explain"><b>解析:</b> 分解得 $\frac{s+3}{(s+1)(s+2)}=\frac{2}{s+1}-\frac{1}{s+2}$, 逆变换为 $2\mathrm{e}^{-t}-\mathrm{e}^{-2t}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 关于用留数法计算逆变换, 下列说法正确的是?</div>
+<label class="quiz-opt" data-ok="1">A. 需 $F(s)$ 在有限复平面内只有有限个孤立奇点, 且当 $s\to\infty$ 时 $F(s)\to0$ (取 $\beta$ 使奇点全在 $\operatorname{Re}s&lt;\beta$ 内)</label>
+<label class="quiz-opt">B. 只要 $F(s)$ 有极点就一定可用, 无需其它条件</label>
+<label class="quiz-opt">C. $F(s)$ 允许有无限多个孤立奇点, 不影响公式成立</label>
+<label class="quiz-opt">D. 要求 $F(s)$ 在整个 $s$ 平面上处处解析</label>
+<div class="quiz-explain"><b>解析:</b> 定理 3.1 的条件是: $F(s)$ 只有有限个孤立奇点; 可取足够大的 $\beta$ 使奇点全在 $\operatorname{Re}s&lt;\beta$ 内; 当 $s\to\infty$ 时 $F(s)$ 一致趋于 $0$ (例如有理函数分母次数高于分子). 若奇点有无穷多个或 $F(s)$ 不趋于 $0$, 就不能直接套用该公式.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 若 $s_0$ 是 $F(s)$ 的 $m$ 级极点, 则 $\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_0\right]$ 等于?</div>
+<label class="quiz-opt">A. $\lim\limits_{s\to s_0}(s-s_0)F(s)\mathrm{e}^{st}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{(m-1)!}\lim\limits_{s\to s_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}s^{m-1}}\left[(s-s_0)^mF(s)\mathrm{e}^{st}\right]$</label>
+<label class="quiz-opt">C. $\frac{1}{m!}\lim\limits_{s\to s_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}s^{m-1}}\left[(s-s_0)^mF(s)\mathrm{e}^{st}\right]$</label>
+<label class="quiz-opt">D. $\lim\limits_{s\to s_0}\frac{\mathrm{d}^{m}}{\mathrm{d}s^{m}}\left[(s-s_0)^mF(s)\mathrm{e}^{st}\right]$</label>
+<div class="quiz-explain"><b>解析:</b> $m$ 级极点的留数准则为 $\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_0\right]=\frac{1}{(m-1)!}\lim\limits_{s\to s_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}s^{m-1}}\left[(s-s_0)^mF(s)\mathrm{e}^{st}\right]$. 选项 A 是 $m=1$ (一级极点) 的特殊情形; 选项 C 把阶乘写成了 $m!$, 选项 D 多求了一阶导数.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位"把逆变换写成一条积分路径"的数学家</h3>
+<div class="hero-sub">他没有像拉普拉斯那样名满天下, 却在剑桥的书房里, 把"已知象函数、求象原函数"这件事写成了一条复平面上的直线积分; 今天每一个学过拉氏逆变换的人, 都在无声地使用着他的名字.</div>
+<div class="hero-quote">
+当工程师需要把 $s$ 域里的答案"翻译"回时间域时, 他们写下
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s,$$</div>
+这条沿竖直直线 $\operatorname{Re}s=\beta$ 的积分, 就被后人称为<b>布罗姆维奇积分</b> (Bromwich integral) —— 也就是本节的<b>反演积分</b>.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 布罗姆维奇: 把逆变换写成一条积分路径的人</div>
+
+<div class="person-card">
+<div class="p-av">布</div>
+<div class="p-main">
+<div class="p-name">托马斯·约翰·伊安森·布罗姆维奇 (Thomas John I'Anson Bromwich, 1875—1929)</div>
+<div class="p-meta">英国数学家 · 剑桥学派 · 无穷级数理论与复变反演方法的代表人物 · "布罗姆维奇积分"的冠名者</div>
+<p>他在剑桥大学圣约翰学院 (St John's College) 求学并长期在那里从事研究与教学, 一生以<b>严密的复变分析</b>著称. 他写下的《<b>无穷级数论</b>》(<i>An Introduction to the Theory of Infinite Series</i>, 1908) 在很长一段时间里是英语世界学习级数理论的标准读本, 影响了一代又一代的数学与物理学者.</p>
+<p>他研究过<b>无穷级数的收敛性</b>、<b>二次型与不变量因子</b>、<b>线性微分方程</b>等一批"硬功夫"的题目; 而让他今天仍被工程与数学界反复提起的, 是那条以他的名字命名的复积分 —— 布罗姆维奇积分. 这段故事告诉我们: <b>把一件"逆着来的"事情说清楚, 与把"正着来的"事情说清楚, 同样重要.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>剑桥的书房: 一位"纯分析"出身的数学家</h5>
+<p>布罗姆维奇成长于十九世纪末的英国数学传统之中. 那时的剑桥以"严格化"闻名: 极限、收敛、一致收敛, 这些今天看来理所当然的语言, 正是那一代英国数学家精心打磨出来的工具. 布罗姆维奇就是这一传统的忠实继承者 —— 他极其看重每一个条件是否成立、每一个极限是否可以交换次序.</p>
+<p>这种"较真"的性格, 恰恰是复变反演方法所必需的. 因为把一条无穷长的直线积分变成"留数之和", 关键就在于<b>能否补上大圆弧并证明圆弧上的积分趋于零</b>; 而这正是一个需要严谨估计、不能凭感觉越过的步骤.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>布罗姆维奇积分: 本节的"反演积分"以他命名</h5>
+<p>我们这一节的核心公式
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s\qquad(t&gt;0)$$</div>
+就是所谓<b>布罗姆维奇积分</b>. 它的形状很"反常": 积分路径是一条从 $\beta-\mathrm{i}\infty$ 伸到 $\beta+\mathrm{i}\infty$ 的竖直直线, 也就是一条<b>无穷长的直线</b>. 要在这样的路径上谈积分, 必须先把路径"截断"、补上大圆弧围成闭曲线, 再让半径趋于无穷 —— 布罗姆维奇正是把这一整套做法讲清楚的人之一.</p>
+<p>今天我们把这条路径直接称为 <b>Bromwich 路径</b>, 把这条积分直接称为 <b>Bromwich 积分</b>. 一个名字能被写进公式里, 是数学给予提出者最朴素也最持久的纪念.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>无穷级数: 布罗姆维奇定理与"收敛"这门手艺</h5>
+<p>布罗姆维奇最广为流传的著作是关于<b>无穷级数</b>的. 在《无穷级数论》中, 他把当时散落各处的判别法系统整理, 给出了若干以他命名的结果 (教材中常见"布罗姆维奇定理"之名), 讨论级数的收敛、乘积级数与幂级数的性质. 这本书之所以重要, 是因为它把"级数"从一堆零散技巧变成了一门有体系的学问.</p>
+<p>这件事与本节的关系出奇地直接: <b>反演积分的合法性, 正是各种"收敛"条件在复平面上的翻版.</b> 当 $s\to\infty$ 时 $F(s)\to0$、大圆弧上的积分随 $R\to\infty$ 趋于零 —— 这些条件的严格表述, 用的正是布罗姆维奇最擅长的那套语言.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>线性微分方程与算子法: 给"逆运算"一个可靠的底座</h5>
+<p>布罗姆维奇还研究过<b>线性微分方程</b>与各种"算子"方法. 在他之前, 赫维赛德凭直觉发展出一套"把微分算子当字母来算"的运算微积, 用它解决了许多电路与电报方程问题, 但做法长期缺乏严格证明, 也因此屡遭质疑.</p>
+<p>布罗姆维奇这一类分析学家的贡献, 恰恰是<b>为这些"好用的技巧"补上严格的基础</b>: 把算子法解释成拉普拉斯变换的代数形式, 把"逆运算"解释成复平面上的反演积分. 于是"直觉先行、严密后补"的戏码在数学史上再次上演 —— <b>工具先跑起来, 理论再把它扶正.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>与梅林反演的关系: 同一枚硬币的两面</h5>
+<p>与布罗姆维奇积分几乎同时, 梅林 (H. Mellin) 研究了另一条复反演积分 —— <b>梅林反演公式</b>, 它把定义在 $(0,+\infty)$ 上的函数与其梅林变换互相还原. 二者的积分形状极为相似: 都是一条竖直直线上的复变函数积分, 都靠留数来算.</p>
+<p>事实上, 拉普拉斯变换与梅林变换之间有明确的换算关系 (作变量替换 $s$ 与 $t=\ln x$ 即可相互转化), 因此<b>布罗姆维奇反演与梅林反演, 是同一枚硬币的两面</b>. 这提醒我们: 数学里看似不同的两套公式, 常常不过是"换了变量看"之后的同一个东西 —— 这正是本课程反复出现的思想.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">6</span>剑桥的讲席与教材: 把方法留给后来人</h5>
+<p>除了原创研究, 布罗姆维奇更持久的贡献是<b>教学与著述</b>. 他在剑桥长期授课, 把复变分析、级数理论中那些"不讲清楚就永远学不会"的细节, 一条条写成教材. 直到二十世纪中叶, 许多大学的级数课程仍在参考他的书.</p>
+<p>一个方法能否流传, 不只取决于它多聪明, 还取决于有没有人愿意把它讲得清清楚楚. 布罗姆维奇做的正是这件事: <b>他把一条积分路径留在了教科书的公式里, 让两百年后的学生仍能照着它把话说完.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>在许多工程与管理类教材里, 反演积分常常被"一句话带过" —— 直接告诉学生"用留数定理算就行", 却很少解释那条无穷长的竖直直线到底该怎么积分. 若追根溯源, 你会发现这个"一句话"背后, 是一整套关于<b>无穷积分路径、大圆弧估计与收敛条件</b>的严密工作, 而这正是布罗姆维奇这类分析学家最擅长的本事. 有人说, 应用数学里最奢侈的东西, 往往就是那"看似平凡的一步" —— 因为它背后, 总有人替你把所有的边界情形都试过了.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 布罗姆维奇式的严谨</div>
+在布罗姆维奇那里, 一条积分路径不是随手画在纸上的线, 而是一个必须交代清楚的对象: 它从哪里来, 到哪里去, 围成的区域里有没有奇点, 边界上的估计是否够快.
+<br>
+"<em>把一个式子用一个等式写出来"</em> 容易, 把"这个等式为什么成立"说清楚却难.
+<br>
+"<em>先让路径闭合, 再看圆弧是否消失.</em>"
+<span class="iv-sig">—— 这种"把条件一条条钉牢"的态度, 正是本节从 $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$ 走到 $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$ 的全部底气.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">正与逆</div>
+<h4>能"变换过去", 就要能"变换回来"</h4>
+<p>正变换把 $f(t)$ 搬到 $s$ 域, 逆变换再把它送回来. 只有来回都能走通, 变换才真正"可用" —— 否则它只是把问题从一个地方挪到了另一个更难的地方.</p>
+<p>学一门工具, 别只记住"怎么去", 还要弄清"怎么回".</p>
+<div class="pc-math">$f(t)\ \xrightarrow{\ \mathscr{L}\ }\ F(s)\ \xrightarrow{\ \mathscr{L}^{-1}\ }\ f(t)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">直线与圆弧</div>
+<h4>把开的路径补成闭合的曲线</h4>
+<p>反演积分的路径是一条不闭合的直线, 留数定理却要求闭曲线. 于是我们"补上一段大圆弧"把口封起来, 再证明这段圆弧在极限中消失.</p>
+<p>遇到缺一块的难题, 有时先"补齐"成一个完整结构, 处理完再让多出的部分归零.</p>
+<div class="pc-math">直线 $+$ 大圆弧 $C_R\ \xrightarrow{\ R\to\infty\ }\ $ 闭曲线</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">化整为零</div>
+<h4>一个大积分 = 几个小留数之和</h4>
+<p>反演积分本是一条无穷长直线上的积分, 却在留数定理的帮助下, 化成了有限几个奇点处的"局部信息"之和.</p>
+<p>看起来"全局"的难题, 常常可以拆成若干个"局部"的小问题, 再相加得到答案.</p>
+<div class="pc-math">$\frac{1}{2\pi\mathrm{i}}\oint \longleftrightarrow$<br>$\sum\limits_{k}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">乘积与卷积</div>
+<h4>$s$ 域的乘法, 时域的卷积</h4>
+<p>两个象函数相乘, 对应的并不是两个象原函数相乘, 而是它们的卷积. 变换改变了"乘法"的含义, 却保持了运算的可对应性.</p>
+<p>换一个域, 同样的符号可能代表完全不同的操作 —— 用之前先确认"这里的乘法是什么".</p>
+<div class="pc-math">$\mathscr{L}[f*g]=F(s)G(s)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">条件与结论</div>
+<h4>结论漂亮, 条件才是命门</h4>
+<p>留数法公式写成一行极其简洁, 但它成立需要"有限个孤立奇点"和"$s\to\infty$ 时 $F(s)\to0$"等条件. 条件一破, 公式就失效.</p>
+<p>看到一个漂亮结论, 第一反应应当是:"它需要什么前提?"</p>
+<div class="pc-math">有限奇点 $+$ $F(s)\to0\ \Rightarrow\ f(t)=\sum\operatorname{Res}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">反问题</div>
+<h4>由结果反推原因</h4>
+<p>拉氏逆变换本质上是一类"<b>反问题</b>": 已知结果 (象函数), 反求原因 (象原函数). 这类问题在科学中处处可见, 也往往比正问题更难.</p>
+<p>学会"倒着想", 是科学思维里一项极其重要的能力.</p>
+<div class="pc-math">正向: $f\to F$ 易; 逆向: $F\to f$ 需借助复变方法</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 割圆术的"逼近"与《九章算术》的"还原" —— 由结果反推原因</div>
+中国传统数学里, 早就藏着"逆着算"的智慧.
+<br><br>
+最著名的例子是魏晋时期<b>刘徽</b>的"<b>割圆术</b>". 他用圆内接正多边形去逼近圆, 边数一倍一倍地加, 面积就一圈一圈地贴近真实值. 刘徽写道:"<b>割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣.</b>" 这是一种"以直代曲、以离散逼连续"的逼近思想 —— 从一个可以算清楚的近似量出发, 一步步<b>还原</b>出算不清楚的精确量.
+<br><br>
+而更贴近"反问题"意识的, 是《<b>九章算术</b>》中的"<b>还原</b>"类问题: 已知运算的结果, 反推出最初的数目. 例如"今有物, 不知其数"的各类问目, 都是要你从给出的结果出发, 逆着运算的次序一步步推回原因. 中国古人发展出成套的"逆运算"技巧 ("还原术"), 讲究按固定的次序反向推行 —— 这与本节的逆变换神韵相通: <b>正着算容易, 倒着算才是真功夫.</b>
+<br><br>
+从割圆术的"逼近与还原", 到《九章算术》的"由果溯因", 中国古人一直在做同一件事: <b>当无法直接得到答案时, 就设计一条可控的路径, 一步一步把它还原出来.</b> 这与本节"把逆变换写成一条复积分路径"的思想, 正是同一数学精神在不同时代、不同语言里的回响.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: "反演问题"如何撑起成像、勘探与深空探测</div>
+数学上的"反演", 在工程与科学中有一个专门的名字 —— <b>反演问题 (inverse problem)</b>: 由观测到的"结果", 反推不可直接测量的"原因". 它几乎无处不在:
+<ul>
+<li><b>医学 CT 重建.</b> CT 机只能测到穿过人体的 X 射线投影 (若干条射线衰减后的总和), 却要重建出体内每一层的密度分布. 这正是一个把拉东变换"反演"回去的过程 —— 数学里的反演积分, 是 CT、PET、MRI 成像的算法心脏.</li>
+<li><b>地球物理勘探.</b> 我们无法钻进地壳看清结构, 只能在地面接收地震波 (人工震源或天然地震). 由波的走时与波形反推地下的速度分布与界面位置, 是典型的反演问题; 石油、矿产与地质灾害评估都依赖它.</li>
+<li><b>遥感反演.</b> 卫星只能"看"到地表的辐射亮温与反射光谱, 却要反推出地表温度、植被指数、大气气溶胶、土壤含水量等参数. 我国<b>资源系列卫星</b> (如资源三号等) 与高分系列卫星每天传回的海量观测数据, 都需要靠遥感反演模型"翻译"成可用的地球信息.</li>
+<li><b>无损检测与工业探伤.</b> 用超声或电磁信号探伤, 由反射波反推内部缺陷的位置与形状, 不破坏工件即可判明"看不见的裂纹". 高铁轮轴、航空发动机关键部件的安全检测, 都建立在这类反演之上.</li>
+<li><b>深空与深地探测.</b> 在<b>嫦娥工程</b>中, 月球表面的月壤厚度、次表层结构, 需要通过月球车雷达 (测月雷达) 的回波来反演 —— 由"回波"反推"月壤分层". 在地面, 我国的<b>深地探测</b>与科学钻探工程, 也要用地震波、电磁法等手段反演地下数千米乃至上万米的结构. 从月球到地心, 用的都是同一套"反演"的数学.</li>
+<li><b>数学的接力.</b> 从把反演理论与计算数学 (如正则化方法、数值反演算法) 引进教材的前辈学者, 到今天在 CT 成像、遥感定量反演、深空探测数据处理一线工作的科研人员, 中国科学工作者一直在做同一件事: <b>把"由结果反推原因"的数学, 变成国家看得见、用得上的能力.</b></li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 逆变换, 是一种"由果溯因"的能力</div>
+一条"把象函数还原成时间函数"的复积分, 看似只是课本上的一行公式; 但把它放大来看, 它背后是一整类<b>反演问题</b>: 由投影还原身体内部的 CT, 由地震波还原地下结构, 由卫星观测还原地表参数, 由雷达回波还原月壤分层.
+<br><br>
+从刘徽割圆术"割之又割"的逼近还原, 到《九章算术》"由果溯因"的还原术, 再到布罗姆维奇把逆变换写成一条积分路径、今天中国在遥感反演与深空探测上的持续攻坚 —— 中国人一直在同一个数学精神上前行: <b>正着算不清的, 就设计一条路径, 一步步倒着算回来.</b>
+<br><br>
+这件事的价值在于: <b>越是基础的工具, 越能撑起国家最需要的地方.</b> 一节逆变换的课, 可以只是一道留数计算题, 也可以是一台 CT 机、一颗资源卫星、一台月壤雷达的数学地基 —— 区别在于我们是否愿意把基础打牢、把工具握在自己手里.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆合体而无所失矣."<span class="q-src">—— 刘徽《九章算术注》(割圆术)</span></div>
+<div class="quote-item">"先让路径闭合, 再看圆弧是否消失."<span class="q-src">—— 复变反演方法的一条"操作格言"</span></div>
+<div class="quote-item">"数学的进步, 常常是先有人凭直觉把式子写出来, 再有人把它为什么要成立讲清楚."<span class="q-src">—— 关于算子法与拉氏变换的一段公论</span></div>
+<div class="quote-item">"由结果反推原因, 与由原因推出结果, 同样需要严谨."<span class="q-src">—— 反演问题研究中的一句共识</span></div>
+<div class="quote-item">"把复杂的问题化为清晰的步骤, 再把步骤交给可靠的算法."<span class="q-src">—— 中国传统数学精神的一种概括</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 布罗姆维奇是剑桥的一位纯分析学家, 他把"已知象函数求象原函数"这件事, 写成了一条沿竖直直线 $\operatorname{Re}s=\beta$ 的复积分, 后人称之为<b>布罗姆维奇积分</b> —— 也就是本节的<b>反演积分</b> $f(t)=\frac{1}{2\pi\mathrm{i}}\int_{\beta-\mathrm{i}\infty}^{\beta+\mathrm{i}\infty}F(s)\mathrm{e}^{st}\mathrm{d}s$. 他还在《无穷级数论》里把级数理论整理成体系, 并为算子法补上了严格的基础. 本节从这条积分出发, 在"有限个孤立奇点 + $s\to\infty$ 时 $F(s)\to0$"的条件下把它化为留数之和 $f(t)=\sum\limits_{k=1}^{n}\operatorname{Res}\left[F(s)\mathrm{e}^{st},s_k\right]$, 正是这一思想的直接果实.<br>
+<b>一个道理:</b> 从"正着变换"到"逆着还原", 我们看到了一个朴素而深刻的策略: <b>把一条不闭合的路径补成闭曲线, 再让多余的部分归零.</b> 留数法之所以好用, 是因为它把"无穷长直线上的积分"化成了"有限几个奇点处的局部信息"; 而这套做法能否成立, 又完全取决于"有限个孤立奇点"与"$F(s)\to0$"这些条件是否满足. 这说明: <b>结论越是简洁, 越要弄清它站在什么条件之上.</b><br>
+<b>一份责任:</b> 从刘徽割圆术"割之又割"的逼近还原、《九章算术》"由果溯因"的还原术, 到布罗姆维奇把逆变换写成一条积分路径; 从 CT 重建、遥感反演、地球物理勘探, 到我国资源卫星、嫦娥工程的月壤探测与深地探测 —— 同一种"由结果反推原因"的数学精神, 贯穿古今中外. 今天我国在成像、遥感、深空与深地探测上不断走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习拉普拉斯逆变换, 既是在为后续的应用打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第八章第三节 拉普拉斯逆变换 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tsub(ctx,x,y,main,sub,tail,color,font,subFont){
+  ctx.font=font; ctx.fillStyle=color; ctx.fillText(main,x,y);
+  var w1=ctx.measureText(main).width;
+  ctx.font=subFont||font.replace(/([\d.]+)px/,function(_,p){ return (parseFloat(p)*0.72)+'px'; });
+  ctx.fillText(sub,x+w1+0.5,y+3);
+  if(tail){ var w2=ctx.measureText(sub).width; ctx.font=font; ctx.fillText(tail,x+w1+w2+1.5,y); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+// ================= 模块 1: s 平面上的 Bromwich 反演积分路径 =================
+module('cvInvPath',function(cv){
+  var B=2.6, MAXRE=2;
+  var pol=[{re:1,im:0,lab:'s₁=1'},{re:2,im:0,lab:'s₂=2'}];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=44,Rr=28,TOP=36,BOT=32;
+    var iw=w-L-Rr, ih=h-TOP-BOT;
+    var xmin=-1.2, xmax=4.4, ymin=-3.1, ymax=3.1;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,xmin,xmax,ymin,ymax);
+    // 解析区 (Re s > B) 阴影
+    var xb=m.px(B); if(xb<0) xb=0; if(xb>iw) xb=iw;
+    ctx.fillStyle='rgba(46,125,50,.13)';
+    ctx.fillRect(xb,0,iw-xb,ih);
+    grid(ctx,iw,ih,m,1);
+    axes(ctx,iw,ih,m,'Re s','Im s');
+    // 奇点 (叉号)
+    pol.forEach(function(p){
+      var px=m.px(p.re), py=m.py(p.im);
+      ctx.strokeStyle='#c62828'; ctx.lineWidth=2.6;
+      ctx.beginPath(); ctx.moveTo(px-7,py-7); ctx.lineTo(px+7,py+7);
+      ctx.moveTo(px-7,py+7); ctx.lineTo(px+7,py-7); ctx.stroke();
+      ctx.fillStyle='#c62828'; ctx.font='bold 12px Segoe UI';
+      ctx.fillText(p.lab, px+10, py-9);
+    });
+    // 反演积分路径 Re s = B
+    var xp=m.px(B), okB=(B>MAXRE);
+    var col=okB?'#1565c0':'#e65100';
+    ctx.strokeStyle=col; ctx.lineWidth=3.2; ctx.setLineDash([10,6]);
+    ctx.beginPath(); ctx.moveTo(xp,0); ctx.lineTo(xp,ih); ctx.stroke();
+    ctx.setLineDash([]);
+    arrow(ctx,xp,ih*0.5,xp,6,col,2.4,10);
+    arrow(ctx,xp,ih*0.5,xp,ih-6,col,2.4,10);
+    ctx.fillStyle=col; ctx.font='bold 12.5px Segoe UI';
+    ctx.fillText('Re s = β = '+fmt(B,1), xp+8, 16);
+    ctx.fillText('β + i∞', xp+8, ih-8);
+    ctx.fillText('β − i∞', xp+8, 30);
+    ctx.fillStyle='#2e7d32'; ctx.font='bold 12.5px Segoe UI';
+    ctx.fillText('F(s) 解析区', Math.min(xb+10,iw-92), ih-12);
+    ctx.restore();
+    tlabel(ctx,L,22,'s 平面: 反演积分路径 Re s = β (蓝/橙虚线) 与 F(s) 的奇点 (×)','#37474f','bold 12.5px Segoe UI');
+    var txt;
+    if(okB){
+      txt='路径位置 $\\beta='+fmt(B,1)+'$: 位于全部奇点 (实部最大为 $'+fmt(MAXRE,1)+'$) 的右侧, '+hl('$\\operatorname{Re}s=\\beta$ 的右方不含 $F(s)$ 的奇点')+',<br>反演积分沿此直线有定义.<br>'+
+        '此时 '+hl2('$f(t)=\\frac{1}{2\\pi\\mathrm{i}}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty}F(s)\\mathrm{e}^{st}\\mathrm{d}s$')+' 成立, 并可将直线补上左侧大圆弧, 用留数定理计算.';
+    }else{
+      txt='路径位置 $\\beta='+fmt(B,1)+'$: '+hl('小于某个奇点的实部, 直线穿过了奇点所在的区域')+', 于是「直线右方无奇点」的前提被破坏.<br>'+
+        '要使反演积分公式成立, 必须把 $\\beta$ 取到 '+hl2('$\\operatorname{Re}s=\\beta$ 大于所有奇点实部')+' 的位置, 即 $\\beta&gt;'+fmt(MAXRE,1)+'$.';
+    }
+    setRO('iveBReadout',txt);
+  }
+  bindSlider('iveB',function(v){ B=v; badge('iveBV',fmt(v,1)); draw(); });
+  badge('iveBV',fmt(B,1));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 大圆弧 C_R 上的积分随 R→∞ 趋于零 =================
+module('cvResArc',function(cv){
+  var Rr=4.5, B=2.6;
+  var pol=[{re:1,im:0},{re:2,im:0}];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=46,Rm=30,TOP=36,BOT=32;
+    var iw=w-L-Rm, ih=h-TOP-BOT;
+    var xmin=-7, xmax=4.6, ymin=-9, ymax=9;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,xmin,xmax,ymin,ymax);
+    grid(ctx,iw,ih,m,1);
+    axes(ctx,iw,ih,m,'Re s','Im s');
+    // 大圆弧 (左侧半圆), 圆心 (B,0)
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3; ctx.beginPath();
+    var k, first=true;
+    for(k=0;k<=140;k++){
+      var th=Math.PI/2+(Math.PI)*k/140;
+      var xs=B+Rr*Math.cos(th), ys=Rr*Math.sin(th);
+      var px=m.px(xs), py=m.py(ys);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 竖直直线段 (从 B-iR 到 B+iR)
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(m.px(B),m.py(-Rr)); ctx.lineTo(m.px(B),m.py(Rr)); ctx.stroke();
+    dot(ctx,m.px(B),m.py(Rr),4,'#c62828','#fff');
+    dot(ctx,m.px(B),m.py(-Rr),4,'#c62828','#fff');
+    // 奇点
+    pol.forEach(function(p){
+      var px=m.px(p.re), py=m.py(p.im);
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6;
+      ctx.beginPath(); ctx.moveTo(px-7,py-7); ctx.lineTo(px+7,py+7);
+      ctx.moveTo(px-7,py+7); ctx.lineTo(px+7,py-7); ctx.stroke();
+    });
+    ctx.fillStyle='#1565c0'; ctx.font='bold 13px Segoe UI';
+    tsub(ctx, m.px(B-Rr)+8, m.py(0)+4, 'C','R','','#1565c0','bold 13px Segoe UI');
+    ctx.fillStyle='#c62828'; ctx.font='bold 12.5px Segoe UI';
+    ctx.fillText('Re s = β', m.px(B)+6, m.py(Rr)-8);
+    ctx.fillStyle='#e65100'; ctx.font='bold 12px Segoe UI';
+    ctx.fillText('奇点', m.px(1)+12, m.py(0)-12);
+    ctx.restore();
+    tlabel(ctx,L,22,'闭曲线 = 竖直直线段 (红) + 左侧大圆弧 (蓝), 半径 R','#37474f','bold 12.5px Segoe UI');
+    // 圆弧上积分的上界估计
+    var bound=Math.PI*Rr/((Rr-0.6)*(Rr-1.6)*(Rr-1.6));
+    setRO('iveRReadout',
+      '圆弧半径 $R='+fmt(Rr,1)+'$: 在左侧大圆弧上 $\\left|\\mathrm{e}^{st}\\right|\\le\\mathrm{e}^{\\beta t}$ 有界, 而 $\\left|F(s)\\right|$ 的量级为 '+hl('$\\frac{1}{R^{3}}$')+' (分母比分子高 $3$ 次), 于是'+hl2('$\\left|\\int_{C_R}F(s)\\mathrm{e}^{st}\\mathrm{d}s\\right|\\le \\pi R\\cdot\\frac{1}{R^{3}}\\sim \\frac{1}{R^{2}}$')+'.<br>'+
+      '当前上界估计 $\\pi R\\cdot\\max\\left|F\\right|\\approx '+fmt(bound,3)+'$, 随 $R\\to\\infty$ 趋于 $0$: '+hl('$\\lim\\limits_{R\\to\\infty}\\int_{C_R}F(s)\\mathrm{e}^{st}\\mathrm{d}s=0$')+'.<br>'+
+      '因此反演积分等于"直线 + 圆弧"整个闭曲线上的积分, 再由留数定理化为留数之和.');
+  }
+  bindSlider('iveR',function(v){ Rr=v; badge('iveRV',fmt(v,1)); draw(); });
+  badge('iveRV',fmt(Rr,1));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 极点分布与留数贡献的叠加 =================
+module('cvInvEx',function(cv){
+  var sel=0;
+  var OPT=[
+    {fs:'\\dfrac{1}{(s-1)(s+2)}', plain:'1/((s−1)(s+2))',
+     pol:[{re:1,im:0,k:1},{re:-2,im:0,k:1}],
+     terms:[{f:function(t){return Math.exp(t)/3;}, col:'#1565c0', lab:'(1/3)e^t'},
+            {f:function(t){return -Math.exp(-2*t)/3;}, col:'#e65100', lab:'−(1/3)e^'+SUP[0]+'2t'}],
+     sum:function(t){return (Math.exp(t)-Math.exp(-2*t))/3;},
+     res:'$\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},1\\right]=\\frac{\\mathrm{e}^{t}}{3}$; $\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},-2\\right]=-\\frac{\\mathrm{e}^{-2t}}{3}$',
+     out:'$f(t)=\\frac{1}{3}\\left(\\mathrm{e}^{t}-\\mathrm{e}^{-2t}\\right)$'},
+    {fs:'\\dfrac{1}{(s-1)^2}', plain:'1/(s−1)²',
+     pol:[{re:1,im:0,k:2}],
+     terms:[{f:function(t){return t*Math.exp(t);}, col:'#1565c0', lab:'t e^t'}],
+     sum:function(t){return t*Math.exp(t);},
+     res:'$\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},1\\right]=\\lim\\limits_{s\\to 1}\\frac{\\mathrm{d}}{\\mathrm{d}s}\\mathrm{e}^{st}=t\\mathrm{e}^{t}$',
+     out:'$f(t)=t\\mathrm{e}^{t}$'},
+    {fs:'\\dfrac{1}{(s-2)(s-1)^2}', plain:'1/((s−2)(s−1)²)',
+     pol:[{re:2,im:0,k:1},{re:1,im:0,k:2}],
+     terms:[{f:function(t){return Math.exp(2*t);}, col:'#1565c0', lab:'e^'+SUP[0]+'2t'},
+            {f:function(t){return -(1+t)*Math.exp(t);}, col:'#e65100', lab:'−e^t(1+t)'}],
+     sum:function(t){return Math.exp(2*t)-(1+t)*Math.exp(t);},
+     res:'$\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},2\\right]=\\mathrm{e}^{2t}$ (一级极点); $\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},1\\right]=-\\mathrm{e}^{t}(1+t)$ (二级极点)',
+     out:'$f(t)=\\mathrm{e}^{2t}-\\mathrm{e}^{t}(1+t)$'}
+  ];
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var o=OPT[sel];
+    var halfW=(w-24)/2, H=h-64;
+    // ---- 左: s 平面极点分布 ----
+    ctx.save(); ctx.translate(12,34);
+    var m1=mapperEq(halfW,H,-3.4,2.8,-2.6,2.6);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'Re s','Im s');
+    o.pol.forEach(function(p){
+      var px=m1.px(p.re), py=m1.py(p.im);
+      var c=(p.k>1)?'#e65100':'#c62828';
+      ctx.strokeStyle=c; ctx.lineWidth=2.8;
+      ctx.beginPath(); ctx.moveTo(px-8,py-8); ctx.lineTo(px+8,py+8);
+      ctx.moveTo(px-8,py+8); ctx.lineTo(px+8,py-8); ctx.stroke();
+      ctx.fillStyle=c; ctx.font='bold 11.5px Segoe UI';
+      ctx.fillText((p.k>1?(p.k+'级极点'):'一级极点')+'  s='+fmt(p.re,0), px+10, py-10);
+    });
+    ctx.restore();
+    tlabel(ctx,12,22,'s 平面: F(s) 的极点 (红=一级, 橙=高阶)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: t 域分量叠加 ----
+    var sx=halfW+24, TM=1.3, tt;
+    ctx.save(); ctx.translate(sx,34);
+    var vmax=0;
+    for(tt=0;tt<=TM+1e-9;tt+=0.01){
+      o.terms.forEach(function(tm){ var v=Math.abs(tm.f(tt)); if(v>vmax) vmax=v; });
+      var sv=Math.abs(o.sum(tt)); if(sv>vmax) vmax=sv;
+    }
+    vmax=vmax*1.12+1e-6;
+    var m2=mapperEq(halfW,H,0,TM,-vmax,vmax);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'t','f');
+    o.terms.forEach(function(tm){
+      ctx.strokeStyle=tm.col; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+      var fd=true;
+      for(tt=0;tt<=TM+1e-9;tt+=0.01){
+        var px=m2.px(tt), py=m2.py(tm.f(tt));
+        if(fd){ ctx.moveTo(px,py); fd=false; } else ctx.lineTo(px,py);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=3; ctx.beginPath();
+    var fs=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.01){
+      var px2=m2.px(tt), py2=m2.py(o.sum(tt));
+      if(fs){ ctx.moveTo(px2,py2); fs=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,sx,22,'t 域: 各留数分量 (虚线) 与总和 f(t) (绿实线)','#37474f','bold 12.5px Segoe UI');
+    setRO('iveSelReadout',
+      '当前 $F(s)='+o.fs+'$: '+hl2(o.res)+'.<br>'+
+      '把各分量沿 $t$ 轴「叠加」, 得 '+hl(o.out)+'.<br>'+
+      '可见留数法的本质是「化整为零、再相加」: 每一个极点贡献一个指数型分量, 全部相加就是 $f(t)$.');
+  }
+  bindSlider('iveSel',function(v){ sel=Math.round(v); badge('iveSelV','$'+OPT[sel].fs.replace(/\\dfrac/g,'\\frac')+'$'); draw(); });
+  badge('iveSelV','$'+OPT[sel].fs.replace(/\\dfrac/g,'\\frac')+'$');
+  return {draw:draw};
+});
+
+// ================= 模块 4: 部分分式分解与逆变换 =================
+module('cvMethod',function(cv){
+  var sel=0;
+  var OPT=[
+    {fs:'\\dfrac{1}{s(s+1)}', plain:'1/(s(s+1))',
+     dec:[{p:'$\\frac{1}{s}$', i:'$1$', col:'#1565c0'},
+          {p:'$-\\frac{1}{s+1}$', i:'$-\\mathrm{e}^{-t}$', col:'#e65100'}],
+     terms:[{f:function(t){return 1;}, col:'#1565c0'},
+            {f:function(t){return -Math.exp(-t);}, col:'#e65100'}],
+     sum:function(t){return 1-Math.exp(-t);},
+     out:'$f(t)=1-\\mathrm{e}^{-t}$'},
+    {fs:'\\dfrac{s+3}{(s+1)(s+2)}', plain:'(s+3)/((s+1)(s+2))',
+     dec:[{p:'$\\frac{2}{s+1}$', i:'$2\\mathrm{e}^{-t}$', col:'#1565c0'},
+          {p:'$-\\frac{1}{s+2}$', i:'$-\\mathrm{e}^{-2t}$', col:'#e65100'}],
+     terms:[{f:function(t){return 2*Math.exp(-t);}, col:'#1565c0'},
+            {f:function(t){return -Math.exp(-2*t);}, col:'#e65100'}],
+     sum:function(t){return 2*Math.exp(-t)-Math.exp(-2*t);},
+     out:'$f(t)=2\\mathrm{e}^{-t}-\\mathrm{e}^{-2t}$'},
+    {fs:'\\dfrac{1}{s^2(s+1)}', plain:'1/(s²(s+1))',
+     dec:[{p:'$-\\frac{1}{s}$', i:'$-1$', col:'#1565c0'},
+          {p:'$+\\frac{1}{s^2}$', i:'$t$', col:'#8e24aa'},
+          {p:'$+\\frac{1}{s+1}$', i:'$\\mathrm{e}^{-t}$', col:'#e65100'}],
+     terms:[{f:function(t){return -1;}, col:'#1565c0'},
+            {f:function(t){return t;}, col:'#8e24aa'},
+            {f:function(t){return Math.exp(-t);}, col:'#e65100'}],
+     sum:function(t){return t-1+Math.exp(-t);},
+     out:'$f(t)=t-1+\\mathrm{e}^{-t}$'}
+  ];
+  function renderDec(o){
+    var box=document.getElementById('methodDec');
+    if(!box) return;
+    box.innerHTML='';
+    var wrap=document.createElement('div');
+    wrap.className='mf-box';
+    var t=document.createElement('div');
+    t.className='mf-title'; t.textContent='部分分式分解';
+    wrap.appendChild(t);
+    var fs=document.createElement('div');
+    fs.className='mf-fs'; fs.textContent='$F(s)=$';
+    wrap.appendChild(fs);
+    for(var k=0;k<o.dec.length;k++){
+      var d=o.dec[k];
+      var it=document.createElement('div');
+      it.className='mf-item';
+      var p=document.createElement('div');
+      p.className='mf-p'; p.textContent=d.p;
+      var im=document.createElement('div');
+      im.className='mf-i'; im.style.color=d.col; im.textContent='$\\to$ '+d.i;
+      it.appendChild(p); it.appendChild(im);
+      wrap.appendChild(it);
+    }
+    var sm=document.createElement('div');
+    sm.className='mf-sum'; sm.textContent='逐项查表后相加';
+    wrap.appendChild(sm);
+    box.appendChild(wrap);
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([box]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var o=OPT[sel];
+    renderDec(o);
+    var L=46, R=16, TOP=42, BOT=28;
+    var iw=w-L-R, ih=h-TOP-BOT, TM=2.2, tt;
+    ctx.save(); ctx.translate(L,TOP);
+    var vmax=0;
+    for(tt=0;tt<=TM+1e-9;tt+=0.01){
+      o.terms.forEach(function(tm){ var v=Math.abs(tm.f(tt)); if(v>vmax) vmax=v; });
+      var sv=Math.abs(o.sum(tt)); if(sv>vmax) vmax=sv;
+    }
+    vmax=vmax*1.12+1e-6;
+    var m2=mapperEq(iw,ih,0,TM,-vmax,vmax);
+    grid(ctx,iw,ih,m2,1); axes(ctx,iw,ih,m2,'t','f');
+    o.terms.forEach(function(tm){
+      ctx.strokeStyle=tm.col; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+      var fd=true;
+      for(tt=0;tt<=TM+1e-9;tt+=0.01){
+        var px=m2.px(tt), py=m2.py(tm.f(tt));
+        if(fd){ ctx.moveTo(px,py); fd=false; } else ctx.lineTo(px,py);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=3; ctx.beginPath();
+    var fs=true;
+    for(tt=0;tt<=TM+1e-9;tt+=0.01){
+      var px2=m2.px(tt), py2=m2.py(o.sum(tt));
+      if(fs){ ctx.moveTo(px2,py2); fs=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,L,26,'t 域: 各分量 (虚线) 与总和 f(t) (绿实线)','#37474f','bold 12.5px Segoe UI');
+    setRO('iveMReadout',
+      '当前 $F(s)='+o.fs+'$ 的部分分式分解与逆变换如上图所示, 结果为 '+hl(o.out)+'.<br>'+
+      hl2('方法提示: 有理函数优先「部分分式分解 + 查表」; 不易分解或含高阶极点时改用「留数法」; $F=F_1F_2$ 的乘积型则用「卷积定理」.')+'<br>'+
+      '三条路殊途同归, 同一个 $f(t)$ 无论走哪条都应得到一致结果.');
+  }
+  bindSlider('iveM',function(v){ sel=Math.round(v); badge('iveMV','$'+OPT[sel].fs.replace(/\\dfrac/g,'\\frac')+'$'); draw(); });
+  badge('iveMV','$'+OPT[sel].fs.replace(/\\dfrac/g,'\\frac')+'$');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'逆变换的引入 · 反演积分', c:'#1976d2', leaves:['已知 $F(s)$ 求 $f(t)$: 拉氏逆变换','正变换 $=f(t)u(t)\\mathrm{e}^{-\\beta t}$ 的傅氏变换','傅氏逆变换: $\\frac{1}{2\\pi}\\int F(\\beta+\\mathrm{i}\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','令 $s=\\beta+\\mathrm{i}\\omega,\\ \\mathrm{d}\\omega=\\frac{\\mathrm{d}s}{\\mathrm{i}}$','$f(t)=\\frac{1}{2\\pi\\mathrm{i}}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty}F(s)\\mathrm{e}^{st}\\,\\mathrm{d}s$','路径为竖直线 $\\operatorname{Re}s=\\beta$ ($t>0$)']},
+    {t:'用留数计算反演积分', c:'#e65100', leaves:['定理3.1: $F(s)$ 有限个孤立奇点','条件: 奇点全在 $\\operatorname{Re}s\u003c\\beta$ 内','条件: $s\\to\\infty$ 时 $F(s)\\to 0$','$f(t)=\\sum\\operatorname{Res}[F(s)\\mathrm{e}^{st},s_k]$','步骤: 找奇点→判类型→求留数','大圆弧 $C_R$ 积分趋于零']},
+    {t:'典型例题', c:'#c62828', leaves:['例3.1: $F=\\frac{1}{(s-2)(s-1)^2}$','一级极点 $s=2$: $\\operatorname{Res}=\\mathrm{e}^{2t}$','二级极点 $s=1$: $\\operatorname{Res}=-\\mathrm{e}^t(1+t)$','$f(t)=\\mathrm{e}^{2t}-\\mathrm{e}^t(1+t)$','例3.2: $\\frac{1}{(s-1)(s+2)}$ 两个一级极点','例3.3: $\\frac{1}{(s-1)^2}\\to t\\mathrm{e}^t$']},
+    {t:'三种方法对照', c:'#2e7d32', leaves:['部分分式分解 + 查表: 有理函数','留数法(反演积分): 通法','卷积定理: $F=F_1F_2$ 的乘积型','假分式先做多项式除法','先查表, 查不到再上留数','结果乘 $u(t)$, 并注明收敛域']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第八章第三节 · 拉普拉斯逆变换';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 逆变换的引入 → 反演积分公式 → 用留数计算 → 典型例题; 一句话: <b>反演积分公式 $f(t)=\\frac{1}{2\\pi\\mathrm{i}}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty}F(s)\\mathrm{e}^{st}\\mathrm{d}s\\ (t&gt;0)$; 在「$F(s)$ 只有有限个孤立奇点, 且 $s\\to\\infty$ 时 $F(s)\\to0$」的条件下, 它化为留数之和 $f(t)=\\sum\\limits_{k=1}^{n}\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},s_k\\right]$; 有理函数可用「部分分式分解 + 查表」, 乘积型可用「卷积定理」</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'反演积分把"求逆变换"变成了一条复平面上的直线积分. 为什么说这是"从实到复"的一次跃升? 它带来了什么便利?',
+     hints:['实变量的傅氏逆变换要对 ω 从 −∞ 到 +∞ 积分; 令 s=β+iω 后, 这条实轴上的积分变成复平面上的竖直直线 Re s=β.',
+            '跃升的关键在于: 复平面上有"留数定理"这件利器, 可以把路径补成闭曲线、把积分化为有限个奇点处的局部信息.',
+            '便利是实质性的: 无穷长的直线积分, 变成了"找几个奇点、算几个留数"的有限操作.',
+            '可迁移的态度: 换一个更大的舞台, 往往能借到原来没有的工具.']},
+    {q:'留数法把"反演积分"化成"几个留数之和". 这种"化整为零"的思路, 在你学过的数学或生活里还有哪些体现?',
+     hints:['部分分式分解把一个复杂的有理函数拆成若干简单分式, 逐项查表后再相加.',
+            '傅里叶分析把复杂信号拆成不同频率的正弦分量; 工程的"叠加原理"把多输入的总响应拆成各输入响应之和.',
+            '共同点: 先找到一组"简单构件", 再证明任何复杂对象都能表示成它们的组合, 最后逐件处理、统一相加.',
+            '可迁移的态度: 面对复杂问题, 先问"它能被拆成哪些简单部分".']},
+    {q:'部分分式法、留数法、卷积定理三条路殊途同归. 这说明了数学方法的什么特点?',
+     hints:['同一个 f(t) 无论走哪条路都得到同一结果 —— 这是数学自洽性的体现, 也是我们检验算错的天然工具.',
+            '不同方法各有适用场景: 有理函数优先查表, 不易分解或含高阶极点用留数, 乘积型用卷积.',
+            '方法的多样性不是负担, 而是安全网: 一条路走不通, 总有另一条可以互相印证.',
+            '可迁移的态度: 掌握多条路径, 不是为了炫技, 而是为了"总有一条走得通、并且能互相核对".']},
+    {q:'拉氏逆变换本质上是一类"反问题": 已知结果, 反求原因. 结合 CT 重建或遥感反演, 谈谈"由果溯因"思维的价值与难点.',
+     hints:['CT 只能测到射线投影的总和, 却要还原体内每一层的密度; 遥感只能测到卫星接收的辐射, 却要反推地表参数.',
+            '这类问题的难点在于"不唯一"和"不稳定": 不同的原因可能给出相近的结果; 观测中的小误差可能被反演过程放大.',
+            '因此反演必须借助数学工具 (如正则化) 来约束解、抑制误差放大 —— 这正是计算数学的重要课题.',
+            '可迁移的态度: 由结果反推原因时, 要同时说明"有多可信", 而不是只给一个数.']},
+    {q:'从刘徽割圆术"割之又割"的逼近还原、《九章算术》"由果溯因"的还原术, 到今天的反演计算: 你如何理解这一传统的贯通?',
+     hints:['割圆术以可算的内接正多边形面积, 一步步逼近、还原出算不清的圆面积, 体现"以有限逼无限"的路径思想.',
+            '《九章算术》的"还原"类问题要由运算结果逆推最初的数目, 是成熟的"逆运算"技巧体系.',
+            '传承到现代: 反演积分把象函数还原成时间函数, 遥感反演与深空探测把观测数据还原成物理参数.',
+            '可迁移的态度: 直接得不到答案时, 就设计一条可控的路径, 一步步把它还原出来.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='sz8cAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

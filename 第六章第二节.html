@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第六章第二节 分式线性映射</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第六章 第2节 分式线性映射</h1>
+    <p>分式线性映射 &middot; 三种特殊形式 &middot; 共形性·保圆性·保对称性 &middot; 三对对应点 &middot; 典型区域映射</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解<b>分式线性映射</b> $w=\frac{az+b}{cz+d}\ (ad-bc\neq 0)$ 的定义与<b>逆映射</b> $z=\frac{-dw+b}{cw-a}$, 并看清它由 $w=z+b$、$w=az$、$w=\frac{1}{z}$ 三种特殊形式<b>复合</b>而成;
+2. 掌握分式线性映射的<b>三条性质</b>: <b>共形性</b> (除极点外 $w'\neq 0$, 且 $\infty$ 处可补充定义)、<b>保圆性</b> (圆周/直线映成圆周/直线)、<b>保对称性</b> (关于圆周对称的两点, 其像仍关于像圆周对称);
+3. 掌握<b>唯一决定分式线性映射的条件</b>: 三对相异对应点唯一决定一个分式线性映射, 并会用<b>对应点公式</b> (交比形式) 求解;
+4. 会求<b>两个典型区域间的映射</b>: 上半平面 $\operatorname{Im}z>0$ 到单位圆 $|w|&lt;1$、单位圆到单位圆, 并能由附加条件 ($w(z_0)=0$、$\arg w'(z_0)$ 等) 定出参数;
+5. 体会"用<b>圆与直线的统一语言</b>, 把复杂区域搬成简单区域"的思想, 认识它在保角变换法 (机翼与翼型设计、微波与天线工程、电磁场边值问题) 中的价值.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-6a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-6a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、分式线性映射的概念与三种特殊形式</label>
+    <label class="tab-btn" for="tab2" id="label2">二、分式线性映射的性质</label>
+    <label class="tab-btn" for="tab3" id="label3">三、唯一决定分式线性映射的条件</label>
+    <label class="tab-btn" for="tab4" id="label4">四、两个典型区域间的映射</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 概念与三种特殊形式 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 分式线性映射的概念</div>
+
+<div class="box-key">
+<div class="title">定义 (分式线性映射)</div>
+由<b>分式线性函数</b>
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d}\qquad(a,b,c,d\ \text{为常数},\quad ad-bc\neq 0)$$</div>
+构成的映射称为<b>分式线性映射</b>, 当 $c=0$ 时为<b>线性映射</b> (要求 $c$ 与 $d$ 不同时为零).
+<br><br>
+<span style="color:#c62828"><b>为什么要 $ad-bc\neq 0$?</b></span> 若 $ad-bc=0$, 则
+<div class="box-formula">$$\dfrac{\mathrm{d}w}{\mathrm{d}z}=\dfrac{ad-bc}{(cz+d)^2}=0.$$</div>
+这时 $w$ 为常数, 它将整个 $z$ 平面映射成 $w$ 平面上<b>一个点</b>. 所以 $ad-bc\neq 0$ 是保证映射"非退化"的关键前提.
+</div>
+
+<div class="box-key">
+<div class="title">逆映射</div>
+其逆映射为
+<div class="box-formula">$$z=\dfrac{-dw+b}{cw-a},\qquad (-a)(-d)-bc=ad-bc\neq 0.$$</div>
+由此可见: <b>分式线性映射的逆映射也是一个分式线性映射</b>. 也就是说, 分式线性映射总是<b>一对一</b>的 —— 这一点, 正是后面"唯一决定"与"保对称性"的基础.
+</div>
+
+<div class="sec-title">1.2 三种特殊形式</div>
+
+<div class="box-key">
+<div class="title">分解: 一般映射由三种简单映射复合而成</div>
+一般的分式线性映射可分解为几个简单映射的复合. 当 $c=0$ 时,
+<div class="box-formula">$$w=\dfrac{az+b}{d}=\dfrac{a}{d}\left(z+\dfrac{b}{a}\right);$$</div>
+当 $c\neq 0$ 时,
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d}=\left(b-\dfrac{ad}{c}\right)\dfrac{1}{cz+d}+\dfrac{a}{c}.$$</div>
+可见一般形式的分式线性映射可由
+<div class="box-formula">$$w=z+b,\qquad w=az,\qquad w=\dfrac{1}{z}$$</div>
+这三种<b>特殊形式</b>的映射复合而成. 下面依次讨论这三种映射 (为方便, 把 $w$ 平面看成与 $z$ 平面重合).
+</div>
+
+<div class="box-key">
+<div class="title">1) 平移映射 $w=z+b$</div>
+由复数加法的几何意义, $z$ 沿向量 $b$ 的方向平移一段距离 $|b|$ 后, 就得到 $w$. 它把整个图形"整体搬移", 形状、大小、方向都不改变.
+</div>
+
+<div class="box-key">
+<div class="title">2) 旋转与相似映射 $w=az\ (a\neq 0)$</div>
+设 $z=r\mathrm{e}^{\mathrm{i}\theta},\ a=\lambda\mathrm{e}^{\mathrm{i}\alpha}$, 则
+<div class="box-formula">$$w=\lambda r\,\mathrm{e}^{\mathrm{i}(\theta+\alpha)}.$$</div>
+从而
+<div class="box-formula">$$\operatorname{Arg} w=\operatorname{Arg} z+\alpha,\qquad |w|=\lambda|z|.$$</div>
+因此, 先将 $z$ 绕原点<b>旋转</b>一个角度 $\alpha$ (其中 $a=\lambda\mathrm{e}^{\mathrm{i}\alpha}$, $\alpha$ 即旋转角), 再将模 $|z|$ 伸长 (或缩短) $\lambda=|a|$ 倍, 就得到 $w$ —— 这就是"<b>旋转与相似</b>"这个名字的来历.
+</div>
+
+<div class="box-key">
+<div class="title">3) 反演映射 $w=\frac{1}{z}$</div>
+设
+<div class="box-formula">$$w_1=\dfrac{1}{\bar z},\qquad w=\overline{w_1}.$$</div>
+令 $z=r\mathrm{e}^{\mathrm{i}\theta}$, 则
+<div class="box-formula">$$w_1=\dfrac{1}{\bar z}=\dfrac{1}{r}\mathrm{e}^{\mathrm{i}\theta},\qquad w=\overline{w_1}=\dfrac{1}{r}\mathrm{e}^{-\mathrm{i}\theta},$$</div>
+从而
+<div class="box-formula">$$|w_1||z|=1.$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">定义 2.1 (关于圆周的对称点)</div>
+设圆的半径为 $R$, $A,B$ 两点位于从圆心 $O$ 出发的<b>同一条射线</b>上, 且
+<div class="box-formula">$$\overline{OA}\cdot\overline{OB}=R^2,$$</div>
+则称 $A$ 与 $B$ 是关于该圆周的<b>对称点</b>; 并规定圆心 $O$ 的对称点为无穷远点 $\infty$.
+</div>
+
+<div class="box-key">
+<div class="title">反演映射的几何作法与规定</div>
+因此, 要从 $z$ 作出 $w=\frac{1}{z}$, 可<b>先</b>作出点 $z$ 关于圆周 $|z|=1$ 的对称点 $w_1$, <b>再</b>作出 $w_1$ 关于实轴的对称点, 即得到 $w$; 也可以反过来: 先关于实轴对称, 再关于单位圆对称.
+<br><br>
+<span style="color:#c62828"><b>规定 (扩充复平面上的取值):</b></span>
+<br>
+(1) 反演映射 $w=\frac{1}{z}$ 将 $z=0$ 变为 $w=\infty$, 将 $z=\infty$ 变为 $w=0$;
+<br>
+(2) 函数 $f(z)$ 在 $z=\infty$ 邻域内的性质, 可由函数 $\varphi(\xi)$ 在 $\xi=0$ 邻域内的形态确定, 其中
+<div class="box-formula">$$\xi=\dfrac{1}{z},\qquad \varphi(\xi)=f\left(\dfrac{1}{\xi}\right).$$</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">一句话</div>
+<b>一个分式线性映射, 就是"平移 + 旋转伸缩 + 反演"三种动作的组合.</b> 平移只搬运, 旋转伸缩只改变大小与朝向, 唯有反演会把"圆"与"直线"互换 —— 这正是下一节"保圆性"的源头.
+</div>
+
+<div class="chart-container">
+<h3>交互: 一般分式线性映射对网格的作用 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面上的一张正方网格; 右图是把整张网格按 $w=\frac{az+b}{cz+d}$ 映射后的像. 拖动四个滑块改变实数 $a,b,c,d$: 当 $c=0$ 时映射只作"平移 + 旋转伸缩", 网格仍是网格 (直线仍是直线); 一旦 $c\neq 0$ 出现<b>极点</b> $z=-\frac{d}{c}$, 网格线会被"卷"成<b>圆周</b> —— 这就是反演的作用, 也正是<b>保圆性</b>的直观表现.</div>
+<canvas id="cvFlf" data-h="390"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>$a$:</label>
+<input type="range" id="flfA" min="-2" max="2" step="0.1" value="1">
+<span class="val-badge" id="flfAV">1.00</span>
+</div>
+<div class="row">
+<label>$b$:</label>
+<input type="range" id="flfB" min="-2" max="2" step="0.1" value="0">
+<span class="val-badge" id="flfBV">0.00</span>
+</div>
+<div class="row">
+<label>$c$:</label>
+<input type="range" id="flfC" min="-2" max="2" step="0.1" value="0">
+<span class="val-badge" id="flfCV">0.00</span>
+</div>
+<div class="row">
+<label>$d$:</label>
+<input type="range" id="flfD" min="-2" max="2" step="0.1" value="1">
+<span class="val-badge" id="flfDV">1.00</span>
+</div>
+<div class="readout" id="flfReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 分式线性映射的性质 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 共形性</div>
+
+<div class="box-key">
+<div class="title">反演映射 $w=\frac{1}{z}$ 的共形性</div>
+当 $z\neq 0$、$z\neq\infty$ 时, $w=\frac{1}{z}$ 解析. 又
+<div class="box-formula">$$\varphi(\xi)=f\left(\dfrac{1}{\xi}\right)=\xi$$</div>
+在 $\xi=0$ 处解析, 且 $\varphi'(0)=1\neq 0$. 因此, <b>除 $z=0$ 外</b> $w=\frac{1}{z}$ 是共形的; 至于 $w=\frac{1}{z}$ 在 $z=0$ 点的共形性, 可由 $z=\frac{1}{w}$ 在 $w=\infty$ 的共形性得到.
+</div>
+
+<div class="box-key">
+<div class="title">映射 $w=az+b$ 的共形性</div>
+当 $z\neq\infty$ 时, $w=az+b$ 解析且
+<div class="box-formula">$$\dfrac{\mathrm{d}w}{\mathrm{d}z}=a\neq 0,$$</div>
+因此该映射在 $z\neq\infty$ 处是共形的.
+<br><br>
+当 $z=\infty$ 时, 令
+<div class="box-formula">$$\xi=\dfrac{1}{z},\qquad \eta=\dfrac{1}{w},\qquad \eta=\dfrac{\xi}{b\xi+a}.$$</div>
+它在 $\xi=0$ 处解析, 且
+<div class="box-formula">$$\eta'(\xi)\Big|_{\xi=0}=\dfrac{1}{a}\neq 0.$$</div>
+因而 $\eta(\xi)$ 在 $\xi=0$ 是共形的; 又 $\xi=0$ 与 $\eta=0$ 对应, 故 $w=\frac{1}{\eta}$ 在 $\eta=0$ 处共形, 从而 $w=az+b$ 在 $z=\infty$ 处也是共形的.
+</div>
+
+<div class="box-result">
+<div class="res-label">定理 (分式线性映射的共形性)</div>
+<b>分式线性映射在扩充复平面上是一一对应的, 而且是共形的.</b> 在 $D$ 内 $w'\neq 0$, 故除<b>极点</b>外处处共形; 而极点处 (即 $z=-\frac{d}{c}$ 与 $z=\infty$) 的共形性, 由上述 $\xi=\frac{1}{z},\ \eta=\frac{1}{w}$ 的补充定义给出.
+</div>
+
+<div class="sec-title">2.2 保圆性</div>
+
+<div class="box-key">
+<div class="title">为什么具有保圆性?</div>
+映射 $w=az+b$ 由平移、旋转和伸缩复合得到, 且对任何一个 $z$, 伸缩因子均为 $|a|$, 旋转角为 $\operatorname{Arg} a$, 故 $w=az+b\ (a\neq 0)$ 将圆周、直线映射成圆周、直线, 具有<b>保圆性</b>.
+<br><br>
+而对于映射 $w=\frac{1}{z}$, 令
+<div class="box-formula">$$z=x+\mathrm{i}y,\qquad w=u+\mathrm{i}v,\qquad x=\dfrac{u}{u^2+v^2},\qquad y=\dfrac{v}{u^2+v^2}.$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">圆方程在反演映射下的像</div>
+对于 $z$ 平面上任意给定的圆
+<div class="box-formula">$$A(x^2+y^2)+Bx+Cy+D=0\qquad(\text{当 }A=0\text{ 为直线})$$</div>
+其像曲线满足方程
+<div class="box-formula">$$D(u^2+v^2)+Bu-Cv+A=0\qquad(\text{当 }D=0\text{ 为直线})$$</div>
+可以看出它<b>仍然是圆</b> (或直线). 具体地, 可能发生四种情形:
+<div class="box-formula">$$\text{圆}\to\text{圆}\ (A\neq0,\ D\neq0);\qquad \text{圆}\to\text{线}\ (A\neq0,\ D=0);\qquad \text{线}\to\text{圆}\ (A=0,\ D\neq0);\qquad \text{线}\to\text{线}\ (A=0,\ D=0).$$</div>
+这就是说, 映射 $w=\frac{1}{z}$ 把圆周映射成圆周, 或者说它具有<b>保圆性</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定理 2.2 (保圆性) 及推论</div>
+<b>定理 2.2</b> 分式线性映射将扩充 $z$ 平面上的圆周映射成扩充 $w$ 平面上的圆周, 即具有保圆性.
+<br><br>
+<b>推论:</b> 根据保圆性, 在分式线性映射下, 如果给定的圆周或直线上<b>没有点</b>映射成无穷远点, 则它就映射成半径为有限的圆周; 如果<b>有一个点</b>映射成无穷远点, 它就映射成直线.
+<br><br>
+由一一对应性, 在分式线性映射下把 $z$ 平面给定的圆周 $C$ 的内部区域, 或者全部映射到 $w$ 平面像曲线 $\Gamma$ 的<b>内部</b>, 或者全部映射到 $\Gamma$ 的<b>外部</b>.
+</div>
+
+<div class="sec-title">2.3 保对称性</div>
+
+<div class="box-key">
+<div class="title">定理 2.3 (对称点的充要条件)</div>
+在扩充复平面上, 两点 $z_1$ 与 $z_2$ 是关于圆周 $C$ 的对称点的<b>充要条件</b>是: 通过 $z_1$ 与 $z_2$ 的任何圆周都与 $C$ <b>正交</b>.
+</div>
+
+<div class="box-key">
+<div class="title">定理 2.4 (保对称性) 及其证明</div>
+<b>定理 2.4</b> 设点 $z_1,z_2$ 是关于圆周 $C$ 的一对对称点, 则在分式线性映射下, 它们的像点 $w_1$ 与 $w_2$ 也是关于 $C$ 的像曲线 $\Gamma$ 的一对对称点.
+<br><br>
+<b>证明</b> 设经过 $w_1$ 与 $w_2$ 的任一圆周 $\Gamma'$ 是经过 $z_1$ 与 $z_2$ 的圆周 $C'$ 由分式线性映射过来的. 由于 $z_1,z_2$ 关于 $C$ 对称, 有 $C'$ 与 $C$ 正交; 而分式线性映射具有<b>保角性</b>, 所以 $\Gamma'$ 与 $\Gamma$ 正交; 因此由定理 2.3, $w_1$ 与 $w_2$ 是一对关于 $\Gamma$ 的对称点.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.1</div>
+求区域
+<div class="box-formula">$$D=\left\{z:|z-1|&lt;\sqrt{2},\ |z+1|&lt;\sqrt{2}\right\}$$</div>
+在映射 $w=\frac{z-\mathrm{i}}{z+\mathrm{i}}$ 下的像.
+<input type="checkbox" id="ans621" class="answer-toggle">
+<label for="ans621" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+区域 $D$ 的边界为 $C_1+C_2$, $C_1,C_2$ 在点 $\mathrm{i}$ 处的夹角为 $\frac{\pi}{2}$, 且映射将 $\mathrm{i}$ 与 $-\mathrm{i}$ 分别映射成 $0$ 和 $\infty$.
+<br><br>
+因此由<b>保角性</b>和<b>保圆性</b>, 像曲线 $\Gamma_1$ 和 $\Gamma_2$ 为从原点出发的两条<b>射线</b>, 且在原点处的夹角为 $\frac{\pi}{2}$. 取 $C_1$ 与正实轴的交点 $z=\sqrt{2}-1$, 其像为
+<div class="box-formula">$$w=\dfrac{\sqrt{2}-1-\mathrm{i}}{\sqrt{2}-1+\mathrm{i}}=\dfrac{(1-\sqrt{2})+\mathrm{i}(1-\sqrt{2})}{2-\sqrt{2}},$$</div>
+此点在第三象限的角平分线上. 又由 $C_1$ 到 $C_2$ 逆时针旋转 $\frac{\pi}{2}$, 由保角性 $\Gamma_1$ 到 $\Gamma_2$ 在原点顺时针旋转 $\frac{\pi}{2}$. 故像 $D'$ 为以负实轴为对称轴、顶点在原点的两张角形区域 (张角 $\frac{\pi}{2}$) 之并.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 保圆性与保对称性 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图: $z$ 平面上圆心在实轴上、半径为 $R$ 的圆周 $C$ (蓝), 及关于它对称的一对点 $A,B$ (满足 $\overline{OA}\cdot\overline{OB}=R^2$); 图中的 $-\mathrm{i}$ 是映射 $w=\frac{z-\mathrm{i}}{z+\mathrm{i}}$ 的极点. 右图: 圆周 $C$ 的像 $\Gamma$ (仍是圆周或直线, <b>保圆性</b>), 以及 $A,B$ 的像 $w_A,w_B$. <b>拖动滑块</b>改变圆心位置与半径 $R$, 观察: 无论 $C$ 怎么变, $w_A$ 关于 $\Gamma$ 求得的对称点始终落在 $w_B$ 上 —— 这就是<b>保对称性</b>.</div>
+<canvas id="cvProp" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>圆心 $O$ 的实坐标:</label>
+<input type="range" id="prCx" min="-1.2" max="1.6" step="0.05" value="0.8">
+<span class="val-badge" id="prCxV">0.80</span>
+</div>
+<div class="row">
+<label>半径 $R$:</label>
+<input type="range" id="prR" min="0.5" max="2" step="0.02" value="1.10">
+<span class="val-badge" id="prRV">1.10</span>
+</div>
+<div class="readout" id="propReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 唯一决定分式线性映射的条件 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 只有三个独立常数</div>
+
+<div class="box-key">
+<div class="title">为什么"三个条件"就够?</div>
+分式线性映射
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d}$$</div>
+中含有四个常数 $a,b,c,d$. 但是, 如果用这四个数中的一个去除分子和分母, 就可将分式中的常数减少为三个. 所以上式中实际上只有<b>三个独立的常数</b>. 因此, 只需给定<b>三个条件</b>, 就能决定一个分式线性映射.
+</div>
+
+<div class="sec-title">3.2 三对对应点唯一决定映射</div>
+
+<div class="box-key">
+<div class="title">定理 (三对相异对应点决定唯一分式线性映射)</div>
+在 $z$ 平面上任意给定三个相异的点 $z_1,z_2,z_3$, 在 $w$ 平面上也任意给定三个相异的点 $w_1,w_2,w_3$, 则存在<b>唯一</b>的分式线性映射, 将 $z_k\ (k=1,2,3)$ 依次映射成 $w_k\ (k=1,2,3)$.
+<br><br>
+<b>证明</b> 设 $w=\frac{az+b}{cz+d}\ (ad-bc\neq 0)$ 将 $z_1,z_2,z_3$ 映射成 $w_1,w_2,w_3$, 即
+<div class="box-formula">$$w_k=\dfrac{az_k+b}{cz_k+d}\qquad(k=1,2,3),$$</div>
+因而有
+<div class="box-formula">$$w-w_k=\dfrac{(z-z_k)(ad-bc)}{(cz+d)(cz_k+d)}\qquad(k=1,2),$$</div>
+<div class="box-formula">$$w_3-w_k=\dfrac{(z_3-z_k)(ad-bc)}{(cz_3+d)(cz_k+d)}\qquad(k=1,2).$$</div>
+两组式子分别相除, 即可消去公共因子, 得到下面的对应点公式.
+</div>
+
+<div class="sec-title">3.3 对应点公式</div>
+
+<div class="box-key">
+<div class="title">对应点公式 (交比形式)</div>
+由此得
+<div class="box-formula">$$\dfrac{w-w_1}{w-w_2}\cdot\dfrac{w_3-w_2}{w_3-w_1}=\dfrac{z-z_1}{z-z_2}\cdot\dfrac{z_3-z_2}{z_3-z_1}.\qquad\text{(对应点公式)}$$</div>
+这就是所求的分式线性映射, 也是由三对相异的对应点<b>唯一确定</b>的分式线性映射.
+<br><br>
+<span style="color:#c62828"><b>约定 (出现 $\infty$ 时):</b></span> 若某个 $z_k$ (或 $w_k$) 为 $\infty$, 则把对应点公式中含有该点的那些<b>因式直接略去</b> (即视为 $1$). 例如当 $z_3=\infty$ 时, 右端就写成 $\frac{z-z_1}{z-z_2}$.
+</div>
+
+<div class="box-key">
+<div class="title">公式的几种等价形状</div>
+上式可化为一般形式
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d};$$</div>
+还可进一步化为
+<div class="box-formula">$$w=k\dfrac{z-\xi_1}{z-\xi_2}.$$</div>
+最后这种形式最便于记忆: 它把映射"钉"在 $z$ 平面上两个特殊点 $\xi_1,\xi_2$ 上 —— 通常分别取 $z=0$ 的原像与极点.
+</div>
+
+<div class="chart-container">
+<h3>交互: 三对对应点决定映射 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">固定 $z$ 平面实轴上的三点 $z_1=-1,\ z_2=0,\ z_3=1$ (左图红点), 用三个滑块把它们的像 $w_1,w_2,w_3$ 沿单位圆周移动 (右图红点). 程序按对应点公式<b>实时解出</b>唯一的分式线性映射, 并画出左图水平直线的像. 可以看到: 只要三对点确定, 映射就唯一确定, 而且整条实轴始终映成单位圆周 —— 这既是"唯一决定", 也印证了<b>保圆性</b>与<b>保角性</b>.</div>
+<canvas id="cvThree" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>$w_1$ 的辐角:</label>
+<input type="range" id="t3a" min="-180" max="180" step="1" value="0">
+<span class="val-badge" id="t3aV">0°</span>
+</div>
+<div class="row">
+<label>$w_2$ 的辐角:</label>
+<input type="range" id="t3b" min="-180" max="180" step="1" value="90">
+<span class="val-badge" id="t3bV">90°</span>
+</div>
+<div class="row">
+<label>$w_3$ 的辐角:</label>
+<input type="range" id="t3c" min="-180" max="180" step="1" value="180">
+<span class="val-badge" id="t3cV">180°</span>
+</div>
+<div class="readout" id="threeReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 两个典型区域间的映射 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 例 2.2 上半平面 → 单位圆 (两种解法)</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.2</div>
+求将上半平面 $\operatorname{Im}z>0$ 映射成单位圆 $|w|&lt;1$ 的分式线性映射.
+<br><br>
+<b>【解法一】三点对应法.</b> 这两个区域的边界分别为实轴与单位圆周. 根据唯一决定分式线性映射的条件, 可在 $z$ 平面的 $x$ 轴 (半径无限大的圆周) 上取三个互异点, 再在 $w$ 平面的圆周 $|w|=1$ 上取三个互异点.
+<br><br>
+<b>【解法二】对称点法.</b> 利用共轭点与保对称性, 直接写出映射的形式.
+<input type="checkbox" id="ans622" class="answer-toggle">
+<label for="ans622" class="answer-btn">显示两种解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解法一】</div>
+在 $x$ 轴上任取三点
+<div class="box-formula">$$z_1=-1,\qquad z_2=0,\qquad z_3=1,$$</div>
+使它们对应 $|w|=1$ 上的三点
+<div class="box-formula">$$w_1=1,\qquad w_2=\mathrm{i},\qquad w_3=-1.$$</div>
+则因 $z_1,z_2,z_3$ 与 $w_1,w_2,w_3$ 的绕向相同, 由保角性, 上半平面映射到圆的<b>内部</b>. 由对应点公式,
+<div class="box-formula">$$\dfrac{w-1}{w-\mathrm{i}}\cdot\dfrac{-1-\mathrm{i}}{-1-1}=\dfrac{z+1}{z-0}\cdot\dfrac{1-0}{1+1}.$$</div>
+化简后即得
+<div class="box-formula">$$w=\dfrac{z-\mathrm{i}}{\mathrm{i}z-1}=-\mathrm{i}\,\dfrac{z-\mathrm{i}}{z+\mathrm{i}}.$$</div>
+</div>
+<div class="box-result">
+<div class="res-label">【解法二】</div>
+在上半 $z$ 平面任取一点 $z_0$ (记作 $\lambda$, $\operatorname{Im}\lambda>0$), 使之映射到 $w$ 平面上单位圆周 $|w|=1$ 的圆心 $w=0$; 由保对称性, 与 $\lambda$ 关于实轴对称的点 $\bar\lambda$ 将映射成 $w=\infty$. 于是所求映射具有形式
+<div class="box-formula">$$w=k\left(\dfrac{z-\lambda}{z-\bar\lambda}\right)\qquad(k\text{ 为常数}).$$</div>
+因为
+<div class="box-formula">$$|w|=|k|\left|\dfrac{z-\lambda}{z-\bar\lambda}\right|,$$</div>
+又实轴上的点满足
+<div class="box-formula">$$\left|\dfrac{z-\lambda}{z-\bar\lambda}\right|=1$$</div>
+且对应 $|w|=1$ 上的点, 故 $|k|=1$, 即
+<div class="box-formula">$$k=\mathrm{e}^{\mathrm{i}\theta}\qquad(\theta\text{ 为任意实常数}).$$</div>
+因此所求映射的一般形式为
+<div class="box-formula">$$w=\mathrm{e}^{\mathrm{i}\theta}\dfrac{z-z_0}{z-\bar z_0},\qquad(\operatorname{Im}z_0>0,\ \theta\in\mathbb{R}).$$</div>
+<b>两种解法结果一致</b>: 解法一得到的是其中一个特例 ($z_0=\mathrm{i},\ \theta=-\frac{\pi}{2}$), 解法二给出了整个映射族.
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.2 例 2.3 由附加条件定出参数</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.3</div>
+求将上半平面 $\operatorname{Im}z>0$ 映射成单位圆 $|w|&lt;1$, 且满足 $w(2\mathrm{i})=0,\ \arg w'(2\mathrm{i})=0$ 的分式线性映射.
+<input type="checkbox" id="ans623" class="answer-toggle">
+<label for="ans623" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由条件 $w(2\mathrm{i})=0$ 知, 所求映射要将上半平面中的点 $z=2\mathrm{i}$ 映射成单位圆周的圆心 $w=0$. 从而由例 2.2 有
+<div class="box-formula">$$w=\mathrm{e}^{\mathrm{i}\theta}\left(\dfrac{z-2\mathrm{i}}{z+2\mathrm{i}}\right).$$</div>
+因为
+<div class="box-formula">$$w'(z)=\mathrm{e}^{\mathrm{i}\theta}\dfrac{4\mathrm{i}}{(z+2\mathrm{i})^2},$$</div>
+故有
+<div class="box-formula">$$w'(2\mathrm{i})=\mathrm{e}^{\mathrm{i}\theta}\left(-\dfrac{\mathrm{i}}{4}\right),$$</div>
+<div class="box-formula">$$\arg w'(2\mathrm{i})=\arg \mathrm{e}^{\mathrm{i}\theta}+\arg\left(-\dfrac{\mathrm{i}}{4}\right)=\theta-\dfrac{\pi}{2}=0,$$</div>
+从而
+<div class="box-formula">$$\theta=\dfrac{\pi}{2}.$$</div>
+于是所求映射为
+<div class="box-formula">$$w=\mathrm{i}\left(\dfrac{z-2\mathrm{i}}{z+2\mathrm{i}}\right).$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.3 例 2.4 单位圆 → 单位圆</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.4</div>
+求将单位圆 $|z|&lt;1$ 映射成单位圆 $|w|&lt;1$ 的分式线性映射.
+<input type="checkbox" id="ans624" class="answer-toggle">
+<label for="ans624" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $z$ 平面上单位圆 $|z|&lt;1$ 内部的一点 $\alpha$ 映射成 $w$ 平面上单位圆 $|w|&lt;1$ 的中心 $w=0$. 则与 $\alpha$ 关于 $|z|=1$ 对称的点 $\frac{1}{\bar\alpha}$ 映射为 $w=\infty$. 因此映射形式为
+<div class="box-formula">$$w=k\dfrac{z-\alpha}{z-\dfrac{1}{\bar\alpha}}=k\bar\alpha\left(\dfrac{z-\alpha}{\bar\alpha z-1}\right)=k'\left(\dfrac{z-\alpha}{1-\bar\alpha z}\right),$$</div>
+其中 $k'=-k\bar\alpha$.
+<br><br>
+由于 $z$ 平面上单位圆周上的点要映成 $w$ 平面上单位圆周上的点, 所以当 $|z|=1$ 时 $|w|=1$. 将圆周 $|z|=1$ 代入式中, 得
+<div class="box-formula">$$|w|=|k'|\left|\dfrac{1-\alpha}{1-\bar\alpha}\right|=|k'|=1.$$</div>
+于是 $k'=\mathrm{e}^{\mathrm{i}\varphi}\ (\varphi\text{ 为任意实数})$, 故所求映射形式为
+<div class="box-formula">$$w=\mathrm{e}^{\mathrm{i}\varphi}\left(\dfrac{z-\alpha}{1-\bar\alpha z}\right),\qquad(|\alpha|&lt;1,\ \varphi\in\mathbb{R}).$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.4 例 2.5 单位圆 → 单位圆, 再定参数</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.5</div>
+求将单位圆映射成单位圆, 且满足条件 $w(1/2)=0,\ w'(1/2)>0$ 的分式线性映射.
+<input type="checkbox" id="ans625" class="answer-toggle">
+<label for="ans625" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由条件 $w(1/2)=0$ 知, 所求的映射要将 $z=1/2$ 映射成 $|w|&lt;1$ 的中心. 所以由例 2.4 有
+<div class="box-formula">$$w=\mathrm{e}^{\mathrm{i}\varphi}\left(\dfrac{z-\dfrac{1}{2}}{1-\dfrac{1}{2}z}\right).$$</div>
+求导, 得
+<div class="box-formula">$$w'\left(\dfrac{1}{2}\right)=\mathrm{e}^{\mathrm{i}\varphi}\dfrac{\left(1-\dfrac{1}{2}z\right)+\left(z-\dfrac{1}{2}\right)\dfrac{1}{2}}{\left(1-\dfrac{1}{2}z\right)^2}\Bigg|_{z=1/2}=\mathrm{e}^{\mathrm{i}\varphi}\dfrac{4}{3}.$$</div>
+故
+<div class="box-formula">$$\arg w'\left(\dfrac{1}{2}\right)=\varphi.$$</div>
+由 $w'\left(\frac{1}{2}\right)>0$ 为正实数, 从而
+<div class="box-formula">$$\arg w'\left(\dfrac{1}{2}\right)=\varphi=0.$$</div>
+所求映射为
+<div class="box-formula">$$w=\dfrac{z-\dfrac{1}{2}}{1-\dfrac{1}{2}z}=\dfrac{2z-1}{2-z}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">四个例题的共同套路</div>
+<b>先"定圆心" (令 $\lambda$ 或 $\alpha$ 映成 $w=0$), 再"定参数" ($k=\mathrm{e}^{\mathrm{i}\theta}$ 或 $k'=\mathrm{e}^{\mathrm{i}\varphi}$).</b> 定圆心用的是<b>保对称性</b> (对称点映成 $\infty$, 即极点), 定参数用的是<b>边界映成边界</b> ($|z|=1\Rightarrow|w|=1$ 或附加条件 $w'(z_0)$ 的辐角). 这四个例题, 正是"<b>三对点 + 保对称性</b>"的两套标准打法.
+</div>
+
+<div class="chart-container">
+<h3>交互: 上半平面 → 单位圆的网格映射 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图: $z$ 平面的上半部分 (实轴与若干水平、竖直直线), 红点是 $z_0$、灰点是其共轭 $\bar z_0$; 右图: 按 $w=\mathrm{e}^{\mathrm{i}\theta}\frac{z-z_0}{z-\bar z_0}$ 得到的像 —— <b>整个上半平面被压进单位圆</b>, 实轴恰好映成单位圆周. <b>拖动滑块</b>移动 $z_0$ 并改变 $\theta$: 无论 $z_0$ 取在上半平面的哪个位置, 这张"网格"都被整齐地收进圆里, 边界一一对应.</div>
+<canvas id="cvRegion" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>$\operatorname{Re} z_0$:</label>
+<input type="range" id="rgX" min="-1.4" max="1.4" step="0.05" value="0">
+<span class="val-badge" id="rgXV">0.00</span>
+</div>
+<div class="row">
+<label>$\operatorname{Im} z_0$:</label>
+<input type="range" id="rgY" min="0.2" max="2" step="0.02" value="1.20">
+<span class="val-badge" id="rgYV">1.20</span>
+</div>
+<div class="row">
+<label>旋转角 $\theta$:</label>
+<input type="range" id="rgTh" min="-180" max="180" step="1" value="0">
+<span class="val-badge" id="rgThV">0°</span>
+</div>
+<div class="readout" id="regionReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>分式线性映射的概念</b> (三种特殊形式) → <b>三条性质</b> (共形性、保圆性、保对称性) → <b>唯一决定条件</b> (三对对应点与对应点公式) → <b>典型区域映射</b> (上半平面→单位圆、单位圆→单位圆). 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>关键式子 / 内容</th><th>要点</th></tr>
+<tr><td>三种特殊形式</td><td>平移 $w=z+b$; 旋转与相似 $w=az\ (a=\lambda\mathrm{e}^{\mathrm{i}\alpha})$; 反演 $w=\frac{1}{z}$</td><td>一般分式线性映射是这三者的<b>复合</b>; $c=0$ 时退化为线性映射; 反演把圆与直线互换</td></tr>
+<tr><td>共形性</td><td>扩充复平面上处处共形 (除极点外 $w'\neq 0$)</td><td>逆映射 $z=\frac{-dw+b}{cw-a}$ 仍是分式线性映射; $\infty$ 与 $w=\infty$ 处用 $\xi=\frac{1}{z},\ \eta=\frac{1}{w}$ 补充定义</td></tr>
+<tr><td>保圆性</td><td>圆周/直线 $\longleftrightarrow$ 圆周/直线; $A(x^2+y^2)+Bx+Cy+D=0\ \mapsto\ D(u^2+v^2)+Bu-Cv+A=0$</td><td>无点映成 $\infty$ 时为有限圆周; 有点映成 $\infty$ 时为直线; 区域内部或全映到内部、或全映到外部</td></tr>
+<tr><td>保对称性</td><td>关于 $C$ 对称的两点, 其像关于像曲线 $\Gamma$ 对称</td><td>充要条件: 过两点的任何圆周与 $C$ <b>正交</b> (定理 2.3); 定理 2.4 由保角性推出</td></tr>
+<tr><td>唯一决定条件</td><td>三对相异对应点唯一决定; 对应点公式 $\frac{w-w_1}{w-w_2}\cdot\frac{w_3-w_2}{w_3-w_1}=\frac{z-z_1}{z-z_2}\cdot\frac{z_3-z_2}{z_3-z_1}$</td><td>四个常数只有三个独立; 含 $\infty$ 时略去相应因式; 结果可化为 $w=k\frac{z-\xi_1}{z-\xi_2}$</td></tr>
+<tr><td>典型区域映射</td><td>上半平面→单位圆: $w=\mathrm{e}^{\mathrm{i}\theta}\frac{z-z_0}{z-\bar z_0}\ (\operatorname{Im}z_0>0)$; 单位圆→单位圆: $w=\mathrm{e}^{\mathrm{i}\varphi}\frac{z-\alpha}{1-\bar\alpha z}\ (|\alpha|&lt;1)$</td><td>由 $w(z_0)=0$ 与 $|z|=1\Rightarrow|w|=1$ 定出形式, 再由 $w'(z_0)$ 的辐角等附加条件定出 $\theta$ 或 $\varphi$</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 分式线性映射 $w=\frac{az+b}{cz+d}$ 构成非退化映射的条件是?</div>
+<label class="quiz-opt">A. $ad-bc=0$</label>
+<label class="quiz-opt" data-ok="1">B. $ad-bc\neq 0$</label>
+<label class="quiz-opt">C. $c=0$</label>
+<label class="quiz-opt">D. $a=d$</label>
+<div class="quiz-explain"><b>解析:</b> 若 $ad-bc=0$, 则 $\frac{\mathrm{d}w}{\mathrm{d}z}=\frac{ad-bc}{(cz+d)^2}=0$, $w$ 为常数, 把整个 $z$ 平面映成一点. 故必须 $ad-bc\neq 0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 分式线性映射 $w=\frac{az+b}{cz+d}$ 的逆映射是?</div>
+<label class="quiz-opt">A. $z=\frac{dw-b}{cw-a}$</label>
+<label class="quiz-opt" data-ok="1">B. $z=\frac{-dw+b}{cw-a}$</label>
+<label class="quiz-opt">C. $z=\frac{cw+d}{aw+b}$</label>
+<label class="quiz-opt">D. $z=\frac{-dw-b}{cw+a}$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $w(cz+d)=az+b$ 解出 $z$, 得 $z=\frac{-dw+b}{cw-a}$, 且 $(-a)(-d)-bc=ad-bc\neq 0$, 故逆映射仍是分式线性映射.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 分式线性映射的"保圆性"是指?</div>
+<label class="quiz-opt">A. 把圆周映成直线, 把直线映成圆周</label>
+<label class="quiz-opt" data-ok="1">B. 把圆周或直线映成圆周或直线</label>
+<label class="quiz-opt">C. 保持圆周的半径不变</label>
+<label class="quiz-opt">D. 只把圆周映成圆周</label>
+<div class="quiz-explain"><b>解析:</b> 定理 2.2: 分式线性映射把扩充平面上的圆周映成圆周 (把直线视为半径无限的圆周). 圆与线之间可能互换, 但"圆/线"这一类型保持不变.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 映射 $w=\frac{z-\mathrm{i}}{z+\mathrm{i}}$ 把实轴 $\operatorname{Im}z=0$ 映成?</div>
+<label class="quiz-opt">A. 一条直线</label>
+<label class="quiz-opt" data-ok="1">B. 单位圆周 $|w|=1$</label>
+<label class="quiz-opt">C. 上半平面</label>
+<label class="quiz-opt">D. 一个点</label>
+<div class="quiz-explain"><b>解析:</b> 实轴是圆周, 由保圆性其像仍为圆周或直线. 取 $z=0\mapsto-1$, $z=1\mapsto-\mathrm{i}$, $z=\infty\mapsto1$, 三点都在 $|w|=1$ 上; 且极点在 $z=-\mathrm{i}$ (不在实轴上), 故像为圆周 $|w|=1$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 在扩充复平面上, 三对相异的对应点决定的分式线性映射有几个?</div>
+<label class="quiz-opt">A. 无穷多个</label>
+<label class="quiz-opt">B. 两个</label>
+<label class="quiz-opt" data-ok="1">C. 唯一一个</label>
+<label class="quiz-opt">D. 不存在</label>
+<div class="quiz-explain"><b>解析:</b> 一般式含四个常数, 去掉一个公共因子后只有三个独立常数, 恰好被三对对应点定满, 故存在且唯一.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 若 $A$ 与 $B$ 关于半径为 $R$ 的圆周对称 (圆心为 $O$), 则应满足?</div>
+<label class="quiz-opt">A. $\overline{OA}=\overline{OB}$</label>
+<label class="quiz-opt" data-ok="1">B. $\overline{OA}\cdot\overline{OB}=R^2$</label>
+<label class="quiz-opt">C. $\overline{OA}+\overline{OB}=R$</label>
+<label class="quiz-opt">D. $\overline{OA}\cdot\overline{OB}=2R$</label>
+<div class="quiz-explain"><b>解析:</b> 由定义 2.1, $A,B$ 位于从圆心 $O$ 出发的同一条射线上且 $\overline{OA}\cdot\overline{OB}=R^2$; 圆心 $O$ 的对称点规定为 $\infty$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 关于圆周 $C$ 对称的两点 $z_1,z_2$, 在分式线性映射下的像 $w_1,w_2$ ?</div>
+<label class="quiz-opt" data-ok="1">A. 仍是关于像曲线 $\Gamma$ 的对称点</label>
+<label class="quiz-opt">B. 变成同一点</label>
+<label class="quiz-opt">C. 关于原点对称</label>
+<label class="quiz-opt">D. 不再具有任何对称关系</label>
+<div class="quiz-explain"><b>解析:</b> 这就是定理 2.4 (保对称性). 证明的关键是: 对称的充要条件是"过两点的任何圆周与 $C$ 正交", 而分式线性映射保角, 故正交关系保持.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 映射 $w=az\ (a=\lambda\mathrm{e}^{\mathrm{i}\alpha},\ a\neq 0)$ 的几何意义是?</div>
+<label class="quiz-opt">A. 单纯的平移</label>
+<label class="quiz-opt" data-ok="1">B. 先旋转 $\alpha$, 再按 $\lambda$ 伸缩</label>
+<label class="quiz-opt">C. 关于单位圆的反演</label>
+<label class="quiz-opt">D. 关于实轴的对称</label>
+<div class="quiz-explain"><b>解析:</b> 设 $z=r\mathrm{e}^{\mathrm{i}\theta}$, 则 $w=\lambda r\,\mathrm{e}^{\mathrm{i}(\theta+\alpha)}$, 即 $\operatorname{Arg}w=\operatorname{Arg}z+\alpha$, $|w|=\lambda|z|$ —— 旋转角 $\alpha$、伸缩因子 $\lambda$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 将上半平面 $\operatorname{Im}z>0$ 映成单位圆 $|w|&lt;1$ 的一般分式线性映射是? (设 $\operatorname{Im}z_0>0$)</div>
+<label class="quiz-opt" data-ok="1">A. $w=\mathrm{e}^{\mathrm{i}\theta}\frac{z-z_0}{z-\bar z_0}$</label>
+<label class="quiz-opt">B. $w=\mathrm{e}^{\mathrm{i}\theta}\frac{z-\bar z_0}{z-z_0}$</label>
+<label class="quiz-opt">C. $w=\frac{z-z_0}{z+\bar z_0}$</label>
+<label class="quiz-opt">D. $w=\mathrm{e}^{\mathrm{i}\theta}(z-z_0)$</label>
+<div class="quiz-explain"><b>解析:</b> 令上半平面内的 $z_0$ 映成圆心 $w=0$, 由保对称性 $\bar z_0$ 映成 $\infty$ (极点), 故形如 $k\frac{z-z_0}{z-\bar z_0}$; 再由实轴 $|z|$ 有 $\left|\frac{z-z_0}{z-\bar z_0}\right|=1$ 且须映成 $|w|=1$, 得 $|k|=1$, 即 $k=\mathrm{e}^{\mathrm{i}\theta}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 将单位圆映成单位圆、且满足 $w(1/2)=0,\ w'(1/2)>0$ 的分式线性映射是?</div>
+<label class="quiz-opt" data-ok="1">A. $w=\frac{2z-1}{2-z}$</label>
+<label class="quiz-opt">B. $w=\frac{2z+1}{2+z}$</label>
+<label class="quiz-opt">C. $w=\frac{2z-1}{2+z}$</label>
+<label class="quiz-opt">D. $w=\frac{1-2z}{2-z}$</label>
+<div class="quiz-explain"><b>解析:</b> 由例 2.5, $w=\mathrm{e}^{\mathrm{i}\varphi}\frac{z-\frac{1}{2}}{1-\frac{1}{2}z}$, 且 $w'\left(\frac{1}{2}\right)=\mathrm{e}^{\mathrm{i}\varphi}\frac{4}{3}>0$ 给出 $\varphi=0$, 化简得 $w=\frac{2z-1}{2-z}$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>"圆"与"对称"的守护者: 让几何关系随映射而走</h3>
+<div class="hero-sub">他一生站在天文台与讲台之间, 却在纸面上发现了数学中最"耐走"的变换之一 —— 无论怎样变形, 圆还是圆, 对称还是对称.</div>
+<div class="hero-quote">
+一八二七年的《重心计算》里, 他把图形放进"变换"的眼光中去看; 一八五八年, 他又写下了一个只有"一个面"的曲面.<br>
+<b>本节里的三条性质 —— 共形性、保圆性、保对称性 —— 正是莫比乌斯变换留给后世的通行证.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 莫比乌斯: 让"圆"与"对称"随映射而走</div>
+
+<div class="person-card">
+<div class="p-av">莫</div>
+<div class="p-main">
+<div class="p-name">奥古斯特·费迪南德·莫比乌斯 (August Ferdinand Möbius, 1790—1868)</div>
+<div class="p-meta">德国数学家 · 天文学家 · 长期任莱比锡大学天文学教授 · 分式线性变换与莫比乌斯带的发现者</div>
+<p>他的名字, 今天主要挂在两个地方: 一个叫<b>莫比乌斯变换</b> —— 也就是本节讲的<b>分式线性映射</b>; 另一个叫<b>莫比乌斯带</b> —— 那个只有一面的纸圈. 前者是复分析里最"听话"的一类共形映射, 后者是拓扑学中最著名的小玩具.</p>
+<p>但很少有人注意到, 这位把"圆"与"对称"讲得如此漂亮的数学家, 一生的正式身份其实是<b>天文学家</b>: 他在莱比锡大学当了近三十年的天文学教授, 还长期主持天文台. 正是这种"白昼算轨道、夜晚想变换"的双重生活, 让他的数学既有天体的宏阔, 又有几何的精微.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从普福尔塔到莱比锡: 一位天文学教授</h5>
+<p>1790 年, 莫比乌斯出生于萨克森的普福尔塔. 他先后在莱比锡大学与哥廷根大学学习, 在哥廷根曾受教于<b>高斯</b>的门下, 又赴哈勒深造. 1815 年他完成教授资格论文, 1816 年成为莱比锡大学的<b>天文学副教授</b>, 1844 年升任<b>正教授</b>, 1848 年起主持莱比锡天文台.</p>
+<p>天文学是他的职业, 也是他数学灵感的来源. 计算行星轨道、编制星历表、处理天文观测 —— 这些工作需要的, 恰恰是<b>把刚体的直线与圆周, 用变换的方式搬运到另一个坐标系里</b>. 他后来关于变换的许多想法, 都能在这种"坐标系搬运"中找到影子.</p>
+<p>一个人可以在两个领域同时深耕: 白天观星, 夜里演算, 二者并不冲突, 反而彼此照亮.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1827 年《重心计算》: 变换观点的诞生</h5>
+<p>1827 年, 莫比乌斯出版《重心计算》(Der barycentrische Calcul). 这本书表面上讲的是"重心坐标", 实际上却做了一件极其现代的事: 他把图形与它的<b>变换</b>放在一起研究, 引入了<b>齐次坐标</b>, 系统讨论保持直线为直线的一类变换 (射影变换).</p>
+<p>更重要的是, 他发现了在这种变换下<b>"交比"保持不变</b>. 交比是一个由四个点构成的量, 它像一把"标尺", 不管图形怎样被拉拽变形, 只要变换是这类"合规矩"的变换, 交比就不变. <b>本节第三部分的三对对应点公式, 正是交比不变性的直接产物.</b></p>
+<p>莫比乌斯的眼光也因此超越了他所处的时代: 他不再问"图形长什么样", 而开始问"<b>图形在变换下什么保持不变</b>".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>莫比乌斯变换: 圆与直线的不变家族</h5>
+<p>在此基础上, 莫比乌斯系统研究了一类特殊的变换 —— 今天被称为<b>莫比乌斯变换</b>, 也就是复平面上的<b>分式线性映射</b>
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d}\qquad(ad-bc\neq 0).$$</div>
+他发现: 这类变换能由<b>平移、旋转伸缩与反演</b>复合而成, 因而把"圆或直线"这一族曲线<b>整体地</b>映成"圆或直线" —— 圆不会变成别的什么, 只会变成圆或直线.</p>
+<p>与之相伴的, 还有一条更隐蔽的美: 关于圆周的<b>对称关系</b>也被完整保留 —— 对称点的像, 仍然是关于像圆周的对称点. 这就是本节的<b>保圆性</b>与<b>保对称性</b>. 它们把"圆"与"对称"这两件最基本的几何事物, 变成了随变换而走的"不变量".</p>
+<p>后世把这类变换的全体看成一个<b>群</b> (莫比乌斯群), 并用矩阵去计算它 —— 一个几何问题, 就此与代数结构接上了轨.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>1858 年: 只有"一个面"的纸圈</h5>
+<p>1858 年, 莫比乌斯发现了后来以他命名的曲面 —— <b>莫比乌斯带</b>: 把一条纸带扭转半圈后首尾粘合, 就得到一个只有<b>一个面、一条边界</b>的曲面 (几乎同时, 数学家李斯廷也独立发现了它).</p>
+<p>这张纸带之所以轰动, 是因为它第一次以如此简单的方式告诉人们: <b>"面"与"边界"这些看似天经地义的概念, 其实是可以被推翻的</b>. 沿着莫比乌斯带的中线走一圈, 你会回到出发点的"背面", 却从未越过边缘.</p>
+<p>从"圆可以变成直线", 到"纸带可以只有一个面", 莫比乌斯一再提醒他的时代: 我们以为是"图形本身的属性"的很多东西, 其实是<b>依赖于我们用什么眼光去看它</b>.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>数论、射影几何与更远的回响</h5>
+<p>除了变换与曲面, 莫比乌斯在<b>数论</b>上还留下了著名的"莫比乌斯函数" $\mu(n)$ 与"莫比乌斯反演公式" —— 它至今仍是组合数学与数论中的常用工具.</p>
+<p>在<b>射影几何</b>方面, 他提出的"莫比乌斯平面"把"圆"提升为最基本的研究对象, 与本节的"保圆性"一脉相承. 而他的分式线性变换, 后来被发现与"球面上的旋转"、$2\times2$ 复矩阵群 $\mathrm{SL}(2,\mathbb{C})$ 乃至<b>四元数</b>所描述的三维旋转紧密相连 —— 复分析、射影几何、代数与几何, 在这里汇成一处.</p>
+<p>这种"一处发现、多处回响"的现象, 正是数学最迷人的地方.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说莫比乌斯为人沉静, 讲课并不以"热闹"见长, 却极受内行敬重. 他身为天文学教授, 要花大量时间做观测与计算, 数学研究多是"挤"出来的; 可就是这样, 他仍然完成了《重心计算》、发现了莫比乌斯带、写下了关于分式线性变换的深刻工作. 后人常说, 若没有他那种"<b>在琐碎事务的缝隙里坚持想大问题</b>"的劲头, 数学史上或许就会少掉一个如此优美的变换家族.
+</div>
+
+<div class="clash-card">
+<div class="cl-title">一次"超前"的遭遇</div>
+莫比乌斯的变换观点, 在当时并没有立刻得到应有的重视 —— 他关心的"图形在变换下保持不变的关系", 要等到几十年后, 克莱因以"<b>埃尔朗根纲领</b>"把"几何 = 研究某种变换群下的不变量"确立为统一纲领, 人们才真正听懂了他的话. <b>一个想法被写下与被理解, 中间常常隔着几十年.</b> 这也提醒我们: 对暂时"看不懂"的深刻工作, 要多一分耐心与敬意.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 莫比乌斯式的问题</div>
+在他的研究里, 反复出现的是同一个追问:
+<br>
+"<em>当我们把这个图形变换过去之后, 还剩下什么是没有变的?</em>"
+<br>
+圆的圆性、对称的对称性、四点的交比 —— 这些"变不掉的量", 才是他眼中图形真正的"身份"。
+<br>
+"<em>与其问它"长什么样", 不如问"什么变了它也不变".</em>"
+<span class="iv-sig">—— 这是对莫比乌斯研究方法的一种概括. 本节的三条性质正是这一追问的答案: 无论分式线性映射怎么变, 角不变、圆不变、对称不变.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">分与合</div>
+<h4>再复杂的映射, 也能拆成三个简单动作</h4>
+<p>一般分式线性映射看似难缠, 却被拆成了 <b>$w=z+b$ (平移)</b>、<b>$w=az$ (旋转伸缩)</b>、<b>$w=\frac{1}{z}$ (反演)</b> 三步. 每一步都简单到可以画在纸上, 合起来却威力无穷.</p>
+<p>"把复杂分解为简单"是数学最家常的智慧: 先拆开看清零件, 再装回去理解整体.</p>
+<div class="pc-math">任意分式线性映射 $=$ 平移 $\circ$ 旋转伸缩 $\circ$ 反演</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>$w'\neq 0$ 保证的是一点, 得到的却是整片</h4>
+<p>共形性来自 $\frac{\mathrm{d}w}{\mathrm{d}z}\neq 0$ 这一个<b>局部</b>条件; 但因为它在区域内处处成立, 就整片地保住了角度 —— <b>局部成立, 汇聚为整体成立</b>.</p>
+<p>这与"每一颗纽扣都扣对, 整件衣服才整齐"是同一种逻辑: 整体的可靠, 建立在每一处的可靠之上.</p>
+<div class="pc-math">处处 $w'\neq 0$ $\Longrightarrow$ 区域内的共形映射</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">变中之不变</div>
+<h4>图形千变万化, 圆与对称始终不变</h4>
+<p>分式线性映射能把平面"揉"得很厉害: 直线可以弯成圆, 圆可以拉直成线; 但"<b>圆或直线</b>"这一族、以及"<b>两点关于圆周对称</b>"这一关系, 却始终不变.</p>
+<p>莫比乌斯问的就是这个: 变化之中, 什么是守得住的不变量? 找到它, 就抓住了变换的本质.</p>
+<div class="pc-math">保圆性 + 保对称性: 圆族与对称关系的不变性</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对应与唯一</div>
+<h4>三对点, 就足以锁定整张映射</h4>
+<p>一个分式线性映射只有三个独立常数, 因此<b>三对相异对应点</b>就把它完全钉住 —— 既有存在性, 又有唯一性. 已知得如此之少, 确定得却如此之全.</p>
+<p>这是"以少御多"的典型: 抓住最有代表性的少数信息, 就能掌控全局.</p>
+<div class="pc-math">三对相异对应点 $\Longleftrightarrow$ 唯一的分式线性映射</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">边界与约定</div>
+<h4>$\infty$ 不是一个"坏点", 而是一次约定</h4>
+<p>把 $\infty$ 请进来后, "直线是半径无限的圆周"这句话才真正成立, 保圆性也才有了统一的表述; 极点、$w=\infty$ 处的共形性, 也都靠 $\xi=\frac{1}{z},\ \eta=\frac{1}{w}$ 的<b>补充定义</b>变得顺理成章.</p>
+<p>很多"例外", 其实只是我们还没给它一个恰当的位置. 补上一个约定, 例外的裂缝就被抹平了.</p>
+<div class="pc-math">扩充复平面: 直线 $=$ 过 $\infty$ 的圆周</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">抽象与实用</div>
+<h4>从纸上的圆, 到天上的机翼</h4>
+<p>分式线性映射与它的"亲兄弟"儒可夫斯基变换, 把困难的物理区域"搬"成规则区域, 让流体、电磁、热的问题在简单区域中被解出 —— 抽象变换就这样落到了机翼与天线上.</p>
+<p>越基本的数学结构, 越可能在意想不到的地方发挥关键作用.</p>
+<div class="pc-math">保角变换法 $\longrightarrow$ 翼型设计 / 天线工程 / 电磁场边值问题</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "圆出于方"与"一中同长"</div>
+中国古代早已用"规矩"丈量世界, 并把平面与曲直的相互转化写进了经典. 《周髀算经》有"<b>数之法出于圆方, 圆出于方, 方出于矩</b>"之说 —— 以方圆相互规定, 揭示了"曲"与"直"在有限范围内可以互相逼近的思想. 这与分式线性映射"<b>把圆与直线视为同一族</b>"的眼光, 遥遥相通.
+<br><br>
+《墨经》又云: "<b>圆, 一中同长也。</b>" 意思是"到一个中心距离相等的所有点构成圆" —— 这恰恰是本节<b>定义 2.1</b>中"圆心、半径、关于圆周对称"的一句话源头: 有确定的圆心 $O$ 与半径 $R$, 才有 $\overline{OA}\cdot\overline{OB}=R^2$ 这条对称的"标尺".
+<br><br>
+在制图实践上, 古代地图长期采用的"<b>计里画方</b>" —— 先画好方格网, 再按方位与里程填绘地理要素 —— 正是用一套规则的网格, 把弯曲的大地"压"到纸面上, 与今天我们"用网格去看映射"的做法如出一辙. 方圆相生、规矩准绳: 古人的这些用心, 是本节数学思想最早的东方回声.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 保角变换法托举的大国工程</div>
+<ul>
+<li><b>保角变换法与机翼、翼型设计</b>: 把分式线性映射与<b>儒可夫斯基变换</b> $w=\frac{1}{2}\left(z+\frac{1}{z}\right)$ 组合使用, 可以把一个"圆"变成一段"翼型"轮廓. 于是"绕圆的流动"这一简单问题, 就能换算成"绕机翼的流动" —— 航空工程中估算升力、优化翼型的基础工具, 正是这类保角映射.</li>
+<li><b>微波与天线工程</b>: 波导截面、微带线的电场分布, 通过分式线性映射/保角变换把复杂截面化为简单区域的经典问题; 天线与微波器件的阻抗匹配设计 (如史密斯圆图的方法论), 其背后也是"分式线性映射把圆映成圆"的思想在支撑.</li>
+<li><b>电磁场与温度场的边值问题</b>: 静电场、稳恒电流场、平面热传导等二维边值问题, 常常先用保角映射把不规则边界"搬"成圆或半平面, 再在规则区域上用解析方法求解, 最后映射回去. 这正是本节"典型区域映射"思路的工程化.</li>
+<li><b>中国数学家的接力</b>: 从<b>华罗庚</b>在函数论与多复变上的开拓, 到<b>陈建功</b>以三角级数、函数逼近跻身国际前沿, 再到<b>龚昇</b>在复分析 (特别是单叶函数与典型域) 上的深入工作 —— 一代代中国数学工作者, 把最基础的复分析一寸寸向前推, 也让"分式线性映射"这样的基础工具, 在今天的工程与教学中更加好用.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"圆"与"对称"用到实处</div>
+$\frac{az+b}{cz+d}$ 看上去只是一行公式, 但当它与儒可夫斯基变换联手, 就变成了机翼的轮廓、天线的匹配、电磁场的边界 —— 抽象与实用之间, 只隔着一次"愿意用出去"的心.
+<br><br>
+这件事的价值在于: <b>越是基础、越是优美的数学结构, 越可能在大国工程里挑起大梁.</b> 从《周髀算经》"圆出于方"的智慧, 到莫比乌斯变换的现代应用, 一条跨越两千年的线索告诉我们: 数学的"不变之美", 最终要在现实世界里"变"出价值.
+<br><br>
+可以说: <b>守住那些"怎么变都不变"的东西, 才敢在千变万化的工程里放手去做.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"数之法出于圆方, 圆出于方, 方出于矩。"<span class="q-src">—— 《周髀算经》</span></div>
+<div class="quote-item">"圆, 一中同长也。"<span class="q-src">—— 《墨经》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋。"<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"科学上没有平坦的大道, 只有不畏劳苦沿着陡峭山路攀登的人, 才有希望达到光辉的顶点。"<span class="q-src">—— 马克思</span></div>
+<div class="quote-item">"数学是研究现实世界中的数量关系和空间形式的科学。"<span class="q-src">—— 恩格斯</span></div>
+<div class="quote-item">"圆与直线本是同一族, 对称也是 —— 所谓不变, 就是变换之后再回头看它, 它还在那里。"<span class="q-src">—— 关于保圆性与保对称性的一点思考</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 莫比乌斯一生以<b>天文学教授</b>为职业, 却写下了一个优美的变换家族. 1827 年的《重心计算》里, 他引入了齐次坐标与保持直线为直线的变换, 并发现交比不变; 由此发展出的分式线性映射, 把"圆与直线"、"对称关系"都变成了变换下不变的对象. 1858 年, 他又发现了只有一个面的莫比乌斯带. 本节的共形性、保圆性、保对称性, 正是他留下的这份遗产.<br>
+<b>一个道理:</b> 分式线性映射只有三个独立常数, 所以三对相异对应点就能唯一决定它; 而它由平移、旋转伸缩、反演复合而成, 所以"圆或直线"这一族与"对称"这一关系始终不变. 这告诉我们: <b>抓住少数关键信息, 就能掌控整体; 找到变化中的不变量, 就抓住了本质.</b> 莫比乌斯的"超前"遭遇也提醒我们, 深刻的想法常常要等时间来证明.<br>
+<b>一份责任:</b> 从《周髀算经》"圆出于方"、《墨经》"圆, 一中同长也"的智慧与古代"计里画方"的制图方法, 到<b>保角变换法 (分式线性映射 / 儒可夫斯基变换)</b>在机翼与翼型设计、微波与天线工程、电磁场边值问题中的实际应用, 再到<b>华罗庚、陈建功、龚昇</b>等中国数学家在复分析上的接力, 基础的数学结构始终与国家工程相连. 今天我们学习分式线性映射, 既是在为后续的区域映射与初等函数映射打基础, 也是在承接这份<b>把优美的基础理论, 坚定地用到最需要的地方去</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第六章第二节 分式线性映射 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tsub(ctx,x,y,main,sub,tail,color,font,subFont){
+  ctx.font=font; ctx.fillStyle=color; ctx.fillText(main,x,y);
+  var w1=ctx.measureText(main).width;
+  ctx.font=subFont||font.replace(/([\d.]+)px/,function(_,p){ return (parseFloat(p)*0.72)+'px'; });
+  ctx.fillText(sub,x+w1+0.5,y+3);
+  if(tail){ var w2=ctx.measureText(sub).width; ctx.font=font; ctx.fillText(tail,x+w1+w2+1.5,y); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 一般分式线性映射对网格的作用 =================
+module('cvFlf',function(cv){
+  var a=1, b=0, c=0, d=1;
+  function mob(re,im){
+    var nr=a*re+b, ni=a*im, dr=c*re+d, di=c*im;
+    var dd=dr*dr+di*di;
+    if(dd<1e-9) return null;
+    return C((nr*dr+ni*di)/dd,(ni*dr-nr*di)/dd);
+  }
+  function sg(x){ return (x<0? '−'+fmt(-x) : '+'+fmt(x)); }
+  function plot(ctx,m,pts,color,lw){
+    ctx.strokeStyle=color; ctx.lineWidth=lw||1.6; ctx.beginPath();
+    var pen=false;
+    for(var i=0;i<pts.length;i++){
+      var wv=mob(pts[i][0],pts[i][1]);
+      if(!wv || Math.abs(wv.re)>7 || Math.abs(wv.im)>7){ pen=false; continue; }
+      var px=m.px(wv.re), py=m.py(wv.im);
+      if(!pen){ ctx.moveTo(px,py); pen=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-80, gx=3, gy=2.3;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-gx,gx,-gy,gy);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    if(Math.abs(c)>1e-9){
+      var zp=-d/c;
+      if(zp>-gx && zp<gx){
+        ctx.strokeStyle='#c62828'; ctx.lineWidth=1.6; ctx.setLineDash([5,5]);
+        ctx.beginPath(); ctx.moveTo(m1.px(zp),0); ctx.lineTo(m1.px(zp),H); ctx.stroke();
+        ctx.setLineDash([]);
+        dot(ctx,m1.px(zp),m1.py(0),5,'#c62828','#fff');
+        tlabel(ctx,m1.px(zp)+7,m1.py(0)-10,'极点 −d/c','#c62828','bold 11.5px Segoe UI');
+      }
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 正方网格 (直线族)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-gx,gx,-gy,gy);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'u','v');
+    for(var k=-3;k<=3;k++){
+      var vert=[], horz=[];
+      for(var t=-3.2;t<=3.2001;t+=0.05){ vert.push([k,t]); horz.push([t,k]); }
+      plot(ctx,m2,vert,'rgba(21,101,192,.75)');
+      plot(ctx,m2,horz,'rgba(230,81,0,.75)');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 网格的像 (圆周或直线)','#37474f','bold 12.5px Segoe UI');
+    // ---- 读数 ----
+    var det=a*d-b*c, desc;
+    if(Math.abs(c)<1e-9){
+      desc='此时 $c=0$, 映射是<b>线性映射</b>: '+hl('$w=\\frac{a}{d}\\left(z+\\frac{b}{a}\\right)$')+', 即「旋转伸缩」与「平移」的复合, 网格仍是网格.';
+    } else {
+      desc='此时 $c\\neq0$, 极点 $z=-\\frac{d}{c}='+fmt(-d/c)+'$ 已在左图用虚线标出; 一般映射由 '+hl2('$w=z+b$')+', '+hl2('$w=az$')+', '+hl2('$w=\\frac{1}{z}$')+' 三种特殊形式复合而成 —— 网格线被「卷」成圆周, 这正是反演的作用, 也正是<b>保圆性</b>的直观表现.';
+    }
+    setRO('flfReadout',
+      '当前映射 $w=\\frac{'+fmt(a)+'z'+sg(b)+'}{'+fmt(c)+'z'+sg(d)+'}$ &nbsp;|&nbsp; '+
+      (Math.abs(det)<1e-9 ? hl('<b>退化</b>: $ad-bc=0$') : hl2('$ad-bc='+fmt(det)+'\\neq0$'))+
+      '<br>'+desc);
+  }
+  bindSlider('flfA',function(v){ a=v; badge('flfAV',fmt(v)); draw(); });
+  bindSlider('flfB',function(v){ b=v; badge('flfBV',fmt(v)); draw(); });
+  bindSlider('flfC',function(v){ c=v; badge('flfCV',fmt(v)); draw(); });
+  bindSlider('flfD',function(v){ d=v; badge('flfDV',fmt(v)); draw(); });
+  badge('flfAV',fmt(a)); badge('flfBV',fmt(b)); badge('flfCV',fmt(c)); badge('flfDV',fmt(d));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 保圆性与保对称性 =================
+module('cvProp',function(cv){
+  var ccx=0.8, RR=1.1;
+  function mob(re,im){
+    var nr=re, ni=im-1, dr=re, di=im+1;
+    var dd=dr*dr+di*di;
+    if(dd<1e-8) return null;
+    return C((nr*dr+ni*di)/dd,(ni*dr-nr*di)/dd);
+  }
+  function rp(wv){ return {x:wv.re,y:wv.im}; }
+  function circ3(p1,p2,p3){
+    var dd=2*(p1.x*(p2.y-p3.y)+p2.x*(p3.y-p1.y)+p3.x*(p1.y-p2.y));
+    if(Math.abs(dd)<1e-9) return {line:true,p1:p1,p2:p2};
+    var s1=p1.x*p1.x+p1.y*p1.y, s2=p2.x*p2.x+p2.y*p2.y, s3=p3.x*p3.x+p3.y*p3.y;
+    var ux=(s1*(p2.y-p3.y)+s2*(p3.y-p1.y)+s3*(p1.y-p2.y))/dd;
+    var uy=(s1*(p3.x-p2.x)+s2*(p1.x-p3.x)+s3*(p2.x-p1.x))/dd;
+    return {line:false, cx:ux, cy:uy, r:Math.hypot(p1.x-ux,p1.y-uy)};
+  }
+  function symPt(G,p){
+    if(G.line){
+      var ax=G.p1.x, ay=G.p1.y, dx=G.p2.x-ax, dy=G.p2.y-ay, L2=dx*dx+dy*dy;
+      if(L2<1e-12) return {x:p.x,y:p.y};
+      var tt=((p.x-ax)*dx+(p.y-ay)*dy)/L2;
+      var fx=ax+tt*dx, fy=ay+tt*dy;
+      return {x:2*fx-p.x, y:2*fy-p.y};
+    }
+    var vx=p.x-G.cx, vy=p.y-G.cy, d2=vx*vx+vy*vy;
+    if(d2<1e-12) return {x:p.x,y:p.y};
+    var k=G.r*G.r/d2;
+    return {x:G.cx+k*vx, y:G.cy+k*vy};
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-80, gx=3, gy=2.2;
+    var A=ccx+1.7*RR, B=ccx+RR/1.7;
+    var wA=mob(A,0), wB=mob(B,0);
+    // ---- 左: 圆周 C 与对称点 A, B ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-gx,gx,-gy,gy);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.arc(m1.px(ccx),m1.py(0),RR*m1.s,0,TAU); ctx.stroke();
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=1.4; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(m1.px(ccx),m1.py(0)); ctx.lineTo(m1.px(A+0.3),m1.py(0)); ctx.stroke();
+    ctx.setLineDash([]);
+    dot(ctx,m1.px(ccx),m1.py(0),5,'#37474f','#fff');
+    tlabel(ctx,m1.px(ccx)+7,m1.py(0)+17,'O','#37474f','bold 12px Segoe UI');
+    dot(ctx,m1.px(A),m1.py(0),6,'#c62828','#fff');
+    tlabel(ctx,m1.px(A)+6,m1.py(0)-10,'A','#c62828','bold 12.5px Segoe UI');
+    dot(ctx,m1.px(B),m1.py(0),6,'#e65100','#fff');
+    tlabel(ctx,m1.px(B)-14,m1.py(0)-10,'B','#e65100','bold 12.5px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(-1),5,'#7b1fa2','#fff');
+    tlabel(ctx,m1.px(0)+8,m1.py(-1)+4,'−i (极点)','#7b1fa2','bold 11.5px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 圆周 C 与关于它对称的 A, B','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 像曲线 Γ 与像点 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-gx,gx,-gy,gy);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'u','v');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.4; ctx.beginPath();
+    var pen=false, valid=[];
+    for(var i=0;i<=180;i++){
+      var t=i*TAU/180;
+      var wv=mob(ccx+RR*Math.cos(t), RR*Math.sin(t));
+      if(!wv || Math.abs(wv.re)>40 || Math.abs(wv.im)>40){ pen=false; continue; }
+      valid.push(wv);
+      var px=m2.px(wv.re), py=m2.py(wv.im);
+      if(!pen){ ctx.moveTo(px,py); pen=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    var G=null;
+    if(valid.length>=3){
+      var n3=Math.floor(valid.length/3);
+      G=circ3(rp(valid[0]), rp(valid[n3]), rp(valid[2*n3]));
+    }
+    var sym=null, err=0;
+    if(G && wA){
+      sym=symPt(G, rp(wA));
+      if(wB) err=Math.hypot(sym.x-wB.re, sym.y-wB.im);
+    }
+    if(wA){ dot(ctx,m2.px(wA.re),m2.py(wA.im),6,'#c62828','#fff'); tsub(ctx,m2.px(wA.re)+7,m2.py(wA.im)-8,'w','A','','#c62828','bold 12.5px Segoe UI'); }
+    if(wB){ dot(ctx,m2.px(wB.re),m2.py(wB.im),6,'#e65100','#fff'); tsub(ctx,m2.px(wB.re)-26,m2.py(wB.im)-8,'w','B','','#e65100','bold 12.5px Segoe UI'); }
+    if(sym){
+      ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.arc(m2.px(sym.x),m2.py(sym.y),7,0,TAU); ctx.stroke();
+      tlabel(ctx,m2.px(sym.x)-24,m2.py(sym.y)+18,'对称点','#2e7d32','bold 11.5px Segoe UI');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 像曲线 Γ 与像点 (红、橙点)','#37474f','bold 12.5px Segoe UI');
+    // ---- 读数 ----
+    var imgTxt;
+    if(!G) imgTxt='(无法确定)';
+    else if(G.line) imgTxt='一条<b>直线</b> (圆周 $C$ 的像经过 $\\infty$)';
+    else imgTxt='圆心 $('+fmt(G.cx)+','+fmt(G.cy)+')$、半径 $'+fmt(G.r)+'$ 的<b>圆周</b>';
+    setRO('propReadout',
+      '圆周 $C$: 圆心 $('+fmt(ccx)+',0)$, 半径 $R='+fmt(RR)+'$; 对称点取 $A='+fmt(A)+'$, $B='+fmt(B)+'$, 满足 $\\overline{OA}\\cdot\\overline{OB}='+fmt(A-ccx)+'\\times '+fmt(B-ccx)+'=R^2='+fmt(RR*RR)+'$.<br>'+
+      '像 $\\Gamma$ 为'+imgTxt+' —— 这正是<b>保圆性</b>: 圆仍映成圆 (或直线), 圆族不改变.<br>'+
+      '由 $w_A$ 关于 $\\Gamma$ 求得的对称点, 与实际像点 $w_B$ 的误差仅 $'+fmt(err,4)+'$ —— <b>保对称性</b> (定理 2.4) 成立.');
+  }
+  bindSlider('prCx',function(v){ ccx=v; badge('prCxV',fmt(v)); draw(); });
+  bindSlider('prR',function(v){ RR=v; badge('prRV',fmt(v)); draw(); });
+  badge('prCxV',fmt(ccx)); badge('prRV',fmt(RR));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 三对对应点决定映射 =================
+module('cvThree',function(cv){
+  var A1=0, A2=90, A3=180, ws=null;
+  function upd(){ ws=[cexp(1,A1*Math.PI/180), cexp(1,A2*Math.PI/180), cexp(1,A3*Math.PI/180)]; }
+  function coeff(){
+    if(!ws) upd();
+    var w1=ws[0], w2=ws[1], w3=ws[2];
+    var den=csub(w1,w3);
+    if(cabs(den)<1e-6) return null;
+    var cc=cdiv(csub(cadd(w1,w3), cmul(C(2,0),w2)), den);
+    var aa=csub(cadd(cmul(cc,w3), w3), w2);
+    return {a:aa, b:w2, c:cc, d:C(1,0)};
+  }
+  function mapZ(z,cf){
+    if(!cf) return null;
+    var num=cadd(cmul(cf.a,z), cf.b);
+    var den=cadd(cmul(cf.c,z), cf.d);
+    if(cabs(den)<1e-6) return null;
+    return cdiv(num,den);
+  }
+  function plot(ctx,m,fn,t0,t1,step,color,lw,clip){
+    ctx.strokeStyle=color; ctx.lineWidth=lw||1.8; ctx.beginPath();
+    var pen=false;
+    for(var t=t0;t<=t1+1e-9;t+=step){
+      var wv=fn(t);
+      if(!wv || Math.abs(wv.re)>clip || Math.abs(wv.im)>clip){ pen=false; continue; }
+      var px=m.px(wv.re), py=m.py(wv.im);
+      if(!pen){ ctx.moveTo(px,py); pen=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-80;
+    upd(); var cf=coeff();
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-3.2,3.2,-2.4,2.4);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    var ks=[0.6,1.2,1.8];
+    ctx.strokeStyle='rgba(230,81,0,.8)'; ctx.lineWidth=1.6;
+    ks.forEach(function(k){ ctx.beginPath(); ctx.moveTo(m1.px(-3.2),m1.py(k)); ctx.lineTo(m1.px(3.2),m1.py(k)); ctx.stroke(); });
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(0,m1.py(0)); ctx.lineTo(halfW,m1.py(0)); ctx.stroke();
+    var zk=[['-1','z₁'],['0','z₂'],['1','z₃']];
+    zk.forEach(function(pt){
+      var xv=parseFloat(pt[0]);
+      dot(ctx,m1.px(xv),m1.py(0),6,'#c62828','#fff');
+      tlabel(ctx,m1.px(xv)-8,m1.py(0)+20,pt[1],'#c62828','bold 12px Segoe UI');
+    });
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 实轴上的 z₁, z₂, z₃ 与若干水平直线','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-2.2,2.2,-1.7,1.7);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'u','v');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.5; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),m2.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    plot(ctx,m2,function(t){ return mapZ(C(t,0),cf); },-4,4,0.01,'#1565c0',2.6,6);
+    ks.forEach(function(k){
+      plot(ctx,m2,function(t){ return mapZ(C(t,k),cf); },-6,6,0.01,'rgba(230,81,0,.85)',2,6);
+    });
+    var names=['w₁','w₂','w₃'];
+    for(var i=0;i<3;i++){
+      dot(ctx,m2.px(ws[i].re),m2.py(ws[i].im),6,'#c62828','#fff');
+      tlabel(ctx,m2.px(ws[i].re)+8,m2.py(ws[i].im)-8,names[i],'#c62828','bold 12px Segoe UI');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 单位圆周上的 w₁, w₂, w₃ 与各直线的像','#37474f','bold 12.5px Segoe UI');
+    // ---- 读数 ----
+    if(!cf){
+      setRO('threeReadout', hl('<b>三对点出现重合</b>: 请让 $w_1,w_2,w_3$ 互不相同, 才存在唯一的分式线性映射.'));
+      return;
+    }
+    setRO('threeReadout',
+      '对应点: $z_1=-1,\\ z_2=0,\\ z_3=1$ 依次映成 $w_1='+cstr(ws[0])+',\\ w_2='+cstr(ws[1])+',\\ w_3='+cstr(ws[2])+'$ (三者都在 $|w|=1$ 上).<br>'+
+      '由对应点公式 '+hl('$\\frac{w-w_1}{w-w_2}\\cdot\\frac{w_3-w_2}{w_3-w_1}=\\frac{z-z_1}{z-z_2}\\cdot\\frac{z_3-z_2}{z_3-z_1}$')+' 解得唯一的 $w=\\frac{az+b}{cz+d}$.<br>'+
+      '注意: <b>只要三对点定下, 映射就唯一确定</b>; 且无论怎么调, 实轴始终映成单位圆周, 水平直线映成与它正交的圆周 —— 这正是<b>保圆性</b>与<b>保角性</b>.');
+  }
+  bindSlider('t3a',function(v){ A1=v; badge('t3aV',fmt(v,0)+'°'); draw(); });
+  bindSlider('t3b',function(v){ A2=v; badge('t3bV',fmt(v,0)+'°'); draw(); });
+  bindSlider('t3c',function(v){ A3=v; badge('t3cV',fmt(v,0)+'°'); draw(); });
+  badge('t3aV',fmt(A1,0)+'°'); badge('t3bV',fmt(A2,0)+'°'); badge('t3cV',fmt(A3,0)+'°');
+  return {draw:draw};
+});
+
+// ================= 模块 4: 上半平面 -> 单位圆 =================
+module('cvRegion',function(cv){
+  var zx=0, zy=1.2, thDeg=0;
+  function mapZ(z){
+    var n=csub(z, C(zx,zy));
+    var dd=csub(z, C(zx,-zy));
+    if(cabs(dd)<1e-4) return null;
+    return cmul(cexp(1,thDeg*Math.PI/180), cdiv(n,dd));
+  }
+  function plot(ctx,m,fn,t0,t1,step,color,lw,clip){
+    ctx.strokeStyle=color; ctx.lineWidth=lw||1.7; ctx.beginPath();
+    var pen=false;
+    for(var t=t0;t<=t1+1e-9;t+=step){
+      var wv=fn(t);
+      if(!wv || Math.abs(wv.re)>clip || Math.abs(wv.im)>clip){ pen=false; continue; }
+      var px=m.px(wv.re), py=m.py(wv.im);
+      if(!pen){ ctx.moveTo(px,py); pen=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-80;
+    // ---- 左: 上半 z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.6,2.6,-2.3,2.3);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='rgba(21,101,192,.75)'; ctx.lineWidth=1.6;
+    for(var k=0.4;k<=2.001;k+=0.4){ ctx.beginPath(); ctx.moveTo(m1.px(-2.6),m1.py(k)); ctx.lineTo(m1.px(2.6),m1.py(k)); ctx.stroke(); }
+    for(var vx=-2;vx<=2;vx++){ ctx.beginPath(); ctx.moveTo(m1.px(vx),m1.py(0)); ctx.lineTo(m1.px(vx),m1.py(2.3)); ctx.stroke(); }
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath(); ctx.moveTo(0,m1.py(0)); ctx.lineTo(halfW,m1.py(0)); ctx.stroke();
+    dot(ctx,m1.px(zx),m1.py(zy),6,'#c62828','#fff');
+    tlabel(ctx,m1.px(zx)+8,m1.py(zy)-8,'z₀','#c62828','bold 12.5px Segoe UI');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.6; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.arc(m1.px(zx),m1.py(-zy),6,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    tlabel(ctx,m1.px(zx)+8,m1.py(-zy)+14,'z̄₀ (极点)','#78909c','bold 11.5px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 上半平面 Im z 大于 0 与 z₀','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面单位圆 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.5,1.5,-1.15,1.15);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.5; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),m2.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    for(var k2=0;k2<=2.001;k2+=0.4){
+      plot(ctx,m2,function(t){ return mapZ(C(t,k2)); },-3,3,0.01,'rgba(21,101,192,.85)',2,4);
+    }
+    for(var v2=-2;v2<=2;v2++){
+      plot(ctx,m2,function(t){ return mapZ(C(v2,t)); },0,3,0.01,'rgba(230,81,0,.85)',2,4);
+    }
+    plot(ctx,m2,function(t){ return mapZ(C(t,0)); },-4,4,0.005,'#1565c0',2.8,6);
+    dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+7,m2.py(0)-8,'0','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 网格全部落入单位圆内','#37474f','bold 12.5px Segoe UI');
+    // ---- 读数 ----
+    setRO('regionReadout',
+      '映射 $w=\\mathrm{e}^{\\mathrm{i}\\theta}\\frac{z-z_0}{z-\\bar z_0}$, 其中 $z_0='+cstr(C(zx,zy))+'$, $\\theta='+fmt(thDeg,0)+'^\\circ$, 满足 $\\operatorname{Im}z_0>0$.<br>'+
+      '由<b>保对称性</b>: $z_0$ 映成圆心 $w=0$, 其共轭 $\\bar z_0$ 映成 $w=\\infty$ (极点), 故 $\\bar z_0$ 落在下半平面 —— 上半平面的点全部被映到<b>单位圆内部</b>.<br>'+
+      '实轴 $\\operatorname{Im}z=0$ 恰好映成单位圆周 $|w|=1$: '+hl2('$|z|=|\\bar z|$ 时 $\\left|\\frac{z-z_0}{z-\\bar z_0}\\right|=1$'));
+  }
+  bindSlider('rgX',function(v){ zx=v; badge('rgXV',fmt(v)); draw(); });
+  bindSlider('rgY',function(v){ zy=v; badge('rgYV',fmt(v)); draw(); });
+  bindSlider('rgTh',function(v){ thDeg=v; badge('rgThV',fmt(v,0)+'°'); draw(); });
+  badge('rgXV',fmt(zx)); badge('rgYV',fmt(zy)); badge('rgThV',fmt(thDeg,0)+'°');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'概念与三种特殊形式', c:'#1976d2', leaves:['分式线性映射 $w=\\frac{az+b}{cz+d}$','条件: $ad-bc\\neq 0$','逆映射: $z=\\frac{-dw+b}{cw-a}$','1) 平移: $w=z+b$','2) 旋转与相似: $w=az$','3) 反演: $w=\\frac{1}{z}$']},
+    {t:'三条性质', c:'#e65100', leaves:['共形性: 扩充平面上处处共形','保圆性: 圆周/直线 → 圆周/直线','$A(x^2+y^2)+Bx$','$+Cy+D=0$ (圆的一般方程)','一般圆周的像: 圆周或直线','保对称性: 对称点的像仍对称','定理2.3: 对称 $\\Longleftrightarrow$ 圆周正交','例2.1: 两圆弧夹角 $\\frac{\\pi}{2}$ 的像']},
+    {t:'唯一决定条件', c:'#c62828', leaves:['四个常数, 只有三个独立','定理: 三对相异点定唯一映射','对应点公式 (交比形式)','$\\frac{w-w_1}{w-w_2}\\cdot\\frac{w_3-w_2}{w_3-w_1}=\\cdots$','含 $\\infty$ 时略去相应因式','可化为 $w=\\frac{k(z-\\xi_1)}{z-\\xi_2}$']},
+    {t:'典型区域映射', c:'#2e7d32', leaves:['例2.2: 上半平面 → 单位圆','$w=\\mathrm{e}^{\\mathrm{i}\\theta}\\frac{z-z_0}{z-\\bar{z}_0}$, $\\operatorname{Im} z_0>0$','例2.3: $w(2\\mathrm{i})=0$, $\\arg w\'(2\\mathrm{i})=0$','例2.4: 单位圆 → 单位圆','$w=\\mathrm{e}^{\\mathrm{i}\\varphi}\\frac{z-\\alpha}{1-\\bar{\\alpha}z}$, $|\\alpha|\u003c1$','例2.5: $w\\left(\\frac{1}{2}\\right)=0$, $w\'\\left(\\frac{1}{2}\\right)>0$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第六章第二节 · 分式线性映射';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 概念与三种特殊形式 → 三条性质 → 唯一决定条件 → 典型区域映射; 一句话: <b>分式线性映射 $w=\\frac{az+b}{cz+d}$ ($ad-bc\\neq0$) 由平移、旋转伸缩与反演复合而成, 保角、保圆、保对称; 三对相异对应点唯一决定它</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'为什么"三对相异对应点"就能唯一决定一个分式线性映射? 这与"三点确定一个圆"有什么相通之处?',
+     hints:['分式线性映射含四个常数, 但分子分母可同除一个常数, 故实际上只有三个独立参数.',
+            '三对对应点恰好提供三个独立条件, 既保证存在、又保证唯一.',
+            '与"三点确定一个圆"同理: 自由度只有三个, 给定三组约束就被完全锁定.',
+            '可迁移的态度: 遇到"有多少个自由参数"的问题, 先数一数独立条件够不够.']},
+    {q:'保圆性把"直线"看成"半径无限的圆周". 引入 ∞ 这一约定, 给数学带来了什么便利?',
+     hints:['有了 ∞, "圆或直线"就统一成"扩充平面上的圆周", 保圆性一句话即可说清.',
+            '极点、w = ∞ 处的共形性, 也靠 ξ = 1/z、η = 1/w 的补充定义变得顺理成章.',
+            '很多"例外情形", 其实只是还没有给它一个恰当的位置.',
+            '可迁移的态度: 与其处处打补丁, 不如补上一个统一的约定, 让特例归队.']},
+    {q:'反演映射 w = 1/z 等价于"先关于单位圆对称、再关于实轴对称". 请谈谈"把一个复杂动作分解为两个简单动作"的好处.',
+     hints:['每一步都容易画出来、也容易验证, 合起来却完成了"反演"这种不平凡的动作.',
+            '整个一般分式线性映射也正被分解为平移、旋转伸缩、反演三步.',
+            '分解之后, 每一部分的性质可以分别研究, 再复合起来得到整体的性质.',
+            '可迁移的态度: 面对复杂问题, 先问"它能不能拆成几个我认识的小问题".']},
+    {q:'保对称性 (定理 2.4) 的证明只用了一句"正交关系在保角映射下保持不变". 为什么"把性质转化为另一种等价刻画"常能让证明变简单?',
+     hints:['"关于圆周对称"不好直接搬运算, 但它的等价说法"过两点的任何圆周与 C 正交"就便于使用了.',
+            '分式线性映射保角, 于是正交关系被原样传给像曲线, 结论立刻得到.',
+            '选择恰当的等价形式, 等于换了一把好用的钥匙.',
+            '可迁移的态度: 证不出来时, 试着把待证的性质改写成另一种等价说法.']},
+    {q:'从莫比乌斯的"变换观点", 到今天机翼设计中的保角变换法: 你如何理解"基础数学结构的长久生命力"?',
+     hints:['莫比乌斯当时关心的只是"变换下什么不变", 并未想到机翼与天线.',
+            '但正是这种"圆仍是圆、对称仍对称"的结构, 让它能与儒可夫斯基变换联手, 把圆变成翼型.',
+            '越是基础、越优美的结构, 应用面往往越广, 也越经得起时间的检验.',
+            '可迁移的态度: 尊重基础研究, 别急着用"这有什么用"去衡量它.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

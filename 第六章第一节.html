@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第六章第一节 导数的几何意义与共形映射</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第六章 第1节 导数的几何意义与共形映射</h1>
+    <p>导数的几何意义 &middot; 伸缩率与旋转角 &middot; 三个不变性 &middot; 共形映射及其判别</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解有向曲线 $C:z=z(t)$ 的<b>切向量</b> $z'(t_0)$, 以及两曲线在交点处夹角的定义;
+2. 掌握解析函数 $f$ 的导数 $f'(z_0)=\rho\mathrm{e}^{\mathrm{i}\varphi}$ 的几何意义 —— 模 $\rho$ 是<b>伸缩率</b>, 辐角 $\varphi$ 是<b>旋转角</b>, 并会求像曲线 $w=f[z(t)]$;
+3. 掌握导数的三个不变性: <b>伸缩率不变性</b>、<b>旋转角不变性</b>与<b>保角性</b>, 能写出 $\varphi_2-\varphi_1=\theta_2-\theta_1$ 的含义;
+4. 理解<b>共形映射</b>的定义 1.1 与判别定理 1.1, 会判断常见函数 (如 $z^2,\ z^3,\ \mathrm{e}^z,\ \bar z$) 在给定点或区域上的共形性, 并看清 $f'(z_0)=0$ 时"不保角、角被放大"的现象;
+5. 体会"用局部的一个复数导数, 概括映射在一点的全部几何行为"这一思想的力量, 认识它通向分式线性映射与初等函数映射的大门.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-6a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-6a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-6a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、导数的几何意义</label>
+    <label class="tab-btn" for="tab2" id="label2">二、三个不变性</label>
+    <label class="tab-btn" for="tab3" id="label3">三、共形映射的概念与判别</label>
+    <label class="tab-btn" for="tab4" id="label4">四、典型例题与延伸</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 导数的几何意义 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 有向曲线的切向量</div>
+
+<div class="box-key">
+<div class="title">有向曲线与切向量</div>
+设 $z$ 平面内的一条有向曲线 $C$ 的方程为
+<div class="box-formula">$$z=z(t),\qquad \alpha\le t\le\beta,$$</div>
+它的正向取为 $t$ 增大时点 $z$ 移动的方向. 设 $z_0=z(t_0)$, 而 $z=z(t_0+\Delta t)$ 是曲线上另一点, 割线正方向 $\overrightarrow{z_0z}$ 对应参数 $t$ 增大的方向, 则
+<div class="box-formula">$$z'(t_0)=\lim\limits_{\Delta t\to 0}\dfrac{z(t_0+\Delta t)-z(t_0)}{\Delta t}$$</div>
+就是曲线 $C$ 在 $z_0$ 处的<b>切向量</b>, 且其方向与曲线 $C$ 的正向一致.
+</div>
+
+<div class="box-key">
+<div class="title">两条曲线在交点处的夹角</div>
+<span style="color:#c62828"><b>(1)</b></span> $\theta_0=\operatorname{Arg} z'(t_0)$ 是曲线 $C$ 的切线正向与 $x$ 轴正向之间的夹角;
+<br><br>
+<span style="color:#c62828"><b>(2)</b></span> 相交于一点的两条曲线 $C_1$ 与 $C_2$ 正向之间的夹角, 就是它们在交点处<b>切线正向之间的夹角</b>.
+<br><br>
+后一条是本节一切讨论的出发点: 曲线之间的"夹角", 从此被翻译成了"两个切向量之间的夹角".
+</div>
+
+<div class="sec-title">1.2 导数的几何意义: 伸缩率与旋转角</div>
+
+<div class="box-key">
+<div class="title">设定</div>
+设函数 $w=f(z)$ 在 $z_0\in D$ 内<b>解析</b>, 且 $f'(z_0)\neq 0$. 又设 $C$ 为 $z$ 平面内通过点 $z_0$ 的一条有向光滑曲线, 其参数方程为
+<div class="box-formula">$$z=z(t),\quad \alpha\le t\le\beta,\qquad z_0=z(t_0),\quad z'(t_0)\neq 0.$$</div>
+映射 $w=f(z)$ 把 $C$ 变为 $w$ 平面内通过点 $w_0=f(z_0)$ 的一条光滑曲线 $\Gamma$, 其参数方程为
+<div class="box-formula">$$w=f\left[z(t)\right],\quad \alpha\le t\le\beta,$$</div>
+正向取为相应于 $t$ 增大的方向.
+</div>
+
+<div class="box-key">
+<div class="title">伸缩率</div>
+在曲线 $C$ 上点 $z_0$ 处任取 $z=z_0+\Delta z$, 则在 $\Gamma$ 上有对应点 $w=w_0+\Delta w$. 由 $f$ 在 $z_0$ 可导,
+<div class="box-formula">$$f'(z_0)=\lim\limits_{z\to z_0}\dfrac{w-w_0}{z-z_0},\qquad \left|f'(z_0)\right|=\lim\limits_{z\to z_0}\dfrac{\left|w-w_0\right|}{\left|z-z_0\right|}=\rho\quad(\rho\neq 0).$$</div>
+称极限 $\rho=\left|f'(z_0)\right|$ 为经 $w=f(z)$ 映射后在 $z_0$ 处的<b>伸缩率</b>. 它描述: 在 $z_0$ 处任取一个"无穷小向量", 映像的长度被放大了 $\rho$ 倍.
+</div>
+
+<div class="box-key">
+<div class="title">旋转角</div>
+由复合函数求导法, 有 $w'(t_0)=f'(z_0)z'(t_0)\neq 0$. 因此在 $\Gamma$ 上点 $w_0$ 处切线存在, 且切线正向与 $u$ 轴正向的夹角为
+<div class="box-formula">$$\operatorname{Arg} w'(t_0)=\operatorname{Arg} f'(z_0)+\operatorname{Arg} z'(t_0).$$</div>
+记 $\theta_0=\operatorname{Arg} z'(t_0)$, $\varphi_0=\operatorname{Arg} w'(t_0)$, 则
+<div class="box-formula">$$\varphi_0-\theta_0=\operatorname{Arg} f'(z_0).$$</div>
+把 $w$ 平面重叠放在 $z$ 平面上且坐标一致, 则 $\varphi_0-\theta_0$ 就是曲线 $C$ 经映射后在 $z_0$ 处的<b>旋转角</b> $\varphi=\operatorname{Arg} f'(z_0)$.
+</div>
+
+<div class="box-result">
+<div class="res-label">一句话 (本节的核心)</div>
+<div class="box-formula">$$f'(z_0)=\rho\,\mathrm{e}^{\mathrm{i}\varphi}:\qquad \rho=\left|f'(z_0)\right|\ \text{是伸缩率},\qquad \varphi=\operatorname{Arg} f'(z_0)\ \text{是旋转角}.$$</div>
+<b>一个复数导数, 同时概括了映射在一点处"放大多少倍"与"转多少度"这两件事</b> —— 这正是复变函数比实变函数"更几何"的地方.
+</div>
+
+<div class="chart-container">
+<h3>交互: 伸缩率与旋转角 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面上的曲线 $C$ (过 $z_0$), 右图是它的像曲线 $\Gamma$ (过 $w_0=f(z_0)$). <b>在左图中拖动</b>可改变曲线 $C$ 在 $z_0$ 处的方向 $\theta_0$; 拖动滑块可取不同的伸缩率 $\rho$ 与旋转角 $\varphi$. 注意: 无论 $\theta_0$ 怎么变, 像曲线始终是把原曲线<b>整体旋转 $\varphi$</b>、并把每个方向都<b>按 $\rho$ 伸缩</b>的结果 —— $\rho$ 与 $\varphi$ 只与 $z_0$ 有关.</div>
+<canvas id="cvGeom" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>伸缩率 $\rho$:</label>
+<input type="range" id="gmRho" min="0.4" max="1.9" step="0.01" value="1.3">
+<span class="val-badge" id="gmRhoV">1.30</span>
+</div>
+<div class="row">
+<label>旋转角 $\varphi$:</label>
+<input type="range" id="gmPhi" min="-180" max="180" step="1" value="40">
+<span class="val-badge" id="gmPhiV">40°</span>
+</div>
+<div class="readout" id="gmReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 三个不变性 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 伸缩率的不变性</div>
+
+<div class="box-key">
+<div class="title">1) 伸缩率不变性</div>
+由 $1.2$ 已得 $\left|f'(z_0)\right|=\lim\limits_{z\to z_0}\frac{\left|w-w_0\right|}{\left|z-z_0\right|}=\rho\neq 0$. 这个极限<b>只与点 $z_0$ 有关</b>, 而与曲线 $C$ 的形状、方向都没有关系.
+<br><br>
+换言之: 经过 $z_0$ 的<b>任意一条</b>曲线 $C$, 经 $w=f(z)$ 映射后在 $z_0$ 处都有<b>相同的伸缩率</b>. 这一性质称为映射的<b>伸缩率不变性</b>.
+</div>
+
+<div class="sec-title">2.2 旋转角的不变性</div>
+
+<div class="box-key">
+<div class="title">2) 旋转角不变性</div>
+由 $w'(t_0)=f'(z_0)z'(t_0)$ 得
+<div class="box-formula">$$\operatorname{Arg} w'(t_0)=\operatorname{Arg} f'(z_0)+\operatorname{Arg} z'(t_0),\qquad \operatorname{Arg} f'(z_0)=\varphi_0-\theta_0.$$</div>
+可见旋转角 $\operatorname{Arg} f'(z_0)$ 同样<b>只与点 $z_0$ 有关</b>, 与曲线 $C$ 的形状与方向无关. 因此称这个映射具有<b>旋转角不变性</b>.
+<br><br>
+直观地说: 从 $z_0$ 出发的所有方向, 经映射后都<b>被旋转了同一个角度</b> $\operatorname{Arg} f'(z_0)$.
+</div>
+
+<div class="sec-title">2.3 保角性</div>
+
+<div class="box-key">
+<div class="title">3) 保角性</div>
+设相交于点 $z_0$ 的两条曲线 $C_1$、$C_2$ 经 $w=f(z)$ 映射后的像曲线为 $\Gamma_1$、$\Gamma_2$, 相交于 $w_0=f(z_0)$. $C_1$、$C_2$ 在 $z_0$ 处切线正向与 $x$ 轴的夹角分别为 $\theta_1$、$\theta_2$; $\Gamma_1$、$\Gamma_2$ 在 $w_0$ 处切线正向与 $u$ 轴的夹角分别为 $\varphi_1$、$\varphi_2$.
+<br><br>
+由旋转角不变性, 对这两条曲线分别有
+<div class="box-formula">$$\operatorname{Arg} f'(z_0)=\varphi_1-\theta_1,\qquad \operatorname{Arg} f'(z_0)=\varphi_2-\theta_2.$$</div>
+两式相减即得
+<div class="box-formula">$$\varphi_2-\varphi_1=\theta_2-\theta_1.$$</div>
+上式两端分别是 $C_1$、$C_2$ 之间的夹角与 $\Gamma_1$、$\Gamma_2$ 之间的夹角. 这说明映射保持了两曲线间夹角的<b>大小与方向</b>都不变, 这就是<b>保角性</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">三个不变性的逻辑关系</div>
+<b>伸缩率不变性</b> + <b>旋转角不变性</b> $\Longrightarrow$ <b>保角性</b>. 前两条说的是"长度放大倍数"与"方向旋转角度"各自与曲线无关; 合起来就保证了"两条曲线的夹角"在映射前后完全一致. 下一节的共形映射, 正是把(1)(2)两条性质一起作为定义.
+</div>
+
+<div class="chart-container">
+<h3>交互: 两曲线夹角在映射前后的对比 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图: $z$ 平面上过 $z_0$ 的两条曲线 $C_1$、$C_2$, 夹角为 $\theta_2-\theta_1$; 右图: 它们的像曲线 $\Gamma_1$、$\Gamma_2$ 在 $w_0$ 处的夹角 $\varphi_2-\varphi_1$. <b>在左图中拖动</b>可改变 $C_2$ 的方向, 拖动滑块改变旋转角 $\varphi$. 无论怎么变, 两图的夹角始终<b>大小相等、方向相同</b>.</div>
+<canvas id="cvAngle" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>旋转角 $\varphi$:</label>
+<input type="range" id="agPhi" min="-180" max="180" step="1" value="35">
+<span class="val-badge" id="agPhiV">35°</span>
+</div>
+<div class="readout" id="agReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 共形映射的概念与判别 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 共形映射的定义</div>
+
+<div class="box-key">
+<div class="title">定义 1.1 (共形映射 / 保角映射)</div>
+设函数 $w=f(z)$ 在 $z_0$ 的邻域内有定义, 在 $z_0$ 具有<b>保角性</b>和<b>伸缩率不变性</b>, 则称映射 $w=f(z)$ 在 $z_0$ 是<b>共形的</b> (或称保角的), 或称函数 $w=f(z)$ 在 $z_0$ 是<b>共形映射</b>.
+<br><br>
+如果映射 $w=f(z)$ 在区域 $D$ 内的<b>每一点</b>都是共形的, 就称 $w=f(z)$ 是区域 $D$ 内的<b>共形映射</b>.
+<br><br>
+<span style="color:#c62828"><b>注:</b></span> 定义中的两条性质缺一不可. 只保角而伸缩率随方向变化, 或只伸缩率不变而不保角, 都不是共形映射.
+</div>
+
+<div class="sec-title">3.2 判别定理</div>
+
+<div class="box-key">
+<div class="title">定理 1.1 (解析 + 导数非零 ⟹ 共形)</div>
+如果函数 $w=f(z)$ 在 $z_0$ <b>解析</b>, 且 $f'(z_0)\neq 0$, 则映射 $w=f(z)$ 在 $z_0$ 是<b>共形的</b>. 而且
+<div class="box-formula">$$\left|f'(z_0)\right|\ \text{表示这个映射在}\ z_0\ \text{的伸缩率},\qquad \operatorname{Arg} f'(z_0)\ \text{表示这个映射在}\ z_0\ \text{的旋转角}.$$</div>
+如果解析函数 $w=f(z)$ 在 $D$ 内<b>处处</b>有 $f'(z)\neq 0$, 则映射 $w=f(z)$ 是 $D$ 内的<b>共形映射</b>.
+<br><br>
+<b>使用要点:</b> "解析" 保证了 (1)、(2) 两条不变性; "$f'(z_0)\neq 0$" 保证了伸缩率 $\rho\neq 0$、旋转角有意义 —— 二者共同构成共形性的<b>充分条件</b>.
+</div>
+
+<div class="sec-title">3.3 当 $f'(z_0)=0$ 时, 会发生什么?</div>
+
+<div class="box-key">
+<div class="title">$f'(z_0)=0$: 不保角, 夹角被"放大"</div>
+若 $f'(z_0)=0$, 则伸缩率 $\rho=0$, 旋转角也失去意义 —— 定理 1.1 的条件被破坏, 映射在 $z_0$ 处<b>一般不保角</b>.
+<br><br>
+最典型的例子是 $w=z^n\ (n\ge 2)$ 在原点处. 因为
+<div class="box-formula">$$f'(z)=nz^{n-1},\qquad f'(0)=0\quad(n\ge 2).$$</div>
+可以证明: 原点附近夹角为 $\alpha$ 的两条射线, 经 $w=z^n$ 后的像射线夹角变成 $n\alpha$ —— 夹角被<b>放大了 $n$ 倍</b>, 因此映射在原点<b>不共形</b>.
+<br><br>
+<span style="color:#c62828"><b>例如:</b></span> $w=z^2$ 在 $z=0$ 处使夹角放大 $2$ 倍; $w=z^3$ 在 $z=0$ 处使夹角放大 $3$ 倍; 而在 $z\neq 0$ 处, $f'(z)=nz^{n-1}\neq 0$, 映射处处共形.
+</div>
+
+<div class="chart-container">
+<h3>交互: $w=z^n$ 在原点的角放大 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图: $z$ 平面上从原点出发、夹角为 $\alpha$ 的两条射线; 右图: 经 $w=z^n$ 后的像射线, 夹角变为 $n\alpha$. 拖动滑块改变 $n$, 观察原点附近的夹角如何被"放大" —— 当 $n=1$ 时 (即 $w=z$) 夹角不变、保角; 当 $n\ge 2$ 时角被放大 $n$ 倍, 原点不共形.</div>
+<canvas id="cvPower" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>幂次 $n$:</label>
+<input type="range" id="pwN" min="1" max="5" step="1" value="3">
+<span class="val-badge" id="pwNV">3</span>
+</div>
+<div class="readout" id="pwReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 典型例题与延伸 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 典型例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1</div>
+讨论 $w=z^2$ 的共形性, 并求它在 $z=\mathrm{i}$ 处的伸缩率与旋转角.
+<input type="checkbox" id="ans61" class="answer-toggle">
+<label for="ans61" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$f(z)=z^2$ 在复平面上处处解析, $f'(z)=2z$. 于是
+<div class="box-formula">$$f'(z)\neq 0\iff z\neq 0.$$</div>
+故 $w=z^2$ 在 $z\neq 0$ 的每个点是共形的, 是 $D=\mathbb{C}\setminus\{0\}$ 内的共形映射; 而在 $z=0$ 处, $f'(0)=0$, <b>不共形</b> (夹角被放大 $2$ 倍).
+<br><br>
+在 $z=\mathrm{i}$ 处: $f'(\mathrm{i})=2\mathrm{i}$, 所以
+<div class="box-formula">$$\text{伸缩率}\ \left|f'(\mathrm{i})\right|=\left|2\mathrm{i}\right|=2,\qquad \text{旋转角}\ \operatorname{Arg} f'(\mathrm{i})=\operatorname{Arg}(2\mathrm{i})=\dfrac{\pi}{2}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.2</div>
+说明 $w=\mathrm{e}^z$ 在哪些点是共形的, 并求在 $z_0=\frac{\pi}{2}\mathrm{i}$ 处的伸缩率与旋转角.
+<input type="checkbox" id="ans62" class="answer-toggle">
+<label for="ans62" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$f(z)=\mathrm{e}^z$ 在复平面上处处解析, 且 $f'(z)=\mathrm{e}^z$. 由于对任意 $z$ 都有 $\mathrm{e}^z\neq 0$, 所以
+<div class="box-formula">$$f'(z)\neq 0\quad(\forall z\in\mathbb{C}).$$</div>
+由定理 1.1, $w=\mathrm{e}^z$ 在复平面上<b>处处共形</b>, 是全平面上的共形映射.
+<br><br>
+在 $z_0=\frac{\pi}{2}\mathrm{i}$ 处: $f'(z_0)=\mathrm{e}^{\frac{\pi}{2}\mathrm{i}}=\mathrm{i}$, 故
+<div class="box-formula">$$\text{伸缩率}=|\mathrm{i}|=1,\qquad \text{旋转角}=\operatorname{Arg}\mathrm{i}=\dfrac{\pi}{2}.$$</div>
+这说明 $\mathrm{e}^z$ 在该点附近"只旋转、不伸缩" (伸缩率为 $1$).
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.3</div>
+讨论 $w=\bar z$ 与 $w=z^3$ 在原点处的共形性.
+<input type="checkbox" id="ans63" class="answer-toggle">
+<label for="ans63" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1) $w=\bar z$.</b> 共轭函数 $\bar z$ 在复平面上<b>处处不解析</b> (它把 $z=x+\mathrm{i}y$ 映为 $x-\mathrm{i}y$, 不是 $z$ 的解析函数). 因此不存在任何一点使 $f'(z_0)$ 存在, 由定义 $w=\bar z$ 在复平面上<b>处处不共形</b>. 直观上, 它是关于实轴的镜像, 会把"逆时针夹角"变成"顺时针夹角", 方向被反了过来.
+<br><br>
+<b>(2) $w=z^3$.</b> $f'(z)=3z^2$, 故 $f'(0)=0$. 由 3.3 的结论, $w=z^3$ 在原点处<b>不共形</b>, 且原点附近夹角被放大 $3$ 倍; 而在 $z\neq 0$ 处 $f'(z)=3z^2\neq 0$, 处处共形.
+<div class="box-formula">$$\left|f'(z)\right|=3|z|^2>0\quad(z\neq 0).$$</div>
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.2 延伸与展望</div>
+
+<div class="box-key">
+<div class="title">从三个不变性到分式线性映射</div>
+本节用导数 $f'(z_0)$ 刻画了映射在<b>一点</b>的共形性. 把这些局部性质"拼"起来, 就得到区域上的共形映射. 后续课程中最重要的一类共形映射是<b>分式线性映射</b>
+<div class="box-formula">$$w=\dfrac{az+b}{cz+d}\qquad(ad-bc\neq 0),$$</div>
+它在扩充复平面上处处共形, 且把"圆或直线"映成"圆或直线" —— 这是求解区域映射问题的基本工具. 而分式线性映射的共形性, 正是由本节 $f'(z)\neq 0$ 的判别给出来的.
+</div>
+
+<div class="box-key">
+<div class="title">从初等函数到区域映射</div>
+$z^n$、$\mathrm{e}^z$、$\ln z$ 等<b>初等函数</b>在导数非零处都是共形的, 它们各自有固定的"保留角、放大角"的形态. 把这些初等映射像搭积木一样组合起来, 就能把各种复杂区域"搬"成简单区域 (如上半平面、单位圆), 从而把难区域上的问题化为易区域上的问题.
+</div>
+
+<div class="box-result">
+<div class="res-label">本节到后续的路线图</div>
+<b>导数 $f'(z_0)$</b> (伸缩率 + 旋转角) $\longrightarrow$ <b>三个不变性</b> $\longrightarrow$ <b>共形映射的定义与判别</b> $\longrightarrow$ <b>分式线性映射</b> 与 <b>初等函数映射</b> $\longrightarrow$ <b>区域的共形映射</b>. <br>
+此外, 共形映射在<b>保角投影</b> (地图测绘)、流体力学、静电场与热传导等实际问题中都有直接应用 —— 我们将在思政园地中看到它在国家大地坐标系中的身影.
+</div>
+
+<div class="chart-container">
+<h3>交互: 伸缩率与旋转角读数器 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">选择函数 $f$, 并拖动滑块改变点 $z_0$. 左图给出 $z_0$ 附近的一个小"十字标架" (两条互相垂直的方向), 右图给出它的像: <b>整体旋转 $\operatorname{Arg} f'(z_0)$, 每条方向都按 $\left|f'(z_0)\right|$ 伸缩</b>. 读数区实时给出 $f'(z_0)$ 的伸缩率与旋转角; 若 $f'(z_0)=0$, 则不共形.</div>
+<canvas id="cvField" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数 $f$:</label>
+<input type="range" id="fldK" min="0" max="3" step="1" value="0">
+<span class="val-badge" id="fldKV">$w=z^2$</span>
+</div>
+<div class="row">
+<label>$\operatorname{Re} z_0$:</label>
+<input type="range" id="fldX" min="-1.2" max="1.2" step="0.01" value="0.6">
+<span class="val-badge" id="fldXV">0.60</span>
+</div>
+<div class="row">
+<label>$\operatorname{Im} z_0$:</label>
+<input type="range" id="fldY" min="-1.2" max="1.2" step="0.01" value="0.5">
+<span class="val-badge" id="fldYV">0.50</span>
+</div>
+<div class="readout" id="fieldReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>有向曲线与切向量</b> → <b>导数的几何意义</b> (伸缩率 $\rho$、旋转角 $\varphi$) → <b>三个不变性</b> → <b>共形映射的定义与判别</b> → <b>应用与延伸</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>名称</th><th>含义</th><th>成立条件 / 关键式</th></tr>
+<tr><td>伸缩率不变性</td><td>过 $z_0$ 的任一条曲线, 映射后在 $z_0$ 处都有相同的伸缩率</td><td>$\left|f'(z_0)\right|=\rho\neq 0$ 只与 $z_0$ 有关, 与曲线 $C$ 无关</td></tr>
+<tr><td>旋转角不变性</td><td>从 $z_0$ 出发的每个方向, 映射后都被旋转同一个角度</td><td>$\operatorname{Arg} f'(z_0)=\varphi_0-\theta_0$ 只与 $z_0$ 有关, 与 $C$ 无关</td></tr>
+<tr><td>保角性</td><td>两曲线间夹角的大小与方向都不变</td><td>$\varphi_2-\varphi_1=\theta_2-\theta_1$</td></tr>
+<tr><td>共形映射</td><td>在 $z_0$ 同时具有保角性与伸缩率不变性的映射</td><td>$f$ 在 $z_0$ 解析且 $f'(z_0)\neq 0$ (定理 1.1); $D$ 内处处 $f'\neq 0$ 则为 $D$ 内共形映射</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. $w=z^3$ 在原点 $z=0$ 处对夹角的放大倍数是?</div>
+<label class="quiz-opt">A. $1$ 倍 (保角)</label>
+<label class="quiz-opt">B. $2$ 倍</label>
+<label class="quiz-opt" data-ok="1">C. $3$ 倍</label>
+<label class="quiz-opt">D. 无法确定</label>
+<div class="quiz-explain"><b>解析:</b> $f'(z)=3z^2$, $f'(0)=0$, 由 3.3 的结论, $w=z^n$ 在原点把夹角放大 $n$ 倍, 故 $n=3$ 时放大 $3$ 倍, 原点处不共形.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 映射 $w=z^2$ 在 $z=\mathrm{i}$ 处的伸缩率是?</div>
+<label class="quiz-opt" data-ok="1">A. $2$</label>
+<label class="quiz-opt">B. $\sqrt{2}$</label>
+<label class="quiz-opt">C. $1$</label>
+<label class="quiz-opt">D. $4$</label>
+<div class="quiz-explain"><b>解析:</b> $f'(z)=2z$, 故 $f'(\mathrm{i})=2\mathrm{i}$, 伸缩率 $\left|f'(\mathrm{i})\right|=\left|2\mathrm{i}\right|=2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 若 $f$ 在 $z_0$ 解析但 $f'(z_0)=0$, 则映射在 $z_0$ 处?</div>
+<label class="quiz-opt">A. 仍然共形</label>
+<label class="quiz-opt" data-ok="1">B. 一般不保角 (不共形)</label>
+<label class="quiz-opt">C. 一定无定义</label>
+<label class="quiz-opt">D. 伸缩率为 $1$</label>
+<div class="quiz-explain"><b>解析:</b> 定理 1.1 的条件 $f'(z_0)\neq 0$ 是必要的. 当 $f'(z_0)=0$ 时伸缩率为 $0$、旋转角无意义, 映射一般不保角 (如 $w=z^2$ 在 $0$ 处角放大 $2$ 倍).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 关于 $w=\bar z$, 下列说法正确的是?</div>
+<label class="quiz-opt">A. 在 $z=0$ 处共形</label>
+<label class="quiz-opt">B. 在除原点的复平面上共形</label>
+<label class="quiz-opt" data-ok="1">C. 在复平面上处处不共形</label>
+<label class="quiz-opt">D. 伸缩率恒为 $1$, 故处处共形</label>
+<div class="quiz-explain"><b>解析:</b> $\bar z$ 在复平面上处处不解析 (关于 $z$ 不可导), 故 $f'(z_0)$ 处处不存在, 由定义处处不共形. 它把逆时针夹角变成顺时针夹角, 方向被反转.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 关于 $w=\mathrm{e}^z$, 下列说法正确的是?</div>
+<label class="quiz-opt" data-ok="1">A. 在复平面上处处共形</label>
+<label class="quiz-opt">B. 只在虚轴上是共形的</label>
+<label class="quiz-opt">C. 只在原点共形</label>
+<label class="quiz-opt">D. 处处不共形</label>
+<div class="quiz-explain"><b>解析:</b> $\mathrm{e}^z$ 处处解析且 $(\mathrm{e}^z)'=\mathrm{e}^z\neq 0$, 由定理 1.1 知它在全平面处处共形. 注意其伸缩率 $\left|\mathrm{e}^z\right|=\mathrm{e}^{\operatorname{Re}z}$ 随位置而变, 但"与曲线方向无关"这一点始终成立.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 伸缩率 $\left|f'(z_0)\right|$ 与过 $z_0$ 的曲线 $C$ 的方向是否有关?</div>
+<label class="quiz-opt">A. 与 $C$ 的方向有关</label>
+<label class="quiz-opt" data-ok="1">B. 无关, 只与 $z_0$ 有关</label>
+<label class="quiz-opt">C. 只在 $C$ 为直线时无关</label>
+<label class="quiz-opt">D. 与 $C$ 的形状和方向都有关</label>
+<div class="quiz-explain"><b>解析:</b> 这就是<b>伸缩率不变性</b>: $\left|f'(z_0)\right|$ 只由 $z_0$ 决定, 经过 $z_0$ 的任一条曲线在 $z_0$ 处都有相同的伸缩率.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. (保角性) 设 $C_1,C_2$ 在 $z_0$ 处切线方向为 $\theta_1,\theta_2$, 其像 $\Gamma_1,\Gamma_2$ 在 $w_0$ 处方向为 $\varphi_1,\varphi_2$, 则成立?</div>
+<label class="quiz-opt">A. $\varphi_2-\varphi_1=\theta_1-\theta_2$</label>
+<label class="quiz-opt" data-ok="1">B. $\varphi_2-\varphi_1=\theta_2-\theta_1$</label>
+<label class="quiz-opt">C. $\varphi_2+\varphi_1=\theta_2+\theta_1$</label>
+<label class="quiz-opt">D. $\varphi_2-\varphi_1=2(\theta_2-\theta_1)$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\operatorname{Arg}f'(z_0)=\varphi_1-\theta_1=\varphi_2-\theta_2$ 相减得 $\varphi_2-\varphi_1=\theta_2-\theta_1$, 即夹角大小与方向都不变.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. $\operatorname{Arg} f'(z_0)$ 的几何意义是?</div>
+<label class="quiz-opt">A. 映射在 $z_0$ 处的伸缩率</label>
+<label class="quiz-opt" data-ok="1">B. 映射在 $z_0$ 处的旋转角</label>
+<label class="quiz-opt">C. 曲线 $C$ 在 $z_0$ 处的切线方向</label>
+<label class="quiz-opt">D. 像点 $w_0$ 的辐角</label>
+<div class="quiz-explain"><b>解析:</b> $f'(z_0)=\rho\mathrm{e}^{\mathrm{i}\varphi}$ 中, $\rho=\left|f'(z_0)\right|$ 是伸缩率, $\varphi=\operatorname{Arg} f'(z_0)$ 是旋转角 (即 $\varphi_0-\theta_0$).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 映射 $w=z^2$ 在 $z_0=1+\mathrm{i}$ 处的旋转角是?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{\pi}{4}$</label>
+<label class="quiz-opt">C. $\frac{\pi}{2}$</label>
+<label class="quiz-opt">D. $\pi$</label>
+<div class="quiz-explain"><b>解析:</b> $f'(z)=2z$, 故 $f'(1+\mathrm{i})=2+2\mathrm{i}$, 其辐角为 $\arctan\frac{2}{2}=\frac{\pi}{4}$, 即旋转角为 $\frac{\pi}{4}$ (伸缩率为 $\left|2+2\mathrm{i}\right|=2\sqrt{2}$).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. (定理 1.1) 若解析函数 $w=f(z)$ 在区域 $D$ 内处处满足 $f'(z)\neq 0$, 则?</div>
+<label class="quiz-opt">A. $f$ 在 $D$ 内为常数</label>
+<label class="quiz-opt">B. $f$ 只在 $D$ 的孤立点共形</label>
+<label class="quiz-opt" data-ok="1">C. $w=f(z)$ 是 $D$ 内的共形映射</label>
+<label class="quiz-opt">D. $f$ 在 $D$ 内不解析</label>
+<div class="quiz-explain"><b>解析:</b> 这是定理 1.1 的后半部分: 解析加上 $D$ 内处处 $f'(z)\neq 0$, 就保证 $D$ 内每一点都共形, 从而 $w=f(z)$ 是 $D$ 内的共形映射.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位"数学王子", 让"保角"从纸面走向了大地</h3>
+<div class="hero-sub">他既在数论与代数上留下不朽丰碑, 也亲手丈量过汉诺威的土地 —— 并用一套"保角"的数学, 把地球的弯曲表面铺成了可靠的平面地图.</div>
+<div class="hero-quote">
+从 1822 年关于保角映射的一般理论, 到 1820 年代汉诺威大地的三角测量, 高斯把"角度不变"变成了"地图不失真"的技术基础.<br>
+<b>本节里"伸缩率不变、旋转角不变、保角"这三条性质, 正是高斯-克吕格保角投影的数学内核.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 高斯: 让"保角"走向大地</div>
+
+<div class="person-card">
+<div class="p-av">高</div>
+<div class="p-main">
+<div class="p-name">卡尔·弗里德里希·高斯 (Carl Friedrich Gauss, 1777—1855)</div>
+<div class="p-meta">德国数学家 · "数学王子" · 数论、代数、几何测地学的集大成者 · 保角投影理论的奠基人之一</div>
+<p>他被誉为<b>"数学王子"</b> —— 从数论、代数到非欧几何、曲面论, 几乎每个方向都留下了他的名字. 但高斯一生中还有另一条同样重要的线索: <b>大地测量</b>. 他不仅用数学丈量过真实的土地, 也把"保角"这一纯几何性质, 变成了地图绘制的核心工具.</p>
+<p>本节讲的"伸缩率不变性、旋转角不变性、保角性", 在高斯那里并不是抽象的结论, 而是<b>一张地图能不能用的关键</b>. 这段故事告诉我们: 最基础的数学性质, 往往会在最实际的地方生根发芽.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从"数学王子"到大地测量</h5>
+<p>1777 年, 高斯出生于德国布伦瑞克的一个贫寒家庭. 他自幼显露出惊人的数学天赋, 少年时便发现素数分布的经验规律, 19 岁证明了"二次互反律", 22 岁给出代数基本定理的第一个严格证明 —— 这些成就让他获得了"数学王子"的称号.</p>
+<p>然而高斯绝非只坐在书斋里的学者. 从 1818 年起, 他主持了<b>汉诺威王国的大地测量</b>工作, 亲自组织三角网测量、发明和改进测量仪器 (他发明了"回照器"), 为测量数据建立了系统的处理方法. <b>正是这些"下地"的实践, 把最抽象的几何问题推到了他面前.</b></p>
+<p>一边是纯理论的深邃, 一边是踩在土地上的测量 —— 高斯把二者缝合在了一起.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1822 年: 保角映射的一般理论</h5>
+<p>大地测量向高斯提出了一个本质问题: 地球表面是<b>弯曲</b>的, 而地图是<b>平面</b>的. 无论如何绘制, 都不可能同时保住所有距离和面积 —— 那么, 退一步, 到底能保住什么?</p>
+<p>高斯的回答指向了"角度". 1822 年, 他在论文《将给定曲面映到另一曲面上、使其在无穷小部分相似的解》中系统讨论了<b>保角映射</b>问题: 一个映射如果在每一点、沿每个方向都把无穷小图形相似地映过去 —— 换句话说, 保持角度不变 —— 它就具有内在的规整性.</p>
+<p><b>本节定理 1.1 说的正是同一件事:</b> 函数在一点解析、导数非零, 就能保角; 而"保角"恰恰是地图上"方向不失真"的数学表达.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>三角测量与最小二乘</h5>
+<p>在大地测量中, 高斯面对的是海量、且不可避免带有误差的观测数据. 为此他系统发展了<b>最小二乘</b>方法 —— 让"误差平方和最小"来选取最佳拟合, 并给出了它的概率论依据. 今天工程与科学中随处可见的"最小二乘", 正源于这段测量岁月.</p>
+<p>他还把测地线、曲率等概念系统化, 提出了著名的"绝妙定理" (曲面的高斯曲率是内蕴的). 这些工作与保角映射一起, 构成了现代<b>微分几何与测绘学</b>的双重基础.</p>
+<p><b>可见, 数学与大地测量在这里不是两条平行线, 而是一条互相滋养的路。</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>保角投影: 让地图"保角"</h5>
+<p>把上述思想用于地球到地图的转换, 就得到<b>保角投影</b>: 它不保证距离和面积处处精确, 却保证<b>角度和局部的方向关系不变</b>. 对航海、航测与工程定位而言, "方向准" 往往是第一位的 —— 因为方向错了, 再精确的距离也会把人带到错的地方.</p>
+<p>高斯的保角映射思想, 后来被德国测量学家克吕格 (Krüger) 发展为实用的横轴投影方法, 即今天所说的<b>高斯-克吕格投影</b>. 它把地球按经线分带, 在每一带内近似为平面, 使角度与短距离的变形都极小, 成为全球广泛使用的测绘投影之一.</p>
+<p><b>一条"保角"的数学性质, 就这样支撑起一整张国家地图网的骨架。</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说高斯晚年极少发表未臻完善的工作, 许多重要的思想都留在笔记里. 但他的测量工作却是实打实"公开"的 —— 他要在野外架设仪器、计算基线、处理成千上万个观测值. 曾经有同行惊讶于这位"数学王子"竟会亲自蹲在山头做测量, 高斯却认为: <b>纯数学如果不能在现实中检验, 就还没有被真正想透。</b> 正是这份"既要算得漂亮, 也要量得明白"的坚持, 让保角映射从定理变成了地图.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 高斯式的信念</div>
+在高斯那里, 数学与自然是同一本大书的两页:
+<br>
+"<em>数学是科学的皇后, 而数论是数学的皇后.</em>"
+<br>
+但他同样相信, 皇后也要为大地服务 —— 当他站在测量仪器后, 面对的是真实的山川与误差:
+<br>
+"<em>少而精, 但成熟.</em>"
+<span class="iv-sig">—— 这种"不在未成熟时仓促发表、却愿意为实际问题长期投入"的态度, 正是本节从一条导数公式走到保角投影的思想底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>一个点的导数, 概括了一整片的方向信息</h4>
+<p>$f'(z_0)$ 只是<b>一点</b>处的信息, 却同时给出了"放大多少倍"与"转多少度"两件事 —— 它把映射在 $z_0$ 附近沿<b>所有</b>方向的几何行为都装了进去.</p>
+<p>这种"用一个局部量刻画一片行为"的能力, 是复分析最迷人的地方: 位置够近时, 复杂映射看起来就像是"旋转加伸缩".</p>
+<div class="pc-math">$f'(z_0)=\rho\mathrm{e}^{\mathrm{i}\varphi}$: 局部上, $f$ 就是"以 $z_0$ 为中心、旋转 $\varphi$、伸缩 $\rho$"</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">变中之不变</div>
+<h4>曲线可以千变万化, 伸缩率与旋转角纹丝不动</h4>
+<p>过 $z_0$ 的曲线有无数条, 形状、方向各不相同; 但只要 $f'(z_0)\neq 0$, 它们在该点处的伸缩率都是同一个 $\left|f'(z_0)\right|$, 旋转角都是同一个 $\operatorname{Arg} f'(z_0)$.</p>
+<p>在纷繁的变化里抓住那个"不变量", 是数学最常见的策略 —— 找到不变量, 就等于抓住了事物的本质.</p>
+<div class="pc-math">形变的是曲线, 不变的是 $f'(z_0)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">条件的边界</div>
+<h4>$f'(z_0)\neq 0$: 一个不能省去的"前提"</h4>
+<p>定理 1.1 的结论看起来干净, 但它有一个关键前提: $f'(z_0)\neq 0$. 一旦 $f'(z_0)=0$, 结论立刻失效 —— $w=z^2$ 在原点把夹角放大 $2$ 倍, 正是反例.</p>
+<p>这提醒我们: <b>定理的力量, 一半在结论, 一半在前提.</b> 用定理之前, 先问"条件满足了吗".</p>
+<div class="pc-math">$f'(z_0)=0\Rightarrow$ 伸缩率为 $0$、不保角</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变到质变</div>
+<h4>$n=1$ 保角, $n=2,3,\dots$ 角被放大 $n$ 倍</h4>
+<p>对 $w=z^n$, $n=1$ 时 $f'(0)=1\neq 0$, 保角; 而 $n\ge 2$ 时 $f'(0)=0$, 夹角被放大 $n$ 倍. 幂次只增加了一点点, 几何行为却发生了质变.</p>
+<p>这正是"量变引起质变"的一个干净样本: 差别在于导数的值是否为零, 结果却是"共形"与"不共形"两种完全不同的性质.</p>
+<div class="pc-math">$f'(0)=0\iff n\ge 2$: 角的放大倍数恰为 $n$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">抽象与实用</div>
+<h4>"保角"既是数学定理, 也是地图质量</h4>
+<p>在课堂上, 保角是一个几何性质; 在地图上, 保角是"方向不失真"的工程要求. 同一个概念, 既是抽象的定理, 又是可以触摸的实用指标.</p>
+<p>高斯的故事说明: 越是基本的数学性质, 越可能在意想不到的实际场景里发挥关键作用.</p>
+<div class="pc-math">保角性 $\longleftrightarrow$ 保角投影 (地图上方向不失真)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>复平面上一小步, 天地之间一大步</h4>
+<p>从 $f'(z_0)=\rho\mathrm{e}^{\mathrm{i}\varphi}$ 这一个表达, 到地球表面到平面地图的变换, 中间横跨着微分几何、测绘与国家坐标系统的层层联系.</p>
+<p>数学的"普遍联系"不是口号, 而是实实在在的: 一条关于角度的性质, 可以从纯粹的数, 一直贯通到脚下的山河.</p>
+<div class="pc-math">$\rho,\ \varphi$ 的局部性质 $\longrightarrow$ 区域共形映射 $\longrightarrow$ 大地测量</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "圆出于方, 方出于矩"</div>
+中国古代早已用"规矩"来丈量世界, 并把平面与曲直的相互转化写进了经典. 《周髀算经》中有"<b>圆出于方, 方出于矩</b>"之说 —— 以方圆的相互规定, 揭示了"曲"与"直"在有限范围内可以互相逼近的思想. 这与保角映射"把弯曲区域局部地近似为平面"的精神遥相呼应.
+<br><br>
+在制图实践上, 魏晋时期的<b>裴秀</b>提出"<b>制图六体</b>", 其中"<b>分率</b>""<b>准望</b>"强调比例与方位的确定; 古代地图长期采用的"<b>计里画方</b>" —— 先画好方格网, 再按方位与里程填绘地理要素 —— 正是用一套规则的网格把弯曲的大地"压"到纸面上.
+<br><br>
+方与圆、直与曲、平面与大地: 古人在测量与制图上的这些用心, 与今天"保角投影"要解决的问题, 是同一个问题的两个时代版本 —— <b>如何让弯曲的世界, 在平面的纸上依然可信.</b>
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: "保角"托举的中国坐标</div>
+<ul>
+<li><b>高斯-克吕格保角投影</b>: 它把地球椭球面按经线分带投影到平面, 在每一带内保持角度不变、短距离变形极小. 它是我国大地测量与地形图测绘长期使用的基本投影方式 —— 本节的"保角性", 正是它立身的数学前提.</li>
+<li><b>CGCS2000 国家大地坐标系</b>: 我国自 2008 年启用的 2000 国家大地坐标系 (China Geodetic Coordinate System 2000), 以地球质心为原点、与国际地球参考框架接轨. 要把这一坐标系下的经纬度换算为工程可用的平面坐标, 就离不开保角投影的正反算.</li>
+<li><b>北斗导航与地图测绘</b>: 北斗卫星导航系统提供的高精度定位, 只有配上统一的坐标基准与投影, 才能落到地图、落到工程. 从卫星到图纸的这一段"翻译", 处处用着"保角"这一性质.</li>
+<li><b>跨境工程与国土安全</b>: 高铁、长输管线、跨海通道等重大工程, 常常横跨大范围、涉及多国坐标基准的衔接. 保角投影与坐标转换, 是确保"同一点在两张图上重合"的技术保障 —— 它守护的不只是精度, 更是国土边界的清晰与工程的安全.</li>
+<li><b>中国数学家的接力</b>: 从<b>华罗庚</b>"天才在于积累, 聪明在于勤奋"的执着, 到<b>陈建功</b>在函数论上跻身国际前沿的努力, 一代代中国数学工作者把最基础的理论一寸寸推向前 —— 今天我们能熟练地做保角映射与坐标计算, 正是站在这些肩膀之上.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把角度守住的, 是国家坐标</div>
+"保角"听上去只是"角度不变"四个字, 但当它落到地图上, 就变成了"方向不失真"、变成了"同一点必须在同一处". 高斯用一个几何性质撑起了测绘的骨架; 而在今天的中国, 这一性质又被熔进了<b>CGCS2000、北斗与国家地图</b>之中.
+<br><br>
+这件事的价值在于: <b>基础理论的价值, 常常要以国家的尺度来衡量.</b> 一条关于角度的定理, 可以只是一道习题, 也可以是一个国家坐标系的基石 —— 区别不在于数学本身, 而在于我们是否愿意把最基础的东西, 用到最需要的地方去.
+<br><br>
+可以说: <b>把地基打牢, 才能把大厦建到国土的每一寸.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"数学是科学的皇后, 而数论是数学的皇后."<span class="q-src">—— 高斯</span></div>
+<div class="quote-item">"少而精, 但成熟."<span class="q-src">—— 高斯关于发表工作的准则</span></div>
+<div class="quote-item">"纯数学如果不能在现实中检验, 就还没有被真正想透."<span class="q-src">—— 高斯测量精神的概括</span></div>
+<div class="quote-item">"圆出于方, 方出于矩."<span class="q-src">—— 《周髀算经》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"把地基打牢, 才能把大厦建到国土的每一寸."<span class="q-src">—— 关于基础理论与国家坐标的一点思考</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 高斯既是"数学王子", 又是扎根大地的测量学家. 他在 1822 年系统讨论了保角映射, 又在汉诺威的三角测量与最小二乘计算中反复锤炼它; 高斯的保角思想后来发展为广泛使用的高斯-克吕格投影, 成为地图"方向不失真"的技术基础. 本节的三条不变性, 正是这件事背后的数学内核.<br>
+<b>一个道理:</b> 从一条导数的几何意义出发, 我们得到了"伸缩率不变、旋转角不变、保角", 最终汇聚成共形映射. 关键是 $f'(z_0)\neq 0$ 这个前提 —— 一旦它被破坏, 如 $w=z^2$ 在原点, 保角性便不复存在, 夹角反被放大. 这说明: <b>结论的力量, 取决于前提是否守得住.</b><br>
+<b>一份责任:</b> 从《周髀算经》"圆出于方"的智慧与古代"计里画方"的制图方法, 到高斯-克吕格投影在 <b>CGCS2000 国家大地坐标系、北斗导航、地图测绘与跨境工程</b>中的实际应用, 保角这一数学性质, 已经深深嵌入了国家的坐标与安全的骨架. 今天我们学习共形映射, 既是在为后续的分式线性映射与初等函数映射打基础, 也是在承接这份<b>把基础理论守到最严、用到最实处</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第六章第一节 导数的几何意义与共形映射 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 伸缩率与旋转角 =================
+module('cvGeom',function(cv){
+  var theta=Math.PI/6, rho=1.3, phiDeg=40;
+  function curvePts(th,len,curl){
+    var pts=[];
+    for(var s=-len;s<=len+1e-9;s+=len/40){
+      var nx=-Math.sin(th), ny=Math.cos(th);
+      pts.push([s*Math.cos(th)+curl*s*s*nx, s*Math.sin(th)+curl*s*s*ny]);
+    }
+    return pts;
+  }
+  function drawCurve(ctx,m,pts,color,lw){
+    ctx.strokeStyle=color; ctx.lineWidth=lw||2.6; ctx.beginPath();
+    var first=true;
+    pts.forEach(function(p){
+      var px=m.px(p[0]), py=m.py(p[1]);
+      if(first){ ctx.moveTo(px,py); first=false; }
+      else ctx.lineTo(px,py);
+    });
+    ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, phi=phiDeg*Math.PI/180, eps=0.95;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.4,2.4,-1.9,1.9);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.5; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),eps*m1.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    drawCurve(ctx,m1,curvePts(theta,0.85,0.16),'#1565c0',2.8);
+    arrow(ctx,m1.px(0),m1.py(0),m1.px(0.78*Math.cos(theta)),m1.py(0.78*Math.sin(theta)),'#1565c0',2.4,10);
+    mathArc(ctx,m1.px(0),m1.py(0),0.52,0,theta,'#1565c0',1.8);
+    tlabel(ctx,m1.px(0.58*Math.cos(theta/2)),m1.py(0.58*Math.sin(theta/2))-6,'θ₀','#1565c0','bold 12px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),6,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+9,m1.py(0)-9,'z₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 曲线 C 与切向量 z′(t₀)  (可拖动改变方向 θ₀)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24, ang2=theta+phi;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-2.4,2.4,-1.9,1.9);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    ctx.strokeStyle='#ffb74d'; ctx.lineWidth=1.5; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.arc(m2.px(0),m2.py(0),rho*eps*m2.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    drawCurve(ctx,m2,curvePts(ang2,rho*0.85,0.16),'#2e7d32',2.8);
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(0.72*rho*Math.cos(ang2)),m2.py(0.72*rho*Math.sin(ang2)),'#2e7d32',2.4,10);
+    mathArc(ctx,m2.px(0),m2.py(0),0.60,0,ang2,'#2e7d32',1.8);
+    tlabel(ctx,m2.px(0.68*Math.cos(ang2/2)),m2.py(0.68*Math.sin(ang2/2))-6,'φ₀','#2e7d32','bold 12px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),6,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+9,m2.py(0)-9,'w₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 像曲线 Γ (整体旋转 φ, 处处伸缩 ρ)','#37474f','bold 12.5px Segoe UI');
+    setRO('gmReadout',
+      '$f\'(z_0)=\\rho\\,\\mathrm{e}^{\\mathrm{i}\\varphi}$: '+hl('伸缩率 $\\rho='+fmt(rho)+'$')+', '+hl2('旋转角 $\\varphi='+fmt(phiDeg,0)+'^\\circ$')+'.<br>'+
+      '曲线 $C$ 在 $z_0$ 处方向 $\\theta_0='+fmt(theta*180/Math.PI,0)+'^\\circ$; 像曲线 $\\Gamma$ 的方向 $\\varphi_0=\\theta_0+\\varphi='+fmt(theta*180/Math.PI+phiDeg,0)+'^\\circ$.<br>'+
+      '<b>拖动改变 $\\theta_0$ 时, $\\rho$ 与 $\\varphi$ 纹丝不动</b> —— 这正是伸缩率不变性与旋转角不变性.');
+  }
+  makeDraggable(cv,function(mx,my,w,h){
+    var halfW=(w-24)/2, H=h-70;
+    if(mx<12+halfW){
+      var m=mapperEq(halfW,H,-2.4,2.4,-1.9,1.9);
+      theta=Math.atan2(m.iy(my-40),m.ix(mx-12));
+      draw();
+    }
+  });
+  bindSlider('gmRho',function(v){ rho=v; badge('gmRhoV',fmt(v)); draw(); });
+  bindSlider('gmPhi',function(v){ phiDeg=v; badge('gmPhiV',fmt(v,0)+'°'); draw(); });
+  badge('gmRhoV',fmt(rho)); badge('gmPhiV',fmt(phiDeg,0)+'°');
+  return {draw:draw};
+});
+
+// ================= 模块 2: 两曲线夹角的保角性 =================
+module('cvAngle',function(cv){
+  var th1=Math.PI*20/180, th2=Math.PI*72/180, phiDeg=35;
+  function drawSeg(ctx,m,th,len,color){
+    ctx.strokeStyle=color; ctx.lineWidth=2.8; ctx.beginPath();
+    ctx.moveTo(m.px(-len*Math.cos(th)),m.py(-len*Math.sin(th)));
+    ctx.lineTo(m.px(len*Math.cos(th)),m.py(len*Math.sin(th)));
+    ctx.stroke();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, phi=phiDeg*Math.PI/180;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.3,2.3,-1.8,1.8);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    drawSeg(ctx,m1,th1,1.15,'#1565c0');
+    drawSeg(ctx,m1,th2,1.15,'#e65100');
+    mathArc(ctx,m1.px(0),m1.py(0),0.62,th1,th2,'#5e35b1',2);
+    tlabel(ctx,m1.px(0.74*Math.cos((th1+th2)/2)),m1.py(0.74*Math.sin((th1+th2)/2))-4,'θ₂−θ₁','#5e35b1','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(1.0*Math.cos(th1))+2,m1.py(1.0*Math.sin(th1)),'C₁','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(1.0*Math.cos(th2))+2,m1.py(1.0*Math.sin(th2)),'C₂','#e65100','bold 12px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'z₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: C₁, C₂ 交于 z₀  (可拖动改变 C₂ 方向)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24, a1=th1+phi, a2=th2+phi;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-2.3,2.3,-1.8,1.8);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    drawSeg(ctx,m2,a1,1.15,'#1565c0');
+    drawSeg(ctx,m2,a2,1.15,'#e65100');
+    mathArc(ctx,m2.px(0),m2.py(0),0.62,a1,a2,'#5e35b1',2);
+    tlabel(ctx,m2.px(0.74*Math.cos((a1+a2)/2)),m2.py(0.74*Math.sin((a1+a2)/2))-4,'φ₂−φ₁','#5e35b1','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(1.0*Math.cos(a1))+2,m2.py(1.0*Math.sin(a1)),'Γ₁','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(1.0*Math.cos(a2))+2,m2.py(1.0*Math.sin(a2)),'Γ₂','#e65100','bold 12px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+8,m2.py(0)+16,'w₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: Γ₁, Γ₂ 交于 w₀  (夹角大小、方向都不变)','#37474f','bold 12.5px Segoe UI');
+    var ang=fmt((th2-th1)*180/Math.PI,1);
+    setRO('agReadout',
+      '左图夹角 $\\theta_2-\\theta_1='+ang+'^\\circ$; 右图夹角 $\\varphi_2-\\varphi_1='+ang+'^\\circ$.<br>'+
+      '两者<b>恒相等</b> (因为旋转角 $\\varphi='+fmt(phiDeg,0)+'^\\circ$ 只与 $z_0$ 有关, 与曲线无关), 故夹角的<b>大小与方向都不变</b>.<br>'+
+      hl2('保角性: $\\varphi_2-\\varphi_1=\\theta_2-\\theta_1$'));
+  }
+  makeDraggable(cv,function(mx,my,w,h){
+    var halfW=(w-24)/2, H=h-70;
+    if(mx<12+halfW){
+      var m=mapperEq(halfW,H,-2.3,2.3,-1.8,1.8);
+      var t=Math.atan2(m.iy(my-40),m.ix(mx-12));
+      th2=Math.max(th1+0.12, Math.min(Math.PI-0.06, t));
+      draw();
+    }
+  });
+  bindSlider('agPhi',function(v){ phiDeg=v; badge('agPhiV',fmt(v,0)+'°'); draw(); });
+  badge('agPhiV',fmt(phiDeg,0)+'°');
+  return {draw:draw};
+});
+
+// ================= 模块 3: w = z^n 在原点的角放大 =================
+module('cvPower',function(cv){
+  var n=3, a1=15*Math.PI/180, a2=45*Math.PI/180;
+  function sector(ctx,m,ang1,ang2,R,fill){
+    ctx.beginPath(); ctx.moveTo(m.px(0),m.py(0));
+    ctx.lineTo(m.px(R*Math.cos(ang1)),m.py(R*Math.sin(ang1)));
+    ctx.arc(m.px(0),m.py(0),R*m.s,-ang1,-ang2,true);
+    ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, R=1.25;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.7,1.7,-1.4,1.4);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    sector(ctx,m1,a1,a2,R,'rgba(21,101,192,.14)');
+    arrow(ctx,m1.px(0),m1.py(0),m1.px(R*Math.cos(a1)),m1.py(R*Math.sin(a1)),'#1565c0',2.4,10);
+    arrow(ctx,m1.px(0),m1.py(0),m1.px(R*Math.cos(a2)),m1.py(R*Math.sin(a2)),'#1565c0',2.4,10);
+    mathArc(ctx,m1.px(0),m1.py(0),0.78,a1,a2,'#5e35b1',2);
+    tlabel(ctx,m1.px(0.90*Math.cos((a1+a2)/2)),m1.py(0.90*Math.sin((a1+a2)/2))-3,'α = 30°','#5e35b1','bold 12px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 原点附近夹角 α','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24, b1=a1*n, b2=a2*n;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.7,1.7,-1.4,1.4);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    sector(ctx,m2,b1,b2,R,'rgba(230,81,0,.14)');
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(R*Math.cos(b1)),m2.py(R*Math.sin(b1)),'#e65100',2.4,10);
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(R*Math.cos(b2)),m2.py(R*Math.sin(b2)),'#e65100',2.4,10);
+    mathArc(ctx,m2.px(0),m2.py(0),0.78,b1,b2,'#5e35b1',2);
+    tlabel(ctx,m2.px(0.92*Math.cos((b1+b2)/2)),m2.py(0.92*Math.sin((b1+b2)/2))-3,'nα = '+(n*30)+'°','#5e35b1','bold 12px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+8,m2.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 像的夹角变为 nα','#37474f','bold 12.5px Segoe UI');
+    var msg;
+    if(n===1){
+      msg='当 $n=1$ 时 $w=z$, $f\'(z)=1\\neq0$, 处处保角 —— 夹角保持不变.';
+    } else {
+      msg='$w=z^{'+n+'}$: 原点附近夹角由 $\\alpha=30^\\circ$ 放大为 $n\\alpha='+(n*30)+'^\\circ$. 因 $f\'(0)=0$, 原点处<b>不保角</b> (角度放大 '+n+' 倍); 而在 $z\\neq0$ 处 $f\'(z)=nz^{n-1}\\neq0$, 处处共形.';
+    }
+    setRO('pwReadout', msg+'<br>'+hl2('$f\'(0)=0 \\iff n\\ge 2$: 原点处角的放大倍数恰为 $n$.'));
+  }
+  bindSlider('pwN',function(v){ n=Math.round(v); badge('pwNV',String(n)); draw(); });
+  badge('pwNV',String(n));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 伸缩率 / 旋转角 读数器 =================
+module('cvField',function(cv){
+  var k=0, zx=0.6, zy=0.5;
+  var NAMES=['w=z^2','w=z^3','w=\\mathrm{e}^z','w=1/z'];
+  function fval(x,y){
+    if(k===0) return C(x*x-y*y, 2*x*y);
+    if(k===1) return cmul(C(x*x-y*y,2*x*y), C(x,y));
+    if(k===2){ var ex=Math.exp(x); return C(ex*Math.cos(y), ex*Math.sin(y)); }
+    var d=x*x+y*y; if(d<1e-3) d=1e-3;
+    return C(x/d, -y/d);
+  }
+  function dval(x,y){
+    if(k===0) return C(2*x,2*y);
+    if(k===1) return C(3*(x*x-y*y), 6*x*y);
+    if(k===2){ var ex=Math.exp(x); return C(ex*Math.cos(y), ex*Math.sin(y)); }
+    var d=x*x+y*y; if(d<1e-3) d=1e-3;
+    return C(-(x*x-y*y)/(d*d), 2*x*y/(d*d));
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, L=0.5, dir=Math.PI/4;
+    var fp=dval(zx,zy);
+    var rho=Math.hypot(fp.re,fp.im), arg=Math.atan2(fp.im,fp.re);
+    var w0=fval(zx,zy), r0=Math.hypot(zx,zy);
+    var sc=Math.min(rho>1e-6?rho:0, 2.0), imL=L*sc, dir2=dir+arg;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.7,1.7,-1.4,1.4);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.arc(m1.px(zx),m1.py(zy),L*m1.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    arrow(ctx,m1.px(zx),m1.py(zy),m1.px(zx+L*Math.cos(dir)),m1.py(zy+L*Math.sin(dir)),'#1565c0',2.6,10);
+    arrow(ctx,m1.px(zx),m1.py(zy),m1.px(zx+L*Math.cos(dir+Math.PI/2)),m1.py(zy+L*Math.sin(dir+Math.PI/2)),'#1565c0',2.6,10);
+    dot(ctx,m1.px(zx),m1.py(zy),5.5,'#c62828','#fff');
+    tlabel(ctx,m1.px(zx)+8,m1.py(zy)-8,'z₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: z₀ 处的正交小标架 (半径 '+fmt(L)+')','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24, span=1.9;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H, w0.re-span, w0.re+span, w0.im-span*0.78, w0.im+span*0.78);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    ctx.strokeStyle='#ffb74d'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.arc(m2.px(w0.re),m2.py(w0.im),imL*m2.s,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    arrow(ctx,m2.px(w0.re),m2.py(w0.im),m2.px(w0.re+imL*Math.cos(dir2)),m2.py(w0.im+imL*Math.sin(dir2)),'#2e7d32',2.6,10);
+    arrow(ctx,m2.px(w0.re),m2.py(w0.im),m2.px(w0.re+imL*Math.cos(dir2+Math.PI/2)),m2.py(w0.im+imL*Math.sin(dir2+Math.PI/2)),'#2e7d32',2.6,10);
+    dot(ctx,m2.px(w0.re),m2.py(w0.im),5.5,'#c62828','#fff');
+    tlabel(ctx,m2.px(w0.re)+8,m2.py(w0.im)-8,'w₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 像标架 (旋转 '+fmt(arg*180/Math.PI,0)+'°, 半径 ×'+fmt(rho)+')','#37474f','bold 12.5px Segoe UI');
+    var concl;
+    if(k===3 && r0<0.06){
+      concl=hl('<b>不共形</b>: $z_0=0$ 是 $1/z$ 的奇点, 函数在该点不解析.');
+    } else if(rho<1e-6){
+      concl=hl('<b>不共形</b>: $f\'(z_0)=0$, 伸缩率为 $0$, 映射在该点不保角.');
+    } else {
+      concl=hl2('在该点共形: $f$ 解析且 $f\'(z_0)\\neq0$.');
+    }
+    setRO('fieldReadout',
+      '函数: $'+NAMES[k]+'$, $z_0='+cstr(C(zx,zy))+'$.<br>'+
+      '导数 $f\'(z_0)='+cstr(fp)+'$: '+hl('伸缩率 $\\left|f\'(z_0)\\right|='+fmt(rho)+'$')+', '+hl2('旋转角 $\\operatorname{Arg} f\'(z_0)='+fmt(arg*180/Math.PI,1)+'^\\circ$')+'.<br>'+
+      concl);
+  }
+  bindSlider('fldK',function(v){ k=Math.round(v); badge('fldKV','$'+NAMES[k]+'$'); draw(); });
+  bindSlider('fldX',function(v){ zx=v; badge('fldXV',fmt(v)); draw(); });
+  bindSlider('fldY',function(v){ zy=v; badge('fldYV',fmt(v)); draw(); });
+  badge('fldKV','$'+NAMES[k]+'$'); badge('fldXV',fmt(zx)); badge('fldYV',fmt(zy));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'导数的几何意义', c:'#1976d2', leaves:['有向曲线 $z=z(t),\\ \\alpha\\le t\\le\\beta$','切向量 $z\'(t_0)=\\lim\\frac{\\Delta z}{\\Delta t}$','$\\theta_0=\\operatorname{Arg} z\'(t_0)$: 切线方向','像曲线 $w=f[z(t)]$','伸缩率 $\\rho=|f\'(z_0)|$','旋转角 $\\varphi=\\operatorname{Arg} f\'(z_0)$']},
+    {t:'三个不变性', c:'#e65100', leaves:['1) 伸缩率不变性: $\\rho$ 只与 $z_0$ 有关','2) 旋转角不变性: $\\varphi$ 只与 $z_0$ 有关','$\\varphi=\\varphi_0-\\theta_0$: 曲线整体旋转','3) 保角性: $\\varphi_2-\\varphi_1=\\theta_2-\\theta_1$','夹角大小与方向都不变','两曲线交于 $z_0$ 时成立']},
+    {t:'共形映射与判别', c:'#c62828', leaves:['定义1.1: 保角性 + 伸缩率不变性','$D$ 内每点共形 → $D$ 内共形映射','定理1.1: 解析 + $f\'(z_0)\\neq 0$','$|f\'(z_0)|$ = 伸缩率, $\\operatorname{Arg} f\'$ = 旋转角','$D$ 内处处 $f\'(z)\\neq 0$ → $D$ 内共形','$f\'(z_0)=0$: 不保角, 角放大']},
+    {t:'应用与延伸', c:'#2e7d32', leaves:['$w=z^n$: 原点附近角放大 $n$ 倍','$\\mathrm{e}^z$: 处处 $f\'=\\mathrm{e}^z\\neq 0$, 处处共形','$\\frac{1}{z}$: $f\'=-\\frac{1}{z^2}$, 除原点外共形','$\\bar{z}$: 不解析 → 处处不共形','分式线性映射: 扩充平面的共形映射','保角投影: 高斯-克吕格 / 地图测绘']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第六章第一节 · 导数的几何意义与共形映射';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 切向量 → 伸缩率与旋转角 → 三个不变性 → 共形映射; 一句话: <b>导数 $f\'(z_0)=\\rho\\,\\mathrm{e}^{\\mathrm{i}\\varphi}$ 里的 $\\rho$ 与 $\\varphi$, 就是"放大多少、转多少"; $f\'(z_0)\\neq0$ 时映射共形</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'三个不变性中, 伸缩率不变性与旋转角不变性都只与点 z₀ 有关. 为什么"只与 z₀ 有关"这一点如此关键?',
+     hints:['若伸缩率随曲线方向而变, 那么"放大多少倍"就没有统一答案, 共形映射的定义也无从谈起.',
+            '两条性质合起来, 才推出了保角性 φ₂ − φ₁ = θ₂ − θ₁: 夹角的大小与方向都被保住.',
+            '数学中把"与无关变量无关的量"称为不变量 —— 找到不变量, 就抓住了映射的本质.',
+            '可迁移的态度: 面对复杂对象, 先找那些"怎么变都不变"的特征量.']},
+    {q:'定理 1.1 要求 f′(z₀) ≠ 0. 为什么这个前提不能省去? 请结合 w = z² 在原点说明.',
+     hints:['当 f′(z₀) = 0 时伸缩率为 0, 旋转角失去意义, 保角性一般不再成立.',
+            'w = z² 在原点把夹角放大 2 倍: 两条射线的夹角从 α 变成 2α, 方向关系被改变.',
+            '这提醒我们: 定理的力量一半在结论, 一半在前提 —— 用之前先确认条件.',
+            '可迁移的态度: 结论"失灵"时, 先检查前提, 而不是急着怀疑计算.']},
+    {q:'高斯把"保角"这一局部性质用到了整幅地图上. 从"局部保角"到"整张地图可用", 中间需要怎样的思想跳跃?',
+     hints:['局部保角保证每一点附近的角度不失真, 但地图是整体的, 还要处理区域的划分与拼接.',
+            '高斯-克吕格投影采用"分带"策略: 把地球按经线切成若干带, 在每带内近似成平面, 使变形可控.',
+            '这与本节"在每一点共形"的局部结论, 通过"逐点成立"汇聚为"区域成立"是同一种思路.',
+            '可迁移的态度: 把可靠的局部结论, 通过合理的组织方式, 推广到整体.']},
+    {q:'共形映射能把复杂区域"搬"成简单区域 (如上半平面、单位圆). 这种"换一个世界再看问题"的思路, 你在哪里也见过?',
+     hints:['本节本身: 用 w = f(z) 把 z 平面的曲线搬成 w 平面的曲线, 讨论就变简单了.',
+            '更早章节: 复积分通过参数化转化为实积分; 无穷远点通过 ξ = 1/z 归结到原点.',
+            '工程中的类比: 把困难物理区域映射成规则区域后, 再求解场问题 (流体、电场、热传导).',
+            '可迁移的态度: 与其硬算, 不如先问"能不能换一个坐标系/世界来看".']},
+    {q:'从《周髀算经》"圆出于方, 方出于矩"与古代"计里画方", 到 CGCS2000、北斗与跨境工程: 你如何理解"基础理论服务国家需求"?',
+     hints:['保角这一几何性质, 看似只是"角度不变", 落到地图上就是"方向不失真", 直接影响定位与工程的可靠性.',
+            '高斯-克吕格投影与 CGCS2000 坐标系的结合, 让卫星定位成果能落到统一的图纸与工程坐标上.',
+            '越是基础的理论, 往往越能在国家层面发挥关键作用 —— 北斗、测绘、跨境工程都需要它.',
+            '可迁移的态度: 尊重基础工作, 并愿意把最基础的东西用到最需要的地方去.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

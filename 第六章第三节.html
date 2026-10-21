@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第六章第三节 几个初等函数所构成的映射</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第六章 第3节 几个初等函数所构成的映射</h1>
+    <p>幂函数与角形域 &middot; 根式函数与缩小角形域 &middot; 指数函数与带形域 &middot; 对数函数与区域映射综合</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握幂函数 $w=z^n$ 的映射规律: 令 $z=r\mathrm{e}^{\mathrm{i}\theta}$ 得 $w=r^n\mathrm{e}^{\mathrm{i}n\theta}$, 模取 $n$ 次幂、辐角扩大 $n$ 倍; 理解它在 $z\neq 0$ 处处处共形、而在 $z=0$ 处不共形 (角被放大 $n$ 倍) 的原因;
+2. 掌握幂函数的单叶性条件 $\theta_0&lt;\frac{2\pi}{n}$, 并会用角形域 $0&lt;\arg z&lt;\frac{2\pi}{n}$ 映成"去掉正实轴的平面"这一典型结论;
+3. 掌握根式函数 $w=\sqrt[n]{z}$ 把角形域张角缩小为 $1/n$ 的作用, 会取单值支, 并会处理例 3.1、例 3.2 这类"角形域 $\to$ 上半平面 $\to$ 单位圆"的映射;
+4. 掌握指数函数 $w=\mathrm{e}^z$ 的对应规则: 直线 $x=$ 常数 $\to$ 圆周, 直线 $y=$ 常数 $\to$ 射线, 带形域 $0&lt;\operatorname{Im}(z)&lt;a$ $\to$ 角形域 $0&lt;\arg w&lt;a$; 会处理例 3.3;
+5. 理解对数函数 $\operatorname{Ln}z=\ln|z|+\mathrm{i}\operatorname{Arg}z$ 的多值性与主值支, 会用"平移 $\to$ 旋转伸缩 $\to$ 指数"的分步映射链把带形域 $a&lt;\operatorname{Re}(z)&lt;b$ 映成上半平面 (例 3.4 / 例 5).
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-6c" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-6c" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-6c" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-6c" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-6c" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-6c" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、幂函数与角形域</label>
+    <label class="tab-btn" for="tab2" id="label2">二、根式函数与缩小角形域</label>
+    <label class="tab-btn" for="tab3" id="label3">三、指数函数与带形域</label>
+    <label class="tab-btn" for="tab4" id="label4">四、对数函数与综合应用</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 幂函数 w = z^n 与角形域 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 幂函数 $w=z^n$: 模取 $n$ 次幂、辐角扩大 $n$ 倍</div>
+
+<div class="box-key">
+<div class="title">基本事实</div>
+设 $n\ge 2$ 为自然数. 幂函数 $w=z^n$ 在 $z$ 平面内处处可导, 且
+<div class="box-formula">$$f'(z)=nz^{n-1}.$$</div>
+当 $z\neq 0$ 时 $f'(z)\neq 0$, 所以<b>在 $z$ 平面内除去原点外, 由 $w=z^n$ 所构成的映射处处共形</b>. 下面重点讨论它在 $z=0$ 附近的角形域上的作用.
+</div>
+
+<div class="box-key">
+<div class="title">模与辐角的变化</div>
+令 $z=r\mathrm{e}^{\mathrm{i}\theta}$, 则
+<div class="box-formula">$$w=z^n=r^n\mathrm{e}^{\mathrm{i}n\theta}.$$</div>
+这表明: $z$ 的<b>模被取 $n$ 次幂</b> ($r\mapsto r^n$), 而<b>辐角扩大了 $n$ 倍</b> ($\theta\mapsto n\theta$).
+<br><br>
+于是, 以原点为顶点、张角为 $\theta_0$ 的角形域
+<div class="box-formula">$$0&lt;\theta&lt;\theta_0$$</div>
+经 $w=z^n$ 映射后, 张角变为原来的 $n$ 倍:
+<div class="box-formula">$$0&lt;\varphi&lt;n\theta_0.$$</div>
+因此当 $n\ge 2$ 时, 映射 $w=z^n$ 在 $z=0$ 处<b>不具有保角性</b> —— 夹角被放大了 $n$ 倍, 映射在原点不共形.
+</div>
+
+<div class="box-key">
+<div class="title">单叶性条件</div>
+若还要求 $w=z^n$ 在该角形域上是<b>单叶</b>的 (一一对应的), 则张角 $\theta_0$ 应满足
+<div class="box-formula">$$0&lt;\theta_0&lt;\dfrac{2\pi}{n}.$$</div>
+特别地, 取刚好张满的角形域 $0&lt;\arg z&lt;\frac{2\pi}{n}$, 它被 $w=z^n$ 映成 $w$ 平面上去掉正实轴的平面 (张角恰好铺满 $2\pi$).
+</div>
+
+<div class="box-result">
+<div class="res-label">一句话</div>
+<b>$w=z^n$ 是"角度的放大器"</b>: 模取 $n$ 次幂、辐角乘 $n$. 它在 $z\neq 0$ 处处处共形, 而在 $z=0$ 处把夹角放大 $n$ 倍 —— 这正是原点处不共形的根源.
+</div>
+
+<div class="chart-container">
+<h3>交互: 角形域的张角被放大 $n$ 倍 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面上以原点为顶点、张角 $\theta_0=60^\circ$ 的角形域; 右图是它在 $w=z^n$ 下的像, 张角为 $n\theta_0$. 拖动滑块改变 $n$, 观察张角如何被"放大". 同时留意右图标注的单叶性阈值 $\frac{2\pi}{n}$: 只要 $n\theta_0$ 不超过 $2\pi$, 映射在该角形域上就是单叶的.</div>
+<canvas id="cvZn" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>幂次 $n$:</label>
+<input type="range" id="znN" min="2" max="6" step="1" value="3">
+<span class="val-badge" id="znNV">3</span>
+</div>
+<div class="readout" id="znReadout"></div>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 根式函数与缩小角形域 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 反函数 $w=\sqrt[n]{z}$: 把角形域的张角缩小为 $1/n$</div>
+
+<div class="box-key">
+<div class="title">$n$ 个单值支</div>
+若要<b>缩小</b>一个角形域, 可利用幂函数的反函数 $w=\sqrt[n]{z}$ 所构成的映射. $w=\sqrt[n]{z}$ 有 $n$ 个相异的根:
+<div class="box-formula">$$w_k=r^{\frac{1}{n}}\left(\cos\dfrac{\theta+2k\pi}{n}+\mathrm{i}\sin\dfrac{\theta+2k\pi}{n}\right)\qquad(k=0,1,2,\cdots,n-1).$$</div>
+取主值支 ($k=0$) 构成的映射
+<div class="box-formula">$$w_0=r^{\frac{1}{n}}\left(\cos\dfrac{\theta}{n}+\mathrm{i}\sin\dfrac{\theta}{n}\right)$$</div>
+即可达到缩小角形域的目的: 张角 $\theta_0$ 被缩小为 $\frac{\theta_0}{n}$.
+<br><br>
+注意: $\sqrt[n]{z}$ 是多值函数, 只有先把 $z$ 平面沿从原点出发的一条射线 (割痕) 割开, 才能取到<b>单值解析支</b>, 进而讨论它与它构成的映射.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.1</div>
+求把角形域 $0&lt;\arg z&lt;\frac{\pi}{4}$ 映射成单位圆 $|w|&lt;1$ 的一个映射.
+<input type="checkbox" id="ans31" class="answer-toggle">
+<label for="ans31" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+取 $\xi=z^4$. 由于辐角被扩大 $4$ 倍, 角形域 $0&lt;\arg z&lt;\frac{\pi}{4}$ 被映成上半平面
+<div class="box-formula">$$\operatorname{Im}(\xi)&gt;0,$$</div>
+又 $w=\frac{\xi-\mathrm{i}}{\xi+\mathrm{i}}$ 把上半平面映成单位圆内部
+<div class="box-formula">$$|w|&lt;1.$$</div>
+因此所求映射为
+<div class="box-formula">$$w=\dfrac{z^4-\mathrm{i}}{z^4+\mathrm{i}}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.2</div>
+求把区域 $0&lt;\arg z&lt;2\pi$ (正实轴上带割痕的 $z$ 平面) 映射成单位圆 $|w|&lt;1$ 的一个映射.
+<input type="checkbox" id="ans32" class="answer-toggle">
+<label for="ans32" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+取 $\xi=\sqrt{z}$ (主值支). 它把张角 $2\pi$ 缩小为 $\pi$, 即把区域 $0&lt;\arg z&lt;2\pi$ 映成上半平面
+<div class="box-formula">$$\operatorname{Im}(\xi)&gt;0,$$</div>
+再用 $w=\frac{\xi-\mathrm{i}}{\xi+\mathrm{i}}$ 把上半平面映成单位圆内部
+<div class="box-formula">$$|w|&lt;1.$$</div>
+故所求映射为
+<div class="box-formula">$$w=\dfrac{\sqrt{z}-\mathrm{i}}{\sqrt{z}+\mathrm{i}}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">两个例子的共同套路</div>
+<b>角形域 $\longrightarrow$ 上半平面 $\longrightarrow$ 单位圆</b>: 第一步用幂函数 (或根式函数) 把张角调整到 $\pi$, 得到上半平面; 第二步用分式线性映射把上半平面"折"进单位圆. 这是本节绝大多数区域映射题的标准做法.
+</div>
+
+<div class="chart-container">
+<h3>交互: 角形域张角的变化对比 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面上的区域 $0&lt;\arg z&lt;2\pi$ (沿正实轴割开的平面, 红色为割痕); 右图是它在 $w=\sqrt[n]{z}$ (主值支) 下的像 —— 张角由 $2\pi$ 缩小为 $\frac{2\pi}{n}$. 拖动滑块改变 $n$: $n=2$ 时像为上半平面, $n$ 越大像域越"窄".</div>
+<canvas id="cvRoot" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>根次 $n$:</label>
+<input type="range" id="rtN" min="2" max="4" step="1" value="2">
+<span class="val-badge" id="rtNV">2</span>
+</div>
+<div class="readout" id="rtReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 指数函数与带形域 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 指数函数 $w=\mathrm{e}^z$: 直线映成圆周或射线</div>
+
+<div class="box-key">
+<div class="title">基本分解</div>
+指数函数 $w=\mathrm{e}^z$ 在 $z$ 平面内解析, 且导数 $(\mathrm{e}^z)'=\mathrm{e}^z\neq 0$ 处处不为零, 所以由 $w=\mathrm{e}^z$ 所构成的映射是<b>整个复平面上的共形映射</b>.
+<br><br>
+设 $z=x+\mathrm{i}y$, 写成极坐标 $w=\rho\mathrm{e}^{\mathrm{i}\varphi}$, 则
+<div class="box-formula">$$\rho=\mathrm{e}^{x},\qquad \varphi=y.$$</div>
+由此得到两条对应规则:
+<br><br>
+<span style="color:#c62828"><b>(1)</b></span> $z$ 平面上的直线 $x=$ 常数, 被映成 $w$ 平面上的<b>圆周</b> $\rho=$ 常数, 即 $|w|=\mathrm{e}^{x_0}$;
+<br>
+<span style="color:#c62828"><b>(2)</b></span> $z$ 平面上的直线 $y=$ 常数, 被映成 $w$ 平面上的<b>射线</b> $\varphi=$ 常数, 即 $\arg w=y_0$.
+</div>
+
+<div class="box-key">
+<div class="title">带形域 $\longrightarrow$ 角形域</div>
+带形域
+<div class="box-formula">$$0&lt;\operatorname{Im}(z)&lt;a\qquad(0&lt;a\le 2\pi)$$</div>
+经 $w=\mathrm{e}^z$ 被映成角形域
+<div class="box-formula">$$0&lt;\arg w&lt;a.$$</div>
+特别地, 当 $a=2\pi$ 时, 带形域 $0&lt;\operatorname{Im}(z)&lt;2\pi$ 被映成<b>沿正实轴割开的 $w$ 平面</b>, 即 $0&lt;\arg w&lt;2\pi$, 二者是一一对应的.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.3</div>
+求把带形域 $0&lt;\operatorname{Im}(z)&lt;\pi$ 映射成单位圆内部 $|w|&lt;1$ 的一个映射.
+<input type="checkbox" id="ans33" class="answer-toggle">
+<label for="ans33" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+映射 $\xi=\mathrm{e}^z$ 把带形域 $0&lt;\operatorname{Im}(z)&lt;\pi$ 映成角形域
+<div class="box-formula">$$0&lt;\arg\xi&lt;\pi,$$</div>
+即上半平面; 映射 $w=\frac{\xi-\mathrm{i}}{\xi+\mathrm{i}}$ 再把上半平面映成单位圆内部
+<div class="box-formula">$$|w|&lt;1.$$</div>
+因此所求映射为
+<div class="box-formula">$$w=\dfrac{\mathrm{e}^z-\mathrm{i}}{\mathrm{e}^z+\mathrm{i}}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 带形域到角形域的网格映射 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是 $z$ 平面上的带形域 $0&lt;\operatorname{Im}(z)&lt;a$, 网格由竖直线 $x=$ 常数 (蓝) 与水平线 $y=$ 常数 (橙) 组成; 右图是它们的像: <b>竖直线变成圆周 $|w|=\mathrm{e}^{x_0}$ (蓝), 水平线变成射线 $\arg w=y_0$ (橙)</b>. 拖动滑块改变带形域高度 $a$, 观察右图角形域张角 $a$ 的变化.</div>
+<canvas id="cvExp" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>带形域高度 $a$:</label>
+<input type="range" id="exA" min="0.5" max="2" step="0.25" value="1">
+<span class="val-badge" id="exAV">1.00 &pi;</span>
+</div>
+<div class="readout" id="exReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 对数函数与综合应用 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 对数函数 $\operatorname{Ln}z$</div>
+
+<div class="box-key">
+<div class="title">多值对数与主值支</div>
+对数函数
+<div class="box-formula">$$\operatorname{Ln}z=\ln|z|+\mathrm{i}\operatorname{Arg}z$$</div>
+是<b>多值函数</b>: 因为 $\operatorname{Arg}z=\arg z+2k\pi\ (k\in\mathbb{Z})$, 每一个整数 $k$ 给出一个分支.
+<br><br>
+取主值支 ($\operatorname{arg}z\in(-\pi,\pi]$):
+<div class="box-formula">$$\ln z=\ln|z|+\mathrm{i}\arg z.$$</div>
+它是 $w=\mathrm{e}^z$ 的反函数. 在把 $z$ 平面沿负实轴割开所成的区域内, $\ln z$ 解析, 且
+<div class="box-formula">$$(\ln z)'=\dfrac{1}{z}\neq 0,$$</div>
+因此 $\ln z$ 在该区域内构成<b>共形映射</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.4 / 例 5</div>
+求把带形域 $a&lt;\operatorname{Re}(z)&lt;b$ 映射成上半平面 $\operatorname{Im}(w)&gt;0$ 的一个映射.
+<input type="checkbox" id="ans34" class="answer-toggle">
+<label for="ans34" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>第一步 (平移 + 旋转伸缩).</b> 作映射
+<div class="box-formula">$$\eta=\dfrac{z-a}{b-a}\pi,$$</div>
+带形域 $a&lt;\operatorname{Re}(z)&lt;b$ 变成带形域 $0&lt;\operatorname{Re}(\eta)&lt;\pi$; 再乘 $\mathrm{i}$, 即旋转 $90^\circ$:
+<div class="box-formula">$$\xi=\mathrm{i}\eta=\dfrac{\pi\mathrm{i}}{b-a}(z-a),$$</div>
+带形域随之变为 $0&lt;\operatorname{Im}(\xi)&lt;\pi$.
+<br><br>
+<b>第二步 (指数).</b> 由前面的结论, $w=\mathrm{e}^{\xi}$ 把带形域 $0&lt;\operatorname{Im}(\xi)&lt;\pi$ 映成上半平面 $\operatorname{Im}(w)&gt;0$.
+<br><br>
+合起来, 所求映射为
+<div class="box-formula">$$w=\mathrm{e}^{\frac{\pi\mathrm{i}}{b-a}(z-a)}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">综合练习 1</div>
+求把角形域 $0&lt;\arg z&lt;\frac{2\pi}{3}$ 映射成单位圆 $|w|&lt;1$ 的一个映射.
+<input type="checkbox" id="ans35" class="answer-toggle">
+<label for="ans35" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>第一步.</b> 取 $\xi=z^3$, 辐角被扩大 $3$ 倍, 角形域 $0&lt;\arg z&lt;\frac{2\pi}{3}$ 被映成带割痕的平面 $0&lt;\arg\xi&lt;2\pi$.
+<br><br>
+<b>第二步.</b> 取 $\zeta=\sqrt{\xi}$ (主值支), 张角由 $2\pi$ 缩小为 $\pi$, 得上半平面 $\operatorname{Im}(\zeta)&gt;0$.
+<br><br>
+<b>第三步.</b> 用 $w=\frac{\zeta-\mathrm{i}}{\zeta+\mathrm{i}}$ 把上半平面映成单位圆内部 $|w|&lt;1$. 合起来
+<div class="box-formula">$$w=\dfrac{\sqrt{z^3}-\mathrm{i}}{\sqrt{z^3}+\mathrm{i}}.$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">综合练习 2</div>
+求带形域 $0&lt;\operatorname{Im}(z)&lt;2\pi$ 在 $w=\mathrm{e}^z$ 下的像, 并说明该映射是否与带形域一一对应.
+<input type="checkbox" id="ans36" class="answer-toggle">
+<label for="ans36" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $z=x+\mathrm{i}y$, 则 $w=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$, 于是
+<div class="box-formula">$$|w|=\mathrm{e}^{x}&gt;0,\qquad \arg w=y\in(0,2\pi).$$</div>
+所以像域为
+<div class="box-formula">$$0&lt;\arg w&lt;2\pi,$$</div>
+即<b>沿正实轴割开的 $w$ 平面</b> (去掉原点与正实轴的整个平面).
+<br><br>
+当 $z$ 在开带形域 $0&lt;\operatorname{Im}(z)&lt;2\pi$ 内变化时, 每一个像点 $w$ 恰有一个原像, 因此该映射是<b>单叶</b>的 (一一对应).
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 分步映射链 (平移 → 旋转伸缩 → 指数) <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">一个红点沿着链条被"搬运": 先作 <b>平移</b> $z-a$, 再作 <b>旋转伸缩</b> $\xi=\frac{\pi\mathrm{i}}{b-a}(z-a)$ (带形域立起来), 最后作 <b>指数</b> $w=\mathrm{e}^{\xi}$ (压成上半平面). 拖动滑块改变带形域宽度 $b-a$, 观察链上各点如何相应变化.</div>
+<canvas id="cvLog" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>带宽 $b-a$:</label>
+<input type="range" id="lgW" min="0.6" max="3" step="0.1" value="1.6">
+<span class="val-badge" id="lgWV">1.60</span>
+</div>
+<div class="readout" id="lgReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>幂函数 $w=z^n$</b> (模取 $n$ 次幂、辐角扩大 $n$ 倍) → <b>根式函数 $w=\sqrt[n]{z}$</b> (张角缩小为 $1/n$) → <b>指数函数 $w=\mathrm{e}^z$</b> (带形域 → 角形域) → <b>对数函数 $\operatorname{Ln}z$</b> 与分步映射链. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>名称</th><th>共形性</th><th>区域对应</th><th>典型例题</th></tr>
+<tr>
+<td>幂函数 $w=z^n$</td>
+<td>除 $z=0$ 外处处共形; $z=0$ 处 $f'(0)=0$, 不共形 (角放大 $n$ 倍)</td>
+<td>角形域 $0&lt;\arg z&lt;\frac{2\pi}{n}$ $\longrightarrow$ 去掉正实轴的平面; 张角 $\theta_0\mapsto n\theta_0$</td>
+<td>$w=z^4$ 把 $0&lt;\arg z&lt;\frac{\pi}{4}$ 映成上半平面</td>
+</tr>
+<tr>
+<td>根式函数 $w=\sqrt[n]{z}$</td>
+<td>取单值支后, 除原点与割痕外共形 ($n$ 个分支)</td>
+<td>张角 $\theta_0\mapsto\frac{\theta_0}{n}$; $0&lt;\arg z&lt;2\pi\longrightarrow 0&lt;\arg w&lt;\frac{2\pi}{n}$</td>
+<td>例 3.1 ($z^4$)、例 3.2 ($\sqrt z$) 均映成 $|w|&lt;1$</td>
+</tr>
+<tr>
+<td>指数函数 $w=\mathrm{e}^z$</td>
+<td>处处共形 ($(\mathrm{e}^z)'=\mathrm{e}^z\neq 0$)</td>
+<td>直线 $x=$ 常数 $\to$ 圆周 $|w|=\mathrm{e}^{x_0}$; 直线 $y=$ 常数 $\to$ 射线 $\arg w=y_0$; 带形域 $0&lt;\operatorname{Im}(z)&lt;a\longrightarrow 0&lt;\arg w&lt;a$</td>
+<td>例 3.3: 带形域 $0&lt;\operatorname{Im}(z)&lt;\pi$ 映成 $|w|&lt;1$</td>
+</tr>
+<tr>
+<td>对数函数 $\operatorname{Ln}z$</td>
+<td>多值; 主值支在沿负实轴割开的区域上共形, $(\ln z)'=\frac{1}{z}$</td>
+<td>与 $w=\mathrm{e}^z$ 互逆; 带形域 $a&lt;\operatorname{Re}(z)&lt;b\longrightarrow \operatorname{Im}(w)&gt;0$</td>
+<td>例 3.4 / 例 5: $w=\mathrm{e}^{\frac{\pi\mathrm{i}}{b-a}(z-a)}$</td>
+</tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 映射 $w=z^3$ 把角形域 $0&lt;\arg z&lt;\frac{\pi}{3}$ 映成什么区域?</div>
+<label class="quiz-opt">A. 右半平面</label>
+<label class="quiz-opt" data-ok="1">B. 上半平面</label>
+<label class="quiz-opt">C. 单位圆内部</label>
+<label class="quiz-opt">D. 去掉正实轴的平面</label>
+<div class="quiz-explain"><b>解析:</b> $w=z^n$ 把辐角扩大 $n$ 倍, $n=3$ 时 $0&lt;\arg z&lt;\frac{\pi}{3}$ 变为 $0&lt;\arg w&lt;\pi$, 即上半平面.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 映射 $w=\mathrm{e}^z$ 把带形域 $0&lt;\operatorname{Im}(z)&lt;\pi$ 映成什么区域?</div>
+<label class="quiz-opt" data-ok="1">A. 上半平面 $0&lt;\arg w&lt;\pi$</label>
+<label class="quiz-opt">B. 单位圆内部</label>
+<label class="quiz-opt">C. 右半平面</label>
+<label class="quiz-opt">D. 去掉正实轴的平面</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\rho=\mathrm{e}^{x},\ \varphi=y$ 知带形域 $0&lt;\operatorname{Im}(z)&lt;a$ 映成角形域 $0&lt;\arg w&lt;a$; 取 $a=\pi$ 即上半平面.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 对数函数 $\operatorname{Ln}z=\ln|z|+\mathrm{i}\operatorname{Arg}z$ 的多值性来自?</div>
+<label class="quiz-opt">A. $\ln|z|$ 的多值性</label>
+<label class="quiz-opt" data-ok="1">B. $\operatorname{Arg}z$ 的多值性 (相差 $2k\pi$)</label>
+<label class="quiz-opt">C. $|z|$ 的正负号</label>
+<label class="quiz-opt">D. $\mathrm{i}$ 的取值不唯一</label>
+<div class="quiz-explain"><b>解析:</b> $\operatorname{Arg}z=\arg z+2k\pi\ (k\in\mathbb{Z})$, 每个整数 $k$ 给出一个分支, 故 $\operatorname{Ln}z$ 是多值的; 取定 $\operatorname{arg}z\in(-\pi,\pi]$ 即得主值支 $\ln z$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 主值支 $\ln z$ 在下列哪个区域上解析且构成共形映射?</div>
+<label class="quiz-opt">A. 整个复平面</label>
+<label class="quiz-opt" data-ok="1">B. 沿负实轴割开的平面</label>
+<label class="quiz-opt">C. 单位圆内部</label>
+<label class="quiz-opt">D. 上半平面</label>
+<div class="quiz-explain"><b>解析:</b> 主值 $\operatorname{arg}z\in(-\pi,\pi]$ 在负实轴上不连续, 故需沿负实轴割开; 该区域内 $\ln z$ 解析且 $(\ln z)'=\frac{1}{z}\neq 0$, 于是构成共形映射.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 映射 $w=z^n\ (n\ge 2)$ 在 $z=0$ 处不共形的原因是?</div>
+<label class="quiz-opt">A. $w=z^n$ 在原点不解析</label>
+<label class="quiz-opt" data-ok="1">B. $f'(0)=0$, 伸缩率为 $0$ 且夹角被放大 $n$ 倍</label>
+<label class="quiz-opt">C. $w=z^n$ 在原点没有定义</label>
+<label class="quiz-opt">D. $w=z^n$ 在原点处导数为无穷大</label>
+<div class="quiz-explain"><b>解析:</b> $f'(z)=nz^{n-1}$, 故 $f'(0)=0\ (n\ge 2)$. 此时伸缩率为 $0$、旋转角无意义, 原点附近夹角被放大 $n$ 倍, 映射在原点不保角 (不共形).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 映射 $w=\mathrm{e}^z$ 把直线 $x=$ 常数映成什么?</div>
+<label class="quiz-opt" data-ok="1">A. 圆周 $|w|=$ 常数</label>
+<label class="quiz-opt">B. 直线</label>
+<label class="quiz-opt">C. 射线 $\arg w=$ 常数</label>
+<label class="quiz-opt">D. 椭圆</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\rho=\mathrm{e}^{x}$ 知, $x=x_0$ 固定时 $|w|=\mathrm{e}^{x_0}$ 为常数, 故直线 $x=$ 常数映成以原点为圆心的圆周.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 映射 $w=\mathrm{e}^z$ 把直线 $y=$ 常数映成什么?</div>
+<label class="quiz-opt">A. 圆周 $|w|=$ 常数</label>
+<label class="quiz-opt" data-ok="1">B. 射线 $\arg w=$ 常数</label>
+<label class="quiz-opt">C. 抛物线</label>
+<label class="quiz-opt">D. 双曲线</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\varphi=y$ 知, $y=y_0$ 固定时 $\arg w=y_0$ 为常数, 故直线 $y=$ 常数映成从原点出发的射线.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 把角形域 $0&lt;\arg z&lt;\frac{\pi}{4}$ 映成单位圆 $|w|&lt;1$ 的一个映射是?</div>
+<label class="quiz-opt">A. $w=\frac{z-\mathrm{i}}{z+\mathrm{i}}$</label>
+<label class="quiz-opt" data-ok="1">B. $w=\frac{z^4-\mathrm{i}}{z^4+\mathrm{i}}$</label>
+<label class="quiz-opt">C. $w=\frac{\sqrt z-\mathrm{i}}{\sqrt z+\mathrm{i}}$</label>
+<label class="quiz-opt">D. $w=\frac{\mathrm{e}^z-\mathrm{i}}{\mathrm{e}^z+\mathrm{i}}$</label>
+<div class="quiz-explain"><b>解析:</b> 先用 $\xi=z^4$ 把张角 $\frac{\pi}{4}$ 扩大 $4$ 倍得上半平面, 再用 $w=\frac{\xi-\mathrm{i}}{\xi+\mathrm{i}}$ 映成单位圆内部, 合起来即 $w=\frac{z^4-\mathrm{i}}{z^4+\mathrm{i}}$ (见例 3.1).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 带形域 $0&lt;\operatorname{Im}(z)&lt;2\pi$ 经 $w=\mathrm{e}^z$ 映成什么区域?</div>
+<label class="quiz-opt">A. 单位圆内部</label>
+<label class="quiz-opt">B. 上半平面</label>
+<label class="quiz-opt" data-ok="1">C. 沿正实轴割开的 $w$ 平面, 即 $0&lt;\arg w&lt;2\pi$</label>
+<label class="quiz-opt">D. 左半平面</label>
+<div class="quiz-explain"><b>解析:</b> 带形域高度为 $2\pi$ 时, 角形域张角铺满 $2\pi$, 故像域为 $0&lt;\arg w&lt;2\pi$, 即去掉原点与正实轴的平面, 且映射是一一对应的.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 把带形域 $a&lt;\operatorname{Re}(z)&lt;b$ 映成上半平面 $\operatorname{Im}(w)&gt;0$ 的一个映射是?</div>
+<label class="quiz-opt">A. $w=\mathrm{e}^{\frac{\pi}{b-a}(z-a)}$</label>
+<label class="quiz-opt" data-ok="1">B. $w=\mathrm{e}^{\frac{\pi\mathrm{i}}{b-a}(z-a)}$</label>
+<label class="quiz-opt">C. $w=\frac{\pi\mathrm{i}}{b-a}(z-a)$</label>
+<label class="quiz-opt">D. $w=\operatorname{Ln}\frac{\pi\mathrm{i}}{b-a}(z-a)$</label>
+<div class="quiz-explain"><b>解析:</b> 先用 $\xi=\frac{\pi\mathrm{i}}{b-a}(z-a)$ 把带形域立成 $0&lt;\operatorname{Im}(\xi)&lt;\pi$, 再用 $w=\mathrm{e}^{\xi}$ 映成上半平面, 合起来即 $w=\mathrm{e}^{\frac{\pi\mathrm{i}}{b-a}(z-a)}$ (见例 3.4 / 例 5).</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位把"多值"铺成"单值"的人: 黎曼</h3>
+<div class="hero-sub">他把 $\sqrt z$、$\ln z$ 这类"一个 $z$ 有好几个值"的函数, 安放到一层层叠起来的曲面上; 他证明任意单连通区域都能共形地映成单位圆. 三十九岁便离世, 却重塑了现代数学的版图.</div>
+<div class="hero-quote">
+本节的两个主角 —— <b>根式函数 $w=\sqrt[n]{z}$</b> 与 <b>对数函数 $\operatorname{Ln}z$</b> —— 天然是多值的: 一个 $z$ 对应 $n$ 个根、无穷多个对数值.<br>
+<b>黎曼给出的答案是: 换一个"世界"去看 —— 把平面换成多层的曲面, 多值立刻变成单值.</b> 这就是黎曼曲面, 也是本节绕不开的那段数学史.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 黎曼: 多值函数的"立体化"</div>
+
+<div class="person-card">
+<div class="p-av">黎</div>
+<div class="p-main">
+<div class="p-name">波恩哈德·黎曼 (Bernhard Riemann, 1826—1866)</div>
+<div class="p-meta">德国数学家 · 黎曼几何与黎曼曲面开创者 · 复分析、几何学与数论的共同奠基人之一 · 高斯与狄利克雷的学生</div>
+<p>他出生于汉诺威王国一个<b>贫寒的乡村牧师家庭</b>, 自幼体弱多病, 却显示出惊人的数学才能. 在父亲希望他成为牧师之后, 他终究还是走进了数学 —— 先是到柏林听狄利克雷、雅可比、爱森斯坦的课, 回到哥廷根后又成为<b>高斯</b>的学生与后辈.</p>
+<p>他一生只留下不多的论文, 却篇篇改变方向: 一篇博士论文 (<b>1851</b>) 奠定了复变函数论的几何基础, 一场就职演讲 (<b>1854</b>) 开创了现代几何学, 一篇素数论文 (<b>1859</b>) 留下了至今未解的黎曼猜想. 他没有活到四十岁, 但现代数学的许多主干, 都要从他的名字写起.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从牧师之子到高斯门下</h5>
+<p>1826 年, 黎曼生于汉诺威王国的小村. 家境清贫, 母亲早逝, 他从小要为家庭分担; 童年时一次严重的病痛与后来的多次疾病, 伴随了他一生. 但就是在这样的境况里, 他读完了中学, 并在哥廷根与柏林接受了当时最好的数学教育.</p>
+<p>1846 年他进入哥廷根大学, 后转往柏林; 1849 年回到哥廷根, 师从<b>高斯</b>与韦伯. 1851 年, 他提交了博士论文《单复变函数一般理论的基础》—— 这篇论文的题目平淡, 内容却把整个复变函数论换了一个角度: 不再只盯着"公式", 而是研究<b>映射本身</b>.</p>
+<p><b>从"算函数"到"看映射", 是黎曼留给复分析最关键的一次视角转换。</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1851: 黎曼曲面 —— 让多值变成单值</h5>
+<p>本节遇到的 $\sqrt[n]{z}$ 与 $\operatorname{Ln}z$, 都有一个共同的"麻烦": <b>多值</b>. 绕着原点转一圈, $\sqrt z$ 的符号变了, $\ln z$ 的对数值多了 $2\pi\mathrm{i}$ —— 函数绕一圈回不到原值.</p>
+<p>黎曼的处理办法极其大胆: <b>既然绕一圈会变, 那就不要在平面上看待它.</b> 他设想把若干层"复制"的复平面按某种方式剪开、错开、再拼接起来, 让绕一圈之后恰好走到<b>另一层</b>上去 —— 函数在这张多层曲面上就重新变回了单值.</p>
+<p>这张多层曲面后来被称为<b>黎曼曲面</b>. 于是 $\sqrt z$ 的两层、$\ln z$ 的无穷多层都有了各自的"家": 多值函数不是"含糊不清", 只是被放错了地方.<b>换一张曲面, 多值立刻变单值。</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>黎曼映射定理: 一切单连通区域的"标准像"</h5>
+<p>同一篇 1851 年的论文里, 还埋着本节思想的最终归宿 —— <b>黎曼映射定理</b>: 任意一个单连通的真区域 (即不是整个复平面的单连通区域), 都可以通过一个共形映射, 变成单位圆内部 $|w|&lt;1$; 并且这样的映射在相差一个单位圆自身的共形变换的意义下是唯一的.</p>
+<p>这条定理的意义是巨大的: <b>它说明在共形映射的眼光里, 一切单连通区域都"长得一样"</b> —— 都等价于单位圆. 于是, 只要能把问题搬到单位圆上, 就只需要在一个区域上做研究.</p>
+<p>回头看本节的四个例子: 把角形域、带形域、割痕平面一个个"搬"成上半平面、单位圆 —— 我们其实都在重复黎曼的那一句断言: <b>区域千变万化, 共形结构只有一个。</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>1854 几何、1859 素数: 一个"早逝的天才"</h5>
+<p>1854 年, 为了取得讲师资格, 黎曼作了一场题为《论几何学的基础假设》的演讲. 他提出 <b>高维的一般空间</b> 与"度量由局部决定"的思想, 后来的黎曼几何由此而来 —— 六十多年后, 它成为广义相对论的数学语言.</p>
+<p>1859 年, 他发表了关于素数分布的文章, 提出用复变函数 (zeta 函数) 研究素数, 并留下那个著名的猜想. 此外, 他还在极小曲面、超几何函数、热传导与冲击波理论上留下深刻结果.</p>
+<p>然而他的身体一直不好. 1866 年, 他在意大利北部的塞尔拉斯卡疗养途中因肺结核去世, <b>年仅 39 岁</b>. 他的成果并不多, 却几乎每一次落笔, 都开辟一门新的学问.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>1851 年黎曼的博士论文答辩上, 主考官正是"数学王子"高斯. 据说高斯在答辩后给予了极高的评价, 称这篇论文<b>在方法上开了一个全新的方向</b>. 一位公认寡言而慎于称赞的老者, 如此看重一名二十多岁的青年, 这在当时的数学界并不多见.<br><br>更令人感慨的是: 黎曼一生贫病, 很多工作是在病榻与拮据之中完成的. 他曾因为怕自己的思想不够成熟而反复修改; 而当这些思想终于发表时, 它们却几乎各自开启了一门现代数学分支.<b>他用不到四十年的生命, 写下了此后一百多年的数学地图。</b>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 黎曼式的信念</div>
+当多值函数"绕一圈回不到原处", 多数人选择小心地绕开原点 —— 就像本节里我们小心翼翼地"取主值支"、"引一条割线". 黎曼却选择了另一条路:
+<br>
+"<em>如果一个函数在平面上是多值的, 那就给它一张更合适的曲面.</em>"
+<br>
+他没有让函数去迁就平面, 而是让空间去适应函数. 于是 $\sqrt z$ 有了两层, $\ln z$ 有了无穷多层, 多值问题被彻底"立体化".
+<br>
+"<em>空间之为空间, 不在于它上面有什么, 而在于我们如何度量它。</em>"
+<span class="iv-sig">—— 这种"不迁就现成的舞台, 而是为问题重新搭一个舞台"的气魄, 正是本节从一条割线走到黎曼曲面的思想底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">视角与层次</div>
+<h4>多值不是错, 只是"舞台"选小了</h4>
+<p>$\sqrt z$ 在平面上绕原点一圈换一次符号, $\ln z$ 则加上一个 $2\pi\mathrm{i}$ —— 看上去是函数"不听话", 其实是平面这一层舞台装不下它.</p>
+<p>黎曼把舞台扩成多层曲面, 多值立刻变成单值. 这提示我们: <b>很多"矛盾", 只是视角与层次的问题.</b></p>
+<div class="pc-math">平面上多值 $\longrightarrow$ 曲面上单值</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>一点处共形, 拼起来才是整片区域的共形</h4>
+<p>$w=z^n$ 在 $z\neq 0$ 的每一点共形, 于是它在去掉原点的整个区域上是共形映射; 而 $z=0$ 这一点"坏"了, 就必须单独剖出来谈.</p>
+<p>"逐点成立, 汇聚成区域成立" —— 这与黎曼映射定理"把整个区域搬成单位圆"是同一种从局部到整体的思路.</p>
+<div class="pc-math">$\forall z\neq 0:\ f'(z)\neq 0\ \Longrightarrow\ D$ 上共形</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">化归与标准形</div>
+<h4>把区域搬成单位圆: 数学里的"归零"</h4>
+<p>黎曼映射定理告诉我们: 一切单连通区域在共形意义下都等价于单位圆. 于是任何单连通区域上的问题, 都可以先"搬"到单位圆上再解决.</p>
+<p>这与解方程先化为标准形、算积分先化为基本积分表, 是同一种"化归"智慧 —— <b>找到一个足够好的标准对象, 问题就简化一半。</b></p>
+<div class="pc-math">任意单连通区域 $\longleftrightarrow |w|&lt;1$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">互逆与对称</div>
+<h4>$\mathrm{e}^z$ 与 $\operatorname{Ln}z$: 一对互相成就的映射</h4>
+<p>$w=\mathrm{e}^z$ 把带形域 $0&lt;\operatorname{Im}(z)&lt;a$ 打开成角形域 $0&lt;\arg w&lt;a$; 而它的反函数 $\operatorname{Ln}z$ 则把角度"卷"回来. 同一条性质, 正着看是"张开", 反着看是"收拢".</p>
+<p>这提醒我们: 遇到难缠的映射, 不妨想想它的反函数 —— <b>反函数的性质, 常常是原问题的另一把钥匙。</b></p>
+<div class="pc-math">带形域 $\xrightarrow{\ \mathrm{e}^z\ }$ 角形域 $\xrightarrow{\ \operatorname{Ln}w\ }$ 带形域</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">条件的边界</div>
+<h4>割线: 为了单值, 我们主动"设限"</h4>
+<p>$\sqrt[n]{z}$ 与 $\operatorname{Ln}z$ 本身是多值的. 为了得到一个能解析、能求导、能共形的单值支, 我们必须主动沿一条射线割开平面 —— 这条割线不是缺陷, 而是<b>有意的约定</b>.</p>
+<p>数学常常如此: 为了让结论干净, 先人为地划出适用范围.<b>承认边界, 才能在一个范围内把事情说清楚。</b></p>
+<div class="pc-math">沿负实轴割开 $\Longrightarrow$ $\ln z$ 单值解析, $(\ln z)'=\frac{1}{z}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">抽象与实用</div>
+<h4>保角映射: 从纸面公式到机翼与流场</h4>
+<p>共形映射之所以在工程上如此重要, 是因为它把"困难形状上的问题"搬成"规则形状上的问题": 机翼的绕流可以借茹科夫斯基型变换化为圆上的问题, 电磁场与温度场的计算也可借区域映射简化.</p>
+<p>本节反复出现的"角形域 $\to$ 带形域 $\to$ 上半平面 $\to$ 单位圆", 正是工程里最常用的那几步搬运.<b>抽象的性质, 最终都落在真实的物件上。</b></p>
+<div class="pc-math">角形域 / 带形域 $\longrightarrow$ 上半平面 $\longrightarrow$ 单位圆</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 从"开方术"到"勾股"</div>
+本节的根式函数 $w=\sqrt[n]{z}$ 与幂函数 $w=z^n$, 说的是"乘方"与"开方"这一对互逆的运算. 而在两千多年前的中国, 这套运算早已被写成了可操作的算法.
+<br><br>
+《九章算术》的"少广"章中列有<b>开方术</b> 与 <b>开立方术</b>: 前者求正数的平方根, 后者求立方根, 其算法按"位"逐次推进、逐位定出结果, 本质上就是 $\sqrt[n]{}$ (开平方、开立方) 的计算程序. 古人把开方所得的那一边长称为"<b>面</b>" —— 由面积求边长, 由体积求棱长, 正是"幂与根"相互还原的直观写照. 刘徽为《九章算术》作注, 又把这些算法讲得更为细密, 并留下"割之又割, 以至于不可割"的极限思想.
+<br><br>
+另一部经典《周髀算经》则把"勾股各自乘, 并而开方除之"写成了定理式的表述 —— 先"各自乘" (累积幂), 再"并" (相加), 最后"开方除之" (取根). <b>乘方与开方在这里被串联成一条完整的算法链</b>, 回望起来, 正是本节 $w=z^n$ 与 $w=\sqrt[n]{z}$ 在实数世界里的雏形.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: "保角"托举的中国工程与中国学派</div>
+<ul>
+<li><b>航空翼型</b>: 计算飞机机翼的升力, 关键是把"绕机翼的流动"化为"绕圆的流动". 保角映射 (如茹科夫斯基型变换) 正是完成这一转化的工具 —— 它把复杂的翼型边界搬到单位圆上, 让流场分析变得可行.</li>
+<li><b>流体力学</b>: 不可压缩无旋流动可用复势函数刻画, 而共形映射能把不规则区域上的流动问题, 搬到上半平面或单位圆这类"标准区域"上求解; 本节反复练习的"角形域/带形域 $\to$ 上半平面", 就是这类搬运的入门形态.</li>
+<li><b>电磁场与热传导</b>: 静电场、稳恒电流场与稳态温度场满足的方程具有"共形不变性", 因此保角映射可以把带尖点、带折角的复杂边界化为规则边界, 从而得到解析解. 芯片中的电极边缘、电容与电极损耗估算, 都借重这套方法.</li>
+<li><b>天线与微波器件</b>: 波导截面、天线馈电结构与阻抗匹配的设计中, 保角映射常用于把复杂截面化为矩形或圆形截面, 以便求出特征参数, 指导工程实现.</li>
+<li><b>中国数学家的接力</b>: <b>熊庆来</b>是我国函数论研究的开拓者, 他在整函数与亚纯函数的<b>值分布理论</b>上作出系统而重要的贡献 (被称为"熊氏无穷级"), 并创办了国内第一个现代数学研究机构、培养了大批人才; <b>杨乐</b>与<b>张广厚</b>合作, 在函数值分布论中关于<b>亏值与奇异方向</b>的研究上取得国际公认的成果, 让中国函数论学派走向世界前沿. 从幂函数、根式函数这些最基本的对象出发, 一代代中国数学家把最基础的理论一寸寸推向前。</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"多值"整理清楚, 是要下功夫的</div>
+$\sqrt[n]{z}$ 有 $n$ 个值, $\operatorname{Ln}z$ 有无穷多个值 —— 面对这样的对象, 数学家的做法是: 划出割线、取定主值支、甚至把平面换成多层曲面. 这不是绕开困难, 而是<b>把复杂对象整理到可以被精确研究的程度</b>.
+<br><br>
+从《九章算术》的"开方术"、刘徽的"割之又割", 到黎曼为多值函数铺设的曲面, 再到今天航空翼型、流场、电磁场与天线设计中的保角映射 —— 人类一直在做同一件事: <b>把纷乱的现象收拾成一条清晰可算的路。</b>
+<br><br>
+而在中国, 从熊庆来到杨乐、张广厚, 这份<b>"肯在最基础的对象上长期用力"</b>的学风被一代代接续下来. 今天我们练习把角形域搬成单位圆, 练的不只是一道题, 更是一种把基础打牢、把事情做透的态度.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"任意单连通的真区域, 都可以共形地映成单位圆."<span class="q-src">—— 黎曼映射定理</span></div>
+<div class="quote-item">"把多值函数铺在一层层的曲面上, 它就重新变成单值."<span class="q-src">—— 黎曼曲面思想的概括</span></div>
+<div class="quote-item">"绕不过去的地方, 就把那里的空间换掉。"<span class="q-src">—— 关于黎曼曲面的一点体会</span></div>
+<div class="quote-item">"置积为实, 借一算步之, 超一等."<span class="q-src">—— 《九章算术·少广》开方术</span></div>
+<div class="quote-item">"勾股各自乘, 并而开方除之."<span class="q-src">—— 《周髀算经》</span></div>
+<div class="quote-item">"把基础打扎实, 才能走得更远."<span class="q-src">—— 中国函数论学派的治学传统</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 黎曼出身贫寒的牧师家庭, 一生被疾病与拮据缠绕, 却在 1851 年的博士论文里提出了<b>黎曼曲面</b> —— 用一层层叠起来的曲面, 把 $\sqrt z$、$\ln z$ 这类多值函数化为单值; 同年论文中还有<b>黎曼映射定理</b>: 任意单连通的真区域都可以共形地映成单位圆. 此后他又以 1854 年的几何演讲与 1859 年的素数研究改写数学版图, 却于 1866 年因病去世, 年仅 39 岁. 本节里我们小心"取主值支"、"引割线"所遇到的那点麻烦, 正是他出手解决的对象.<br>
+<b>一个道理:</b> 本节四个函数, 各有各的"搬运本领": $w=z^n$ 把角放大 $n$ 倍、$w=\sqrt[n]{z}$ 把角缩小 $1/n$、$w=\mathrm{e}^z$ 把带形域打开成角形域、$\operatorname{Ln}z$ 再把角卷回来. 它们的共同启示是: <b>遇到复杂的区域, 不要硬算, 先想"能不能换一个区域"</b>; 而遇到多值、割线这类麻烦, 先想"是不是我们看待它的方式不够合适". 黎曼正是这样做的 —— 他不是让函数迁就平面, 而是为函数造了新舞台.<br>
+<b>一份责任:</b> 从《九章算术》的"开方术"、刘徽的"割之又割", 到《周髀算经》"勾股各自乘, 并而开方除之", 中国古人早已把乘方与开方写成算法; 而在今天, 保角映射支撑着<b>航空翼型、流体力学、电磁场、芯片与天线设计</b>中一次次"把复杂区域搬成简单区域"的计算, 中国数学家<b>熊庆来</b>在函数值分布论上的开拓与<b>杨乐、张广厚</b>在亏值、奇异方向上的成果, 则让这一领域留下了中国人清晰的足迹. 我们今天练习把一个角形域搬成单位圆, 承接的正是这份<b>把基础对象整理清楚、把最基础的事做到最实</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第六章第三节 几个初等函数所构成的映射 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 幂函数 w = z^n 与角形域 =================
+module('cvZn',function(cv){
+  var n=3, th0=Math.PI/3, R=1.12;
+  function sector(ctx,m,a1,a2,rad,fill,stroke){
+    ctx.beginPath(); ctx.moveTo(m.px(0),m.py(0));
+    ctx.lineTo(m.px(rad*Math.cos(a1)),m.py(rad*Math.sin(a1)));
+    ctx.arc(m.px(0),m.py(0),rad*m.s,-a1,-a2,true);
+    ctx.closePath();
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=1.8; ctx.stroke(); }
+  }
+  function ray(ctx,m,ang,rad,color){
+    arrow(ctx,m.px(0),m.py(0),m.px(rad*Math.cos(ang)),m.py(rad*Math.sin(ang)),color,2.4,10);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, big=n*th0;
+    // ---- 左: z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.55,1.55,-1.25,1.25);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    sector(ctx,m1,0,th0,R,'rgba(21,101,192,.16)','#1565c0');
+    ray(ctx,m1,0,R*1.18,'#1565c0');
+    ray(ctx,m1,th0,R*1.18,'#1565c0');
+    mathArc(ctx,m1.px(0),m1.py(0),0.70,0,th0,'#5e35b1',2);
+    tlabel(ctx,m1.px(0.84*Math.cos(th0/2)),m1.py(0.84*Math.sin(th0/2))-4,'θ₀ = 60°','#5e35b1','bold 12px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 角形域 0 '+LT+' arg z '+LT+' θ₀ = 60°','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.55,1.55,-1.25,1.25);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    sector(ctx,m2,0,big,R,'rgba(230,81,0,.15)','#e65100');
+    ray(ctx,m2,0,R*1.18,'#e65100');
+    if(big<TAU-1e-6){
+      ray(ctx,m2,big,R*1.18,'#e65100');
+      mathArc(ctx,m2.px(0),m2.py(0),0.70,0,big,'#5e35b1',2);
+    }
+    var mid=big/2;
+    tlabel(ctx,m2.px(0.86*Math.cos(mid)),m2.py(0.86*Math.sin(mid))-4,'nθ₀ = '+(n*60)+'°','#5e35b1','bold 12px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+8,m2.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 像的角形域 0 '+LT+' arg w '+LT+' nθ₀','#37474f','bold 12.5px Segoe UI');
+    var thr=360/n;
+    setRO('znReadout',
+      '幂函数 $w=z^{'+n+'}$: 令 $z=r\\mathrm{e}^{\\mathrm{i}\\theta}$, 则 $w=r^{'+n+'}\\mathrm{e}^{\\mathrm{i}'+n+'\\theta}$ —— <b>模取 '+n+' 次幂、辐角扩大 '+n+' 倍</b>.<br>'+
+      hl('z 平面张角 $\\theta_0=60^\\circ$')+' &nbsp;&rarr;&nbsp; '+hl2('w 平面张角 $n\\theta_0='+(n*60)+'^\\circ$')+'.<br>'+
+      '单叶性阈值 $\\frac{2\\pi}{n}='+fmt(thr,1)+'^\\circ$: 张角 $60^\\circ$ '+(60<=thr?'不超过':'超过')+'该阈值, 映射在此角形域上'+(60<=thr?'单叶':'不单叶')+'.<br>'+
+      '共形性: $z\\neq 0$ 时 $f\'(z)='+n+'z^{'+(n-1)+'}\\neq 0$, 处处共形; 而 $z=0$ 处 $f\'(0)=0$, 不共形.');
+  }
+  bindSlider('znN',function(v){ n=Math.round(v); badge('znNV',String(n)); draw(); });
+  badge('znNV',String(n));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 根式函数 w = z^{1/n} 与缩小角形域 =================
+module('cvRoot',function(cv){
+  var n=2, R=1.12;
+  function sector(ctx,m,a1,a2,rad,fill,stroke){
+    ctx.beginPath(); ctx.moveTo(m.px(0),m.py(0));
+    ctx.lineTo(m.px(rad*Math.cos(a1)),m.py(rad*Math.sin(a1)));
+    ctx.arc(m.px(0),m.py(0),rad*m.s,-a1,-a2,true);
+    ctx.closePath();
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=1.8; ctx.stroke(); }
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, big=TAU/n;
+    // ---- 左: 沿正实轴割开的 z 平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.55,1.55,-1.25,1.25);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'x','y');
+    ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU);
+    ctx.fillStyle='rgba(21,101,192,.13)'; ctx.fill();
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3.2;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(R),m1.py(0)); ctx.stroke();
+    arrow(ctx,m1.px(0),m1.py(0),m1.px(R*1.16*Math.cos(0.10)),m1.py(R*1.16*Math.sin(0.10)),'#1565c0',2.2,9);
+    arrow(ctx,m1.px(0),m1.py(0),m1.px(R*1.16*Math.cos(-0.10)),m1.py(R*1.16*Math.sin(-0.10)),'#1565c0',2.2,9);
+    tlabel(ctx,m1.px(0.30),m1.py(0)-9,'割痕 (正实轴)','#c62828','bold 11.5px Segoe UI');
+    dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)-6,m1.py(0)+17,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 区域 0 '+LT+' arg z '+LT+' 2π (正实轴为割痕)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 缩小后的角形域 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.55,1.55,-1.25,1.25);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    sector(ctx,m2,0,big,R,'rgba(46,125,50,.16)','#2e7d32');
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(R*1.16*Math.cos(0)),m2.py(R*1.16*Math.sin(0)),'#2e7d32',2.4,10);
+    if(big<TAU-1e-6) arrow(ctx,m2.px(0),m2.py(0),m2.px(R*1.16*Math.cos(big)),m2.py(R*1.16*Math.sin(big)),'#2e7d32',2.4,10);
+    mathArc(ctx,m2.px(0),m2.py(0),0.70,0,big,'#5e35b1',2);
+    tlabel(ctx,m2.px(0.86*Math.cos(big/2)),m2.py(0.86*Math.sin(big/2))-4,'张角 = '+(360/n)+'°','#5e35b1','bold 12px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m2.px(0)+8,m2.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 张角缩小为 1/n','#37474f','bold 12.5px Segoe UI');
+    var tail;
+    if(n===2){ tail='即上半平面, 正是例 3.2 的第一步.'; }
+    else if(n===3){ tail='即张角 $120^\\circ$ 的角形域.'; }
+    else { tail='即张角 $90^\\circ$ 的角形域.'; }
+    var final;
+    if(n===2){ final='再配上 $w=\\frac{\\xi-\\mathrm{i}}{\\xi+\\mathrm{i}}$ 把上半平面映成单位圆, 即得例 3.2:  $w=\\frac{\\sqrt{z}-\\mathrm{i}}{\\sqrt{z}+\\mathrm{i}}$, $|w|&lt;1$.'; }
+    else { final='再配上把角形域映成上半平面、再映成单位圆的复合映射, 即可把该区域映成 $|w|&lt;1$.'; }
+    setRO('rtReadout',
+      '$w=\\sqrt['+n+']{z}$ (取主值支 $k=0$): 张角由 $2\\pi$ 缩小为 $\\frac{2\\pi}{'+n+'}='+(360/n)+'^\\circ$, '+tail+'<br>'+
+      '根式函数共有 $'+n+'$ 个相异的根 $w_k=r^{1/'+n+'}\\mathrm{e}^{\\mathrm{i}(\\theta+2k\\pi)/'+n+'}$, 只有取定单值支 (并沿割痕割开平面) 后才能讨论共形性.<br>'+
+      final);
+  }
+  bindSlider('rtN',function(v){ n=Math.round(v); badge('rtNV',String(n)); draw(); });
+  badge('rtNV',String(n));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 指数函数 w = e^z 与带形域 =================
+module('cvExp',function(cv){
+  var a=Math.PI;
+  var XS=[-1.5,-1.1,-0.7,-0.3,0.1,0.5,0.78];
+  function sector(ctx,m,a1,a2,rad,fill,stroke){
+    ctx.beginPath(); ctx.moveTo(m.px(0),m.py(0));
+    ctx.lineTo(m.px(rad*Math.cos(a1)),m.py(rad*Math.sin(a1)));
+    ctx.arc(m.px(0),m.py(0),rad*m.s,-a1,-a2,true);
+    ctx.closePath();
+    if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+    if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=1.8; ctx.stroke(); }
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: z 平面的带形域 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.9,1.4,-0.55,a+0.55);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'x','y');
+    ctx.fillStyle='rgba(21,101,192,.10)';
+    ctx.fillRect(m1.px(-1.8),m1.py(a),m1.px(1.3)-m1.px(-1.8),m1.py(0)-m1.py(a));
+    for(var i=0;i<=4;i++){
+      var y=a*i/4;
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=(i===0||i===4)?2.2:1.3;
+      ctx.beginPath(); ctx.moveTo(m1.px(-1.8),m1.py(y)); ctx.lineTo(m1.px(1.3),m1.py(y)); ctx.stroke();
+    }
+    XS.forEach(function(x0){
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=1.3;
+      ctx.beginPath(); ctx.moveTo(m1.px(x0),m1.py(0)); ctx.lineTo(m1.px(x0),m1.py(a)); ctx.stroke();
+    });
+    tlabel(ctx,m1.px(1.3)-40,m1.py(a)-6,'y = a','#e65100','bold 11.5px Segoe UI');
+    tlabel(ctx,m1.px(1.3)-40,m1.py(0)+16,'y = 0','#e65100','bold 11.5px Segoe UI');
+    dot(ctx,m1.px(-1.8)+2,m1.py(0),3,'#c62828');
+    ctx.restore();
+    tlabel(ctx,12,26,'z 平面: 带形域 0 '+LT+' Im z '+LT+' a','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: w 平面的角形域 ----
+    var sx=halfW+24, span=2.9, RB=2.2;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-span,span,-span*0.78,span*0.78);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'u','v');
+    sector(ctx,m2,0,a,RB,'rgba(230,81,0,.10)','#e65100');
+    XS.forEach(function(x0){
+      var r=Math.exp(x0); if(r>span*0.92) return;
+      mathArc(ctx,m2.px(0),m2.py(0),r*m2.s,0,a,'#1565c0',1.4);
+    });
+    for(var j=0;j<=4;j++){
+      var ang=a*j/4;
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=(j===0||j===4)?2.2:1.3;
+      ctx.beginPath(); ctx.moveTo(m2.px(0),m2.py(0));
+      ctx.lineTo(m2.px(RB*Math.cos(ang)),m2.py(RB*Math.sin(ang))); ctx.stroke();
+    }
+    var ly=RB*0.80;
+    tlabel(ctx,m2.px(ly*Math.cos(a))-34,m2.py(ly*Math.sin(a))-6,'arg w = a','#e65100','bold 11.5px Segoe UI');
+    dot(ctx,m2.px(0),m2.py(0),4,'#c62828');
+    ctx.restore();
+    tlabel(ctx,sx,26,'w 平面: 角形域 0 '+LT+' arg w '+LT+' a','#37474f','bold 12.5px Segoe UI');
+    var aDeg=a*180/Math.PI;
+    var full=(Math.abs(a-TAU)<1e-6);
+    setRO('exReadout',
+      '当前带形域 $0&lt;\\operatorname{Im}(z)&lt;a$, 其中 $a='+fmt(a/Math.PI,2)+'\\pi$ (即 $'+fmt(aDeg,0)+'^\\circ$).<br>'+
+      hl('直线 $x=x_0$ &nbsp;&rarr;&nbsp; 圆周 $|w|=\\mathrm{e}^{x_0}$ (蓝)')+
+      '&nbsp;&nbsp;|&nbsp;&nbsp;'+hl2('直线 $y=y_0$ &nbsp;&rarr;&nbsp; 射线 $\\arg w=y_0$ (橙)')+'<br>'+
+      '带形域被 $w=\\mathrm{e}^z$ 映成角形域 $0&lt;\\arg w&lt;a$, 张角为 $'+fmt(aDeg,0)+'^\\circ$'+(full?' —— 恰好铺满 $2\\pi$, 即沿正实轴割开的 $w$ 平面':'')+'.<br>'+
+      '$(\\mathrm{e}^z)^{\\prime}=\\mathrm{e}^z\\neq 0$, 故 $w=\\mathrm{e}^z$ 处处共形.');
+  }
+  bindSlider('exA',function(v){ a=v*Math.PI; badge('exAV',fmt(v,2)+' π'); draw(); });
+  badge('exAV',fmt(a/Math.PI,2)+' π');
+  return {draw:draw};
+});
+
+// ================= 模块 4: 分步映射链 (平移 → 旋转伸缩 → 指数) =================
+module('cvLog',function(cv){
+  var W=1.6, t=0, cy=0.35, k=0;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var gap=16, pw=(w-2*gap)/3, H=h-70;
+    var eR=(cy*Math.PI)/W;
+    var xiRe=-eR, xiIm=t*Math.PI;
+    var rad=Math.exp(xiRe), wRe=rad*Math.cos(xiIm), wIm=rad*Math.sin(xiIm);
+    // ---- 面板 1: z 平面 ----
+    ctx.save(); ctx.translate(0,40);
+    var m1=mapperEq(pw,H,-0.35,W+0.35,-1.05,1.05);
+    grid(ctx,pw,H,m1,0.5); axes(ctx,pw,H,m1,'x','y');
+    ctx.fillStyle='rgba(21,101,192,.12)';
+    ctx.fillRect(m1.px(0),m1.py(1.0),m1.px(W)-m1.px(0),m1.py(-1.0)-m1.py(1.0));
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(-1.0)); ctx.lineTo(m1.px(0),m1.py(1.0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(m1.px(W),m1.py(-1.0)); ctx.lineTo(m1.px(W),m1.py(1.0)); ctx.stroke();
+    dot(ctx,m1.px(t*W),m1.py(cy),6,'#c62828','#fff');
+    tlabel(ctx,m1.px(t*W)+8,m1.py(cy)-8,'z₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,4,26,'z 平面: 0 '+LT+' Re z '+LT+' '+fmt(W),'#37474f','bold 12px Segoe UI');
+    // ---- 面板 2: ξ 平面 ----
+    ctx.save(); ctx.translate(pw+gap,40);
+    var m2=mapperEq(pw,H,-0.7,Math.PI+0.7,-0.7,Math.PI+0.7);
+    grid(ctx,pw,H,m2,0.5); axes(ctx,pw,H,m2,'Re','Im');
+    ctx.fillStyle='rgba(230,81,0,.12)';
+    ctx.fillRect(0,m2.py(Math.PI),pw,m2.py(0)-m2.py(Math.PI));
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(0,m2.py(0)); ctx.lineTo(pw,m2.py(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,m2.py(Math.PI)); ctx.lineTo(pw,m2.py(Math.PI)); ctx.stroke();
+    dot(ctx,m2.px(xiRe),m2.py(xiIm),6,'#c62828','#fff');
+    tlabel(ctx,m2.px(xiRe)+8,m2.py(xiIm)-8,'ξ₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,pw+gap+4,26,'ξ 平面: 0 '+LT+' Im ξ '+LT+' π','#37474f','bold 12px Segoe UI');
+    // ---- 面板 3: w 平面 ----
+    ctx.save(); ctx.translate(2*(pw+gap),40);
+    var m3=mapperEq(pw,H,-2.7,2.7,-1.7,2.5);
+    grid(ctx,pw,H,m3,0.5); axes(ctx,pw,H,m3,'u','v');
+    ctx.fillStyle='rgba(46,125,50,.12)';
+    ctx.fillRect(0,0,pw,m3.py(0));
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.moveTo(0,m3.py(0)); ctx.lineTo(pw,m3.py(0)); ctx.stroke();
+    dot(ctx,m3.px(wRe),m3.py(wIm),6,'#c62828','#fff');
+    tlabel(ctx,m3.px(wRe)+8,m3.py(wIm)-8,'w₀','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,2*(pw+gap)+4,26,'w 平面: 上半平面 Im w '+GT+' 0','#37474f','bold 12px Segoe UI');
+    setRO('lgReadout',
+      '映射链: '+hl('① 平移 $z-a$')+' &rarr; '+hl('② 旋转伸缩 $\\xi=\\frac{\\pi\\mathrm{i}}{b-a}(z-a)$')+' &rarr; '+hl('③ 指数 $w=\\mathrm{e}^{\\xi}$')+'.<br>'+
+      '当前带宽 $b-a='+fmt(W)+'$; 动点 $z_0='+fmt(t*W)+' + '+fmt(cy)+'\\mathrm{i}$ 沿链变为 '+
+      '$\\xi_0='+fmt(xiRe)+' + '+fmt(xiIm)+'\\mathrm{i}$ &rarr; $w_0='+fmt(wRe)+' + '+fmt(wIm)+'\\mathrm{i}$ (始终落在上半平面).<br>'+
+      '带形域 $a&lt;\\operatorname{Re}(z)&lt;b$ &rarr; 带形域 $0&lt;\\operatorname{Im}(\\xi)&lt;\\pi$ &rarr; 上半平面 $\\operatorname{Im}(w)&gt;0$, 合起来即 $w=\\mathrm{e}^{\\frac{\\pi\\mathrm{i}}{b-a}(z-a)}$ (例 3.4 / 例 5).');
+  }
+  bindSlider('lgW',function(v){ W=v; badge('lgWV',fmt(v)); draw(); });
+  badge('lgWV',fmt(W));
+  animLoop(function(){
+    if(cv.offsetParent!==null){
+      k++; t+=0.009; if(t>1) t=0;
+      if(k%2===0) draw();
+    }
+    return true;
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'幂函数 w = z^n', c:'#1976d2', leaves:['$z=r\\mathrm{e}^{\\mathrm{i}\\theta}\\Rightarrow w=r^n\\mathrm{e}^{\\mathrm{i}n\\theta}$','模取 $n$ 次幂, 辐角扩大 $n$ 倍','$f\'(z)=nz^{n-1}$: $z\\neq 0$ 处处共形','$z=0$: $f\'(0)=0$, 不共形','角形域张角 $\\theta_0$ 放大为 $n\\theta_0$','单叶性条件: $\\theta_0\u003c\\frac{2\\pi}{n}$','$0\u003c\\arg z\u003c\\frac{2\\pi}{n}$ → 去正实轴的平面']},
+    {t:'根式函数 w = z^(1/n)', c:'#e65100', leaves:['$w=z^{1/n}$ 有 $n$ 个相异的根','取主值支 ($k=0$) 才单值','张角 $\\theta_0$ 缩小为 $\\frac{\\theta_0}{n}$','$0\u003c\\arg z\u003c 2\\pi$ → $0\u003c\\arg w\u003c\\frac{2\\pi}{n}$','需沿割痕割开平面才解析','例3.1: $z^4$ → 上半平面 → 单位圆','例3.2: $\\sqrt{z}$ → 上半平面 → 单位圆']},
+    {t:'指数函数 w = e^z', c:'#c62828', leaves:['$z=x+\\mathrm{i}y$: $\\rho=\\mathrm{e}^x$, $\\varphi=y$','直线 $x$ = 常数 → 圆周 $|w|=\\mathrm{e}^{x_0}$','直线 $y$ = 常数 → 射线 $\\arg w=y_0$','带形域 $0\u003c\\operatorname{Im} z\u003c a$ → $0\u003c\\arg w\u003c a$','$0\u003c\\operatorname{Im} z\u003c 2\\pi$ → 去正实轴的平面','$(\\mathrm{e}^z)\'=\\mathrm{e}^z\\neq 0$: 处处共形','例3.3: $\\mathrm{e}^z$ → 上半平面 → 单位圆']},
+    {t:'对数函数 Ln z', c:'#2e7d32', leaves:['$\\operatorname{Ln} z=\\ln|z|+\\mathrm{i}\\operatorname{Arg} z$ (多值)','主值支 $\\ln z=\\ln|z|+\\mathrm{i}\\arg z$','沿负实轴割开后可取单值解析支','$(\\ln z)\'=\\frac{1}{z}$: 该区域上共形','带形域 $a\u003c\\operatorname{Re} z\u003c b$ → $\\operatorname{Im} w>0$','$w=\\mathrm{e}^{\\frac{\\pi\\mathrm{i}(z-a)}{b-a}}$ (例3.4 / 例5)','指数与对数: 一对互逆的映射']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第六章第三节 · 几个初等函数所构成的映射';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var nn=0;
+    animLoop(function(){ nn++;
+      if(nn%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 幂函数 (角放大 n 倍) &rarr; 根式函数 (角缩小 1/n) &rarr; 指数函数 (带形域变角形域) &rarr; 对数函数与分步映射链. 一句话: <b>把复杂区域先"搬"成上半平面或单位圆, 再在标准区域上研究</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'本节反复出现"多值函数", 如 w = z^{1/n} 有 n 个值、Ln z 有无穷多个值. 为什么数学家不干脆宣布它们"不是函数", 而要费力去取主值支、引割线、造黎曼曲面?',
+     hints:['多值并不等于"没有规律": z^{1/n} 的 n 个值、Ln z 的各分支之间差着固定的因子, 结构非常清楚.',
+            '取主值支 + 引割线, 是为了在局部把多值对象变成可解析、可求导、可共形的单值对象.',
+            '黎曼更进一步: 与其在平面上勉强切一刀, 不如把平面换成多层曲面, 让函数回到单值.',
+            '可迁移的态度: 遇到"不规整"的对象, 先别急着否定它, 而是问"需要给它换一个什么样的环境".']},
+    {q:'w = e^z 把直线 x = 常数映成圆周、把直线 y = 常数映成射线. 为什么同一个函数对两种直线有完全不同的"处理方式"?',
+     hints:['因为 w = e^z 的极坐标表示是 ρ = e^x, φ = y: x 只管模, y 只管辐角.',
+            '模固定 → 圆周; 辐角固定 → 射线. 这不是函数的"偏心", 而是两个变量各司其职的结果.',
+            '再从带形域看: 0 < Im z < a 中的 y 取值范围决定张角, 于是带形域被打开成角形域.',
+            '可迁移的态度: 面对一个复杂的变换, 先把它拆成"哪一部分管什么", 结构就清楚了.']},
+    {q:'黎曼映射定理说: 任意单连通的真区域都能共形地映成单位圆. 这句话在"解题"上意味着什么?',
+     hints:['意味着在共形映射的眼光下, 一切单连通区域都"等价于单位圆", 只有"是不是单连通"这一条本质差别.',
+            '因此区域映射题的标准套路是: 用初等函数把区域搬到上半平面或单位圆, 再在标准区域上研究.',
+            '本节四个例子 (例 3.1 至例 5) 走的正是这条路: 调张角 → 上半平面 → 单位圆.',
+            '可迁移的态度: 先想办法把问题"化归"到一个最熟悉的标准情形, 再动手解决.']},
+    {q:'从"角形域张角被放大 n 倍"到"再缩小 1/n", 本节用幂函数与根式函数处理了一对互逆的问题. 这种"正着做与反着做"的思路有什么价值?',
+     hints:['放大与缩小是同一个映射的两个方向: w = z^n 与 w = z^{1/n} 互为反函数, 图像上互为"拉伸"与"压缩".',
+            '遇到难处理的映射时, 研究它的反函数往往能提供另一条捷径 (例 3.4 中 e^ξ 与 Ln ξ 的关系).',
+            '正逆对照也帮助检查: 放大 n 倍再缩小 1/n, 应当回到原来的角形域, 这是天然的验算.',
+            '可迁移的态度: 当一个方向想不通时, 试着把问题反过来问一遍.']},
+    {q:'从《九章算术》的"开方术"、《周髀算经》的"勾股各自乘, 并而开方除之", 到航空翼型、流场、芯片与天线设计中的保角映射, 再到熊庆来、杨乐与张广厚在函数论上的贡献 —— 你如何理解"基础理论服务国家需求"?',
+     hints:['开方与乘方是最基础的运算, 古人把它写成算法; 今天的保角映射原理上仍是"把复杂区域搬成简单区域"这一件事.',
+            '机翼绕流、静电场与温度场计算、波导与天线设计, 都要借助区域映射把问题化到规则区域上求解.',
+            '熊庆来在函数值分布论上的开拓、杨乐与张广厚在亏值与奇异方向上的成果, 说明基础研究同样能在国际前沿留下中国人的名字.',
+            '可迁移的态度: 尊重最基础的工作, 并愿意把最基础的东西用到最需要的地方去.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

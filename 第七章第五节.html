@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章第五节 序列的傅里叶变换</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第七章第五节 序列的傅里叶变换</h1>
+    <p>离散时间序列的傅里叶变换 (DTFT) &middot; 定义与逆变换 &middot; 频谱的 $2\pi$ 周期性 &middot; 基本性质与典型序列</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解从连续时间信号的傅里叶变换到<b>离散序列</b>的过渡: 经过等间隔采样与离散化, 得到序列 $x(n)$ 的傅里叶变换 (DTFT) $X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}$, 并记住其收敛条件 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty$;
+2. 掌握<b>逆变换 (IDTFT)</b> $x(n)=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega$, 会用<b>正交性</b> $\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}\omega(n-m)}\,\mathrm{d}\omega=2\pi\delta_{nm}$ 独立完成推导, 并知道积分区间可取<b>任意长度为 $2\pi$ 的区间</b>;
+3. 理解 DTFT 与连续傅里叶变换最重要的差别: $X(\mathrm{e}^{\mathrm{i}\omega})$ 是<b>以 $2\pi$ 为周期的连续函数</b>, 只需在 $[-\pi,\pi]$ (或任意一个周期) 上研究它;
+4. 掌握 DTFT 的基本性质: 线性、平移、时间倒置、频域微分、帕塞瓦尔等式、卷积定理与调制 (加窗) 定理, 能写出各自的条件与结论;
+5. 会求 $\delta(n)$、$\alpha^n u(n)$ ($|\alpha|&lt;1$)、矩形序列等典型序列的 DTFT, 并能综合运用性质 (如频域微分、卷积定理) 计算级数和与频谱.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-7e" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-7e" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-7e" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-7e" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-7e" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-7e" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、DTFT 的定义</label>
+    <label class="tab-btn" for="tab2" id="label2">二、逆变换的推导与周期性</label>
+    <label class="tab-btn" for="tab3" id="label3">三、DTFT 的性质</label>
+    <label class="tab-btn" for="tab4" id="label4">四、典型序列与综合例题</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: DTFT 的定义 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 从连续傅里叶变换到离散序列</div>
+
+<div class="box-key">
+<div class="title">过渡: 采样与离散化</div>
+前几章我们研究的都是<b>连续时间</b>信号 $f(t)$ 的傅里叶变换
+<div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t,\qquad f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+现在只在等间隔时刻 $t=nT$ 上取样本, 得到一串数 $\{f(nT)\}$ ($n=0,\pm1,\pm2,\cdots$). 把采样间隔归一化并约定把 $T$ 吸收进幅值, 记
+<div class="box-formula">$$x(n)=T\,f(nT)\qquad (n=0,\pm1,\pm2,\cdots),$$</div>
+于是得到<b>离散时间序列</b> $\{x(n)\}_{n=-\infty}^{+\infty}$.
+<br><br>
+关键的一步在于: 时间变量由连续的 $t$ 变成了离散的整数 $n$, 于是连续变换中的<b>积分</b> $\int(\cdot)\,\mathrm{d}t$ 自然地被<b>求和</b> $\sum\limits_{n=-\infty}^{+\infty}(\cdot)$ 取代; 而角频率 $\omega$ 仍可取连续值. 这样得到的变换, 就是本节的<b>序列的傅里叶变换</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">定义 5.1 (序列的傅里叶变换 · DTFT)</div>
+设序列 $x(n)\,(n=0,\pm1,\pm2,\cdots)$ <b>绝对可和</b>, 即
+<div class="box-formula">$$\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty,$$</div>
+则称
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n},\qquad \omega\in[-\pi,\pi]$$</div>
+为序列 $x(n)$ 的傅里叶变换, 简记为 <b>DTFT</b> (Discrete-Time Fourier Transform).
+</div>
+
+<div class="box-key">
+<div class="title">定义 5.2 (逆变换 · IDTFT)</div>
+称
+<div class="box-formula">$$x(n)=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega\qquad (n=0,\pm1,\pm2,\cdots)$$</div>
+为 $X(\mathrm{e}^{\mathrm{i}\omega})$ 的<b>逆变换</b>, 简记为 <b>IDTFT</b>; 有时也称它为序列 $\{x(n)\}$ 的<b>傅里叶级数表达式</b>. 由定义 5.1 与定义 5.2 立即看出: 序列 $x(n)$ 与它的频谱 $X(\mathrm{e}^{\mathrm{i}\omega})$ 是一一对应的.
+</div>
+
+<div class="box-key">
+<div class="title">变换对的记号</div>
+为方便起见, 引入正变换与逆变换的算子记号
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\mathscr{F}\{x(n)\},\qquad x(n)=\mathscr{F}^{-1}\{X(\mathrm{e}^{\mathrm{i}\omega})\}.$$</div>
+时间域序列 $\{x(n)\}_{n=-\infty}^{+\infty}$ 与其频谱 $X(\mathrm{e}^{\mathrm{i}\omega})$ 构成一个<b>傅里叶变换对</b>, 记作
+<div class="box-formula">$$x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega}).$$</div>
+请特别注意: 时间域是<b>离散</b>的 (只在整数 $n$ 处取值), 而频率域函数 $X(\mathrm{e}^{\mathrm{i}\omega})$ 却是<b>关于 $\omega$ 的连续函数</b> —— 这是与"连续傅里叶变换"截然相反的一对关系.
+</div>
+
+<div class="chart-container">
+<h3>交互: 复指数序列 $\mathrm{e}^{-\mathrm{i}\omega n}$ 与加权求和 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">DTFT 的右端 $\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}$ 是"把每个样本 $x(n)$ 乘上不同的复指数后相加". 下图取 $x(n)=a^{|n|}$ ($a=0.8$) 作为示范序列. <b>左图</b>画出复指数序列 $\mathrm{e}^{-\mathrm{i}\omega n}$ 的实部 (蓝) 与虚部 (橙) 随 $n$ 的变化; <b>右图</b>在复平面上把每一项 $x(n)\mathrm{e}^{-\mathrm{i}\omega n}$ 依次"首尾相接"地相加 (红色箭头链), 绿色箭头是它们的和, 即 $X(\mathrm{e}^{\mathrm{i}\omega})$. 拖动滑块改变频率 $\omega$, 观察复指数序列的频率如何变化、求和结果如何随之移动.</div>
+<div class="fig-caps">
+<div class="fc">复指数序列 $\mathrm{e}^{-\mathrm{i}\omega n}$: 实部 (蓝) 与虚部 (橙) 随 $n$ 的变化</div>
+<div class="fc">复平面: 逐项向量求和 (红) 与结果 $X(\mathrm{e}^{\mathrm{i}\omega})$ (绿)</div>
+</div>
+<canvas id="cvDtft" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>频率 $\omega$:</label>
+<input type="range" id="dtftW" min="-3.14" max="3.14" step="0.01" value="0.79">
+<span class="val-badge" id="dtftWV">0.79</span>
+</div>
+<div class="readout" id="dtftReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">收敛条件的作用</div>
+定义 5.1 中要求 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty$, 这是为了保证右端的级数<b>绝对收敛</b>, 从而 $X(\mathrm{e}^{\mathrm{i}\omega})$ 对每个 $\omega$ 都取有限值. 这个条件只是<b>充分</b>的: 有些绝对不可和的序列 (如周期序列) 也在更广的意义下拥有 DTFT, 本节暂不展开.
+<br><br>
+像例 5.2 中 $x(n)=\alpha^n u(n)$ 这类序列, 正是靠 $|\alpha|&lt;1$ 才使级数收敛 —— 这一条件在后面的例题里会反复出现.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 逆变换的推导与周期性 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 逆变换的推导</div>
+
+<div class="box-key">
+<div class="title">思路: 两端乘以 $\mathrm{e}^{\mathrm{i}\omega m}$ 再积分</div>
+已知
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n},\qquad \omega\in[-\pi,\pi].$$</div>
+把两端同乘 $\mathrm{e}^{\mathrm{i}\omega m}$, 再从 $-\pi$ 到 $\pi$ 对 $\omega$ 积分:
+<div class="box-formula">$$\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega m}\,\mathrm{d}\omega=\sum\limits_{n=-\infty}^{+\infty}x(n)\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}\omega(m-n)}\,\mathrm{d}\omega.$$</div>
+右端交换求和与积分次序 (绝对可和保证可以交换), 接下来只需算最里面那个积分.
+</div>
+
+<div class="box-key">
+<div class="title">函数系的正交性</div>
+函数系 $\{\mathrm{e}^{\mathrm{i}n\omega}\}_{n=-\infty}^{+\infty}$ 在 $[-\pi,\pi]$ 上<b>正交</b>:
+<div class="box-formula">$$\int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}\omega(n-m)}\,\mathrm{d}\omega=\begin{cases}0, & n\neq m,\\[6pt] 2\pi, & n=m,\end{cases}\qquad\text{即}\quad \int_{-\pi}^{\pi}\mathrm{e}^{\mathrm{i}\omega(n-m)}\,\mathrm{d}\omega=2\pi\delta_{nm}.$$</div>
+其中 $\delta_{nm}$ 是克罗内克 (Kronecker) 符号. 它的来历很简单: 当 $n\neq m$ 时被积函数是周期为 $2\pi$ 的正弦/余弦函数, 在一个整周期上积分为 $0$; 当 $n=m$ 时被积函数恒为 $1$, 积分即区间长度 $2\pi$.
+</div>
+
+<div class="box-result">
+<div class="res-label">逆变换的导出</div>
+由于正交性, 右端求和里除 $n=m$ 这一项以外全部为 $0$, 于是
+<div class="box-formula">$$\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega m}\,\mathrm{d}\omega=2\pi\,x(m).$$</div>
+把哑标 $m$ 改写成 $n$, 便得逆变换
+<div class="box-formula">$$x(n)=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega\qquad (n=0,\pm1,\pm2,\cdots).$$</div>
+至此, 定义 5.2 得到了完整的推导.
+</div>
+
+<div class="sec-title">2.2 两个重要注释</div>
+
+<div class="box-key">
+<div class="title">注 1: 积分区间可以取任意长度为 $2\pi$ 的区间</div>
+被积函数 $X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}$ 关于 $\omega$ 以 $2\pi$ 为周期 (见下), 因此在一个周期长度上积分, 从哪一点开始都一样. 所以逆变换也可写成
+<div class="box-formula">$$x(n)=\dfrac{1}{2\pi}\int_{0}^{2\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega=\dfrac{1}{2\pi}\int_{-\pi+\theta}^{\pi+\theta}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega,$$</div>
+其中 $\theta$ 可任取. 今后为整齐起见, 统一采用 $[-\pi,\pi]$.
+</div>
+
+<div class="box-key">
+<div class="title">注 2: 频谱的 $2\pi$ 周期性 (与连续情形最重要的差别)</div>
+因为 $\mathrm{e}^{-\mathrm{i}(\omega+2\pi)n}=\mathrm{e}^{-\mathrm{i}\omega n}\mathrm{e}^{-\mathrm{i}2\pi n}=\mathrm{e}^{-\mathrm{i}\omega n}$ (对整数 $n$ 恒成立), 所以
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}(\omega+2\pi)})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}(\omega+2\pi)n}=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}=X(\mathrm{e}^{\mathrm{i}\omega}).$$</div>
+也就是说, $X(\mathrm{e}^{\mathrm{i}\omega})$ 是<b>以 $2\pi$ 为周期的连续函数</b>. 这与连续傅里叶变换 (其频谱一般并不周期) 构成最重要的对照: 序列在时间域上的<b>离散性</b>, 换来了频谱在频率域上的<b>周期性</b>. 正因为如此, 只需在一个周期 $[-\pi,\pi]$ 上研究 DTFT 就够了.
+</div>
+
+<div class="chart-container">
+<h3>交互: 频谱的 $2\pi$ 周期性 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $x(n)=\alpha^n u(n)$ ($\alpha=0.8$), 其频谱为 $X(\mathrm{e}^{\mathrm{i}\omega})=\frac{1}{1-\alpha\mathrm{e}^{-\mathrm{i}\omega}}$, 图中画的是模 $\left|X(\mathrm{e}^{\mathrm{i}\omega})\right|$ 在 $\omega\in[-3\pi,3\pi]$ 上的曲线. 可以看到它在 $\omega=0$ 处有一个主峰, 并且<b>每隔 $2\pi$ 完整地重复一次</b> (蓝色虚线为周期分界). 拖动滑块让 $\omega$ 越出 $[-\pi,\pi]$, 注意读数会与 $[-\pi,\pi]$ 中某个等价的 $\omega$ 完全一致 —— 这正是"只需研究一个周期"的含义.</div>
+<div class="fig-caps">
+<div class="fc">$|X(\mathrm{e}^{\mathrm{i}\omega})|$ 在 $[-3\pi, 3\pi]$ 上的曲线: 每隔 $2\pi$ 完整重复一次   (绿=当前 $\omega$, 橙=$[-\pi,\pi]$ 内的等价频率)</div>
+</div>
+<canvas id="cvPeriod" data-h="360"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>频率 $\omega$ (单位 $\pi$):</label>
+<input type="range" id="perW" min="-3" max="3" step="0.02" value="0.4">
+<span class="val-badge" id="perWV">$0.40\pi$</span>
+</div>
+<div class="readout" id="perReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: DTFT 的性质 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 DTFT 的基本性质</div>
+
+<div class="box-key">
+<div class="title">(1) 线性性质</div>
+若 $x_1(n)\leftrightarrow X_1(\mathrm{e}^{\mathrm{i}\omega})$, $x_2(n)\leftrightarrow X_2(\mathrm{e}^{\mathrm{i}\omega})$, 则对任意常数 $a,b$
+<div class="box-formula">$$a\,x_1(n)+b\,x_2(n)\leftrightarrow a\,X_1(\mathrm{e}^{\mathrm{i}\omega})+b\,X_2(\mathrm{e}^{\mathrm{i}\omega}).$$</div>
+结论直接由求和的线性性得到.
+</div>
+
+<div class="box-key">
+<div class="title">(2) 平移性质</div>
+若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则
+<div class="box-formula">$$x(n-n_0)\leftrightarrow \mathrm{e}^{-\mathrm{i}\omega n_0}X(\mathrm{e}^{\mathrm{i}\omega}),\qquad \mathrm{e}^{\mathrm{i}\omega_0 n}x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}(\omega-\omega_0)}).$$</div>
+第一式是<b>时间平移</b>: 序列右移 $n_0$ 位, 频谱的<b>模不变</b>, 只额外乘上一个 $\mathrm{e}^{-\mathrm{i}\omega n_0}$, 即在相位上叠加了一条斜率为 $-n_0$ 的<b>线性相位</b>. 第二式是<b>频率平移</b>, 它正是通信中"调制"的数学描述.
+</div>
+
+<div class="box-key">
+<div class="title">(3) 时间倒置</div>
+若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则
+<div class="box-formula">$$x(-n)\leftrightarrow X(\mathrm{e}^{-\mathrm{i}\omega}).$$</div>
+序列沿纵轴翻转, 频谱也随之把 $\omega$ 换成 $-\omega$.
+</div>
+
+<div class="box-key">
+<div class="title">(4) 频域微分</div>
+若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则
+<div class="box-formula">$$n\,x(n)\leftrightarrow \mathrm{i}\,\dfrac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}.$$</div>
+时间域乘上 $n$, 相当于对频谱在频率域求导. 这条性质是把"求含 $n$ 的级数和"问题转化为"求频谱导数"问题的钥匙, 例 5.3 会用到它.
+</div>
+
+<div class="box-key">
+<div class="title">(5) 帕塞瓦尔 (Parseval) 等式</div>
+若 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|^2&lt;+\infty$ 且 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则
+<div class="box-formula">$$\sum\limits_{n=-\infty}^{+\infty}|x(n)|^2=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}\bigl|X(\mathrm{e}^{\mathrm{i}\omega})\bigr|^2\,\mathrm{d}\omega.$$</div>
+左端是序列的<b>能量</b>, 右端是频谱的能量在一个周期上的平均. 它说明: 变换不改变能量, 时间域里算与频率域里算结果一样.
+</div>
+
+<div class="box-key">
+<div class="title">(6) 卷积定理</div>
+定义序列 $x(n)$ 与 $h(n)$ 的<b>卷积</b>为
+<div class="box-formula">$$y(n)=x(n)*h(n)=\sum\limits_{k=-\infty}^{+\infty}x(k)h(n-k).$$</div>
+若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, $h(n)\leftrightarrow H(\mathrm{e}^{\mathrm{i}\omega})$, $y(n)\leftrightarrow Y(\mathrm{e}^{\mathrm{i}\omega})$, 则
+<div class="box-formula">$$y(n)=x(n)*h(n)\leftrightarrow Y(\mathrm{e}^{\mathrm{i}\omega})=X(\mathrm{e}^{\mathrm{i}\omega})\cdot H(\mathrm{e}^{\mathrm{i}\omega}).$$</div>
+即<b>时间域的卷积对应频率域的乘积</b>. 反过来, <b>时间域的乘积对应频率域的周期卷积</b>, 这正是下面第 (7) 条.
+</div>
+
+<div class="box-key">
+<div class="title">(7) 调制 (加窗) 定理</div>
+若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, $h(n)\leftrightarrow H(\mathrm{e}^{\mathrm{i}\omega})$ 且 $y(n)=x(n)h(n)$, 则
+<div class="box-formula">$$Y(\mathrm{e}^{\mathrm{i}\omega})=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\theta})H\bigl(\mathrm{e}^{\mathrm{i}(\omega-\theta)}\bigr)\,\mathrm{d}\theta.$$</div>
+右端称为 $X$ 与 $H$ 的<b>周期卷积</b>. 一个典型的应用就是"<b>加窗</b>": 用有限长的窗函数 $h(n)$ 去乘一段长序列 $x(n)$, 频谱就变成原频谱被窗的频谱"周期卷积"平滑一遍.
+</div>
+
+<div class="chart-container">
+<h3>交互: 时移产生线性相位 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $x(n)=0.6^{|n|}$, 它的频谱 $X(\mathrm{e}^{\mathrm{i}\omega})$ 是<b>正实函数</b> (相位恒为 $0$). <b>左图</b>用蓝色竖线画原序列 $x(n)$, 用橙色竖线画右移后的序列 $x(n-n_0)$; <b>右图</b>画时移后频谱的相位谱 $\arg X_{\text{移}}(\mathrm{e}^{\mathrm{i}\omega})=-\omega n_0$. 拖动滑块改变位移量 $n_0$: 时移不改变频谱的模, 只让相位谱变成一条<b>过原点、斜率为 $-n_0$ 的直线</b> —— 这就是"线性相位"。</div>
+<div class="fig-caps">
+<div class="fc">相位谱 $\arg X_s(\mathrm{e}^{\mathrm{i}\omega}) = -\omega n_0$: 一条过原点、斜率为 $-n_0$ 的直线</div>
+</div>
+<canvas id="cvShift" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>位移量 $n_0$:</label>
+<input type="range" id="shN0" min="-4" max="4" step="1" value="1">
+<span class="val-badge" id="shN0V">1</span>
+</div>
+<div class="readout" id="shReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 典型序列与综合例题 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 三个典型序列的 DTFT</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.1</div>
+求<b>单位样本序列</b> (也叫离散时间冲激)
+<div class="box-formula">$$\delta(n)=\begin{cases}0, & n\neq 0,\\[6pt] 1, & n=0\end{cases}$$</div>
+的 DTFT.
+<input type="checkbox" id="c7s5ans1" class="answer-toggle">
+<label for="c7s5ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由 DTFT 的定义, 求和中只有 $n=0$ 这一项非零:
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}\delta(n)\mathrm{e}^{-\mathrm{i}\omega n}=1.$$</div>
+即单位样本序列的频谱是<b>常数谱</b> $1$, 对一切 $\omega$ 恒为 $1$.
+<br><br>
+这里的 $\delta(n)$ 是一个<b>确定的序列</b>, 不同于连续情形下的单位脉冲函数 $\delta(t)$ (后者是广义函数). 但单位样本序列 $\delta(n)$ 在离散时间信号分析中所起的作用, 与 $\delta(t)$ 在连续时间信号分析中的作用是类似的.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.2</div>
+求如下序列 $x(n)$ 的 DTFT, 其中 $|\alpha|&lt;1$:
+<div class="box-formula">$$x(n)=\begin{cases}\alpha^{\,n}, & n\geq 0,\\[6pt] 0, & n&lt;0.\end{cases}$$</div>
+<input type="checkbox" id="c7s5ans2" class="answer-toggle">
+<label for="c7s5ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}=\sum\limits_{n=0}^{+\infty}\alpha^{\,n}\mathrm{e}^{-\mathrm{i}\omega n}=\sum\limits_{n=0}^{+\infty}\left(\alpha\,\mathrm{e}^{-\mathrm{i}\omega}\right)^{n}.$$</div>
+这是一个公比为 $\alpha\mathrm{e}^{-\mathrm{i}\omega}$ 的几何级数. 由 $|\alpha|&lt;1$ 知 $|\alpha\mathrm{e}^{-\mathrm{i}\omega}|=|\alpha|&lt;1$, 故级数收敛, 代入几何级数求和公式得
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\dfrac{1}{1-\alpha\,\mathrm{e}^{-\mathrm{i}\omega}}.$$</div>
+<b>注意</b>: $|\alpha|&lt;1$ 是这里的"命门" —— 它保证几何级数收敛, DTFT 才存在; 若 $|\alpha|\geq 1$, 级数发散, 上述频谱无意义.
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">矩形序列与狄利克雷核</div>
+取长度为 $N$ 的矩形序列 (在 $0\le n\le N-1$ 上取 $1$, 其余为 $0$), 由定义并利用几何级数
+<div class="box-formula">$$R_N(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=0}^{N-1}\mathrm{e}^{-\mathrm{i}\omega n}=\mathrm{e}^{-\mathrm{i}\omega\frac{N-1}{2}}\cdot\dfrac{\sin\!\left(\dfrac{N\omega}{2}\right)}{\sin\!\left(\dfrac{\omega}{2}\right)}.$$</div>
+其中因子 $\frac{\sin(N\omega/2)}{\sin(\omega/2)}$ 称为<b>狄利克雷核</b> (Dirichlet kernel). 它的模在 $\omega=0$ 处取到最大值 $N$ (称为<b>主瓣</b>), 两侧还排列着一串逐渐变小的<b>旁瓣</b> (每两个零点之间的凸起). 这个"主瓣 + 旁瓣"的结构, 正是矩形窗 (以及一切有限长序列) 频谱的典型面貌.
+</div>
+
+<div class="sec-title">4.2 综合例题: 用性质求级数和</div>
+
+<div class="box-example">
+<div class="ex-label">例 5.3</div>
+利用 DTFT 的性质, 求级数 $\sum\limits_{n=0}^{+\infty}n\left(\frac{1}{2}\right)^{n}$ 的和.
+<input type="checkbox" id="c7s5ans3" class="answer-toggle">
+<label for="c7s5ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+令
+<div class="box-formula">$$x(n)=\begin{cases}\left(\dfrac{1}{2}\right)^{n}, & n\geq 0,\\[12pt] 0, & n&lt;0.\end{cases}$$</div>
+由例 5.2 (取 $\alpha=\frac{1}{2}$), $x(n)$ 的 DTFT 为
+<div class="box-formula">$$X(\mathrm{e}^{\mathrm{i}\omega})=\dfrac{1}{1-\dfrac{1}{2}\mathrm{e}^{-\mathrm{i}\omega}}.$$</div>
+再令 $y(n)=n\,x(n)$. 由<b>频域微分性质</b> $n\,x(n)\leftrightarrow \mathrm{i}\frac{\mathrm{d}X}{\mathrm{d}\omega}$, 得
+<div class="box-formula">$$Y(\mathrm{e}^{\mathrm{i}\omega})=\mathscr{F}\{n\,x(n)\}=\mathrm{i}\,\dfrac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}=\dfrac{\dfrac{1}{2}\mathrm{e}^{-\mathrm{i}\omega}}{\left(1-\dfrac{1}{2}\mathrm{e}^{-\mathrm{i}\omega}\right)^{2}}.$$</div>
+另一方面, 由 DTFT 的定义
+<div class="box-formula">$$Y(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}n\,x(n)\mathrm{e}^{-\mathrm{i}\omega n}=\sum\limits_{n=0}^{+\infty}n\left(\dfrac{1}{2}\right)^{n}\mathrm{e}^{-\mathrm{i}\omega n}.$$</div>
+取 $\omega=0$, 左端复指数因子全为 $1$, 右端即所求级数:
+<div class="box-formula">$$\sum\limits_{n=0}^{+\infty}n\left(\dfrac{1}{2}\right)^{n}=Y(\mathrm{e}^{\mathrm{i}0})=\dfrac{\dfrac{1}{2}}{\left(1-\dfrac{1}{2}\right)^{2}}=2.$$</div>
+于是所求级数的和为 $2$.
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.3 两道练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 5.1</div>
+求单位样本序列的时移 $\delta(n-n_0)$ 的 DTFT, 并说明它与平移性质的关系.
+<input type="checkbox" id="c7s5ans4" class="answer-toggle">
+<label for="c7s5ans4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由定义, 求和中只有 $n=n_0$ 这一项非零:
+<div class="box-formula">$$\sum\limits_{n=-\infty}^{+\infty}\delta(n-n_0)\mathrm{e}^{-\mathrm{i}\omega n}=\mathrm{e}^{-\mathrm{i}\omega n_0}.$$</div>
+即 $\delta(n-n_0)\leftrightarrow \mathrm{e}^{-\mathrm{i}\omega n_0}$. 这与平移性质完全吻合: 把 $x(n)=\delta(n)\leftrightarrow 1$ 代入 $x(n-n_0)\leftrightarrow \mathrm{e}^{-\mathrm{i}\omega n_0}X(\mathrm{e}^{\mathrm{i}\omega})$, 得 $\delta(n-n_0)\leftrightarrow \mathrm{e}^{-\mathrm{i}\omega n_0}\cdot 1=\mathrm{e}^{-\mathrm{i}\omega n_0}$, 两种算法结果一致.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 5.2</div>
+设 $x(n)=\left(\frac{1}{2}\right)^{n}u(n)$, 其中 $u(n)$ 为单位阶跃序列. 求 $y(n)=x(n)*x(n)$ 的 DTFT, 并写出 $y(n)$ 的表达式.
+<input type="checkbox" id="c7s5ans5" class="answer-toggle">
+<label for="c7s5ans5" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由例 5.2, $X(\mathrm{e}^{\mathrm{i}\omega})=\frac{1}{1-\frac{1}{2}\mathrm{e}^{-\mathrm{i}\omega}}$. 由<b>卷积定理</b>, 时间域的卷积对应频率域的乘积:
+<div class="box-formula">$$Y(\mathrm{e}^{\mathrm{i}\omega})=X(\mathrm{e}^{\mathrm{i}\omega})\cdot X(\mathrm{e}^{\mathrm{i}\omega})=\dfrac{1}{\left(1-\dfrac{1}{2}\mathrm{e}^{-\mathrm{i}\omega}\right)^{2}}.$$</div>
+再按定义把 $Y$ 展开, 可反读出
+<div class="box-formula">$$y(n)=(n+1)\left(\dfrac{1}{2}\right)^{n}u(n).$$</div>
+对照例 5.3 可以看到: 乘积 $\frac{1}{(1-\frac{1}{2}\mathrm{e}^{-\mathrm{i}\omega})^{2}}$ 的展开系数正是 $(n+1)(1/2)^n$ —— 这正是频域微分性质与卷积定理在同一族序列上的又一次相遇.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 参数 $\alpha$ 对频谱的影响 · 主瓣与旁瓣 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc"><b>左图</b>是序列 $x(n)=\alpha^{\,n}u(n)$ 的柱状图 ($n=0,1,\dots,14$). <b>右图</b>是两条归一化频谱曲线的对照: 蓝线为 $\left|X_\alpha(\mathrm{e}^{\mathrm{i}\omega})\right|=\frac{1}{|1-\alpha\mathrm{e}^{-\mathrm{i}\omega}|}$ 的归一化曲线, 红虚线为矩形序列 (取 $N=5$) 的狄利克雷核归一化曲线. 拖动滑块改变 $\alpha$: $\alpha$ 越接近 $1$, 蓝线在 $\omega=0$ 附近越"尖锐" (能量向低频聚集); 而红虚线始终保持着固定的"<b>一个主瓣 + 一串旁瓣</b>"结构.</div>
+<canvas id="cvAlpha" data-h="390"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $\alpha$:</label>
+<input type="range" id="alA" min="-0.95" max="0.95" step="0.01" value="0.6">
+<span class="val-badge" id="alAV">0.60</span>
+</div>
+<div class="readout" id="alReadout"></div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>采样的过渡</b> → <b>DTFT 的定义 5.1</b> → <b>逆变换与 $2\pi$ 周期性</b> → <b>七条基本性质</b> → <b>典型序列与例题</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>比较项</th><th>连续时间傅里叶变换 (CTFT)</th><th>序列的傅里叶变换 (DTFT)</th></tr>
+<tr><td>时间域</td><td>连续变量 $t\in(-\infty,+\infty)$ 的函数 $f(t)$</td><td>离散变量 $n=0,\pm1,\pm2,\cdots$ 的序列 $x(n)$</td></tr>
+<tr><td>频率域</td><td>$F(\omega)$ 关于 $\omega\in(-\infty,+\infty)$ 一般非周期</td><td>$X(\mathrm{e}^{\mathrm{i}\omega})$ 关于 $\omega$ 连续, 且以 $2\pi$ 为周期</td></tr>
+<tr><td>正变换</td><td>$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$</td><td>$X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}$</td></tr>
+<tr><td>逆变换</td><td>$f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$</td><td>$x(n)=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega$</td></tr>
+<tr><td>周期性</td><td>一般无周期性</td><td>$X(\mathrm{e}^{\mathrm{i}(\omega+2\pi)})=X(\mathrm{e}^{\mathrm{i}\omega})$, 周期 $2\pi$; 只需研究一个周期</td></tr>
+<tr><td>收敛条件</td><td>绝对可积 $\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t&lt;+\infty$</td><td>绝对可和 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty$</td></tr>
+<tr><td>对偶关系</td><td colspan="2">时间域取样 $\longrightarrow$ 频率域周期; 时间域周期 $\longrightarrow$ 频率域取样 (离散)。序列在时间域的离散性, 换来了频谱在频率域的周期性</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 单位样本序列 $\delta(n)$ 的 DTFT 等于?</div>
+<label class="quiz-opt">A. $\delta(\omega)$</label>
+<label class="quiz-opt" data-ok="1">B. 常数 $1$</label>
+<label class="quiz-opt">C. $\mathrm{e}^{-\mathrm{i}\omega}$</label>
+<label class="quiz-opt">D. $0$</label>
+<div class="quiz-explain"><b>解析:</b> 由定义 $X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}\delta(n)\mathrm{e}^{-\mathrm{i}\omega n}=\mathrm{e}^{0}=1$, 是常数谱, 对一切 $\omega$ 恒为 $1$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $X(\mathrm{e}^{\mathrm{i}\omega})$ 作为 $\omega$ 的函数, 其周期等于?</div>
+<label class="quiz-opt">A. $\frac{\pi}{2}$</label>
+<label class="quiz-opt">B. $\pi$</label>
+<label class="quiz-opt" data-ok="1">C. $2\pi$</label>
+<label class="quiz-opt">D. 没有周期性</label>
+<div class="quiz-explain"><b>解析:</b> 由于 $\mathrm{e}^{-\mathrm{i}(\omega+2\pi)n}=\mathrm{e}^{-\mathrm{i}\omega n}$ 对整数 $n$ 恒成立, 故 $X(\mathrm{e}^{\mathrm{i}(\omega+2\pi)})=X(\mathrm{e}^{\mathrm{i}\omega})$, 即以 $2\pi$ 为周期. 这是 DTFT 与连续傅里叶变换最重要的差别.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 逆变换 $x(n)=\frac{1}{2\pi}\int X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega$ 中, 积分区间的长度应取?</div>
+<label class="quiz-opt">A. $\pi$</label>
+<label class="quiz-opt" data-ok="1">B. $2\pi$</label>
+<label class="quiz-opt">C. $4\pi$</label>
+<label class="quiz-opt">D. $+\infty$</label>
+<div class="quiz-explain"><b>解析:</b> 积分区间可以取<b>任意长度为 $2\pi$ 的区间</b> (被积函数以 $2\pi$ 为周期), 习惯上取 $[-\pi,\pi]$. 前面的因子是 $\frac{1}{2\pi}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, $h(n)\leftrightarrow H(\mathrm{e}^{\mathrm{i}\omega})$, 则序列卷积 $y(n)=x(n)*h(n)$ 的频谱是?</div>
+<label class="quiz-opt">A. $X(\mathrm{e}^{\mathrm{i}\omega})+H(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt" data-ok="1">B. $X(\mathrm{e}^{\mathrm{i}\omega})\cdot H(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt">C. $\frac{X(\mathrm{e}^{\mathrm{i}\omega})}{H(\mathrm{e}^{\mathrm{i}\omega})}$</label>
+<label class="quiz-opt">D. $\frac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\theta})H(\mathrm{e}^{\mathrm{i}(\omega-\theta)})\,\mathrm{d}\theta$</label>
+<div class="quiz-explain"><b>解析:</b> 卷积定理: <b>时间域的卷积对应频率域的乘积</b>, 即 $y(n)=x(n)*h(n)\leftrightarrow Y(\mathrm{e}^{\mathrm{i}\omega})=X(\mathrm{e}^{\mathrm{i}\omega})H(\mathrm{e}^{\mathrm{i}\omega})$. 选项 D 是"时间域乘积"对应的周期卷积 (调制 / 加窗定理), 两者不要混淆.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 帕塞瓦尔等式的正确形式是?</div>
+<label class="quiz-opt">A. $\sum\limits_{n=-\infty}^{+\infty}|x(n)|=\frac{1}{2\pi}\int_{-\pi}^{\pi}|X(\mathrm{e}^{\mathrm{i}\omega})|\,\mathrm{d}\omega$</label>
+<label class="quiz-opt" data-ok="1">B. $\sum\limits_{n=-\infty}^{+\infty}|x(n)|^{2}=\frac{1}{2\pi}\int_{-\pi}^{\pi}\bigl|X(\mathrm{e}^{\mathrm{i}\omega})\bigr|^{2}\,\mathrm{d}\omega$</label>
+<label class="quiz-opt">C. $\sum\limits_{n=-\infty}^{+\infty}|x(n)|^{2}=\int_{-\pi}^{\pi}\bigl|X(\mathrm{e}^{\mathrm{i}\omega})\bigr|^{2}\,\mathrm{d}\omega$</label>
+<label class="quiz-opt">D. $\sum\limits_{n=-\infty}^{+\infty}|x(n)|^{2}=\frac{1}{2\pi}\int_{-\pi}^{\pi}\bigl|X(\mathrm{e}^{\mathrm{i}\omega})\bigr|\,\mathrm{d}\omega$</label>
+<div class="quiz-explain"><b>解析:</b> 帕塞瓦尔等式为 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|^2=\frac{1}{2\pi}\int_{-\pi}^{\pi}\bigl|X(\mathrm{e}^{\mathrm{i}\omega})\bigr|^2\,\mathrm{d}\omega$, 体现"能量守恒": 时间域能量 = 频率域一个周期上的平均能量. 注意是模的<b>平方</b>, 且带因子 $\frac{1}{2\pi}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 例 5.2 中条件 $|\alpha|&lt;1$ 所起的作用是?</div>
+<label class="quiz-opt">A. 保证 $x(n)$ 是实序列</label>
+<label class="quiz-opt" data-ok="1">B. 保证几何级数 $\sum\limits_{n=0}^{+\infty}\left(\alpha\mathrm{e}^{-\mathrm{i}\omega}\right)^{n}$ 收敛, 从而 DTFT 存在</label>
+<label class="quiz-opt">C. 保证频谱为常数</label>
+<label class="quiz-opt">D. 保证序列是偶序列</label>
+<div class="quiz-explain"><b>解析:</b> $x(n)=\alpha^n u(n)$ 的 DTFT 是一个公比为 $\alpha\mathrm{e}^{-\mathrm{i}\omega}$ 的几何级数, 其收敛与否取决于 $|\alpha\mathrm{e}^{-\mathrm{i}\omega}|=|\alpha|$. 故 $|\alpha|&lt;1$ 正是级数收敛、DTFT 存在的前提, 此时 $X(\mathrm{e}^{\mathrm{i}\omega})=\frac{1}{1-\alpha\mathrm{e}^{-\mathrm{i}\omega}}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则平移序列 $x(n-n_0)$ 的 DTFT 是?</div>
+<label class="quiz-opt">A. $X(\mathrm{e}^{\mathrm{i}(\omega-\omega_0)})$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathrm{e}^{-\mathrm{i}\omega n_0}X(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt">C. $\mathrm{e}^{\mathrm{i}\omega n_0}X(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt">D. $X(\mathrm{e}^{-\mathrm{i}\omega})$</label>
+<div class="quiz-explain"><b>解析:</b> 平移性质: $x(n-n_0)\leftrightarrow \mathrm{e}^{-\mathrm{i}\omega n_0}X(\mathrm{e}^{\mathrm{i}\omega})$. 时移只改变相位 (叠加线性相位 $-\omega n_0$), 不改变频谱的模.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则时间倒置序列 $x(-n)$ 的 DTFT 是?</div>
+<label class="quiz-opt" data-ok="1">A. $X(\mathrm{e}^{-\mathrm{i}\omega})$</label>
+<label class="quiz-opt">B. $X(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt">C. $-X(\mathrm{e}^{\mathrm{i}\omega})$</label>
+<label class="quiz-opt">D. $\overline{X(\mathrm{e}^{\mathrm{i}\omega})}$</label>
+<div class="quiz-explain"><b>解析:</b> 时间倒置性质: $x(-n)\leftrightarrow X(\mathrm{e}^{-\mathrm{i}\omega})$, 即把 $\omega$ 换成 $-\omega$. 注意这与共轭 $\overline{X(\mathrm{e}^{\mathrm{i}\omega})}$ 是不同的概念.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 若 $x(n)\leftrightarrow X(\mathrm{e}^{\mathrm{i}\omega})$, 则频域微分性质给出 $n\,x(n)\leftrightarrow$ ?</div>
+<label class="quiz-opt">A. $\frac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathrm{i}\,\frac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}$</label>
+<label class="quiz-opt">C. $-\mathrm{i}\,\frac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}$</label>
+<label class="quiz-opt">D. $\bigl[X(\mathrm{e}^{\mathrm{i}\omega})\bigr]^{2}$</label>
+<div class="quiz-explain"><b>解析:</b> 频域微分性质: $n\,x(n)\leftrightarrow \mathrm{i}\,\frac{\mathrm{d}X(\mathrm{e}^{\mathrm{i}\omega})}{\mathrm{d}\omega}$. 例 5.3 正是用它把含 $n$ 的级数转化为频谱的导数, 从而求出 $\sum\limits_{n=0}^{+\infty}n(1/2)^n=2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. DTFT 存在的 (充分) 条件是?</div>
+<label class="quiz-opt" data-ok="1">A. $\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty$ (绝对可和)</label>
+<label class="quiz-opt">B. $\lim\limits_{n\to\infty}x(n)=0$</label>
+<label class="quiz-opt">C. $x(n)$ 是周期序列</label>
+<label class="quiz-opt">D. $x(n)$ 是实序列</label>
+<div class="quiz-explain"><b>解析:</b> 定义 5.1 要求序列绝对可和, 即 $\sum\limits_{n=-\infty}^{+\infty}|x(n)|&lt;+\infty$, 以保证级数绝对收敛、$X(\mathrm{e}^{\mathrm{i}\omega})$ 有限. $\lim\limits_{n\to\infty}x(n)=0$ 只是必要条件的雏形, 并不充分 (如 $\sum 1/n$ 型).</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位给信息"称重"的人</h3>
+<div class="hero-sub">他把"信"变成"数", 把"意外"变成"比特". 当工程师还在焊电路、通信公司还在数铜线时, 他已经证明: 信息是可以被度量、被压缩、被无误传输的物理量.</div>
+<div class="hero-quote">
+1948 年那篇《通信的数学理论》, 让"信息"第一次有了严格的数学单位 —— 比特 (bit). 他还给出了<b>采样定理</b>: 只要采样足够密, 连续信号就能被离散样本完整重建 —— 这正是本节"序列的傅里叶变换"得以登场的那座桥.<br>
+<b>本节里"连续到离散"这一步, 正是香农为整个信息时代铺下的地基.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 香农: 给信息"称重"的人</div>
+
+<div class="person-card">
+<div class="p-av">香</div>
+<div class="p-main">
+<div class="p-name">克劳德·艾尔伍德·香农 (Claude Elwood Shannon, 1916—2001)</div>
+<div class="p-meta">美国数学家 · 电气工程师 · 信息论创始人 · "信息时代之父" · 麻省理工学院教授 · 美国国家科学院院士</div>
+<p>他出生在美国密歇根州一个普通小镇, 小时候最爱拆装收音机与机械玩具. 求学于密歇根大学与麻省理工学院, 他把<b>布尔代数</b>与<b>继电器开关电路</b>这两件看似毫不相干的东西接到了一起, 写出了 20 世纪最重要的硕士论文之一; 十一年后, 他又把"信息"本身变成了一个可以计算的量.</p>
+<p>本节所讲的"序列的傅里叶变换", 在香农那里有一个直接的呼应: 他就是那个回答"连续信号能不能被离散样本完整表示"的人. <b>没有他的采样定理, 今天所有的数字音频、数字图像与数字通信都无从谈起.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从修收音机的少年到"继电器论文"</h5>
+<p>1916 年, 香农出生于密歇根州的佩托斯基. 他从小迷恋机械与电报, 少年时还曾给邻居送过电报信. 1936 年他从密歇根大学毕业后进入麻省理工学院, 1937 年完成了硕士论文《<b>继电器与开关电路的符号分析</b>》(A Symbolic Analysis of Relay and Switching Circuits).</p>
+<p>在这篇论文里, 他注意到: 开关电路的"通 / 断"只有两种状态, 而布尔代数里的命题也只有"真 / 假"两种取值. 于是他把电路直接<b>翻译成布尔代数</b>, 用代数运算来化简电路设计. <b>这是"数学"与"工程"之间少有的、几乎立竿见影的一次结合</b>, 后来被誉为"最重要的硕士论文".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1948 年: 让信息有了单位</h5>
+<p>1948 年, 香农在《贝尔系统技术杂志》上发表了划时代的论文《<b>通信的数学理论</b>》(A Mathematical Theory of Communication). 他给出了通信系统的统一模型: <b>信源 — 编码 — 信道 — 解码 — 信宿</b>; 并且指出, 通信要做的就是"在一点精确或近似地复现另一点所选的消息".</p>
+<p>最惊人的是他对"信息量"的度量: 若一个信源以概率 $p_i$ 发出第 $i$ 种消息, 则其<b>信息熵</b>为
+<div class="box-formula">$$H=-\sum\limits_{i}p_i\log_2 p_i\qquad(\text{单位: 比特 bit}).$$</div>
+越"出乎意料"的消息, 信息量越大; 越是必然发生的事, 越没有信息量. <b>"意外"竟然可以像温度、长度一样被度量!</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>采样定理: 连续通往离散的那座桥</h5>
+<p>香农在 1949 年的论文《噪声中的通信》中系统阐述了<b>采样定理</b> (今称奈奎斯特–香农采样定理): 若一个信号的最高频率为 $B$ (带宽有限), 只要以不低于 $2B$ 的速率对它采样, 这些离散样本就能<b>完全重构</b>原来的连续信号:
+<div class="box-formula">$$f(t)=\sum\limits_{n=-\infty}^{+\infty}f(nT_s)\,\dfrac{\sin\!\bigl(\pi(t-nT_s)/T_s\bigr)}{\pi(t-nT_s)/T_s},\qquad T_s\le\dfrac{1}{2B}.$$</div>
+也就是说: <b>连续世界里的信息, 可以被离散地、无损失地"保存"下来</b> —— 采样率不够高就会"混叠"(aliasing), 高到 $2B$ 以上就万无一失.</p>
+<p>这一步恰好就是本节开头"从连续傅里叶变换到离散序列"的严格依据: 因为有了它, 我们可以放心地用一串离散样本 $x(n)$ 来代替连续信号, 进而研究序列的傅里叶变换 DTFT. <b>麦克风、摄像头、硬盘、5G 基站, 全都站在这个定理肩上.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>信息论的奠基与回响</h5>
+<p>除了信息熵与采样定理, 香农还给出了<b>信道容量</b>公式 $C=B\log_2\!\left(1+\frac{S}{N}\right)$, 证明了"即使在有噪声的信道上, 只要传输速率低于信道容量, 就可以做到几乎无误地传输". 这一结论在当时近乎不可思议, 却奠定了纠错编码、卫星通信、深空探测乃至今天光纤与移动通信的全部理论基础.</p>
+<p>从阿波罗登月发回的照片, 到手机里的高清视频, 到量子信息与人工智能, 人们至今仍在香农画出的框架里工作. <b>他把'通信'从一个工程问题, 变成了一个数学问题.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>"发明家"与"玩心": 把数学与工程打通</h5>
+<p>香农一生不只是一个理论家. 他设计过会走迷宫找奶酪的机械老鼠"<b>忒修斯</b>"(Theseus), 写过会下国际象棋的机器程序, 还造过一个能"猜心"的机器"<b>读心机</b>"(Mind Reading Machine). 他爱骑独轮车, 也爱玩杂耍 (甚至写过一篇"如何杂耍"的短文).</p>
+<p>在他看来, 数学与工程、理论与玩心, 从来不是两张皮: <b>正是这种"把最抽象的想法落到最具体的东西上"的习惯, 让他既写出了布尔代数与电路的桥梁, 也写下了信息论.</b> 这种研究风格, 与本课程"用复变函数解决实际问题"的精神, 是同一种气质.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说在贝尔实验室, 香农常常一边骑车上班一边思考问题, 还曾在上班路上骑着独轮车穿过走廊. 他给实验室的学生演示自己做的机械老鼠"忒修斯": 这只老鼠能靠继电器和磁铁在迷宫里一次次试错, 最终"记住"通往奶酪的路. 有人问他这些玩具有什么用, 他笑而不答 —— 他真正在意的不是老鼠, 而是"学习""记忆"这类想法能不能被造出来. <b>他的很多伟大工作, 都是从这样看似"没用"的好奇心里长出来的.</b>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 香农式的信念</div>
+在《通信的数学理论》开篇, 他写下了那句被无数后来者引用的话:
+<br>
+"<em>通信的基本问题, 是在一点精确或近似地复现另一点所选的消息.</em>"
+<br>
+而当人们惊叹于信息论的威力时, 他自己却常常显得轻描淡写 —— 在他那里, 复杂的问题值得被拆成最简单的问题, 抽象的数学也应当能被算出来、被造出来.
+<br>
+"<em>我们所谓的'信息', 无非是消除不确定性的东西; 一个消息越难预料, 它携带的信息就越多.</em>"
+<span class="iv-sig">—— 这种"把抽象问题度量清楚、把基础理论落到实处"的态度, 正是本节从连续傅里叶变换走到序列 DTFT 的思想底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">度量与本质</div>
+<h4>给"信息"称一次重</h4>
+<p>在香农之前, "信息"是一个模糊的日常词: 说得越多, 信息就越多吗? 香农用信息熵回答: 不, 关键不在"多", 而在"<b>消除多少不确定</b>".</p>
+<p>把模糊的概念变成可计算的数量, 是数学最擅长的事 —— 一旦能度量, 就能比较、优化与设计.</p>
+<div class="pc-math">$H=-\sum\limits_{i}p_i\log_2 p_i$ (比特)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">连续与离散</div>
+<h4>采样: 把时间"切成格子"</h4>
+<p>连续的时间似乎无穷细腻, 但采样定理告诉我们: 只要采样够密, 离散样本就能<b>完整还原</b>连续信号. 离散并不一定丢信息, 丢信息的只是"采得太稀".</p>
+<p>本节正是沿着这一步, 把连续傅里叶变换过渡到序列的 DTFT.</p>
+<div class="pc-math">$T_s\le\frac{1}{2B}$ ⟹ 无损失重构</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">不确定与信号</div>
+<h4>越"意外", 信息越多</h4>
+<p>一句你早已知道的话, 几乎不带信息; 一个完全无法预测的结果, 信息量最大. 熵把"意外程度"变成了数值.</p>
+<p>这也提醒我们: 面对不确定性, 与其焦虑, 不如把它"量出来" —— 可度量的不确定性, 才是可以被处理的.</p>
+<div class="pc-math">必然事件 $p=1\Rightarrow H=0$; 等概率结果多 $\Rightarrow H$ 大</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">抽象与迁移</div>
+<h4>布尔代数 ↔ 开关电路 ↔ 信息</h4>
+<p>同一套数学结构, 可以描述电路的通断, 也可以描述命题的真假. 香农的过人之处, 是看见了"<b>结构相同</b>"背后的通用性.</p>
+<p>抽象不是远离现实, 而是抓住不同现象共享的骨架, 从而一次迁移到许多领域.</p>
+<div class="pc-math">开关通/断 $\leftrightarrow$ 命题真/假 $\leftrightarrow$ 比特 0/1</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">简单与深刻</div>
+<h4>一个"比特"承载整个时代</h4>
+<p>信息论最核心的单位只有一个: 比特. 可正是这最简单的二值单位, 撑起了压缩、纠错、加密与整个数字世界.</p>
+<p>最深刻的理论, 往往建立在最朴素的概念上 —— 就像本节频谱的分析, 也始终围绕 $\mathrm{e}^{-\mathrm{i}\omega n}$ 这一个复指数展开.</p>
+<div class="pc-math">比特 (bit) $\longrightarrow$ 数字音频 / 图像 / 通信 / 存储</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">玩心与创造</div>
+<h4>好奇心是研究的发动机</h4>
+<p>会走迷宫的老鼠、读心机、独轮车与杂耍 —— 香农的"玩具"背后, 是对"这能不能做到"的执着追问. 伟大的工作常常由此出发.</p>
+<p>保持好奇, 敢于试错, 让"有趣"成为探索的第一推动力, 这是香农留给我们的另一份遗产.</p>
+<div class="pc-math">好奇 $\longrightarrow$ 试错 $\longrightarrow$ 理解 $\longrightarrow$ 创造</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 朱载堉的"十二平均律" —— 离散等比的频率比</div>
+中国古人对"音"的理解, 早已触到了"离散频率"与"周期结构"的思想. 一根弦振动时, 除基音之外还有一系列频率成<b>整数倍</b>的泛音, 音律本身, 就是一串离散的频率比.
+<br><br>
+早在《管子》《吕氏春秋》中就有"<b>三分损益法</b>": "三分损一" 取原长的 $\frac{2}{3}$ 得上方纯五度, "三分益一" 取原长的 $\frac{4}{3}$ 得下方纯四度, 交替相生得出一整套音. 其背后是"整数比决定和谐"的观念 —— 与傅里叶级数中"整数倍频率叠加"的思路如出一辙.
+<br><br>
+到了明代, <b>朱载堉</b> (1536—1611) 做出了划时代的突破. 他在《<b>律学新说</b>》《律吕精义》等著作中, 经过精密计算, 解决了"十二律不能自由旋宫"这一千年难题: 他以 $2^{1/12}$ 作为相邻两律的频率比, 构造出<b>十二平均律</b> (又称"新法密率"). 于是十二个半音的频率恰好构成一个<b>离散的等比数列</b>
+<div class="box-formula">$$\omega_{k+1}=2^{1/12}\,\omega_k\qquad (k=0,1,\cdots,11),\qquad \omega_{12}=2\,\omega_0,$$</div>
+十二步之后恰好回到高八度, 使任意调式都能自由转调. 这一成果被后世誉为"<b>钢琴理论的鼻祖</b>", 比欧洲同类研究早了数十年.
+<br><br>
+从"三分损益"的整数比, 到十二平均律的 $2^{1/12}$ —— 中国古人一直在用<b>离散的频率比</b>描述声音的世界. 这与本节"用离散序列与其周期频谱刻画信号"的思想, 是同一个精神在音乐里的千年回响.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从采样定理到数字通信与大国重器</div>
+<ul>
+<li><b>数字信号处理 (DSP) 与 5G/6G 的 OFDM.</b> 现代移动通信的核心技术之一 <b>OFDM</b> (正交频分复用), 就是把一路高速数据<b>切分到许多正交的窄带子载波</b>上并行传输. 它的数学基础, 正是傅里叶变换的对 (正变换把时域切到频域, 逆变换把频域还原回时域); 而在 6G 的探索中, 人们又在为更高的带宽与更复杂的场景设计新的变换方案. 从基站到手机芯片, OFDM 的实现处处是"离散傅里叶变换"的影子.</li>
+<li><b>北斗导航.</b> 北斗系统的定位原理, 是测量信号在卫星与接收机之间传播的时延, 再解算出位置. 而接收机的"捕获与跟踪", 本质上是把接收到的伪随机码与本地码做<b>相关运算</b> —— 相关运算在频域里正是乘积, 用 FFT 加速可以大幅降低计算量. 高精度定位的另一条腿是载波相位测量, 同样离不开频谱与相位分析.</li>
+<li><b>音频与图像压缩 (MP3 / JPEG 的变换编码).</b> MP3 把声音切成短帧, 用<b>变换编码</b> (MDCT) 得到频率成分, 再依据人耳掩蔽效应舍弃听不见的成分; JPEG 把图像分成小块做 DCT (与傅里叶变换同族), 量化后只保留重要的频率系数. <b>"把信号拆成频率成分、再挑重要的留下", 这就是本节"频谱"思想的直接工业应用.</b></li>
+<li><b>芯片与产业攻关.</b> 从 <b>华为</b> 在 5G 基带与大容量传输上的长期投入, 到 <b>紫光展锐</b> 等在移动芯片领域的自主攻关, 中国企业与科研人员正把"数学上的频谱"一步步做成"工程上的器件". 每一次采样率的提高、每一条子载波的拼接、每一段误码率的下降, 背后都是离散信号处理与傅里叶分析的硬功夫.</li>
+<li><b>中国学者的接力。</b> 从<b>张直中</b>院士在雷达信号处理上的奠基性工作, 到一代代通信与信号处理学者在信道编码、阵列信号处理、雷达成像上的持续耕耘, 中国数学与工程工作者一直在做同一件事: <b>把最基础的数学工具, 用到国家最需要的地方.</b></li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 基础理论, 是数字时代的"采样率"</div>
+香农一个"信息可以被度量"的断言, 加上一个"采样够密即可无损重建"的定理, 七十余年后变成了手机通信、卫星导航、医院影像与整个数字经济的数学底座. 从朱载堉的 $2^{1/12}$ 到今天的 OFDM 与 6G 探索, 从"十二平均律"的离散等比到序列 DTFT 的 $2\pi$ 周期谱, 中国人一直在同一个数学思想上前行.
+<br><br>
+这件事的价值在于: <b>越是基础的理论, 越能撑起国家最需要的地方.</b> 一节课上的一串离散序列, 可以只是一道习题, 也可以是一个信息强国的数学地基 —— 区别在于我们是否愿意把基础打牢, 把关键技术握在自己的手里.
+<br><br>
+可以说: <b>把"离散的序列"看懂了, 才能把连续的世界装进数字的机器; 把基础理论握住了, 才能造出真正属于我们自己的大国重器.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"通信的基本问题, 是在一点精确或近似地复现另一点所选的消息."<span class="q-src">—— 香农《通信的数学理论》(1948)</span></div>
+<div class="quote-item">"信息熵所度量的, 是'不确定'被消除的程度: 越难预料, 信息越多."<span class="q-src">—— 香农信息论的核心思想</span></div>
+<div class="quote-item">"新法密率: 以 $2^{1/12}$ 为相邻两律之比, 十二律旋相为宫."<span class="q-src">—— 朱载堉《律学新说》</span></div>
+<div class="quote-item">"凡音之起, 由人心生也; 人心之动, 物使之然也."<span class="q-src">—— 《礼记 · 乐记》</span></div>
+<div class="quote-item">"聪明在于学习, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"基础理论上的每一点领先, 都会在工程与产业里被放大千百倍."<span class="q-src">—— 现代数字通信工程共识</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 香农少年时爱修收音机、爱造小玩意, 却把布尔代数与继电器电路接在了一起; 1948 年, 他在《通信的数学理论》中让"信息"有了比特这个单位, 又在采样定理里证明: 只要采样足够密, 连续信号就能被离散样本完整重建. 本节讲的"从连续傅里叶变换走向序列的 DTFT", 正是沿着他铺下的这条桥走过来的.<br>
+<b>一个道理:</b> 从定义 5.1 $X(\mathrm{e}^{\mathrm{i}\omega})=\sum\limits_{n=-\infty}^{+\infty}x(n)\mathrm{e}^{-\mathrm{i}\omega n}$ 到逆变换 $x(n)=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(\mathrm{e}^{\mathrm{i}\omega})\mathrm{e}^{\mathrm{i}\omega n}\,\mathrm{d}\omega$, 靠的是复指数函数系的正交性; 而 DTFT 与连续傅里叶变换最本质的不同, 是 $X(\mathrm{e}^{\mathrm{i}\omega})$ 以 $2\pi$ 为周期、只须在一个周期上研究. 这说明: <b>把一个对象换一种"坐标"去看, 往往能看出全新的结构.</b><br>
+<b>一份责任:</b> 从《管子》"三分损益"的整数音律, 到朱载堉十二平均律的 $2^{1/12}$; 从香农的采样定理与信息熵, 到 OFDM、北斗导航、MP3 与 JPEG, 再到国产芯片与通信产业的攻关 —— 同一种"离散化 + 频谱"的思想贯穿古今中外. 今天我国在 5G/6G、卫星导航与信号处理领域不断走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习序列的傅里叶变换, 既是在理解数字世界如何"采样"与"重建", 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第七章第五节 序列的傅里叶变换 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+// ================= 模块 1: 复指数序列与加权求和 (DTFT 定义) =================
+module('cvDtft',function(cv){
+  var w0=0.79, aa=0.8;
+  function xseq(n){ return Math.pow(aa,Math.abs(n)); }
+  function Xval(om){ return C((1-aa*aa)/(1-2*aa*Math.cos(om)+aa*aa),0); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, n;
+    // ---- 左: 复指数序列 e^{-i omega n} 的实部 / 虚部 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-8.6,8.6,-1.35,1.35);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'n','Re/Im');
+    for(n=-8;n<=8;n++){
+      var ph=-w0*n, xp=m1.px(n), re=Math.cos(ph), im=Math.sin(ph);
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(xp,m1.py(0)); ctx.lineTo(xp,m1.py(re)); ctx.stroke();
+      dot(ctx,xp,m1.py(re),3.4,'#1565c0','#fff');
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(xp,m1.py(0)); ctx.lineTo(xp,m1.py(im)); ctx.stroke();
+      dot(ctx,xp,m1.py(im),3.4,'#e65100','#fff');
+    }
+    ctx.restore();
+    // ---- 右: 复平面上逐项加权求和 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.7,4.7,-2.7,2.7);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re','Im');
+    var acc=C(0,0);
+    for(n=-8;n<=8;n++){
+      var p=cexp(xseq(n),-w0*n);
+      var nx=m2.px(acc.re+p.re), ny=m2.py(acc.im+p.im);
+      arrow(ctx,m2.px(acc.re),m2.py(acc.im),nx,ny,'rgba(198,40,40,.8)',1.6,6);
+      acc=cadd(acc,p);
+      dot(ctx,m2.px(acc.re),m2.py(acc.im),2.4,'rgba(21,101,192,.9)');
+    }
+    var xv=Xval(w0);
+    arrow(ctx,m2.px(0),m2.py(0),m2.px(xv.re),m2.py(xv.im),'#2e7d32',3,10);
+    dot(ctx,m2.px(xv.re),m2.py(xv.im),5,'#2e7d32','#fff');
+    ctx.restore();
+    setRO('dtftReadout',
+      '取 $x(n)=a^{|n|}$ ($a=0.8$), 其 DTFT 有闭式<br>'+
+      '$X(\\mathrm{e}^{\\mathrm{i}\\omega})=\\frac{1-a^{2}}{1-2a\\cos\\omega+a^{2}}=\\frac{0.36}{1-2a\\cos\\omega+a^{2}}$, 是<b>正实函数</b>.<br>'+
+      '当前 $\\omega='+fmt(w0)+'$: $X(\\mathrm{e}^{\\mathrm{i}\\omega})\\approx '+fmt(xv.re)+'$ (虚部为 $0$, 故绿色箭头落在实轴上).<br>'+
+      hl('复指数序列 $\\mathrm{e}^{-\\mathrm{i}\\omega n}$ 的频率随 $\\omega$ 改变: $\\omega$ 越大, 左图振荡越快;<br>'+
+      '右图的向量链随之旋转与伸缩, 其「终点—原点」向量即为 $X(\\mathrm{e}^{\\mathrm{i}\\omega})$.'));
+  }
+  bindSlider('dtftW',function(v){ w0=v; badge('dtftWV',fmt(v)); draw(); });
+  badge('dtftWV',fmt(w0));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 频谱的 2π 周期性 =================
+module('cvPeriod',function(cv){
+  var aa=0.8, wpi=0.4;
+  function modeg(x){ return 1/Math.sqrt(1-2*aa*Math.cos(x)+aa*aa); }
+  function reducePi(x){ return x-2*Math.round(x/2); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=50,R=20,TOP=38,BOT=32;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,-3.3,3.3,-0.75,6.3);
+    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'ω/π','|X|');
+    // 周期分界 (奇数倍 π)
+    ctx.setLineDash([6,5]); ctx.strokeStyle='rgba(198,40,40,.5)'; ctx.lineWidth=1.6;
+    [-3,-1,1,3].forEach(function(q){
+      ctx.beginPath(); ctx.moveTo(m.px(q),0); ctx.lineTo(m.px(q),ih); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle='#c62828'; ctx.font='11px Segoe UI';
+    ctx.fillText('−3π',m.px(-3)-14,ih-4);
+    ctx.fillText('−π',m.px(-1)-12,ih-4);
+    ctx.fillText('π',m.px(1)-4,ih-4);
+    ctx.fillText('3π',m.px(3)-4,ih-4);
+    // |X| 曲线
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    var first=true, q;
+    for(q=-3.3;q<=3.3+1e-9;q+=0.004){
+      var y=modeg(q*Math.PI), px=m.px(q), py=m.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 周期边界处画等值竖虚线已足够; 标注一个周期内的取值
+    // 当前 ω
+    var yv=modeg(wpi*Math.PI);
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(m.px(wpi),m.py(yv)); ctx.lineTo(m.px(wpi),m.py(0)); ctx.stroke();
+    dot(ctx,m.px(wpi),m.py(yv),5,'#2e7d32','#fff');
+    // [-π,π] 内的等价频率
+    var qr=reducePi(wpi), yr=modeg(qr*Math.PI);
+    dot(ctx,m.px(qr),m.py(yr),5,'#e65100','#fff');
+    ctx.restore();
+    setRO('perReadout',
+      '取 $x(n)=\\alpha^{n}u(n)$ ($\\alpha=0.8$), $X(\\mathrm{e}^{\\mathrm{i}\\omega})=\\frac{1}{1-\\alpha\\mathrm{e}^{-\\mathrm{i}\\omega}}$.<br>'+
+      '当前 $\\omega='+fmt(wpi)+'\\pi$: $\\left|X(\\mathrm{e}^{\\mathrm{i}\\omega})\\right|\\approx '+fmt(yv,3)+'$; 它在 $[-\\pi,\\pi]$ 内的等价频率为 $\\omega_0='+fmt(qr)+'\\pi$, 对应模 $\\approx '+fmt(yr,3)+'$ —— 两者'+hl('完全相等')+'.<br>'+
+      hl2('$X(\\mathrm{e}^{\\mathrm{i}(\\omega+2\\pi)})=X(\\mathrm{e}^{\\mathrm{i}\\omega})$: 频谱以 $2\\pi$ 为周期. 与连续傅里叶变换不同, 序列在时间域的离散性, 换来了频谱在频率域的周期性, 因此只需在一个长度为 $2\\pi$ 的区间 (通常取 $[-\\pi,\\pi]$) 上研究 DTFT.'));
+  }
+  bindSlider('perW',function(v){ wpi=v; badge('perWV','$'+fmt(v)+'\\pi$'); draw(); });
+  badge('perWV','$'+fmt(wpi)+'\\pi$');
+  return {draw:draw};
+});
+
+// ================= 模块 3: 时移产生线性相位 =================
+module('cvShift',function(cv){
+  var n0=1, aa=0.6;
+  function xseq(n){ return Math.pow(aa,Math.abs(n)); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, n;
+    // ---- 左: 原序列与移位序列 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-8.5,8.5,-0.12,1.25);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'n','x(n)');
+    for(n=-8;n<=8;n++){
+      var xp=m1.px(n), v=xseq(n);
+      ctx.strokeStyle='rgba(21,101,192,.55)'; ctx.lineWidth=4.4;
+      ctx.beginPath(); ctx.moveTo(xp,m1.py(0)); ctx.lineTo(xp,m1.py(v)); ctx.stroke();
+      var xs=n+n0, x2=m1.px(xs), v2=xseq(n);
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(x2,m1.py(0)); ctx.lineTo(x2,m1.py(v2)); ctx.stroke();
+      dot(ctx,x2,m1.py(v2),3.6,'#e65100','#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'原序列 x(n)=0.6^{|n|} (蓝) 与右移序列 x(n−n₀) (橙)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 相位谱 (线性) ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var pMax=4*Math.PI+1;
+    var m2=mapperEq(halfW,H,-3.4,3.4,-pMax,pMax);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'ω','arg X');
+    ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(46,125,50,.55)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,m2.py(0)); ctx.lineTo(halfW,m2.py(0)); ctx.stroke();
+    ctx.setLineDash([]);
+    // 相位谱 = - omega * n0
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(m2.px(-Math.PI),m2.py(Math.PI*n0));
+    ctx.lineTo(m2.px(Math.PI),m2.py(-Math.PI*n0));
+    ctx.stroke();
+    // 端点
+    dot(ctx,m2.px(-Math.PI),m2.py(Math.PI*n0),4.4,'#c62828','#fff');
+    dot(ctx,m2.px(Math.PI),m2.py(-Math.PI*n0),4.4,'#c62828','#fff');
+    ctx.restore();
+    setRO('shReadout',
+      '位移量 $n_0='+fmt(n0,0)+'$. 由平移性质 $x(n-n_0)\\leftrightarrow \\mathrm{e}^{-\\mathrm{i}\\omega n_0}X(\\mathrm{e}^{\\mathrm{i}\\omega})$, 频谱的模完全不变, 只在相位上叠加 '+hl('线性相位 $-\\omega n_0$')+'.<br>'+
+      '当前相位谱为一条斜率为 $-n_0='+fmt(-n0,0)+'$ 的直线: 在 $\\omega=\\pi$ 处取到 $\\arg X_{s}=-\\pi n_0='+fmt(-Math.PI*n0,2)+'$.<br>'+
+      hl2('要点: 时移 ⇒ 线性相位; 幅度谱不变. 这一性质是系统「相位失真」分析与匹配滤波等工程问题的基础.'));
+  }
+  bindSlider('shN0',function(v){ n0=Math.round(v); badge('shN0V',fmt(n0,0)); draw(); });
+  badge('shN0V',fmt(n0,0));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 参数 α 对频谱的影响 · 主瓣与旁瓣 =================
+module('cvAlpha',function(cv){
+  var al=0.6, NR=5;
+  function alphaSpec(x){ return 1/Math.sqrt(1-2*al*Math.cos(x)+al*al); }
+  function dirichlet(x){
+    var s=Math.sin(x/2);
+    if(Math.abs(s)<1e-8) return NR;
+    return Math.abs(Math.sin(NR*x/2)/s);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, n, q;
+    // ---- 左: 序列 α^n u(n) ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.2,15.2,-1.15,1.15);
+    grid(ctx,halfW,H,m1,1); axes(ctx,halfW,H,m1,'n','x(n)');
+    for(n=0;n<=14;n++){
+      var v=Math.pow(al,n);
+      var xp=m1.px(n);
+      ctx.strokeStyle=(v<0)?'#e65100':'#1565c0'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(xp,m1.py(0)); ctx.lineTo(xp,m1.py(v)); ctx.stroke();
+      dot(ctx,xp,m1.py(v),3.4,(v<0)?'#e65100':'#1565c0','#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'序列 x(n)=αⁿu(n), n=0,1,…,14','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 归一化频谱对照 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-3.4,3.4,-0.12,1.14);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'ω','|X| (归一化)');
+    // α 序列频谱 (归一到峰值 1)
+    var k1=1-Math.abs(al), first=true;
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=3; ctx.beginPath();
+    for(q=-Math.PI;q<=Math.PI+1e-9;q+=0.006){
+      var y=alphaSpec(q)*k1, px=m2.px(q), py=m2.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 矩形序列 (N=5) 的狄利克雷核 (归一到峰值 1)
+    first=true; ctx.strokeStyle='#c62828'; ctx.lineWidth=2.2; ctx.setLineDash([7,5]); ctx.beginPath();
+    for(q=-Math.PI;q<=Math.PI+1e-9;q+=0.006){
+      var yd=dirichlet(q)/NR, px2=m2.px(q), py2=m2.py(yd);
+      if(first){ ctx.moveTo(px2,py2); first=false; } else ctx.lineTo(px2,py2);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#1565c0'; ctx.font='bold 12px Segoe UI';
+    ctx.fillText('蓝: α 序列频谱的模 (已归一化)',6,m2.py(1.02));
+    ctx.fillStyle='#c62828';
+    ctx.fillText('红虚线: 矩形序列 (N=5) 的狄利克雷核',6,m2.py(0.90));
+    ctx.restore();
+    tlabel(ctx,sx,26,'归一化频谱对照: α 序列 (蓝实线) 与矩形序列 (红虚线)','#37474f','bold 12.5px Segoe UI');
+    var peak=1/(1-Math.abs(al));
+    setRO('alReadout',
+      '参数 $\\alpha='+fmt(al)+'$: 序列 $\\alpha^{n}u(n)$ 的频谱为 $X_{\\alpha}(\\mathrm{e}^{\\mathrm{i}\\omega})=\\frac{1}{1-\\alpha\\mathrm{e}^{-\\mathrm{i}\\omega}}$, 其模在 $\\omega=0$ 处取峰值 $\\frac{1}{1-|\\alpha|}= '+fmt(peak,2)+'$.<br>'+
+      hl('$\\alpha$ 越接近 $1$, 峰值越高、主峰越窄 —— 信号能量越向低频聚集; $\\alpha$ 为负时峰值移到 $\\omega=\\pm\\pi$ 附近.')+'<br>'+
+      hl2('红虚线是矩形序列 (取 $N='+NR+'$) 的归一化狄利克雷核 $\\frac{1}{N}\\left|\\frac{\\sin(N\\omega/2)}{\\sin(\\omega/2)}\\right|$: 它始终保持固定的「一个主瓣 + 一串旁瓣」结构, 主瓣半宽约 $2\\pi/N$ —— 这正是有限长序列频谱的典型面貌.'));
+  }
+  bindSlider('alA',function(v){ al=v; badge('alAV',fmt(v)); draw(); });
+  badge('alAV',fmt(al));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'DTFT 的定义 (定义 5.1)', c:'#1976d2', leaves:['采样与离散化: $t = nT$, 得序列 $x(n)$','绝对可和: $\\sum |x(n)|$ 收敛','$X(\\mathrm{e}^{\\mathrm{i}\\omega}) = \\sum x(n)\\mathrm{e}^{-\\mathrm{i}\\omega n}$, $\\omega \\in [-\\pi,\\pi]$','逆变换 (IDTFT): $x(n) = \\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi} X \\mathrm{e}^{\\mathrm{i}\\omega n}\\,\\mathrm{d}\\omega$','变换对记号: $x(n) \\leftrightarrow X(\\mathrm{e}^{\\mathrm{i}\\omega})$','时间离散, 频率连续']},
+    {t:'逆变换的推导与周期性', c:'#e65100', leaves:['两端乘 $\\mathrm{e}^{\\mathrm{i}\\omega m}$, 从 $-\\pi$ 到 $\\pi$ 积分','正交性 $\\int \\mathrm{e}^{\\mathrm{i}\\omega(n-m)}\\,\\mathrm{d}\\omega = 2\\pi\\delta_{nm}$','得 $\\int X \\mathrm{e}^{\\mathrm{i}\\omega m}\\,\\mathrm{d}\\omega = 2\\pi x(m)$','积分区间可任取长度为 $2\\pi$ 的区间','$X(\\mathrm{e}^{\\mathrm{i}(\\omega+2\\pi)}) = X(\\mathrm{e}^{\\mathrm{i}\\omega})$: 周期 $2\\pi$','与连续频谱最重要的差别']},
+    {t:'DTFT 的性质', c:'#c62828', leaves:['(1) 线性: $a x_1+b x_2 \\leftrightarrow a X_1+b X_2$','(2) 平移: $x(n-n_0) \\leftrightarrow \\mathrm{e}^{-\\mathrm{i}\\omega n_0}X(\\mathrm{e}^{\\mathrm{i}\\omega})$','(3) 时间倒置: $x(-n) \\leftrightarrow X(\\mathrm{e}^{-\\mathrm{i}\\omega})$','(4) 频域微分: $n x(n) \\leftrightarrow \\mathrm{i}\\frac{\\mathrm{d}X}{\\mathrm{d}\\omega}$','(5) 帕塞瓦尔: $\\sum |x|^2 = \\frac{1}{2\\pi}\\int |X|^2\\,\\mathrm{d}\\omega$','(6) 卷积定理 (7) 调制/加窗定理']},
+    {t:'典型序列与例题', c:'#2e7d32', leaves:['$\\delta(n) \\leftrightarrow 1$ (常数谱)','$\\alpha^n u(n) \\leftrightarrow \\frac{1}{1-\\alpha \\mathrm{e}^{-\\mathrm{i}\\omega}}$, $|\\alpha| \u003c 1$','矩形序列 $\\to$ 狄利克雷核: 主瓣 + 旁瓣','例5.3: 频域微分求 $\\sum n\\left(\\frac{1}{2}\\right)^n = 2$','练习5.1: $\\delta(n-n_0) \\leftrightarrow \\mathrm{e}^{-\\mathrm{i}\\omega n_0}$','练习5.2: 卷积定理 $\\to \\frac{1}{\\left(1-\\frac{1}{2}\\mathrm{e}^{-\\mathrm{i}\\omega}\\right)^2}$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第七章第五节 · 序列的傅里叶变换 (DTFT)';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 采样过渡 → 定义 5.1 → 逆变换与 $2\\pi$ 周期性 → 七条性质 → 典型序列与例题; 一句话: <b>$x(n)\\leftrightarrow X(\\mathrm{e}^{\\mathrm{i}\\omega})=\\sum\\limits_{n=-\\infty}^{+\\infty}x(n)\\mathrm{e}^{-\\mathrm{i}\\omega n}$, 逆变换 $x(n)=\\frac{1}{2\\pi}\\int_{-\\pi}^{\\pi}X(\\mathrm{e}^{\\mathrm{i}\\omega})\\mathrm{e}^{\\mathrm{i}\\omega n}\\,\\mathrm{d}\\omega$; $X(\\mathrm{e}^{\\mathrm{i}\\omega})$ 以 $2\\pi$ 为周期, 卷积对应乘积, 帕塞瓦尔保证能量守恒</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'为什么要先把连续信号「采样」成离散序列, 再去研究它? 采样定理给了我们什么保证?',
+     hints:['计算机、芯片、存储器只能处理离散的数字, 离散化是数字世界的入口.',
+            '奈奎斯特–香农采样定理: 若信号最高频率为 B, 以不低于 2B 的速率采样, 离散样本就能完整重建原信号.',
+            '采样率不够会造成「混叠」(aliasing): 高频成分伪装成低频, 信息被永久污染, 事后无法恢复.',
+            '可迁移的态度: 把连续问题「离散化」并不可怕, 可怕的是不知道离散化的「安全边界」在哪里.']},
+    {q:'$X(\\mathrm{e}^{\\mathrm{i}\\omega})$ 以 $2\\pi$ 为周期, 为什么只需在一个周期内研究它? 这带来什么好处?',
+     hints:['因为 $\\mathrm{e}^{-\\mathrm{i}(\\omega+2\\pi)n}=\\mathrm{e}^{-\\mathrm{i}\\omega n}$ 对整数 n 恒成立, 频谱每隔 2π 完整重复.',
+            '这与连续傅里叶变换形成鲜明对照: 那是「时间连续换频率非周期」, 这里是「时间离散换频率周期」.',
+            '好处: 频率域只需盯住一段长度 2π 的区间 (如 [−π,π]), 逆变换的积分也只在有限区间上进行.',
+            '可迁移的态度: 发现周期性就发现「可压缩的冗余」, 只算一个周期, 是效率的来源.']},
+    {q:'时移只改变相位 (线性相位) 而不改变幅度谱, 这对工程有什么价值?',
+     hints:['由平移性质 x(n−n₀) ↔ e^{−iωn₀}X(e^{iω}), 幅度不变、相位被加上 −ωn₀.',
+            '线性相位意味着不同频率成分被「同步延迟」, 波形形状得以保持, 不会发生相位失真.',
+            '在滤波器设计中, 「线性相位 FIR 滤波器」正是为了让信号通过后波形不畸变, 广泛用于音频与图像处理.',
+            '可迁移的态度: 分析问题时把「幅度」与「相位」分开看, 往往能看清各自的作用.']},
+    {q:'从朱载堉的十二平均律 ($2^{1/12}$ 的离散等比频率) 到今天的 OFDM: 你如何理解「离散频率」这一思想贯穿古今?',
+     hints:['十二平均律把音高组织成一串离散等比频率: ω_{k+1} = 2^{1/12} ω_k, 十二步回到高八度, 从而可以自由旋宫转调.',
+            'OFDM 把数据分成许多正交的窄带子载波并行传输, 每个子载波的「离散频率」恰好落在频域采样点上, 这就是离散频谱的工程实现.',
+            '两者都在利用「离散的频率结构」来组织信息: 一个是音乐, 一个是通信.',
+            '可迁移的态度: 基础数学思想没有国界也没有时代, 谁把它用得透、用得实, 谁就能走到前面.']},
+    {q:'卷积定理把时间域的卷积变成频率域的乘积, 为什么说这是工程上的「福音」?',
+     hints:['直接做卷积需要对每个输出点做一次求和 (长度 N 的卷积约需 N² 次运算), 代价很高.',
+            '在频域里只需把两个频谱相乘, 再用快速算法 (FFT) 做正逆变换, 复杂度可降到 O(N log N).',
+            '于是「滤波」「相关」「解卷积」等操作都能借频率域高效完成 —— 这是数字信号处理的基石.',
+            '可迁移的态度: 换一个「坐标系」 (这里是频率域), 难题可能瞬间变成家常便饭.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

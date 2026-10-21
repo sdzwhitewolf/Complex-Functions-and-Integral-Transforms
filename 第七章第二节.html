@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章第二节 傅里叶积分与傅里叶变换</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第七章 第2节 傅里叶积分与傅里叶变换</h1>
+    <p>从离散谱到连续谱 &middot; 傅氏积分定理 &middot; 傅里叶变换与逆变换 &middot; 连续频谱的物理意义 &middot; 典型例题</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解从傅里叶级数到傅里叶积分的过渡思想: 周期 $T\to\infty$ 时, 频谱的角频率 $\omega=n\omega_0$ 之间的间隔 $\omega_0=\frac{2\pi}{T}\to 0$, 一根一根分开的<b>离散谱</b>逐渐"连成一片", 变成<b>连续谱</b>;
+2. 记住<b>傅氏积分定理 (定理2.1)</b> 的条件与结论: $f(t)$ 在 $(-\infty,+\infty)$ 上绝对可积且分段光滑时, 在连续点处有 $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$, 而在间断点处取 $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$;
+3. 掌握<b>傅里叶变换 (定义2.1)</b>: $F(\omega)=\mathscr{F}[f(t)]=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t$ 与逆变换 $f(t)=\mathscr{F}^{-1}[F(\omega)]=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$, 并记住<b>象函数</b>与<b>象原函数</b>两个术语;
+4. 理解 $F(\omega)$ 的<b>物理意义</b>: 它是 $f(t)$ 的连续频谱, $|F(\omega)|$ 是连续振幅谱 (偶函数), $\arg F(\omega)$ 是相位谱 (奇函数), 并会与傅里叶级数的离散谱作对比;
+5. 会用<b>单边指数衰减函数</b> $f(t)=\mathrm{e}^{-\beta t}u(t)$ 与<b>矩形脉冲 (门函数)</b> 两个典型例子求傅氏变换与逆变换, 并由此得到含参变量的广义积分与 $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\mathrm{d}\omega=\frac{\pi}{2}$.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-7b" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-7b" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-7b" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-7b" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-7b" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-7b" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、从傅里叶级数到傅里叶积分</label>
+    <label class="tab-btn" for="tab2" id="label2">二、傅里叶变换的定义</label>
+    <label class="tab-btn" for="tab3" id="label3">三、连续频谱与物理意义</label>
+    <label class="tab-btn" for="tab4" id="label4">四、典型例题</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 从傅里叶级数到傅里叶积分 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 从离散谱到连续谱: 让周期趋于无穷</div>
+
+<div class="box-key">
+<div class="title">先回顾: 周期信号只有"离散的"频率</div>
+第一节中, 以 $T$ 为周期的函数 $f_T(t)$ 可以展开为复指数形式的傅里叶级数
+<div class="box-formula">$$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega_0 t},\qquad \omega_0=\dfrac{2\pi}{T},\qquad c_n=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega_0 t}\,\mathrm{d}t.$$</div>
+各次谐波的角频率只能取
+<div class="box-formula">$$\omega=\omega_n=n\omega_0=\dfrac{2n\pi}{T}\qquad (n=0,\pm1,\pm2,\cdots),$$</div>
+相邻两根谱线之间的间隔恒为 $\omega_0=\frac{2\pi}{T}$, 谱线是一根一根<b>分开的</b> —— 我们称之为<b>离散谱</b>. 只要 $T$ 有限, 这个间隔就恒为正, 频谱永远"分得开".
+</div>
+
+<div class="box-key">
+<div class="title">关键一步: 固定脉冲形状, 让周期 $T\to\infty$</div>
+设想一个宽度 $\tau$ 固定的矩形脉冲, 以越来越大的周期 $T$ 重复出现. 记单脉冲的傅氏变换为
+<div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t,$$</div>
+则重复脉冲的系数满足 $T c_n=F(\omega_n)$, 即 $c_n=\frac{1}{T}F(\omega_n)$. 记谱线间隔 $\Delta\omega=\omega_0=\frac{2\pi}{T}$, 于是 $\frac{1}{T}=\frac{\Delta\omega}{2\pi}$, 傅里叶级数可以改写成
+<div class="box-formula">$$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}\dfrac{1}{T}F(\omega_n)\mathrm{e}^{\mathrm{i}\omega_n t}=\dfrac{1}{2\pi}\sum\limits_{n=-\infty}^{+\infty}F(\omega_n)\mathrm{e}^{\mathrm{i}\omega_n t}\,\Delta\omega.$$</div>
+当 $T\to\infty$ 时: 谱线间隔 $\Delta\omega=\frac{2\pi}{T}\to 0$, 求和区间 $-\frac{T}{2}\le t\le\frac{T}{2}$ 扩张为 $(-\infty,+\infty)$, 右端的<b>黎曼和</b>自然过渡为积分, 于是得到
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+一句话: <b>谱线间隔 $\omega_0\to 0$, 离散谱"连成一片", 成为连续谱</b>; 求和 $\sum$ 变成积分 $\int$, 离散频率 $n\omega_0$ 变成连续频率 $\omega$.
+</div>
+
+<div class="chart-container">
+<h3>交互: 周期增大, 离散谱线如何逼近连续谱 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取宽度 $\tau$ 固定的矩形脉冲, 让周期 $T$ 不断增大. 灰虚线是<b>连续频谱包络</b> $|F(\omega)|$ (它只与单个脉冲的形状有关, 不随 $T$ 改变); 蓝色谱线的高度是 $T\left|c_n\right|=\left|F(n\omega_0)\right|$, 位置在 $\omega=n\omega_0$. 拖动滑块增大 $T$: 谱线间隔 $\omega_0=\frac{2\pi}{T}$ 越来越小, 蓝色谱线越来越密, 逐点落在灰虚线上 —— 这正是"离散谱极限成为连续谱"的直观图像.</div>
+<canvas id="cvPeriod" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>周期 $T$:</label>
+<input type="range" id="perT" min="3" max="30" step="1" value="8">
+<span class="val-badge" id="perTV">8</span>
+</div>
+<div class="readout" id="perReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">1.2 傅里叶积分定理</div>
+
+<div class="box-key">
+<div class="title">定理 2.1 (傅氏积分定理)</div>
+设 $f(t)$ 在 $(-\infty,+\infty)$ 上满足条件:
+<br><br>
+<span style="color:#c62828"><b>(1)</b></span> $f(t)$ 在任一有限区间上满足<b>狄氏条件</b> (即连续或只有有限个第一类间断点, 且只有有限个极值点);
+<br>
+<span style="color:#c62828"><b>(2)</b></span> $f(t)$ 在 $(-\infty,+\infty)$ 上<b>绝对可积</b>, 即 $\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t$ 收敛.
+<br><br>
+则在 $f(t)$ 的<b>连续点</b>处有
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+右端这个式子称为 $f(t)$ 的<b>傅氏积分公式</b> (也称傅氏积分).
+</div>
+
+<div class="box-result">
+<div class="res-label">间断点处收敛到什么?</div>
+在 $f(t)$ 的<b>间断点</b> $t$ 处, 傅氏积分公式右端的积分收敛于左右极限的算术平均:
+<div class="box-formula">$$\dfrac{1}{2}\left[f(t+0)+f(t-0)\right]=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+这与傅里叶级数"连续点取函数值、间断点取平均值"的结论完全一致, 只是把离散的求和换成了连续的积分.
+</div>
+
+<div class="box-key">
+<div class="title">一句话理解</div>
+<b>傅里叶级数</b>说的是"周期信号 = 一列<b>离散</b>谐波之和"; <b>傅里叶积分</b>说的是"非周期信号 = 频率<b>连续</b>变化的谐波之叠加". 后者正是前者在 $T\to\infty$ 时的极限. 下一节要讲的傅里叶变换, 就是把傅氏积分公式"拆成两半"之后的产物.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 傅里叶变换的定义 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 傅里叶变换与傅里叶逆变换</div>
+
+<div class="box-key">
+<div class="title">先把傅氏积分公式"拆成两层"</div>
+在傅氏积分公式
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$$</div>
+中, 方括号里是一个只与 $\omega$ 有关、与 $t$ 无关的定积分. 把它的自变量统一写成 $t$, 并单独记作 $F(\omega)$:
+<div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t, \tag{7.2}$$</div>
+再代回方括号, 右端便化为
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega. \tag{7.3}$$</div>
+一个"正着算"、一个"反着算", 这就是傅里叶变换的全部内容.
+</div>
+
+<div class="box-key">
+<div class="title">定义 2.1 (傅里叶变换与逆变换)</div>
+称 (7.2) 式为函数 $f(t)$ 的<b>傅氏变换</b> (简称傅氏变换), 记为
+<div class="box-formula">$$F(\omega)=\mathscr{F}[f(t)]=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t,$$</div>
+$F(\omega)$ 称为 $f(t)$ 的<b>象函数</b>.
+<br><br>
+称 (7.3) 式为 $F(\omega)$ 的<b>傅氏逆变换</b> (简称傅氏逆变换), 记为
+<div class="box-formula">$$f(t)=\mathscr{F}^{-1}[F(\omega)]=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega,$$</div>
+$f(t)$ 称为 $F(\omega)$ 的<b>象原函数</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">一个变换对: 对称与差异</div>
+把两式合起来看:
+<div class="box-formula">$$f(t)\ \xrightarrow{\ \mathscr{F}\ }\ F(\omega)\ \xrightarrow{\ \mathscr{F}^{-1}\ }\ f(t)$$</div>
+两者<b>指数上的符号相反</b> ($\mathrm{e}^{-\mathrm{i}\omega t}$ 与 $\mathrm{e}^{\mathrm{i}\omega t}$), 而且<b>逆变换前面多一个因子 $\frac{1}{2\pi}$</b>. 记住这两点, 就不会把正、逆变换写反.
+<br><br>
+一个细节: 逆变换公式右端的积分, 在 $f(t)$ 的间断点处仍然取 $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$; 这一点与傅氏积分公式完全相同.
+</div>
+
+<div class="chart-container">
+<h3>交互: 时域 $f(t)$ 与频域 $|F(\omega)|$ 的对照 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是时域波形 $f(t)=\mathrm{e}^{-\beta t}u(t)$; 右图是它的振幅谱 $|F(\omega)|=\frac{1}{\sqrt{\beta^{2}+\omega^{2}}}$. 拖动滑块改变衰减率 $\beta$: $\beta$ 越大, 时域波形衰减越快、越"窄"; 而频域曲线越"平"、越"宽". 这一"<b>时域越窄, 频域越宽</b>"的现象, 是傅里叶变换最重要的定性规律之一.</div>
+<canvas id="cvDef" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>衰减率 $\beta$:</label>
+<input type="range" id="defB" min="0.4" max="3" step="0.1" value="1">
+<span class="val-badge" id="defBV">1.00</span>
+</div>
+<div class="readout" id="defReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2.2 两点说明</div>
+
+<div class="box-key">
+<div class="title">存在条件: 绝对可积是常用的充分条件</div>
+由定理2.1, 只要 $f(t)$ 在 $(-\infty,+\infty)$ 上<b>绝对可积</b>且分段光滑, 它的傅氏变换 $F(\omega)$ 就存在. 绝对可积 $\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t$ 收敛, 保证了 (7.2) 式的积分绝对收敛, 从而 $F(\omega)$ 是一个有界函数.
+<br><br>
+这就是为什么本节例题中都要求 $\beta&gt;0$ 或 $\tau&gt;0$: 只有参数取正, 被积函数才是指数衰减的, 才可能绝对可积.
+</div>
+
+<div class="box-key">
+<div class="title">与傅里叶级数的联系</div>
+傅里叶变换并不是一个全新的东西, 而是傅里叶级数在 $T\to\infty$ 时的<b>极限形式</b>: 把 $\frac{1}{T}$ 看成 $\frac{\Delta\omega}{2\pi}$, 把 $c_n$ 乘上 $T$ 得到 $F(\omega_n)$, 离散求和就"长"成了连续积分. 认清这条来路, 就不会觉得定义2.1 是凭空冒出来的.
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 连续频谱与物理意义 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 连续频谱: 对傅里叶变换物理意义的解读</div>
+
+<div class="box-key">
+<div class="title">谐波的"连续叠加"</div>
+任一非周期函数 $f(t)$ 都可以分解成频率 $\omega$ <b>连续变化</b>的简谐波 $\mathrm{e}^{\mathrm{i}\omega t}$ 的叠加:
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+与傅里叶级数相比: 级数是"离散地数出每一根谱线的系数 $c_n$", 而这里 $\omega$ 是连续取值的, $F(\omega)$ 扮演的角色是"单位频率间隔上的谐波<b>系数密度</b>" —— 它不再是一根根谱线, 而是一条连续的曲线.
+</div>
+
+<div class="box-result">
+<div class="res-label">三个术语: 频谱、振幅谱、相位谱</div>
+在物理中, 我们把 $\mathscr{F}$ 变换得到的结果 $F(\omega)$ 称为 $f(t)$ 的<b>连续频谱</b> (简称频谱); 把
+<div class="box-formula">$$|F(\omega)|\ \text{称为}\ f(t)\ \text{的连续振幅谱 (简称振幅谱)},\qquad \arg F(\omega)\ \text{称为}\ f(t)\ \text{的相位谱 (简称相位谱)}.$$</div>
+<b>注:</b> $|F(\omega)|$ 是 $\omega$ 的<b>偶函数</b>, $\arg F(\omega)$ 是 $\omega$ 的<b>奇函数</b>.
+</div>
+
+<div class="box-key">
+<div class="title">为什么振幅谱是偶函数、相位谱是奇函数?</div>
+当 $f(t)$ 是<b>实函数</b>时, 由定义立即可得
+<div class="box-formula">$$F(-\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}t=\overline{\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t}=\overline{F(\omega)},$$</div>
+也就是说 $F(-\omega)$ 与 $F(\omega)$ <b>互为共轭</b>. 于是它们的模相同、辐角相反:
+<div class="box-formula">$$|F(-\omega)|=|F(\omega)|,\qquad \arg F(-\omega)=-\arg F(\omega).$$</div>
+这与第一节实周期信号的 $c_{-n}=\bar c_n$ 是同一个对称性, 只不过"$c_n$"换成了"$F(\omega)$".
+</div>
+
+<div class="box-key">
+<div class="title">离散谱 与 连续谱: 一张对照</div>
+<span style="color:#c62828"><b>(1)</b></span> <b>周期信号</b>: 频率取离散值 $\omega=n\omega_0$, 谱是一条条分开的"谱线", 用 $\left|c_n\right|$ 与 $\arg c_n$ 描述;
+<br><br>
+<span style="color:#c62828"><b>(2)</b></span> <b>非周期信号</b>: 频率连续取值 $\omega\in(-\infty,+\infty)$, 谱是连成一片的曲线, 用 $|F(\omega)|$ 与 $\arg F(\omega)$ 描述;
+<br><br>
+<span style="color:#c62828"><b>(3)</b></span> 当周期 $T\to\infty$ 时, 离散谱的间隔 $\omega_0=\frac{2\pi}{T}\to 0$, 离散谱就"过渡"成了连续谱 —— 这正是本节开头那条主线.
+</div>
+
+<div class="chart-container">
+<h3>交互: 连续振幅谱与相位谱 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">仍取 $f(t)=\mathrm{e}^{-\beta t}u(t)$ ($\beta&gt;0$). 左图是<b>连续振幅谱</b> $|F(\omega)|=\frac{1}{\sqrt{\beta^{2}+\omega^{2}}}$, 它关于纵轴对称 (偶函数), 在 $\omega=0$ 处取到最大值 $\frac{1}{\beta}$; 右图是<b>相位谱</b> $\arg F(\omega)=-\arctan\frac{\omega}{\beta}$, 它关于原点对称 (奇函数). 拖动滑块改变 $\beta$, 观察两条曲线如何随之伸缩.</div>
+<div class="fig-caps">
+<div class="fc" id="cvSpectrumCap"></div>
+<div class="fc" id="cvSpectrumCap2"></div>
+</div>
+<canvas id="cvSpectrum" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>衰减率 $\beta$:</label>
+<input type="range" id="specB" min="0.4" max="3" step="0.1" value="1">
+<span class="val-badge" id="specBV">1.00</span>
+</div>
+<div class="readout" id="specReadout2"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 典型例题 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 例 2.1: 单边指数衰减函数的傅氏变换与积分表达式</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.1</div>
+求单边指数衰减函数
+<div class="box-formula">$$f(t)=\begin{cases}0, & t&lt;0,\\[4pt] \mathrm{e}^{-\beta t}, & t\ge 0\end{cases}\qquad(\beta&gt;0)$$</div>
+的傅氏变换及积分表达式.
+<input type="checkbox" id="c7s2ans1" class="answer-toggle">
+<label for="c7s2ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】(1) 求 $f(t)$ 的傅氏变换</div>
+<div class="box-formula">$$F(\omega)=\mathscr{F}[f(t)]=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\int_{0}^{+\infty}\mathrm{e}^{-\beta t}\cdot\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\int_{0}^{+\infty}\mathrm{e}^{-(\beta+\mathrm{i}\omega)t}\,\mathrm{d}t.$$</div>
+因为 $\beta&gt;0$, 当 $t\to+\infty$ 时 $\mathrm{e}^{-(\beta+\mathrm{i}\omega)t}\to 0$, 故
+<div class="box-formula">$$F(\omega)=-\dfrac{1}{\beta+\mathrm{i}\omega}\mathrm{e}^{-(\beta+\mathrm{i}\omega)t}\Bigg|_{0}^{+\infty}=\dfrac{1}{\beta+\mathrm{i}\omega}=\dfrac{\beta-\mathrm{i}\omega}{\beta^{2}+\omega^{2}}.$$</div>
+<b>(2) 由象函数求象原函数 (傅氏逆变换)</b>. 记 $\tilde{f}(t)=\frac{1}{2}\left[f(t+0)+f(t-0)\right]$, 则
+<div class="box-formula">$$\tilde{f}(t)=\mathscr{F}^{-1}[F(\omega)]=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\dfrac{\beta-\mathrm{i}\omega}{\beta^{2}+\omega^{2}}\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+展开 $\mathrm{e}^{\mathrm{i}\omega t}=\cos\omega t+\mathrm{i}\sin\omega t$ 并按实部、虚部整理:
+<div class="box-formula">$$\tilde{f}(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\dfrac{\beta\cos\omega t+\omega\sin\omega t}{\beta^{2}+\omega^{2}}\,\mathrm{d}\omega+\dfrac{\mathrm{i}}{2\pi}\int_{-\infty}^{+\infty}\dfrac{\beta\sin\omega t-\omega\cos\omega t}{\beta^{2}+\omega^{2}}\,\mathrm{d}\omega.$$</div>
+第二个积分的被积函数关于 $\omega$ 是<b>奇函数</b>, 积分为零; 第一个积分的被积函数是<b>偶函数</b>, 可化为 $2$ 倍的正半轴积分, 于是
+<div class="box-formula">$$\tilde{f}(t)=\dfrac{1}{\pi}\int_{0}^{+\infty}\dfrac{\beta\cos\omega t+\omega\sin\omega t}{\beta^{2}+\omega^{2}}\,\mathrm{d}\omega.$$</div>
+<b>(3) 由此得到一个含参变量的广义积分</b>. 取 $t=0$, 则
+<div class="box-formula">$$\tilde{f}(0)=\dfrac{1}{2}\left[f(0+0)+f(0-0)\right]=\dfrac{1+0}{2}=\dfrac{1}{2}.$$</div>
+代入上式并整理, 即得
+<div class="box-formula">$$\int_{0}^{+\infty}\dfrac{\beta\cos\omega t+\omega\sin\omega t}{\beta^{2}+\omega^{2}}\,\mathrm{d}\omega=\pi\tilde{f}(t)=\begin{cases}0, & t&lt;0,\\[8pt] \dfrac{\pi}{2}, & t=0,\\[8pt] \pi\mathrm{e}^{-\beta t}, & t&gt;0.\end{cases}$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">从例2.1 可以学到什么?</div>
+<span style="color:#c62828"><b>(1)</b></span> <b>一个"标准结果"</b>: $\mathscr{F}\left[\mathrm{e}^{-\beta t}u(t)\right]=\frac{1}{\beta+\mathrm{i}\omega}$ ($\beta&gt;0$) 是后续大量计算的起点, 值得记住;
+<br><br>
+<span style="color:#c62828"><b>(2)</b></span> <b>逆变换的用法</b>: 只要把 $F(\omega)$ 代入逆变换公式, 就能"顺手"得到一个含参变量的广义积分 —— 这是用积分变换"造"积分公式的典型手法;
+<br><br>
+<span style="color:#c62828"><b>(3)</b></span> <b>间断点的处理</b>: 结果里出现 $\tilde{f}(t)=\frac{1}{2}\left[f(t+0)+f(t-0)\right]$, 正是定理2.1 中"间断点取左右极限平均"的兑现.
+</div>
+
+<div class="sec-title">4.2 例 2.2: 矩形脉冲 (门函数) 的频谱及其逆变换</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.2</div>
+如图所示的函数 $f(t)$ 叫做<b>矩形脉冲</b> (也常称<b>门函数</b>): (1) 求 $f(t)$ 的傅氏变换; (2) 作出 $f(t)$ 的频谱 $|F(\omega)|$ 随 $\omega$ 变化的频谱图; (3) 求 $G(\omega)=\frac{\sin\omega}{\omega}$ 的傅氏逆变换.
+<div class="box-formula">$$f(t)=\begin{cases}E, & |t|\le\dfrac{\tau}{2},\\[8pt] 0, & |t|&gt;\dfrac{\tau}{2}\end{cases}\qquad(\tau&gt;0).$$</div>
+<input type="checkbox" id="c7s2ans2" class="answer-toggle">
+<label for="c7s2ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】(1) 求 $f(t)$ 的傅氏变换</div>
+<div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\int_{-\frac{\tau}{2}}^{\frac{\tau}{2}}E\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\dfrac{E\mathrm{e}^{-\mathrm{i}\omega t}}{-\mathrm{i}\omega}\Bigg|_{-\frac{\tau}{2}}^{\frac{\tau}{2}}$$</div>
+<div class="box-formula">$$=-\dfrac{E}{\mathrm{i}\omega}\left(\mathrm{e}^{-\frac{\mathrm{i}\omega\tau}{2}}-\mathrm{e}^{\frac{\mathrm{i}\omega\tau}{2}}\right)=\dfrac{2E}{\omega}\sin\dfrac{\tau\omega}{2}.$$</div>
+<b>(2) 振幅谱</b>为
+<div class="box-formula">$$|F(\omega)|=2E\left|\dfrac{\sin\dfrac{\omega\tau}{2}}{\omega}\right|=E\tau\left|\dfrac{\sin\dfrac{\omega\tau}{2}}{\dfrac{\omega\tau}{2}}\right|.$$</div>
+其峰值在 $\omega=0$ 处, 为 $|F(0)|=E\tau$; 除 $\omega=0$ 外, 零点位于 $\omega=\pm\frac{2\pi}{\tau},\ \pm\frac{4\pi}{\tau},\ \pm\frac{6\pi}{\tau},\ \cdots$, 即 $\omega=\frac{2k\pi}{\tau}$ ($k=\pm1,\pm2,\cdots$). 注意: 门函数越窄 ($\tau$ 越小), 频谱的主瓣越宽.
+<br><br>
+<b>(3)</b> 取 $E=\frac{1}{2},\ \tau=2$, 则
+<div class="box-formula">$$f(t)=\begin{cases}\dfrac{1}{2}, & |t|\le 1,\\[8pt] 0, & |t|&gt;1\end{cases}$$</div>
+的傅氏变换为 $G(\omega)=\frac{\sin\omega}{\omega}$ (这就是常见的抽样函数 $\operatorname{Sa}(\omega)$), 其傅氏逆变换为
+<div class="box-formula">$$g(t)=\begin{cases}\dfrac{1}{2}, & |t|&lt;1,\\[8pt] \dfrac{1}{4}, & t=\pm 1,\\[8pt] 0, & |t|&gt;1.\end{cases}$$</div>
+这里 $g(\pm1)=\frac{1}{4}$ 正是间断点处左右极限的平均 $\frac{1}{2}\left[\frac{1}{2}+0\right]=\frac{1}{4}$.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 门函数与它的频谱 (脉宽可调) <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是门函数 $f(t)$ ($|t|&lt;\frac{\tau}{2}$ 时为 $1$, 其余为 $0$); 右图是它的振幅谱 $|F(\omega)|=\frac{2}{\omega}\left|\sin\frac{\tau\omega}{2}\right|$. 拖动滑块改变脉宽 $\tau$: 门函数越<b>窄</b>, 频谱主瓣越<b>宽</b>、零点越"远"; 门函数越<b>宽</b>, 频谱越集中于低频. 竖直的虚线标出了第一对零点 $\omega=\pm\frac{2\pi}{\tau}$ —— 它们围成的"主瓣"宽度为 $\frac{4\pi}{\tau}$.</div>
+<canvas id="cvGate" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>脉宽 $\tau$:</label>
+<input type="range" id="gateTau" min="0.4" max="3" step="0.05" value="2">
+<span class="val-badge" id="gateTauV">2.00</span>
+</div>
+<div class="readout" id="gateReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.3 两道练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 2.1</div>
+设 $$f(t)=\begin{cases}1, & |t|&lt;a,\\[4pt] 0, & |t|&gt;a\end{cases}$$ ($a&gt;0$). 求 $f(t)$ 的傅氏变换, 并写出 $f(t)$ 的积分表达式; 由此求出 $\int_{0}^{+\infty}\frac{\sin a\omega}{\omega}\,\mathrm{d}\omega$.
+<input type="checkbox" id="c7s2ans3" class="answer-toggle">
+<label for="c7s2ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由定义
+<div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\int_{-a}^{a}\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\dfrac{2\sin a\omega}{\omega}.$$</div>
+代入逆变换公式, 得 $f(t)$ 的积分表达式
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\dfrac{2\sin a\omega}{\omega}\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega=\dfrac{1}{\pi}\int_{-\infty}^{+\infty}\dfrac{\sin a\omega\cos\omega t}{\omega}\,\mathrm{d}\omega=\dfrac{2}{\pi}\int_{0}^{+\infty}\dfrac{\sin a\omega\cos\omega t}{\omega}\,\mathrm{d}\omega.$$</div>
+(用到了 $\frac{\sin a\omega}{\omega}$ 关于 $\omega$ 为偶函数、$\sin a\omega\sin\omega t$ 关于 $\omega$ 为奇函数.) 令 $t=0$, 此时 $f(0)=1$, 于是
+<div class="box-formula">$$\dfrac{2}{\pi}\int_{0}^{+\infty}\dfrac{\sin a\omega}{\omega}\,\mathrm{d}\omega=1\qquad\Longrightarrow\qquad \int_{0}^{+\infty}\dfrac{\sin a\omega}{\omega}\,\mathrm{d}\omega=\dfrac{\pi}{2}\quad(a&gt;0).$$</div>
+特别地, 取 $a=1$ 就得到著名的<b>狄利克雷积分</b> $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\,\mathrm{d}\omega=\frac{\pi}{2}$.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 2.2</div>
+设 $f(t)=\mathrm{e}^{-\beta t}u(t)$ ($\beta&gt;0$), 已知 $\mathscr{F}[f(t)]=\frac{1}{\beta+\mathrm{i}\omega}$. 求 $g(t)=f(t)\cos\omega_0 t$ 的傅氏变换 $G(\omega)$, 并说明当 $\omega_0$ 很大时 $|G(\omega)|$ 的形状.
+<input type="checkbox" id="c7s2ans4" class="answer-toggle">
+<label for="c7s2ans4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由欧拉公式 $g(t)=f(t)\cos\omega_0 t=\frac{1}{2}f(t)\left(\mathrm{e}^{\mathrm{i}\omega_0 t}+\mathrm{e}^{-\mathrm{i}\omega_0 t}\right)$, 代入定义:
+<div class="box-formula">$$G(\omega)=\int_{-\infty}^{+\infty}f(t)\cos\omega_0 t\,\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\dfrac{1}{2}\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}(\omega-\omega_0)t}\,\mathrm{d}t+\dfrac{1}{2}\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}(\omega+\omega_0)t}\,\mathrm{d}t,$$</div>
+即
+<div class="box-formula">$$G(\omega)=\dfrac{1}{2}\left[F(\omega-\omega_0)+F(\omega+\omega_0)\right]=\dfrac{1}{2}\left[\dfrac{1}{\beta+\mathrm{i}(\omega-\omega_0)}+\dfrac{1}{\beta+\mathrm{i}(\omega+\omega_0)}\right].$$</div>
+这说明: 乘以 $\cos\omega_0 t$ 相当于把原频谱 $F(\omega)$ 向左右各"平移" $\omega_0$、幅值减半 —— 这就是<b>频移 (调制) 性质</b>. 当 $\omega_0$ 很大时, $|G(\omega)|$ 在 $\omega=\pm\omega_0$ 附近各出现一个尖锐的峰, 两个峰互不重叠; 这正是无线电"用低频信号去调制高频载波"的数学依据.
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>傅里叶级数 (周期 T 有限)</b> → <b>周期 $T\to\infty$ 得到傅里叶积分定理</b> → <b>傅里叶变换与逆变换</b> → <b>连续频谱的物理意义</b> → <b>典型例题</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>比较项</th><th>傅里叶级数 (周期函数)</th><th>傅里叶变换 (非周期函数)</th></tr>
+<tr><td>适用对象</td><td>以 $T$ 为周期的函数 $f_T(t)$</td><td>在 $(-\infty,+\infty)$ 上绝对可积且分段光滑的非周期函数 $f(t)$</td></tr>
+<tr><td>分解式</td><td>$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega_0 t}$</td><td>$f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$</td></tr>
+<tr><td>频率</td><td>离散频率 $\omega=n\omega_0=\frac{2n\pi}{T}$ ($n=0,\pm1,\pm2,\cdots$)</td><td>连续频率 $\omega\in(-\infty,+\infty)$, 取遍全体实数</td></tr>
+<tr><td>系数 / 象函数</td><td>$c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega_0 t}\,\mathrm{d}t$</td><td>$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$ (象函数)</td></tr>
+<tr><td>谱线间隔</td><td>$\omega_0=\frac{2\pi}{T}$, 间隔有限, 谱线一根一根分开</td><td>间隔 $\Delta\omega\to 0$, 谱线连成一片</td></tr>
+<tr><td>谱的形态</td><td>离散谱: 离散振幅谱 $\left|c_n\right|$ 与离散相位谱 $\arg c_n$</td><td>连续谱: 连续振幅谱 $|F(\omega)|$ (偶) 与相位谱 (奇)</td></tr>
+<tr><td>相互关系</td><td colspan="2">令 $T\to\infty$: $\frac{1}{T}=\frac{\Delta\omega}{2\pi}$, 求和 $\sum$ 过渡为积分 $\frac{1}{2\pi}\int$, $T c_n$ 过渡为 $F(\omega)$ —— 傅里叶级数成为傅里叶变换</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 一个函数 $f(t)$ 能够进行傅里叶变换, 下列哪个是常用的充分条件?</div>
+<label class="quiz-opt">A. $f(t)$ 在 $(-\infty,+\infty)$ 上单调</label>
+<label class="quiz-opt" data-ok="1">B. $f(t)$ 在任一有限区间满足狄氏条件, 且 $\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t$ 收敛 (绝对可积)</label>
+<label class="quiz-opt">C. $f(t)$ 在 $(-\infty,+\infty)$ 上有界</label>
+<label class="quiz-opt">D. $f(t)$ 是偶函数</label>
+<div class="quiz-explain"><b>解析:</b> 定理2.1 (傅氏积分定理) 的条件正是"任一有限区间上满足狄氏条件 (分段光滑)"且"在 $(-\infty,+\infty)$ 上绝对可积". 单调、有界、奇偶性都不是充分条件.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 当 $t$ 是 $f(t)$ 的间断点时, 傅氏积分公式右端的积分收敛于?</div>
+<label class="quiz-opt">A. $f(t)$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$</label>
+<label class="quiz-opt">C. $0$</label>
+<label class="quiz-opt">D. $\frac{1}{2}\left[f(t+0)-f(t-0)\right]$</label>
+<div class="quiz-explain"><b>解析:</b> 与狄利克雷定理一致: 连续点收敛于 $f(t)$, 间断点收敛于左右极限的算术平均 $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 傅里叶变换 $F(\omega)=\mathscr{F}[f(t)]$ 的定义式是?</div>
+<label class="quiz-opt">A. $F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}t$</label>
+<label class="quiz-opt" data-ok="1">B. $F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$</label>
+<label class="quiz-opt">C. $F(\omega)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$</label>
+<label class="quiz-opt">D. $F(\omega)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}t$</label>
+<div class="quiz-explain"><b>解析:</b> 傅氏变换的指数上带<b>负号</b>, 且前面<b>没有</b> $\frac{1}{2\pi}$ 因子; 逆变换才是指数带正号并乘 $\frac{1}{2\pi}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 傅里叶逆变换 $f(t)=\mathscr{F}^{-1}[F(\omega)]$ 的定义式是?</div>
+<label class="quiz-opt">A. $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}\omega$</label>
+<label class="quiz-opt">B. $f(t)=\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$</label>
+<label class="quiz-opt" data-ok="1">C. $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$</label>
+<label class="quiz-opt">D. $f(t)=\frac{1}{2}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$</label>
+<div class="quiz-explain"><b>解析:</b> 逆变换的指数上<b>没有负号</b> (为 $\mathrm{e}^{\mathrm{i}\omega t}$), 且积分号前必须乘上因子 $\frac{1}{2\pi}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 关于"象函数"与"象原函数", 下列说法正确的是?</div>
+<label class="quiz-opt">A. $f(t)$ 称为象函数, $F(\omega)$ 称为象原函数</label>
+<label class="quiz-opt" data-ok="1">B. $F(\omega)$ 称为象函数, $f(t)$ 称为象原函数</label>
+<label class="quiz-opt">C. $f(t)$ 与 $F(\omega)$ 都称为象函数</label>
+<label class="quiz-opt">D. $f(t)$ 与 $F(\omega)$ 都称为象原函数</label>
+<div class="quiz-explain"><b>解析:</b> 变换后得到的 $F(\omega)$ 称为 $f(t)$ 的象函数; 反过来, 被变换的 $f(t)$ 称为 $F(\omega)$ 的象原函数. 这与积分变换"原象 → 象"的命名习惯一致.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 设 $f(t)$ 为实函数, $F(\omega)=\mathscr{F}[f(t)]$. 下列关系正确的是?</div>
+<label class="quiz-opt">A. $F(-\omega)=F(\omega)$</label>
+<label class="quiz-opt">B. $F(-\omega)=-F(\omega)$</label>
+<label class="quiz-opt" data-ok="1">C. $F(-\omega)=\overline{F(\omega)}$</label>
+<label class="quiz-opt">D. $F(-\omega)=\frac{1}{F(\omega)}$</label>
+<div class="quiz-explain"><b>解析:</b> $F(-\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}t=\overline{\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t}=\overline{F(\omega)}$. 由此立刻得到 $|F(\omega)|$ 是偶函数、$\arg F(\omega)$ 是奇函数.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 设 $f(t)=\mathrm{e}^{-\beta t}u(t)$ ($\beta&gt;0$), 其傅里叶变换 $F(\omega)$ 为?</div>
+<label class="quiz-opt">A. $\frac{1}{\beta-\mathrm{i}\omega}$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{\beta+\mathrm{i}\omega}$</label>
+<label class="quiz-opt">C. $\frac{1}{\beta^{2}+\omega^{2}}$</label>
+<label class="quiz-opt">D. $\frac{\mathrm{i}\omega}{\beta+\mathrm{i}\omega}$</label>
+<div class="quiz-explain"><b>解析:</b> $F(\omega)=\int_{0}^{+\infty}\mathrm{e}^{-(\beta+\mathrm{i}\omega)t}\,\mathrm{d}t=\frac{1}{\beta+\mathrm{i}\omega}=\frac{\beta-\mathrm{i}\omega}{\beta^{2}+\omega^{2}}$. 注意振幅谱是 $|F(\omega)|=\frac{1}{\sqrt{\beta^{2}+\omega^{2}}}$, 不要与 $\left|F(\omega)\right|^{2}$ 混淆.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 门函数 $f(t)=E\ \left(|t|&lt;\frac{\tau}{2}\right)$, $f(t)=0\ \left(|t|&gt;\frac{\tau}{2}\right)$ 的傅里叶变换为?</div>
+<label class="quiz-opt" data-ok="1">A. $\frac{2E}{\omega}\sin\frac{\tau\omega}{2}$</label>
+<label class="quiz-opt">B. $\frac{2E}{\omega}\cos\frac{\tau\omega}{2}$</label>
+<label class="quiz-opt">C. $E\tau$</label>
+<label class="quiz-opt">D. $\frac{E}{\omega}\sin\frac{\tau\omega}{2}$</label>
+<div class="quiz-explain"><b>解析:</b> $F(\omega)=\int_{-\tau/2}^{\tau/2}E\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\frac{2E}{\omega}\sin\frac{\tau\omega}{2}$. 峰值 $|F(0)|=E\tau$, 与"矩形面积"一致.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 上题门函数的振幅谱 $|F(\omega)|$, 除 $\omega=0$ 外的零点位于?</div>
+<label class="quiz-opt" data-ok="1">A. $\omega=\frac{2k\pi}{\tau}$ ($k=\pm1,\pm2,\cdots$)</label>
+<label class="quiz-opt">B. $\omega=\frac{(2k+1)\pi}{\tau}$ ($k=0,\pm1,\pm2,\cdots$)</label>
+<label class="quiz-opt">C. $\omega=\frac{k\pi}{\tau}$ ($k=\pm1,\pm2,\cdots$)</label>
+<label class="quiz-opt">D. 没有零点</label>
+<div class="quiz-explain"><b>解析:</b> 令 $\sin\frac{\tau\omega}{2}=0$, 得 $\frac{\tau\omega}{2}=k\pi$, 即 $\omega=\frac{2k\pi}{\tau}$; 主瓣位于 $\left(-\frac{2\pi}{\tau},\ \frac{2\pi}{\tau}\right)$ 内.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 由例2.2 中 $G(\omega)=\frac{\sin\omega}{\omega}$ 的逆变换, 可得 $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\,\mathrm{d}\omega=$?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt">B. $\frac{\pi}{4}$</label>
+<label class="quiz-opt" data-ok="1">C. $\frac{\pi}{2}$</label>
+<label class="quiz-opt">D. $\pi$</label>
+<div class="quiz-explain"><b>解析:</b> $g(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}\frac{\sin\omega}{\omega}\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$, 取 $t=0$ 时 $g(0)=\frac{1}{2}$ (间断点处的平均), 于是 $\frac{1}{2\pi}\int_{-\infty}^{+\infty}\frac{\sin\omega}{\omega}\,\mathrm{d}\omega=\frac{1}{2}$, 由被积函数为偶函数得 $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\,\mathrm{d}\omega=\frac{\pi}{2}$ (狄利克雷积分).</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位给"收敛"立规矩的人</h3>
+<div class="hero-sub">傅里叶断言"任意周期函数都能展成三角级数", 却迟迟说不清"这个级数究竟收敛到什么"; 第一个把这句话变成严格定理的, 是一位年仅二十四岁的德国青年.</div>
+<div class="hero-quote">
+1829 年, 狄利克雷给出了三角级数收敛的充分条件 —— 今天教科书里的<b>狄利克雷条件</b>, 也正是本节定理2.1 中"分段光滑 + 绝对可积"的来源.<br>
+<b>本节所写的傅里叶积分与傅里叶变换之所以能放心地写下来, 前提正是有人先把"收敛"的边界划清楚.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 狄利克雷: 给"收敛"立规矩的人</div>
+
+<div class="person-card">
+<div class="p-av">狄</div>
+<div class="p-main">
+<div class="p-name">约翰·彼得·古斯塔夫·勒热纳·狄利克雷 (Johann Peter Gustav Lejeune Dirichlet, 1805—1859)</div>
+<div class="p-meta">德国数学家 · 解析数论与函数论的开创者之一 · 抽屉原理(鸽巢原理)的命名者 · 1855 年接替高斯任哥廷根大学教授</div>
+<p>他出生在德国西部小镇迪伦 (Düren, 姓氏 Dirichlet 便来源于此) 的一个普通家庭, 少年时随家迁居科隆, 又远赴巴黎求学. 在巴黎, 一本高斯的《算术研究》改变了他的一生 —— 他把这本书当作随身之物, 反复研读, 几乎把它当成了自己的老师.</p>
+<p>本节所依赖的"傅里叶级数与傅里叶积分的收敛条件", 正是由他在 1829 年首次系统给出. 他一生跨越数论、分析、函数论与位势论多个领域, 既能提出最抽象的概念, 又善于用最朴素的办法解决最困难的问题 —— 这正是他能"给收敛立规矩"的底气.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从迪伦到巴黎: 一本《算术研究》点亮的数学之路</h5>
+<p>1805 年, 狄利克雷生于德国迪伦. 少年时代他随家迁居科隆, 后来到巴黎深造, 成为当时欧洲数学中心里最年轻的德国学生之一. 促使他下定决心研究数学的, 是高斯的《算术研究》(Disquisitiones Arithmeticae) —— 这部数论经典当时以晦涩难读著称, 却被他当作随身之物, 反复推演.</p>
+<p>正是这段经历, 让他既继承了高斯的深刻, 又养成了"不放过任何一个细节"的习惯. 后来他为《算术研究》所作的补充与讲解, 也成为后人理解高斯思想的重要桥梁.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>1829 年: 三角级数的收敛性第一次有了严格判据</h5>
+<p>傅里叶断言任意周期函数都能展成三角级数, 但"部分和究竟收敛到什么"一直悬而未决. 1829 年, 狄利克雷发表论文, 第一次给出了明确的充分条件: 函数在一个周期内<b>连续或只有有限个第一类间断点</b>, 且<b>只有有限个极值点</b>, 则级数在连续点收敛于函数值, 在间断点收敛于左右极限的算术平均.</p>
+<p>这一条件被称为<b>狄利克雷条件</b>, 它把傅里叶的"大胆断言"变成了可以检验、可以证明的<b>定理</b>. 本节定理2.1 把它推广到无穷区间: 只要 $f(t)$ 绝对可积且分段光滑, 傅氏积分公式就成立. 可以说, 没有狄利克雷这一步, 就没有今天意义上的傅里叶变换法.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>狄利克雷函数: 一个"处处不连续"却定义得清清楚楚的函数</h5>
+<p>他定义了一个看似"病态"、却极为重要的函数 —— 后来被称为<b>狄利克雷函数</b>:
+<div class="box-formula">$$D(t)=\begin{cases}1, & t\ \text{为有理数},\\[6pt] 0, & t\ \text{为无理数}.\end{cases}$$</div>
+</p>
+<p>这个函数在每一点处都不连续, 每一点都谈不上有导数, 却是一个完全确定、完全合法的函数. 它的意义在于猛烈冲击了当时"函数必须由公式给出、必须是连续曲线"的旧观念: 定义函数的关键不在"公式", 而在"对应法则". 这一冲击直接成为后来实变函数与勒贝格积分理论的重要起点, 也让我们更能体会: 傅里叶变换之所以要附加"绝对可积"之类的条件, 正是因为函数的世界远比想象中复杂.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>狄利克雷积分与抽屉原理: 最朴素的工具解决最难的问题</h5>
+<p>数论中著名的<b>抽屉原理</b> (鸽巢原理) 常与他的名字相连 —— 它是"把若干对象放进较少的抽屉, 必有两只落在同一格"这样一句几乎不需要证明的话, 却被狄利克雷用来证明深刻的数论结论. 他还证明了著名的<b>狄利克雷定理</b>: 首项与公差互素的等差数列中, 含有无穷多个素数.</p>
+<p>而在分析一侧, 练习2.1 中出现的积分 $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\,\mathrm{d}\omega=\frac{\pi}{2}$ 也被称作<b>狄利克雷积分</b>. 一个名字同时出现在数论与分析最基础的结论里, 足见他的影响之广.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>接替高斯: 哥廷根的数学传统与"严格化"的品格</h5>
+<p>他少年成名: 二十余岁便在巴黎与柏林间往来任教, 1831 年被聘为柏林大学教授, 成为当时德国最年轻的数学教授之一. 1855 年高斯逝世后, 他接替高斯出任<b>哥廷根大学</b>教授 —— 这不仅是职位的传承, 更是数学传统与学派精神的传承, 他在这里继续开课、主持讨论班, 影响了黎曼、戴德金等一代人.</p>
+<p>可惜两年之后, 1859 年, 狄利克雷在哥廷根去世, 年仅 54 岁. 但他留下的"严格化"传统, 却成为现代数学的基本品格: <b>一个结论在被严格证明之前, 都只能算作猜想.</b> 本节定理2.1 的每一条条件, 都是这一品格的体现.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>在巴黎求学时, 狄利克雷几乎把高斯的《算术研究》随身带着读 —— 这部书当时被公认为难读, 他却靠它自学出了自己的数论眼光, 后来还专门为它写下补充与讲稿. 他娶了音乐家门德尔松家的女儿丽贝卡, 家中常有音乐与数学交织的夜晚. 据说他讲课时思路极快, 学生常常跟不上; 但每当有人提出疑问, 他总会停下来, 一遍又一遍地重新解释 —— 因为他知道, <b>把话说清楚, 本身就是数学的一部分.</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">观念之争: "病态函数"到底算不算函数?</div>
+<div class="cc-side"><b>传统观点:</b> 在当时多数人眼里, 函数应当能由一个 (或几个) 公式给出, 图象应当是一条 (或几段) 连续曲线; 像狄利克雷函数这样"处处不连续"的东西, 与其说是函数, 不如说是一种"怪例".</div>
+<div class="cc-side"><b>狄利克雷:</b> 他坚持认为, 定义一个函数的关键不是"有没有公式", 而是"是否给出了一种明确的对应法则" —— 只要对每个 $t$ 都能确定唯一的函数值, 这个东西就是一个合法的函数, 哪怕它处处不连续.</div>
+<div class="cc-side"><b>历史的裁决:</b> 这场观念之争最终以狄利克雷一方获胜告终. "函数 = 对应法则"成为现代定义, 而"哪些函数可以积分、在什么意义下收敛"也由此被重新审视, 最终催生了勒贝格积分. <b>数学的进步, 常常表现为"把直觉让位给概念"的那一小步.</b></div>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 狄利克雷式的信念</div>
+后世在回顾狄利克雷的工作时, 常这样概括他的数学风格:
+<br>
+"<em>把分析牢牢地建立在明确的概念与条件之上, 而不是建立在图形的直观与技巧的堆砌之上.</em>"
+<br>
+他给三角级数补上的那几条条件, 看似是一种"限制", 实则是<b>让结论能够站得住的地基</b>.
+<span class="iv-sig">—— 本节定理2.1 中的"绝对可积 + 分段光滑", 正是这条信念在傅里叶分析里的具体落点.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">有限与无限</div>
+<h4>让周期趋于无穷, 离散就变成连续</h4>
+<p>周期有限时, 频谱是一根一根分开的谱线; 一旦周期趋于无穷, 谱线的间隔 $\omega_0=\frac{2\pi}{T}$ 趋于零, 离散谱就"连成一片". 离散与连续, 不是两种对立的东西, 而是同一结构在两个极限下的两副面孔.</p>
+<p>这也提醒我们: 很多看似"新"的对象, 其实只是旧对象在某个极限里的样子 —— 找到这个极限, 就找到了理解它的钥匙.</p>
+<div class="pc-math">$\sum\limits_{n=-\infty}^{+\infty}\frac{1}{T}\ \longrightarrow\ \frac{1}{2\pi}\int_{-\infty}^{+\infty}\mathrm{d}\omega$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">条件与结论</div>
+<h4>没有条件, 就没有定理</h4>
+<p>傅里叶的断言之所以一度被质疑, 并不是结论错了, 而是"条件"没有说清楚. 只有当"绝对可积""分段光滑"这些条件被补上, 结论才真正立得住.</p>
+<p>做数学、做工程都一样: 说"这个方法行"之前, 先想清楚"它在什么条件下行". 条件越清楚, 结论才越可靠.</p>
+<div class="pc-math">$\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t&lt;+\infty$<br>$\Longrightarrow\ F(\omega)=$<br>$\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>整体可积, 局部光滑</h4>
+<p>傅里叶积分定理的两条条件, 一条管"整体" (在整个数轴上绝对可积), 一条管"局部" (在任何有限区间上分段光滑). 二者缺一不可: 只盯局部会丢掉整体收敛, 只盯整体又管不住个别点的跳变.</p>
+<p>看问题要同时有"局部"与"整体"两只眼: 细节决定成败, 全局约束决定可能.</p>
+<div class="pc-math">局部: 分段光滑; 整体: $\int_{-\infty}^{+\infty}|f|\mathrm{d}t$ 收敛</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对称与对偶</div>
+<h4>$F(-\omega)=\overline{F(\omega)}$: 一半藏着另一半</h4>
+<p>对实函数 $f(t)$, 频谱天然关于实轴共轭对称: 振幅谱是偶函数, 相位谱是奇函数. 负频率那一侧, 并没有携带新的信息, 它只是正频率一侧的"镜像".</p>
+<p>对称性往往意味着"冗余", 也意味着"一半就够了"; 发现对称, 就等于把工作量减半 —— 这是数学既美又实用的地方.</p>
+<div class="pc-math">$|F(-\omega)|=|F(\omega)|$<br>$\arg F(-\omega)=-\arg F(\omega)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">时域与频域</div>
+<h4>两个互补的视角</h4>
+<p>同一个信号, 在时域里看是"波形", 在频域里看是"频谱". 时域越窄, 频域越宽; 时域越"平滑", 频域越"集中". 想同时把两边都看清, 是有代价的.</p>
+<p>换一个视角, 常常能看到在原视角里完全看不见的东西 —— "提不出问题"也许只是"站错了地方".</p>
+<div class="pc-math">$\beta\uparrow\ \Rightarrow\ f(t)$ 变窄, $|F(\omega)|$ 变宽</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">工具与问题</div>
+<h4>好工具是被问题逼出来的</h4>
+<p>傅里叶不是为了"发明变换"而发明变换, 他是为了解热传导方程、为了说清"任意函数如何分解", 才一步步把级数推到积分、把离散推到连续.</p>
+<p>真正的创造常常不是为了创造本身, 而是被一个具体而困难的问题"顶"出来的. 先把问题提准, 工具自然会长出来.</p>
+<div class="pc-math">热传导方程 $\longrightarrow$ 傅里叶级数 $\longrightarrow$ 傅里叶积分 $\longrightarrow$ 傅里叶变换</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "一尺之棰"与《九章算术》"均输" —— 连续累积的古代表达</div>
+《庄子·天下篇》记载惠施的一句话: "<b>一尺之棰, 日取其半, 万世不竭</b>." 一根一尺长的木棍, 每天取走一半, 取之不尽、取之不完 —— 古人用最朴素的图像, 讲出了"无穷可分"与"无穷累积"的思想. 而本节所讲的傅里叶积分, 正是"无穷多个无穷小量连续累加"的结果: 把连续变化的频率成分一份一份地"取"过来, 再积分起来.
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$$</div>
+这一串积分号写的, 正是"一份一份地取、再连续累积"的现代形态.
+<br><br>
+再如《九章算术》"<b>均输</b>"一章: 各地输送赋税, 路程有远近、运费有多寡, 古人要按一定法则去"平均"分配, 使总量在连续变化的条件下达到均衡. 这种"在连续变化的量之间做分配与累积"的思路, 与积分的思想异曲同工 —— <b>无论是分棰还是均输, 中国古人早已在"连续"这条路上走了很远.</b>
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从 CT 到 MRI —— 医院里的逆傅里叶变换</div>
+<ul>
+<li><b>CT 成像。</b> CT 的核心是"投影重建": 机器绕人体一周采集大量投影数据, 再把这些数据"还原"成断层图像. 其数学关键正是<b>傅里叶切片定理</b>, 而重建算法本质上就是一次<b>逆傅里叶变换</b>.</li>
+<li><b>核磁共振 (MRI)。</b> MRI 与 CT 不同: 它<b>直接在频域采集信号</b> (即所谓的 $k$ 空间), 再通过<b>逆傅里叶变换</b>重构出人体图像. 图像的"快慢、明暗", 都对应着频域数据的采集方式. 可以说, 没有逆傅里叶变换, 就没有今天的核磁共振。</li>
+<li><b>国产高端影像设备。</b> 近年来我国在高端医学影像装备上持续突破, <b>联影医疗 (United Imaging)</b> 等企业自主研发了 3T/5T 超导磁体的 MRI、高端 CT 与全身 PET-CT 等产品, 把"频域重建"这类原本写在论文里的算法, 做成了医院里可用的机器. 一条数学公式, 就这样变成了"看得见病"的仪器.</li>
+<li><b>遥感、地震勘探与无损检测。</b> 卫星遥感图像的去噪与增强、油气勘探中对地下反射波做<b>频谱分析与反演</b>、工业上对材料缺陷做超声<b>无损检测</b>, 用的都是同一套频率分解与重构的方法. 越是基础的方法, 越是能"到处都用得上".</li>
+<li><b>中国学者的接力。</b> 从<b>华罗庚</b>把数学方法推广到工厂田间, 到<b>冯康</b>开创有限元与计算数学、<b>张直中</b>推进我国雷达信号处理, 再到今天在图像重建、遥感反演与信号处理领域耕耘的一代代中国学者 —— 他们做的都是同一件事: <b>把最基础的数学工具, 交到最需要它的人手里.</b></li>
+</ul>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示: 基础理论, 是国家的"频谱"</div>
+傅里叶一条"把信号拆成频率成分"的思想, 两百年后变成了 CT 与 MRI 的重建算法、遥感与勘探的反演方法、工业无损检测的标准工具. 而让这条思想"立得住"的, 是狄利克雷给"收敛"划下的那几条条件 —— <b>基础理论的分量, 恰恰体现在它决定了一个国家能把工具用到多深.</b>
+<br><br>
+从《庄子》"日取其半"的无穷可分, 到《九章算术》"均输"的连续分配; 从狄利克雷的收敛条件, 到联影的高端磁共振 —— 同一种"用频率看世界、用连续求和解决问题"的思维, 在中国人手里一直被反复使用、不断升级.
+<br><br>
+可以说: <b>把"频率"看懂了、把"收敛"讲清楚了, 才能把信号还原成图像, 也才能把大国重器的核心技术握在自己手中.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"一尺之棰, 日取其半, 万世不竭."<span class="q-src">—— 《庄子·天下篇》</span></div>
+<div class="quote-item">"赋役有远近劳费之殊, 而必求其均."<span class="q-src">——《九章算术》"均输"章之旨</span></div>
+<div class="quote-item">"对自然的深入研究, 是数学发现最丰富的源泉."<span class="q-src">—— 傅里叶</span></div>
+<div class="quote-item">"数学是科学的皇后, 而数论是数学的皇后."<span class="q-src">—— 高斯</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"收敛不是理所当然的, 它需要条件."<span class="q-src">—— 狄利克雷条件带给我们的第一课</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 1829 年, 年仅二十四岁的狄利克雷给出了三角级数收敛的严格条件 —— 狄利克雷条件, 让傅里叶那句"任意周期函数都能展成三角级数"的断言第一次有了可以检验的判据; 1855 年高斯逝世后, 他又接替高斯出任哥廷根大学教授, 把这份"给结论立规矩"的传统传了下去. 本节定理2.1 的每一条条件, 都是这份传统的延续.<br>
+<b>一个道理:</b> 从傅里叶级数到傅里叶积分, 我们做的是"让周期趋于无穷"这一步极限: 谱线间隔 $\omega_0=\frac{2\pi}{T}\to 0$, 离散谱连成连续谱, 求和变成积分, 于是有了傅里叶变换 $F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t$ 与逆变换 $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$. 这说明: <b>看清一个对象, 往往在于找到它所属的那个极限与那份条件.</b><br>
+<b>一份责任:</b> 从《庄子》"日取其半"的无穷可分, 到《九章算术》"均输"的连续分配; 从狄利克雷给"收敛"立的规矩, 到 CT、MRI、遥感与无损检测里的逆傅里叶变换 —— 同一种"频率思想"贯穿古今中外. 今天我国在高端医学影像、遥感与信号处理等领域不断走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习傅里叶积分与傅里叶变换, 既是在为后续的变换性质与工程应用打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第七章第二节 傅里叶积分与傅里叶变换 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// ================= 模块 1: 从离散谱到连续谱 (周期 T 增大, 谱线逐渐变密) =================
+module('cvPeriod',function(cv){
+  var T=8, tau=1.0, WMAX=9;
+  // 单脉冲 (宽 tau, 高 1) 的连续频谱包络 |F(ω)|
+  function env(w){
+    var a=Math.abs(w);
+    if(a<1e-6) return tau;
+    return 2*Math.abs(Math.sin(w*tau/2))/a;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=46,R=18,TOP=38,BOT=30;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,-WMAX,WMAX,-0.16*tau,tau*1.32);
+    grid(ctx,iw,ih,m,1); axes(ctx,iw,ih,m,'ω','|F|');
+    // 连续频谱包络 (灰虚线): 只与单脉冲形状有关, 不随 T 改变
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2.2; ctx.setLineDash([7,5]); ctx.beginPath();
+    var first=true;
+    for(var x=-WMAX;x<=WMAX+1e-9;x+=0.01){
+      var y=env(x), px=m.px(x), py=m.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // 离散谱线 |T c_n| = |F(n ω0)|
+    var w0=2*Math.PI/T, nmax=Math.floor(WMAX/w0), cnt=0;
+    for(var n=-nmax;n<=nmax;n++){
+      var wn=n*w0, yv=env(wn), x2=m.px(wn);
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(x2,m.py(0)); ctx.lineTo(x2,m.py(yv)); ctx.stroke();
+      dot(ctx,x2,m.py(yv),3.2,'#1565c0','#fff');
+      cnt++;
+    }
+    ctx.restore();
+    tlabel(ctx,L,24,'周期 T 增大 ⇒ 离散谱线 (蓝) 越来越密, 逐点落在连续频谱 (灰虚线) 上','#37474f','bold 12.5px Segoe UI');
+    setRO('perReadout',
+      '周期 $T='+fmt(T)+'$: 谱线间隔 $\\omega_0=\\frac{2\\pi}{T}='+fmt(2*Math.PI/T)+'$, 在 $|\\omega|\\le '+WMAX+'$ 内共有 '+cnt+' 根谱线.<br>'+
+      hl('$T$ 增大 $\\Rightarrow$ 间隔 $\\omega_0\\to 0$, 离散谱线越来越密, 趋于连续频谱')+'.<br>'+
+      hl2('极限下 $T c_n\\to F(\\omega)$; 求和 $\\frac{1}{2\\pi}\\sum\\limits_{n}F(\\omega_n)\\,\\Delta\\omega$ 变为积分 $\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}F(\\omega)\\mathrm{d}\\omega$ —— 级数过渡为傅里叶积分.'));
+  }
+  bindSlider('perT',function(v){ T=Math.round(v); badge('perTV',String(T)); draw(); });
+  badge('perTV',String(T));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 时域 f(t) 与频域 |F(ω)| 的对照 (单边指数衰减) =================
+module('cvDef',function(cv){
+  var B=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 时域 f(t)=e^{-βt}u(t) ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.2,4.2,-0.18,1.32);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'t','f');
+    var ta=-1.2,tb=4.2,tt,first=true;
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    for(tt=ta;tt<=tb+1e-9;tt+=0.01){
+      var y=(tt<0)?0:Math.exp(-B*tt);
+      if(first){ ctx.moveTo(m1.px(tt),m1.py(y)); first=false; } else ctx.lineTo(m1.px(tt),m1.py(y));
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath(); ctx.moveTo(m1.px(0),m1.py(0)); ctx.lineTo(m1.px(0),m1.py(1)); ctx.stroke();
+    dot(ctx,m1.px(0),m1.py(1),4,'#c62828','#fff');
+    ctx.restore();
+    setCap('cvSpectrumCap','时域: $f(t)=\\mathrm{e}^{-\\beta t}u(t)$ (蓝), $\\beta='+fmt(B)+'$');
+    // ---- 右: 频域 |F(ω)|=1/√(β²+ω²) ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var mmax=1/B;
+    var m2=mapperEq(halfW,H,-9,9,-0.16*mmax,mmax*1.32);
+    grid(ctx,halfW,H,m2,2); axes(ctx,halfW,H,m2,'ω','|F|');
+    first=true;
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.8; ctx.beginPath();
+    for(var x=-9;x<=9+1e-9;x+=0.02){
+      var yv=1/Math.sqrt(B*B+x*x), px=m2.px(x), py=m2.py(yv);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    dot(ctx,m2.px(0),m2.py(mmax),4.5,'#c62828','#fff');
+    ctx.restore();
+    setCap('cvSpectrumCap2','频域: $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^2+\\omega^2}}$ (橙),  峰值 $\\frac{1}{\\beta}='+fmt(1/B)+'$');
+    setRO('defReadout',
+      '取 $\\beta='+fmt(B)+'$: $f(t)=\\mathrm{e}^{-\\beta t}u(t)$ 的傅氏变换为 $F(\\omega)=\\frac{1}{\\beta+\\mathrm{i}\\omega}=\\frac{\\beta-\\mathrm{i}\\omega}{\\beta^{2}+\\omega^{2}}$, 故 $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^{2}+\\omega^{2}}}$.<br>'+
+      hl('振幅谱峰值 $|F(0)|=\\frac{1}{\\beta}='+fmt(1/B)+'$; 相位谱 $\\arg F(\\omega)=-\\arctan\\frac{\\omega}{\\beta}$.')+'<br>'+
+      hl2('$\\beta$ 越大 $\\Rightarrow$ 时域波形衰减越快、越窄, 频域曲线越平坦、越宽 —— 「时域越窄, 频域越宽」.'));
+  }
+  bindSlider('defB',function(v){ B=v; badge('defBV',fmt(v)); draw(); });
+  badge('defBV',fmt(B));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 连续振幅谱与相位谱 =================
+module('cvSpectrum',function(cv){
+  var B=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 连续振幅谱 |F(ω)| (偶函数) ----
+    ctx.save(); ctx.translate(12,40);
+    var mmax=1/B;
+    var m1=mapperEq(halfW,H,-9,9,-0.16*mmax,mmax*1.32);
+    grid(ctx,halfW,H,m1,2); axes(ctx,halfW,H,m1,'ω','|F|');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8; ctx.beginPath();
+    var first=true;
+    for(var x=-9;x<=9+1e-9;x+=0.02){
+      var yv=1/Math.sqrt(B*B+x*x), px=m1.px(x), py=m1.py(yv);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 偶函数对称提示: 左右等高
+    dot(ctx,m1.px(-2),m1.py(1/Math.sqrt(B*B+4)),3.6,'#e65100','#fff');
+    dot(ctx,m1.px(2),m1.py(1/Math.sqrt(B*B+4)),3.6,'#e65100','#fff');
+    ctx.restore();
+    tlabel(ctx,12,26,'连续振幅谱 |F(ω)|: 偶函数, 关于纵轴对称','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 相位谱 arg F(ω)=-arctan(ω/β) (奇函数) ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var phmax=Math.PI/2*1.25;
+    var m2=mapperEq(halfW,H,-9,9,-phmax,phmax);
+    grid(ctx,halfW,H,m2,Math.PI/4);
+    axes(ctx,halfW,H,m2,'ω','arg F');
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(0,m2.py(Math.PI/2)); ctx.lineTo(halfW,m2.py(Math.PI/2)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,m2.py(-Math.PI/2)); ctx.lineTo(halfW,m2.py(-Math.PI/2)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#78909c'; ctx.font='11px Segoe UI';
+    ctx.fillText('π/2',4,m2.py(Math.PI/2)-4);
+    ctx.fillText('−π/2',4,m2.py(-Math.PI/2)+14);
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.8; ctx.beginPath();
+    first=true;
+    for(var q=-9;q<=9+1e-9;q+=0.03){
+      var ph=-Math.atan(q/B), qx=m2.px(q), qy=m2.py(ph);
+      if(first){ ctx.moveTo(qx,qy); first=false; } else ctx.lineTo(qx,qy);
+    }
+    ctx.stroke(); ctx.restore();
+    tlabel(ctx,sx,26,'相位谱 arg F(ω): 奇函数, 关于原点对称','#37474f','bold 12.5px Segoe UI');
+    setRO('specReadout2',
+      '取 $\\beta='+fmt(B)+'$: $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^{2}+\\omega^{2}}}$ 为<b>偶函数</b>, 在 $\\omega=0$ 取最大值 $\\frac{1}{\\beta}='+fmt(1/B)+'$, 两侧等高对称;<br>'+
+      hl('$\\arg F(\\omega)=-\\arctan\\frac{\\omega}{\\beta}$ 为<b>奇函数</b>, 当 $\\omega\\to\\pm\\infty$ 时分别趋于 $\\mp\\frac{\\pi}{2}$.')+'<br>'+
+      hl2('这正是实函数情形 $F(-\\omega)=\\overline{F(\\omega)}$ 的直接体现: 振幅谱偶、相位谱奇, 负频率一侧与正频率一侧共轭对称.'));
+  }
+  bindSlider('specB',function(v){ B=v; badge('specBV',fmt(v)); draw(); });
+  badge('specBV',fmt(B));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 门函数与它的频谱 (脉宽可调) =================
+module('cvGate',function(cv){
+  var tau=2.0, E=1, WMAX=12;
+  function spec(w){
+    var a=Math.abs(w);
+    if(a<1e-6) return E*tau;
+    return 2*E*Math.abs(Math.sin(tau*w/2))/a;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 门函数 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-3.1,3.1,-0.28,1.36);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'t','f');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
+    ctx.beginPath();
+    ctx.moveTo(m1.px(-3.1),m1.py(0));
+    ctx.lineTo(m1.px(-tau/2),m1.py(0));
+    ctx.lineTo(m1.px(-tau/2),m1.py(E));
+    ctx.lineTo(m1.px(tau/2),m1.py(E));
+    ctx.lineTo(m1.px(tau/2),m1.py(0));
+    ctx.lineTo(m1.px(3.1),m1.py(0));
+    ctx.stroke();
+    dot(ctx,m1.px(-tau/2),m1.py(E),4,'#1565c0','#fff');
+    dot(ctx,m1.px(tau/2),m1.py(E),4,'#1565c0','#fff');
+    ctx.restore();
+    tlabel(ctx,12,26,'门函数: 宽 τ = '+fmt(tau)+', 高 E = 1','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 振幅谱 |F(ω)| ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var pk=E*tau;
+    var m2=mapperEq(halfW,H,-WMAX,WMAX,-0.14*pk,pk*1.32);
+    grid(ctx,halfW,H,m2,2); axes(ctx,halfW,H,m2,'ω','|F|');
+    // 第一对零点 (主瓣边界)
+    var z1=2*Math.PI/tau;
+    if(z1<WMAX){
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=1.6; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(m2.px(-z1),m2.py(0)); ctx.lineTo(m2.px(-z1),m2.py(pk)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(m2.px(z1),m2.py(0)); ctx.lineTo(m2.px(z1),m2.py(pk)); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=2.6; ctx.beginPath();
+    var first=true;
+    for(var x=-WMAX;x<=WMAX+1e-9;x+=0.01){
+      var yv=spec(x), px=m2.px(x), py=m2.py(yv);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    dot(ctx,m2.px(0),m2.py(pk),4.5,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'振幅谱 |F(ω)| = (2/ω)|sin(τω/2)|,  峰值 Eτ = '+fmt(pk),'#37474f','bold 12.5px Segoe UI');
+    setRO('gateReadout',
+      '脉宽 $\\tau='+fmt(tau)+'$: 峰值 $|F(0)|=E\\tau='+fmt(pk)+'$; 第一对零点 $\\omega=\\pm\\frac{2\\pi}{\\tau}=\\pm '+fmt(z1)+'$, 主瓣宽度 $\\frac{4\\pi}{\\tau}='+fmt(4*Math.PI/tau)+'$.<br>'+
+      hl('零点位置 $\\omega=\\frac{2k\\pi}{\\tau}$ ($k=\\pm1,\\pm2,\\cdots$); 用零点间隔 $\\frac{2\\pi}{\\tau}$ 与峰值 $E\\tau$ 即可快速画出频谱轮廓.')+'<br>'+
+      hl2('$\\tau$ 越小 (门越窄) $\\Rightarrow$ 峰值越低、主瓣越宽; 取 $E=\\frac{1}{2},\\tau=2$ 时即得 $G(\\omega)=\\frac{\\sin\\omega}{\\omega}$ —— 「时域越窄, 频域越宽」在门函数上最直观.'));
+  }
+  bindSlider('gateTau',function(v){ tau=v; badge('gateTauV',fmt(v)); draw(); });
+  badge('gateTauV',fmt(tau));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'傅里叶积分定理', c:'#1976d2', leaves:['周期 $T \\to \\infty$: 离散谱 $\\to$ 连续谱','$\\omega = n\\omega_0$, 谱线间隔 $\\omega_0 = \\frac{2\\pi}{T} \\to 0$','条件: 分段光滑(狄氏条件) + 绝对可积','$f = \\frac{1}{2\\pi}\\int \\left[\\int f(\\tau)\\mathrm{e}^{-\\mathrm{i}\\omega\\tau}\\,\\mathrm{d}\\tau\\right]$','$\\cdot\\ \\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','连续点: 收敛于 $f(t)$','间断点: 收敛于 $\\frac{1}{2}[f(t+0)+f(t-0)]$']},
+    {t:'傅里叶变换的定义', c:'#e65100', leaves:['$F(\\omega) = \\int f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\,\\mathrm{d}t$  (7.2)','$f(t) = \\frac{1}{2\\pi}\\int F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$  (7.3)','记 $F(\\omega) = \\mathscr{F}[f(t)]$, $f(t) = \\mathscr{F}^{-1}[F(\\omega)]$','$F(\\omega)$: 象函数; $f(t)$: 象原函数','正变换无系数, 逆变换乘 $\\frac{1}{2\\pi}$','指数符号相反, 别写反']},
+    {t:'连续频谱 · 物理意义', c:'#c62828', leaves:['$f(t)$ 分解为连续频率的谐波 $\\mathrm{e}^{\\mathrm{i}\\omega t}$','$F(\\omega)$: 连续频谱 (复频谱)','$|F(\\omega)|$: 连续振幅谱 (偶函数)','$\\arg F(\\omega)$: 相位谱 (奇函数)','实 $f$: $F(-\\omega) = \\overline{F(\\omega)}$','离散谱(级数) vs 连续谱(变换)']},
+    {t:'典型例题', c:'#2e7d32', leaves:['例2.1 $\\mathrm{e}^{-\\beta t}u(t)$: $F = \\frac{1}{\\beta+\\mathrm{i}\\omega}$','逆变换 $\\to$ 含参变量广义积分','例2.2 门函数: $F = \\frac{2E}{\\omega}\\sin\\left(\\frac{\\tau\\omega}{2}\\right)$','$|F| = E\\tau\\left|\\frac{\\sin(\\tau\\omega/2)}{\\tau\\omega/2}\\right|$','零点 $\\omega = \\frac{2k\\pi}{\\tau}$; 峰值 $E\\tau$','$E=\\frac{1}{2}$, $\\tau=2$: $G(\\omega)=\\frac{\\sin\\omega}{\\omega}$, $\\int_0^{+\\infty}\\frac{\\sin\\omega}{\\omega}\\,\\mathrm{d}\\omega = \\frac{\\pi}{2}$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第七章第二节 · 傅里叶积分与傅里叶变换';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 傅里叶级数 (T→∞) → 傅里叶积分定理 → 傅里叶变换 → 连续频谱; 一句话: <b>$F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\mathrm{d}t$, $f(t)=\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\mathrm{d}\\omega$; $|F(\\omega)|$ 是振幅谱 (偶), $\\arg F(\\omega)$ 是相位谱 (奇)</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'傅里叶积分是把周期 T 推到无穷得到的. 为什么「无穷」这一步能把离散谱变成连续谱? 这里的「极限」究竟改变了什么?',
+     hints:['改变的不是谱线的高度, 而是谱线的「间隔」: ω₀ = 2π/T, T 越大间隔越小.',
+            '当 ω₀ → 0 时, 一根一根分开的谱线被「填满」, 求和 Σ (1/T)F(ωₙ) 变成积分 (1/2π)∫F(ω)dω.',
+            '数学上这是一次「黎曼和 → 定积分」的标准过渡: 只要把 1/T 认作 Δω/(2π), 结构就完全对上了.',
+            '可迁移的态度: 遇到「离散」与「连续」的对立, 先问「间隔是多少、它趋于零时会怎样」.']},
+    {q:'本节所有的结论都带着「绝对可积」「分段光滑」这些条件. 为什么数学一定要先讲条件, 才能讲结论?',
+     hints:['傅里叶的断言之所以被拉格朗日质疑, 不是结论错, 而是「对什么样的函数成立」没说清楚.',
+            '绝对可积保证 F(ω) 的积分收敛; 分段光滑保证积分值只在有限个跳变点上「打折扣」; 两条缺一不可.',
+            '条件不是「限制」, 而是划出结论可靠的范围 —— 没有边界, 「成立」就无从谈起.',
+            '可迁移的态度: 说「这个办法行」之前, 先说清「在什么范围内行」.']},
+    {q:'实函数时 F(−ω) = F̄(ω), 即振幅谱为偶函数、相位谱为奇函数. 为什么负频率一侧「没有新信息」? 这对计算有什么好处?',
+     hints:['共轭关系意味着 |F(−ω)| = |F(ω)|、arg F(−ω) = −arg F(ω), 负频率一侧完全由正频率一侧决定.',
+            '因此绘制或计算实信号的频谱时, 只需处理 ω ≥ 0 的一半, 另一半「照镜子」即可.',
+            '这也解释了为什么工程上常说「带宽」只讨论正频率区间.',
+            '可迁移的态度: 发现对称就发现了冗余; 把冗余剥掉, 计算量就能减半.']},
+    {q:'门函数越窄, 频谱主瓣越宽; 单边指数衰减越快, 频谱越平坦. 你如何理解「时域越窄, 频域越宽」这条规律?',
+     hints:['从定积分看: 门函数宽 τ 时峰值是 Eτ、第一零点在 2π/τ —— 宽度与峰值此消彼长.',
+            '直观上, 要在极短时间内「交代」清楚一个信号, 就必须动用更宽的频率成分.',
+            '这正是通信中「传输速率与带宽成正比」的原因之一, 也是不确定性原理在信号里的体现.',
+            '可迁移的态度: 想同时把两个相互制约的量都做到极致, 往往要先承认「存在取舍」.']},
+    {q:'从《庄子》「日取其半」、《九章算术》「均输」, 到 CT 与 MRI 的图像重建: 你如何理解「连续累积」这一思想贯穿古今?',
+     hints:['「一尺之棰, 日取其半, 万世不竭」讲的是无穷可分的极限思想, 与积分「无限细分再累积」同源.',
+            '「均输」要在连续变化的条件下做分配与均衡, 本质上也是在连续量之间做「求和」.',
+            'CT 的投影重建、MRI 的 k 空间到图像的还原, 数学核心都是逆傅里叶变换 —— 即「离散数据 → 连续图像」的还原过程.',
+            '可迁移的态度: 越基础的思想越没有时代边界; 谁把它用得透、做得实, 谁就能把理论变成大国重器.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章第一节 傅里叶级数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第七章 第1节 傅里叶级数</h1>
+    <p>周期函数的傅里叶级数展开 &middot; 复指数形式 &middot; 振幅谱与相位谱 &middot; 典型例题与频谱分析</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解周期函数 $f_T(t)$ 满足的 <b>狄利克雷 (Dirichlet) 条件</b>, 会叙述 Dirichlet 定理: 连续点处级数收敛于 $f_T(t)$, 间断点处收敛于 $\frac{1}{2}\left[f_T(t+0)+f_T(t-0)\right]$;
+2. 掌握周期函数的<b>三角形式</b>傅里叶级数 $f_T(t)=\frac{a_0}{2}+\sum\limits_{n=1}^{\infty}\left(a_n\cos n\omega t+b_n\sin n\omega t\right)$, 基频 $\omega=\frac{2\pi}{T}$, 并会写出傅里叶系数 $a_n,\ b_n$ 的积分公式;
+3. 掌握利用欧拉公式化为<b>复指数形式</b>的过程, 记住 $c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t$ ($n=0,\pm1,\pm2,\cdots$) 与合并式 $f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega t}$, 并理解实函数情形的共轭对称关系 $c_{-n}=\bar c_n$;
+4. 理解傅里叶级数的<b>物理意义</b>: 谐波分解 $A_n\cos(n\omega t+\theta_n)$, 直流分量 $A_0=|c_0|$, 以及 $A_n=2|c_n|$, 会读<b>离散振幅谱</b> $|c_n|$ 与<b>离散相位谱</b> $\arg c_n$;
+5. 会用方波 (矩形波) 这一典型例子做完整的频谱分析, 体会"把复杂周期信号拆成简谐波之和"这一思想的威力与它通向傅里叶变换的道路.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-7a" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-7a" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-7a" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-7a" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-7a" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-7a" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、周期函数的傅里叶级数展开</label>
+    <label class="tab-btn" for="tab2" id="label2">二、复指数形式</label>
+    <label class="tab-btn" for="tab3" id="label3">三、物理意义: 振幅谱与相位谱</label>
+    <label class="tab-btn" for="tab4" id="label4">四、典型例题与频谱分析</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 周期函数的傅里叶级数展开 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 周期函数与 Dirichlet 定理</div>
+
+<div class="box-key">
+<div class="title">定理 1.1 (Dirichlet 定理)</div>
+设 $f_T(t)$ 是以 $T$ 为周期的实值函数, 且在 $\left[-\frac{T}{2},\ \frac{T}{2}\right]$ 上满足<b>狄利克雷 (Dirichlet) 条件</b>, 即 $f_T(t)$ 在该区间上满足:
+<br><br>
+<span style="color:#c62828"><b>(1)</b></span> <b>连续</b>或只有有限个<b>第一类间断点</b>;
+<br>
+<span style="color:#c62828"><b>(2)</b></span> 只有有限个<b>极值点</b>.
+<br><br>
+则在 $f_T(t)$ 的连续点处有
+<div class="box-formula">$$f_T(t)=\dfrac{a_0}{2}+\sum\limits_{n=1}^{\infty}\left(a_n\cos n\omega t+b_n\sin n\omega t\right),\qquad (7.1)$$</div>
+这就是周期函数 $f_T(t)$ 的<b>傅里叶级数展开</b> (三角形式).
+</div>
+
+<div class="box-key">
+<div class="title">基频与傅里叶系数</div>
+其中 $\omega$ 由周期 $T$ 唯一确定, 称为<b>基频</b> (基角频率):
+<div class="box-formula">$$\omega=\dfrac{2\pi}{T},$$</div>
+而系数为
+<div class="box-formula">$$a_n=\dfrac{2}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\cos n\omega t\,\mathrm{d}t\qquad (n=0,1,2,\cdots),$$</div>
+<div class="box-formula">$$b_n=\dfrac{2}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\sin n\omega t\,\mathrm{d}t\qquad (n=1,2,\cdots).$$</div>
+$a_n,\ b_n$ 统称为 $f_T(t)$ 的<b>傅里叶系数</b>. 注意 $a_0$ 由第一式取 $n=0$ 得到, 它等于 $f_T(t)$ 在一个周期上平均值的 $2$ 倍.
+</div>
+
+<div class="box-result">
+<div class="res-label">收敛性: 间断点处收敛到什么?</div>
+在 $f_T(t)$ 的<b>连续点</b>处, (7.1) 式右端的级数收敛于 $f_T(t)$;
+<br><br>
+在 $f_T(t)$ 的<b>间断点</b>处, (7.1) 式右端的级数收敛于
+<div class="box-formula">$$\dfrac{1}{2}\left[f_T(t+0)+f_T(t-0)\right],$$</div>
+即左极限与右极限的<b>算术平均</b>. 这正是 Dirichlet 定理"连续点到函数值、间断点取平均值"的完整含义.
+</div>
+
+<div class="chart-container">
+<h3>交互: 用正弦波叠加逼近方波 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取周期 $T=2$ 的奇方波 $f_T(t)=\operatorname{sgn}(\sin\pi t)$, 它的傅里叶级数为 $\frac{4}{\pi}\sum\limits_{k=0}^{\infty}\frac{\sin(2k+1)\pi t}{2k+1}$. 拖动滑块改变<b>谐波项数 $N$</b> (只取前 $N$ 个奇次正弦项), 观察部分和曲线如何一步步"包住"方波; 注意间断点附近的<b>吉布斯 (Gibbs) 过冲</b>始终存在, 增大 $N$ 只会让它更贴近跳变点, 而不会消失.</div>
+<canvas id="cvFourier" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>谐波项数 $N$:</label>
+<input type="range" id="fouN" min="1" max="25" step="2" value="5">
+<span class="val-badge" id="fouNV">5</span>
+</div>
+<div class="readout" id="fouReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">两个常用的对称简化</div>
+若 $f_T(t)$ 是<b>奇函数</b>, 则 $a_n=0$ ($n=0,1,2,\cdots$), 级数中只剩正弦项;
+<br>
+若 $f_T(t)$ 是<b>偶函数</b>, 则 $b_n=0$ ($n=1,2,\cdots$), 级数中只剩余弦项 (含常数项).
+<br><br>
+利用对称性可以<b>少算一半积分</b> —— 这是做傅里叶系数计算时最先要看的东西.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 复指数形式 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 用欧拉公式代入三角形式</div>
+
+<div class="box-key">
+<div class="title">欧拉公式</div>
+利用欧拉公式, 可把三角函数写为复指数:
+<div class="box-formula">$$\cos n\omega t=\dfrac{1}{2}\left(\mathrm{e}^{\mathrm{i}n\omega t}+\mathrm{e}^{-\mathrm{i}n\omega t}\right),\qquad \sin n\omega t=\dfrac{-\mathrm{i}}{2}\left(\mathrm{e}^{\mathrm{i}n\omega t}-\mathrm{e}^{-\mathrm{i}n\omega t}\right).$$</div>
+代入 (7.1) 式并把同频率的项合并, 得到
+<div class="box-formula">$$f_T(t)=\dfrac{a_0}{2}+\sum\limits_{n=1}^{\infty}\left(\dfrac{a_n-\mathrm{i}b_n}{2}\mathrm{e}^{\mathrm{i}n\omega t}+\dfrac{a_n+\mathrm{i}b_n}{2}\mathrm{e}^{-\mathrm{i}n\omega t}\right).$$</div>
+式子右端出现了两种"成对"的系数, 自然而然地引出下面的定义.
+</div>
+
+<div class="box-key">
+<div class="title">复指数形式的系数</div>
+令
+<div class="box-formula">$$c_0=\dfrac{a_0}{2}=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\,\mathrm{d}t,$$</div>
+<div class="box-formula">$$c_n=\dfrac{a_n-\mathrm{i}b_n}{2}=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t\qquad (n=1,2,\cdots),$$</div>
+<div class="box-formula">$$c_{-n}=\dfrac{a_n+\mathrm{i}b_n}{2}=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{\mathrm{i}n\omega t}\,\mathrm{d}t\qquad (n=1,2,\cdots).$$</div>
+可见 $c_n$ 与 $c_{-n}$ 只是指数上差一个正负号, 公式完全对称.
+</div>
+
+<div class="sec-title">2.2 统一的复指数形式与共轭对称性</div>
+
+<div class="box-result">
+<div class="res-label">核心结果</div>
+上面三个式子可以<b>统一</b>写成
+<div class="box-formula">$$c_n=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t\qquad (n=0,\pm1,\pm2,\cdots),$$</div>
+于是 (7.1) 式化为紧凑的<b>复指数形式</b>
+<div class="box-formula">$$f_T(t)=c_0+\sum\limits_{n=1}^{\infty}\left(c_n\mathrm{e}^{\mathrm{i}n\omega t}+c_{-n}\mathrm{e}^{-\mathrm{i}n\omega t}\right)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega t}.$$</div>
+一个求和号、一个系数公式, 就把三角形式中"常数项 + 余弦 + 正弦"三套东西装了起来.
+</div>
+
+<div class="box-key">
+<div class="title">实函数情形: $c_{-n}=\bar c_n$</div>
+当 $f_T(t)$ 是<b>实值函数</b>时, $a_n,\ b_n$ 都是实数, 于是
+<div class="box-formula">$$c_{-n}=\dfrac{a_n+\mathrm{i}b_n}{2}=\overline{\dfrac{a_n-\mathrm{i}b_n}{2}}=\bar c_n\qquad (n=1,2,\cdots).$$</div>
+这说明频谱关于原点<b>共轭对称</b>: 幅值相同、辐角相反,
+<div class="box-formula">$$\left|c_{-n}\right|=\left|c_n\right|,\qquad \arg c_{-n}=-\arg c_n.$$</div>
+因此对实周期信号, 只要研究 $n\ge 0$ 的频谱就够了, 负频率只是正频率的"共轭镜像".
+</div>
+
+<div class="chart-container">
+<h3>交互: 复指数系数 $c_n$ 的分布 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">以例 1.1 的方波为例 ($c_0=1$; $n$ 为奇数时 $c_n=-\frac{2\mathrm{i}}{n\pi}$, $n$ 为偶数时 $c_n=0$). 左图把各 $c_n$ 画在<b>复平面</b>上, 右图把它们拆成<b>实部与虚部</b>随 $n$ 的分布. 拖动滑块改变 $n$ 的取值上界, 注意所有 $c_n$ (除 $c_0$ 外) 都落在<b>虚轴</b>上, 且 $c_{-n}$ 与 $c_n$ 互为共轭.</div>
+<canvas id="cvComplex" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>系数范围 $n\le$:</label>
+<input type="range" id="cpxN" min="1" max="11" step="1" value="7">
+<span class="val-badge" id="cpxNV">7</span>
+</div>
+<div class="readout" id="cpxReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 物理意义 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 谐波分解</div>
+
+<div class="box-key">
+<div class="title">由复指数形式回到"振幅 + 相位"</div>
+取
+<div class="box-formula">$$c_0=\dfrac{a_0}{2},\qquad A_n=\sqrt{a_n^2+b_n^2},\qquad \cos\theta_n=\dfrac{a_n}{A_n},\quad \sin\theta_n=\dfrac{-b_n}{A_n},$$</div>
+则
+<div class="box-formula">$$f_T(t)=c_0+\sum\limits_{n=1}^{\infty}A_n\left(\cos\theta_n\cos n\omega t-\sin\theta_n\sin n\omega t\right)=c_0+\sum\limits_{n=1}^{\infty}A_n\cos\left(n\omega t+\theta_n\right).$$</div>
+也就是说, 周期为 $T$ 的信号 $f_T(t)$ 可以分解为一系列<b>简谐波</b>之和.
+</div>
+
+<div class="box-key">
+<div class="title">频率: 离散取值的谐波</div>
+各次谐波的频率都是一个<b>基频</b> $\omega$ 的整数倍. 第 $n$ 次谐波
+<div class="box-formula">$$A_n\cos\left(n\omega t+\theta_n\right)\qquad (n&gt;0)$$</div>
+的频率为正值 $n\omega=\frac{2n\pi}{T}$, 且只取<b>离散值</b>, 故称为<b>离散频率</b>. 这与"连续频谱"的傅里叶变换形成鲜明对照.
+</div>
+
+<div class="box-result">
+<div class="res-label">振幅、相位、直流分量与频谱</div>
+在 $A_n\cos(n\omega t+\theta_n)$ 中, <b>振幅</b>是 $A_n$, <b>相位</b>是 $n\omega t+\theta_n$, <b>初相位</b>是 $\theta_n$.
+<br><br>
+而
+<div class="box-formula">$$c_0=\dfrac{a_0}{2}=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\,\mathrm{d}t$$</div>
+表示周期信号在一个周期内的<b>平均值</b>, 也叫<b>直流分量</b>; 规定 $A_0=|c_0|$ 为直流分量的振幅.
+<br><br>
+一般地, $c_n$ 称为周期函数 $f_T(t)$ 的<b>频谱</b> (复频谱), $\left|c_n\right|$ 称为<b>离散振幅谱</b>, $\arg c_n$ 称为<b>离散相位谱</b>.
+</div>
+
+<div class="box-key">
+<div class="title">三角形式与复指数形式的振幅关系</div>
+<div class="box-formula">$$A_0=\left|c_0\right|,\qquad A_n=\sqrt{a_n^2+b_n^2}=2\left|c_n\right|\qquad (n=1,2,\cdots).$$</div>
+系数 $2$ 的来源是: 复指数形式中频率 $n\omega$ 的振幅被<b>平均分给了</b> $\pm n$ 两根谱线, 而要还原成"一根" $n$ 次谐波, 自然要乘回 $2$.
+</div>
+
+<div class="chart-container">
+<h3>交互: 离散振幅谱与离散相位谱 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是方波的<b>离散振幅谱</b>: 蓝线为 $\left|c_n\right|$, 橙色虚线为 $A_n=2\left|c_n\right|$ (只画在 $n&gt;0$ 一侧). 右图是<b>离散相位谱</b> $\arg c_n$, 只在奇数 $n$ 处取值 $\mp\frac{\pi}{2}$. 拖动滑块改变谱线数目 $N$, 观察各次谐波幅值如何按 $\frac{1}{n}$ 衰减、相位如何只在两个值之间跳动.</div>
+<canvas id="cvSpec" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>谱线数目 $N$:</label>
+<input type="range" id="specN" min="3" max="15" step="2" value="7">
+<span class="val-badge" id="specNV">7</span>
+</div>
+<div class="readout" id="specReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 典型例题与频谱分析 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 典型例题: 周期方波的展开与频谱</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1</div>
+求以 $T$ 为周期的函数
+<div class="box-formula">$$f_T(t)=\begin{cases}0, & -\dfrac{T}{2}\le t\le 0,\\[6pt] 2, & 0\le t&lt;\dfrac{T}{2}\end{cases}$$</div>
+的离散频谱和它的傅里叶级数的复指数形式.
+<input type="checkbox" id="c7ans1" class="answer-toggle">
+<label for="c7ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+记 $\omega=\frac{2\pi}{T}$, 则 $\omega T=2\pi$.
+<br><br>
+<b>(1) 当 $n=0$ 时.</b>
+<div class="box-formula">$$c_0=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\,\mathrm{d}t=\dfrac{1}{T}\int_{0}^{\frac{T}{2}}2\,\mathrm{d}t=1.$$</div>
+<b>(2) 当 $n\neq0$ 时.</b>
+<div class="box-formula">$$c_n=\dfrac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t=\dfrac{2}{T}\int_{0}^{\frac{T}{2}}\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t=-\dfrac{2}{\mathrm{i}n\omega T}\left.\mathrm{e}^{-\mathrm{i}n\omega t}\right|_{0}^{\frac{T}{2}}$$</div>
+<div class="box-formula">$$=\dfrac{\mathrm{i}}{n\pi}\left(\mathrm{e}^{-\mathrm{i}n\pi}-1\right)=\dfrac{\mathrm{i}}{n\pi}\left[(-1)^n-1\right]=\begin{cases}0, & n\ \text{为偶数},\\[6pt] -\dfrac{2\mathrm{i}}{n\pi}, & n\ \text{为奇数}.\end{cases}$$</div>
+<b>(3) 傅里叶级数的复指数形式.</b> 当 $n=2k-1$ ($k=0,\pm1,\pm2,\cdots$) 时 $c_{2k-1}=-\frac{2\mathrm{i}}{(2k-1)\pi}$, 于是
+<div class="box-formula">$$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega t}=1+\sum\limits_{k=-\infty}^{+\infty}\dfrac{-2\mathrm{i}}{(2k-1)\pi}\,\mathrm{e}^{\mathrm{i}(2k-1)\omega t}.$$</div>
+<b>(4) 离散振幅谱与离散相位谱.</b>
+<div class="box-formula">$$\left|c_n\right|=\begin{cases}1, & n=0,\\[6pt] 0, & n=\pm2,\pm4,\cdots,\\[6pt] \dfrac{2}{|n|\pi}, & n=\pm1,\pm3,\pm5,\cdots.\end{cases}\qquad A_0=|c_0|=1,\quad A_n=2|c_n|.$$</div>
+<div class="box-formula">$$\arg c_n=\begin{cases}0, & n=0,\\[6pt] -\dfrac{\pi}{2}, & n=1,3,5,\cdots,\\[6pt] \dfrac{\pi}{2}, & n=-1,-3,-5,\cdots.\end{cases}$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">频谱解读: 从这张谱里读出什么?</div>
+<span style="color:#c62828"><b>(1)</b></span> <b>直流分量</b>: $c_0=1$, 正是该方波在一个周期内的平均值 (半个周期取 $2$、半个周期取 $0$), $A_0=1$.
+<br><br>
+<span style="color:#c62828"><b>(2)</b></span> <b>只含奇次谐波</b>: $n$ 为偶数时 $c_n=0$, 谱线上每隔一根就空一根 —— 这是因为"半波对称性" (平移半个周期后波形上下翻转).
+<br><br>
+<span style="color:#c62828"><b>(3)</b></span> <b>幅值按 $\frac{1}{n}$ 衰减</b>: $\left|c_n\right|=\frac{2}{|n|\pi}$, 且 $A_n=\frac{4}{n\pi}$ ($n$ 为奇数). 衰减较慢, 说明方波含有丰富的高频成分, 这正是方波听起来"刺耳"、在电路里易引起干扰的原因.
+<br><br>
+<span style="color:#c62828"><b>(4)</b></span> <b>相位只有两个取值</b>: 正频率相位 $-\frac{\pi}{2}$、负频率相位 $+\frac{\pi}{2}$, 恰好体现了共轭对称 $c_{-n}=\bar c_n$.
+</div>
+
+<div class="box-result">
+<div class="res-label">特例: 取 $T=2$、幅值取 $1$</div>
+若把上面的方波改成周期 $T=2$、幅值 $1$ 的方波, 即
+<div class="box-formula">$$f_T(t)=\begin{cases}0, & -1\le t\le 0,\\[6pt] 1, & 0\le t&lt;1,\end{cases}$$</div>
+则各系数整体缩小一半:
+<div class="box-formula">$$c_0=\dfrac{1}{2},\qquad c_n=\begin{cases}0, & n\ \text{为偶数},\\[6pt] -\dfrac{\mathrm{i}}{n\pi}, & n\ \text{为奇数},\end{cases}\qquad \left|c_n\right|=\dfrac{1}{|n|\pi}\ (n\ \text{为奇数}).$$</div>
+可见<b>改变幅值只按比例缩放整个频谱</b>, 而频谱的"形状" (哪些 $n$ 非零、相位如何) 由波形的对称性决定.
+</div>
+
+<div class="chart-container">
+<h3>交互: 矩形脉冲与它的频谱 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">左图是周期 $T=2$、幅值 $1$ 的矩形脉冲及其傅里叶部分和 (取前 $N$ 次谐波); 右图是对应的离散振幅谱 $\left|c_n\right|$. 两个滑块分别控制<b>占空比 $D$</b> (脉冲占一个周期的比例) 与<b>谐波次数 $N$</b>. 注意: 占空比越小, 谱线包络的主瓣越宽、高频成分越多 —— 这就是"时域越窄、频域越宽"的雏形.</div>
+<canvas id="cvSquare" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>占空比 $D$:</label>
+<input type="range" id="sqD" min="0.15" max="0.85" step="0.01" value="0.5">
+<span class="val-badge" id="sqDV">0.50</span>
+</div>
+<div class="row">
+<label>谐波次数 $N$:</label>
+<input type="range" id="sqN" min="1" max="31" step="2" value="9">
+<span class="val-badge" id="sqNV">9</span>
+</div>
+<div class="readout" id="sqReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.2 两道练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.1</div>
+设 $f_T(t)$ 以 $2\pi$ 为周期, 且在 $(-\pi,\pi)$ 上 $f_T(t)=t$. 求它的傅里叶系数并写出傅里叶级数.
+<input type="checkbox" id="c7ans2" class="answer-toggle">
+<label for="c7ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+$T=2\pi$, 故 $\omega=\frac{2\pi}{T}=1$. 因为 $f_T(t)=t$ 是<b>奇函数</b>, 所以所有余弦项系数为零:
+<div class="box-formula">$$a_n=0\qquad (n=0,1,2,\cdots).$$</div>
+而
+<div class="box-formula">$$b_n=\dfrac{2}{2\pi}\int_{-\pi}^{\pi}t\sin nt\,\mathrm{d}t=\dfrac{1}{\pi}\int_{-\pi}^{\pi}t\sin nt\,\mathrm{d}t=\dfrac{1}{\pi}\cdot\dfrac{2(-1)^{n+1}}{n}\cdot\pi\cdot\dfrac{1}{1}=\dfrac{2(-1)^{n+1}}{n}.$$</div>
+(由分部积分 $\int_{-\pi}^{\pi}t\sin nt\,\mathrm{d}t=\frac{2\pi(-1)^{n+1}}{n}$.) 于是
+<div class="box-formula">$$f_T(t)=\sum\limits_{n=1}^{\infty}\dfrac{2(-1)^{n+1}}{n}\sin nt=2\left(\sin t-\dfrac{\sin 2t}{2}+\dfrac{\sin 3t}{3}-\cdots\right)\qquad (-\pi&lt;t&lt;\pi).$$</div>
+在间断点 $t=(2k+1)\pi$ 处, 级数收敛于 $\frac{1}{2}[f_T(\pi+0)+f_T(\pi-0)]=\frac{1}{2}[\pi+(-\pi)]=0$.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.2</div>
+已知某实周期信号的复指数系数 $c_1=3-4\mathrm{i}$. 求 $A_1$、$\theta_1$ 以及对应的 $a_1,\ b_1$, 并写出 $c_{-1}$.
+<input type="checkbox" id="c7ans3" class="answer-toggle">
+<label for="c7ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由 $A_n=2\left|c_n\right|$ 得
+<div class="box-formula">$$A_1=2\left|c_1\right|=2\sqrt{3^2+(-4)^2}=2\times5=10.$$</div>
+由 $c_n=\frac{a_n-\mathrm{i}b_n}{2}$ 得
+<div class="box-formula">$$a_1=2\operatorname{Re}c_1=2\times3=6,\qquad b_1=-2\operatorname{Im}c_1=-2\times(-4)=8.$$</div>
+再由 $\cos\theta_1=\frac{a_1}{A_1}=\frac{6}{10}=0.6$, $\sin\theta_1=\frac{-b_1}{A_1}=\frac{-8}{10}=-0.8$, 得
+<div class="box-formula">$$\theta_1=-\arctan\dfrac{4}{3}\approx-53.13^{\circ}.$$</div>
+即 $f_T(t)$ 的一次谐波为 $10\cos\left(\omega t-53.13^{\circ}\right)$.
+<br><br>
+由共轭对称 $c_{-n}=\bar c_n$ 得
+<div class="box-formula">$$c_{-1}=\bar c_1=3+4\mathrm{i}.$$</div>
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>周期函数与 Dirichlet 定理</b> → <b>三角形式的傅里叶级数</b> → <b>复指数形式</b> → <b>物理意义 (振幅谱 / 相位谱)</b> → <b>典型例题与频谱分析</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>比较项</th><th>三角形式</th><th>复指数形式</th></tr>
+<tr><td>级数形式</td><td>$f_T(t)=\frac{a_0}{2}+\sum\limits_{n=1}^{\infty}\left(a_n\cos n\omega t+b_n\sin n\omega t\right)$</td><td>$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega t}$</td></tr>
+<tr><td>基频</td><td colspan="2">$\omega=\frac{2\pi}{T}$ (两种形式相同)</td></tr>
+<tr><td>系数与公式</td><td>$a_n=\frac{2}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\cos n\omega t\,\mathrm{d}t$, $b_n=\frac{2}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\sin n\omega t\,\mathrm{d}t$; $a_n,b_n$ 皆为实数</td><td>$c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t$ ($n=0,\pm1,\pm2,\cdots$); $c_n$ 一般为复数</td></tr>
+<tr><td>系数关系</td><td>$c_0=\frac{a_0}{2},\ c_n=\frac{a_n-\mathrm{i}b_n}{2},\ c_{-n}=\frac{a_n+\mathrm{i}b_n}{2}$</td><td>$a_n=c_n+c_{-n},\ b_n=\mathrm{i}\left(c_n-c_{-n}\right)$</td></tr>
+<tr><td>谱的含义</td><td>$A_n=\sqrt{a_n^2+b_n^2}$ 是第 $n$ 次谐波的振幅, $\theta_n$ 是初相位</td><td>$\left|c_n\right|$ 是离散振幅谱, $\arg c_n$ 是离散相位谱</td></tr>
+<tr><td>两者关系</td><td colspan="2">$A_0=\left|c_0\right|,\quad A_n=2\left|c_n\right|\ (n=1,2,\cdots)$; 实函数时 $c_{-n}=\bar c_n$, 即 $\left|c_{-n}\right|=\left|c_n\right|$、$\arg c_{-n}=-\arg c_n$</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 在 $f_T(t)$ 的间断点 $t$ 处, 它的傅里叶级数收敛于?</div>
+<label class="quiz-opt">A. $f_T(t)$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{2}\left[f_T(t+0)+f_T(t-0)\right]$</label>
+<label class="quiz-opt">C. $0$</label>
+<label class="quiz-opt">D. $\frac{f_T(t+0)-f_T(t-0)}{2}$</label>
+<div class="quiz-explain"><b>解析:</b> Dirichlet 定理指出: 连续点处收敛于 $f_T(t)$, 间断点处收敛于左右极限的算术平均 $\frac{1}{2}\left[f_T(t+0)+f_T(t-0)\right]$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 当 $n\ge 1$ 时, 第 $n$ 次谐波的振幅 $A_n$ 与复指数系数 $c_n$ 的关系是?</div>
+<label class="quiz-opt">A. $A_n=\left|c_n\right|$</label>
+<label class="quiz-opt" data-ok="1">B. $A_n=2\left|c_n\right|$</label>
+<label class="quiz-opt">C. $A_n=\frac{1}{2}\left|c_n\right|$</label>
+<label class="quiz-opt">D. $A_n=\left|c_n\right|^2$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $A_n=\sqrt{a_n^2+b_n^2}$ 与 $c_n=\frac{a_n-\mathrm{i}b_n}{2}$ 可得 $A_n=2\left|c_n\right|$ (因为 $|c_n|=\frac{1}{2}\sqrt{a_n^2+b_n^2}$). 而直流分量对应 $A_0=|c_0|$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 三角形式中的常数项 $\frac{a_0}{2}$ 对应复指数形式的哪个系数?</div>
+<label class="quiz-opt">A. $c_1$</label>
+<label class="quiz-opt">B. $c_{-1}$</label>
+<label class="quiz-opt" data-ok="1">C. $c_0$</label>
+<label class="quiz-opt">D. $a_0$</label>
+<div class="quiz-explain"><b>解析:</b> 由定义 $c_0=\frac{a_0}{2}=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\,\mathrm{d}t$, 它表示周期信号的平均值, 即直流分量.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 当 $f_T(t)$ 是实值函数时, $c_{-n}$ 与 $c_n$ 的关系是?</div>
+<label class="quiz-opt">A. $c_{-n}=c_n$</label>
+<label class="quiz-opt" data-ok="1">B. $c_{-n}=\bar c_n$</label>
+<label class="quiz-opt">C. $c_{-n}=-c_n$</label>
+<label class="quiz-opt">D. $c_{-n}=\frac{1}{c_n}$</label>
+<div class="quiz-explain"><b>解析:</b> 实函数时 $a_n,b_n$ 皆为实数, $c_{-n}=\frac{a_n+\mathrm{i}b_n}{2}=\overline{\left(\frac{a_n-\mathrm{i}b_n}{2}\right)}=\bar c_n$, 即频谱关于实轴共轭对称.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 若 $f_T(t)$ 是奇函数, 则它的傅里叶级数中哪些系数一定为零?</div>
+<label class="quiz-opt" data-ok="1">A. 全部 $a_n$ ($n=0,1,2,\cdots$)</label>
+<label class="quiz-opt">B. 全部 $b_n$ ($n=1,2,\cdots$)</label>
+<label class="quiz-opt">C. $a_n$ 与 $b_n$ 都为零</label>
+<label class="quiz-opt">D. 没有任何系数恒为零</label>
+<div class="quiz-explain"><b>解析:</b> 奇函数乘偶函数 $(\cos n\omega t)$ 为奇函数, 在一个对称区间上的积分为 $0$, 故 $a_n=0$; 级数中只剩正弦项 $b_n\sin n\omega t$. 相应地 (偶函数时 $b_n=0$).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 傅里叶级数的基频 $\omega$ 与周期 $T$ 的关系是?</div>
+<label class="quiz-opt">A. $\omega=\frac{T}{2\pi}$</label>
+<label class="quiz-opt" data-ok="1">B. $\omega=\frac{2\pi}{T}$</label>
+<label class="quiz-opt">C. $\omega=\frac{\pi}{T}$</label>
+<label class="quiz-opt">D. $\omega=2\pi T$</label>
+<div class="quiz-explain"><b>解析:</b> 基频定义为 $\omega=\frac{2\pi}{T}$; 各次谐波的频率为 $n\omega=\frac{2n\pi}{T}$, 只取离散值, 故也称离散频率.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 复指数形式中 $c_n$ 的积分表达式是?</div>
+<label class="quiz-opt">A. $c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{\mathrm{i}n\omega t}\,\mathrm{d}t$</label>
+<label class="quiz-opt" data-ok="1">B. $c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t$</label>
+<label class="quiz-opt">C. $c_n=\frac{2}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\cos n\omega t\,\mathrm{d}t$</label>
+<label class="quiz-opt">D. $c_n=\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t$</label>
+<div class="quiz-explain"><b>解析:</b> 统一的复指数系数公式为 $c_n=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\mathrm{e}^{-\mathrm{i}n\omega t}\,\mathrm{d}t$ ($n=0,\pm1,\pm2,\cdots$). 注意指数上带负号, 且前面的因子是 $\frac{1}{T}$ 而非 $\frac{2}{T}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 例 1.1 的方波中, 当 $n$ 为偶数时, 复指数系数 $c_n$ 等于?</div>
+<label class="quiz-opt">A. $\frac{1}{n\pi}$</label>
+<label class="quiz-opt">B. $-\frac{2\mathrm{i}}{n\pi}$</label>
+<label class="quiz-opt" data-ok="1">C. $0$</label>
+<label class="quiz-opt">D. $1$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $c_n=\frac{\mathrm{i}}{n\pi}\left[(-1)^n-1\right]$, 当 $n$ 为偶数时 $(-1)^n=1$, 故 $c_n=0$; 只有奇数 $n$ 时 $c_n=-\frac{2\mathrm{i}}{n\pi}$. 这反映了方波的半波对称性.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 例 1.1 的方波, 当 $n$ 为正奇数时, 离散相位谱 $\arg c_n$ 等于?</div>
+<label class="quiz-opt">A. $0$</label>
+<label class="quiz-opt" data-ok="1">B. $-\frac{\pi}{2}$</label>
+<label class="quiz-opt">C. $\frac{\pi}{2}$</label>
+<label class="quiz-opt">D. $\pi$</label>
+<div class="quiz-explain"><b>解析:</b> $n$ 为正奇数时 $c_n=-\frac{2\mathrm{i}}{n\pi}$ 是负纯虚数, 其辐角为 $-\frac{\pi}{2}$; 由共轭对称, $n$ 为负奇数时 $\arg c_n=+\frac{\pi}{2}$; $n=0$ 时 $\arg c_0=0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 直流分量 $c_0$ 的物理意义是?</div>
+<label class="quiz-opt">A. 信号的最大值</label>
+<label class="quiz-opt">B. 信号一次谐波的振幅</label>
+<label class="quiz-opt" data-ok="1">C. 信号在一个周期内的平均值</label>
+<label class="quiz-opt">D. 信号的相位</label>
+<div class="quiz-explain"><b>解析:</b> $c_0=\frac{1}{T}\int_{-\frac{T}{2}}^{\frac{T}{2}}f_T(t)\,\mathrm{d}t$ 正是周期信号在一个周期上的平均值, 称为直流分量, 其振幅规定为 $A_0=|c_0|$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位"用正弦波拆开整个世界"的人</h3>
+<div class="hero-sub">他随拿破仑远征埃及, 在尼罗河畔丈量金字塔与沙漠; 他研究一根铁棒里"热"如何流动, 却意外发现: 任何周期性的"形", 都能被拆成最简单的"波".</div>
+<div class="hero-quote">
+从 1807 年那篇被权威否定的论文, 到 1822 年的《热的解析理论》, 傅里叶把"任意函数展开成三角级数"这一在当时近乎离经叛道的断言, 变成了整个现代分析学与信息技术的起点.<br>
+<b>本节里"把周期信号拆成简谐波之和"这件事, 正是傅里叶留给后世的最重要遗产.</b>
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 傅里叶: 用正弦波"拆开"整个世界</div>
+
+<div class="person-card">
+<div class="p-av">傅</div>
+<div class="p-main">
+<div class="p-name">让-巴普蒂斯·约瑟夫·傅里叶 (Jean-Baptiste Joseph Fourier, 1768—1830)</div>
+<div class="p-meta">法国数学家 · 物理学家 · 埃及远征随行学者 · 热传导理论与傅里叶分析的创立者 · 巴黎科学院终身秘书</div>
+<p>他出生在法国欧塞尔一个裁缝家庭, 九岁丧父, 却一路从地方教会学校读到了巴黎高等师范与综合工科学校. 青年时他曾在修道院里教书, 也在大革命的风暴中几度起落; 但真正让他名垂青史的, 是他在<b>热传导</b>问题上的一次孤军深入的远征 —— 以及由此诞生的<b>傅里叶级数</b>.</p>
+<p>本节所讲的"周期函数展开成简谐波之和", 在傅里叶那里并不是一道习题, 而是一把<b>解开自然之书的钥匙</b>. 这段故事告诉我们: 一个看似只是"数学技巧"的表示方法, 往往会改变整个科学认知世界的方式.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从裁缝之子到埃及远征的学者</h5>
+<p>1768 年, 傅里叶生于法国欧塞尔的贫寒之家. 他聪慧勤勉, 早年进入教会学校, 后来到巴黎的师范学校与综合工科学校任教. 1798 年, 他随拿破仑远征埃及, 出任下埃及的行政官, 同时担任<b>开罗埃及研究院的常任秘书</b> —— 他组织的不是战事, 而是<b>科学考察</b>: 测绘地形、研究古迹、整理尼罗河两岸的自然资料.</p>
+<p>正是在埃及, 傅里叶第一次真正接触到<b>沙漠的酷热</b>, 并开始思考"热到底是什么、它如何在大地上传播". 他说过, 对热的探究几乎贯穿了他此后的一生. <b>一个纯粹数学问题的种子, 竟然是在沙漠里发芽的.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>一根铁棒里的物理学: 热传导方程</h5>
+<p>回到法国后, 傅里叶长期研究<b>热在固体中的传播</b>. 他将一根铁棒视为一个连续体, 通过极为细致的物理推理, 得到了描述温度分布的偏微分方程 —— 今天称之为<b>热传导方程</b>:
+<div class="box-formula">$$\dfrac{\partial u}{\partial t}=a^2\,\dfrac{\partial^2 u}{\partial x^2}.$$</div>
+</p>
+<p>为了求解这个方程, 他必须把给定的<b>初始温度分布</b>展开成一系列正弦、余弦函数的叠加. 于是问题被逼到了墙角: <b>一个任意的函数, 真的能写成三角函数的无穷和吗?</b> 傅里叶给出的答案是"能" —— 而且他还给出了计算各个系数的显式公式, 这正是本节的 $a_n,\ b_n$ 与 $c_n$.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>惊世骇俗的断言: 任意函数都是简谐波之和</h5>
+<p>在 18—19 世纪之交, "函数"的语汇还相当狭窄, 人们习惯的只是光滑、连续的曲线. 傅里叶却断言: 哪怕是<b>带棱角、带跳跃</b>的周期函数 (比如方波), 也能被写成
+<div class="box-formula">$$f_T(t)=\dfrac{a_0}{2}+\sum\limits_{n=1}^{\infty}\left(a_n\cos n\omega t+b_n\sin n\omega t\right)$$</div>
+这样的三角级数之和, 并且给出了相应的系数公式.</p>
+<p>这句话在当时的分量, 相当于宣布"用最简单的波动, 可以'拼'出世间一切周期之形". 从今天的眼光看, 它不只是数学上的一个表示定理, 更是<b>整个信号与信息处理的起点</b>: 声音、图像、电信号, 都可以被拆成"频率成分"来看.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>被冷遇的二十年与迟到的承认</h5>
+<p>1807 年, 傅里叶向巴黎科学院提交了关于热传导的论文. 审稿的院士中, <b>拉格朗日</b>强烈反对"任意函数都能展成三角级数"这一断言, 认为它缺乏严格性, 论证不足以服人. 论文因此没能顺利发表, 只被劝说继续补充证明.</p>
+<p>1811 年, 傅里叶以此工作参加科学院的大奖竞赛并获奖, 但评语中依然写着"推导缺乏严格性"的评价. 他并未因此放弃. 1822 年, 他出版了<b>《热的解析理论》(Théorie analytique de la chaleur)</b>, 系统地阐述了热传导方程、傅里叶级数与傅里叶积分; 1824 年, 他当选巴黎科学院<b>终身秘书</b>, 学术声望到达顶峰.</p>
+<p>而数学上的最终裁决来得更晚一些: 直到 1829 年, <b>狄利克雷 (Dirichlet)</b> 才给出了三角级数收敛性的严格条件 (即本节定理 1.1 所依据的 Dirichlet 条件), 傅里叶的断言才被彻底"追认". <b>从提出到被完全接受, 这条路走了二十多年.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>百年回响: 从热学到整个分析学</h5>
+<p>傅里叶级数的意义远远溢出热传导问题本身: 它催生了<b>傅里叶积分与傅里叶变换</b>, 直接通向本课程第七章后续的内容; 它为"函数"概念的普遍化提供了强劲动力, 间接推动了集合论与实分析; 它还开启了一整套"用频率看世界"的方法论.</p>
+<p>今天, 从手机通话、医学 CT 与核磁共振, 到地震勘探、雷达成像, 人们所依赖的"频谱分析", 都建立在傅里叶这一思想之上. <b>他当年为一个物理问题发明的工具, 最终成了整个信息时代的通用语言.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>在埃及的岁月里, 傅里叶不仅做学问, 也做"管家": 他负责整理埃及研究院的调查报告, 还参与了《埃及记述》这一巨型科学文献的组织工作. 回到法国后, 他在格勒诺布尔的家中长期进行热学实验, 据说他笃信"热有益于健康", 即使在炎热时节也穿得格外严实, 房间里总是暖烘烘的. 有人觉得这是怪癖, 但他的老朋友却说: <b>这个人一谈起"热"就两眼放光 —— 他研究的不只是温度, 而是自然运行的一种普遍方式.</b> 这份近乎偏执的专注, 正是傅里叶级数得以诞生的土壤.
+</div>
+
+<div class="clash-card">
+<div class="cc-title">学术公案: 拉格朗日的反对</div>
+<div class="cc-side"><b>拉格朗日 (Joseph-Louis Lagrange, 1736—1813):</b> 作为当时分析学的最高权威, 他坚持认为正弦函数之和无法表示带有<b>角点或跳跃</b>的函数; 在他看来, 傅里叶的论断缺乏严格基础, 甚至可能导出荒谬的结论. 这份质疑并非出于偏狭 —— 它恰恰抓住了当时数学尚未解决的核心难点: <b>"收敛"与"表示"的严格含义.</b></div>
+<div class="cc-side"><b>傅里叶:</b> 他没有在争议中退缩, 而是用物理事实与越来越细致的计算来支持自己的断言, 并把整套思想写进《热的解析理论》. 他的态度是: <b>数学不但要"讲得通", 还要"算得出"、"对得上实验".</b></div>
+<div class="cc-side"><b>历史的裁决:</b> 这场争论最终以双方"各有其理"的方式收场 —— 傅里叶的表示确实成立, 但需要<b>附加条件</b>; 而这些条件正是 1829 年狄利克雷给出的 Dirichlet 条件. <b>真理往往不是"谁对谁错"的胜负, 而是在争论中被一点点打磨得更精确.</b></div>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 傅里叶式的信念</div>
+在傅里叶那里, 数学与自然同样是同一本大书的两页. 他在《热的解析理论》开篇写道:
+<br>
+"<em>热, 像万有引力一样, 渗透宇宙间的一切物质; 它的射线占据着空间的每一个角落.</em>"
+<br>
+他也留下过这样一句被后人反复引用的话:
+<br>
+"<em>对自然的深入研究, 是数学发现最丰富的源泉.</em>"
+<span class="iv-sig">—— 这种"从最朴素的自然现象出发、把最基础的数学工具用到极致"的态度, 正是本节从一根铁棒的温度分布走到傅里叶级数的思想底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">分解与综合</div>
+<h4>把复杂的东西拆成简单的东西</h4>
+<p>一段方波看起来"棱角分明、不易描述", 但只要把它拆成一系列正弦波, 每一项都简单到极点. 复杂不等于混乱, 只等于<b>很多个简单之和</b>.</p>
+<p>这是数学中最朴素也最强大的策略: 遇到复杂对象, 先问"它由哪些简单成分构成".</p>
+<div class="pc-math">$f_T(t)=\frac{a_0}{2}$<br>$+\sum\limits_{n=1}^{\infty}\bigl(a_n\cos n\omega t$<br>$+b_n\sin n\omega t\bigr)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">有限与无穷</div>
+<h4>用有限项, 逼近无限的和</h4>
+<p>傅里叶级数有无穷多项, 但我们永远只取有限项 $N$. 有意思的是: 取项越多, 逼近越好, 却<b>永远无法在跳跃点处完全重合</b> (吉布斯过冲始终存在).</p>
+<p>这提醒我们: 近似可以无限接近, 但"精确"往往需要重新定义"精确"的含义.</p>
+<div class="pc-math">$\lim\limits_{N\to\infty}\sum\limits_{n=1}^{N}\cdots$ 收敛, 但间断点处收敛到左右极限的平均</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">离散与连续</div>
+<h4>频率只取离散值</h4>
+<p>周期信号的频谱 $\omega=n\omega$ 只取基频的整数倍, 谱线是<b>一根一根分开的</b>; 而一旦周期趋于无穷 (非周期信号), 离散谱就"连成一片", 变成连续的频谱.</p>
+<p>离散与连续, 在这里不是对立, 而是同一种结构在两个极限下的两副面孔.</p>
+<div class="pc-math">周期 $\longrightarrow$ 离散谱; 非周期 $\longrightarrow$ 连续谱 (傅里叶变换)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对称与美</div>
+<h4>$c_{-n}=\bar c_n$: 一半藏着另一半</h4>
+<p>对实信号, 频谱关于实轴共轭对称: 幅值相同、辐角相反. 于是负频率部分<b>没有携带新的信息</b>, 只是正频率的镜像.</p>
+<p>对称性常常意味着"冗余" —— 发现对称, 就能把工作量减半, 这是数学赏心悦目的地方, 也是非常实用的地方.</p>
+<div class="pc-math">$\left|c_{-n}\right|=\left|c_n\right|$<br>$\arg c_{-n}=-\arg c_n$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">质疑与坚持</div>
+<h4>被权威否定, 不等于被真理否定</h4>
+<p>傅里叶的断言曾被拉格朗日明确反对, 论文被搁置、获奖评语中仍被指"不严格". 但他坚持把工作做完、写成体系, 最终等到了狄利克雷的严格证明.</p>
+<p>这段公案说明: 面对质疑, 正确的态度不是回避, 而是<b>把问题做得更精确、更清楚</b> —— 让反对意见成为推进工作的动力.</p>
+<div class="pc-math">1807 遭反对 $\longrightarrow$ 1822 成书 $\longrightarrow$ 1829 被严格证明</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>一根铁棒的温度, 关联着整个信息时代</h4>
+<p>傅里叶当初只为研究"热如何流动", 却无意中给出了描述一切周期现象的通用工具. 从声音到图像, 从雷达到 5G, 人们用的都是同一套"频率语言".</p>
+<p>越是基础的工具, 适用面往往越广. 数学的"普遍联系", 在这里不是一句口号, 而是实实在在的历史事实.</p>
+<div class="pc-math">热传导方程 $\longrightarrow$ 傅里叶级数 $\longrightarrow$ 频谱分析 $\longrightarrow$ 通信与成像</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: "三分损益法"与十二律 —— 最早的谐波分解</div>
+中国古人对"音"的理解, 早已触到了傅里叶思想的边: 一根弦振动时, 除基音之外还有一系列频率成<b>整数倍</b>的<b>泛音</b>, 音律本身就是一组频率比.
+<br><br>
+早在《管子》《吕氏春秋》中, 就有著名的"<b>三分损益法</b>": 以一条基准弦长为起点, "三分损一" (取原长的 $\frac{2}{3}$) 得上方纯五度, "三分益一" (取原长的 $\frac{4}{3}$) 得下方纯四度, 交替相生, 生出一整套音. 这一套律制的背后, 正是<b>整数比决定和谐</b>的观念 —— 而"整数倍频率的叠加"正是傅里叶级数的核心.
+<br><br>
+到了明代, <b>朱载堉</b> (1536—1611) 在这一问题上做出了划时代的贡献. 他在《<b>律吕精义</b>》等著作中, 经过精密的计算, 解决了"十二律不能自由旋宫"这一千年难题: 他以 $2^{1/12}$ 作为相邻两律的频率比, 构造出<b>十二平均律</b> —— 又称"新法密率". 这样一来, 十二个半音的频率恰好构成一个等比数列
+<div class="box-formula">$$\omega_{k+1}=2^{1/12}\,\omega_k\qquad (k=0,1,\cdots,11),$$</div>
+十二步之后恰好回到高八度, 使任意调式都能自由转调. 这一成果被后世誉为"<b>钢琴理论的鼻祖</b>", 比欧洲同类研究早了数十年.
+<br><br>
+从"三分损益"的整数比, 到"十二平均律"的 $2^{1/12}$, 中国古人一直在用<b>频率之间的关系</b>来描述声音的世界 —— 这与本节"把周期信号分解为谐波"的思想, 是同一个思路在音乐里的千年回响.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 从频谱分析到大国重器</div>
+<ul>
+<li><b>通信: OFDM 与 5G.</b> 现代移动通信的核心技术之一 <b>OFDM</b> (正交频分复用), 就是把一路高速数据<b>切分到许多正交的窄带子载波</b>上并行传输 —— 其数学基础正是傅里叶变换与逆变换. 华为等中国企业在 5G 的 OFDM 实现与大规模天线技术上走到世界前列, 可以说是把傅里叶的数学直接变成了工程与产业.</li>
+<li><b>雷达与遥感.</b> 雷达通过发射电磁波、接收回波, 并对回波做<b>匹配滤波与频谱分析</b>来测距测速. 中国雷达事业的奠基者之一<b>张直中</b>院士长期从事雷达信号处理研究, 推动了我国雷达与遥感技术的自主发展; 更早的<b>赵九章</b>先生则在动力气象与地球物理的数学方法上做出了奠基性的贡献.</li>
+<li><b>医学影像。</b> CT 成像的核心是"投影重建", 其数学本质与傅里叶切片定理密切相关; 核磁共振 (MRI) 则直接以<b>频域数据</b>采集信号、再经傅里叶逆变换得到图像. 今天医院里的这些"透视之眼", 处处是傅里叶分析的影子.</li>
+<li><b>语音识别与人工智能.</b> 语音识别第一步往往是把声音切成短时片段、做<b>短时傅里叶变换</b>得到频谱特征; 图像与音频的压缩编码 (如 JPEG、MP3) 也都建立在频率分解之上.</li>
+<li><b>应用数学的接力。</b> 从<b>华罗庚</b>把"统筹法""优选法"推广到工厂田间、让数学直接服务生产, 到冯康、石钟慈等一代代学者在计算数学与信号处理上的耕耘, 中国数学工作者一直在做同一件事: <b>把最基础的数学工具, 交到最需要它的人手里.</b></li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 基础理论, 是国家的"频谱"</div>
+傅里叶一条"把周期信号拆成简谐波"的定理, 两百年后变成了手机通信、雷达探测、医院影像与国家信息基础设施的数学底座. 从朱载堉的 $2^{1/12}$ 到华为 5G 的 OFDM, 从"三分损益"的整数比到今天的频谱工程, 中国人一直在同一个数学思想上前行.
+<br><br>
+这件事的价值在于: <b>越是基础的理论, 越能撑起国家最需要的地方.</b> 一节课上的三角级数, 可以只是一道习题, 也可以是一个信息强国的数学地基 —— 区别在于我们是否愿意把基础打牢、把工具握在自己的手里.
+<br><br>
+可以说: <b>把"波"看懂了, 才能把世界拆开, 也才能把大国重器造出来.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"对自然的深入研究, 是数学发现最丰富的源泉."<span class="q-src">—— 傅里叶</span></div>
+<div class="quote-item">"热, 像万有引力一样, 渗透宇宙间的一切物质."<span class="q-src">—— 傅里叶《热的解析理论》</span></div>
+<div class="quote-item">"数学是科学的皇后, 而数论是数学的皇后."<span class="q-src">—— 高斯</span></div>
+<div class="quote-item">"三分损一, 三分益一, 以生十二律."<span class="q-src">—— 三分损益法 (《管子》《吕氏春秋》)</span></div>
+<div class="quote-item">"新法密率: 隔八相生, 十二律旋相为宫."<span class="q-src">—— 朱载堉《律吕精义》(十二平均律)</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 傅里叶从一根铁棒里的"热"出发, 在 1807 年提出"任意周期函数都能展成三角级数"的断言, 遭到拉格朗日的反对而迟迟未能发表; 他不改其志, 1822 年写成《热的解析理论》, 直到 1829 年狄利克雷给出严格条件, 这一思想才被完全承认. 本节讲的三角形式、复指数形式与频谱, 正是这件事的数学内核.<br>
+<b>一个道理:</b> 从 Dirichlet 定理到 $f_T(t)=\sum\limits_{n=-\infty}^{+\infty}c_n\mathrm{e}^{\mathrm{i}n\omega t}$, 我们把一个复杂的周期信号拆成了简单谐波之和. 关键是<b>收敛的条件与系数的含义</b> —— 连续点收敛于函数值, 间断点收敛于左右极限的平均; 而 $\left|c_n\right|$ 与 $\arg c_n$ 分别给出了振幅谱与相位谱. 这说明: <b>把一个复杂对象看透, 靠的是找到合适的"分解方式".</b><br>
+<b>一份责任:</b> 从《管子》"三分损益"的整数音律, 到朱载堉十二平均律的 $2^{1/12}$; 从傅里叶的三角级数, 到 OFDM、雷达信号处理、CT 与 MRI、语音识别 —— 同一种"频谱思想"贯穿古今中外. 今天我国在 5G、雷达成像与人工智能等领域走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习傅里叶级数, 既是在为下一节的傅里叶变换打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第七章第一节 傅里叶级数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// 局部绘图小工具: 按步长 step 画坐标轴与刻度 (用于谱线较密的图)
+function axStep(ctx,w,h,m,lx,ly,step){
+  var x0=m.px(0), y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath(); ctx.moveTo(0,y0); ctx.lineTo(w,y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0,0); ctx.lineTo(x0,h); ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(lx||'n',w-28,y0-8);
+  if(x0+6<w) ctx.fillText(ly||'',x0+6,16);
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.85)';
+  var lo=Math.ceil(m.ix(0)), hi=m.ix(w);
+  for(var x=lo;x<=hi;x++){
+    if(x===0) continue;
+    if(x%step!==0) continue;
+    ctx.beginPath(); ctx.moveTo(m.px(x),y0-4); ctx.lineTo(m.px(x),y0+4);
+    ctx.strokeStyle='#546e7a'; ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-6,y0+16);
+  }
+  ctx.restore();
+}
+
+// ================= 模块 1: 三角形式 —— 用正弦波叠加逼近方波 =================
+module('cvFourier',function(cv){
+  var N=5, T=2, Om=Math.PI;
+  function ideal(t){ var s=Math.sin(Om*t); return s>0?1:(s<0?-1:0); }
+  function partial(t,n){
+    var s=0;
+    for(var k=0;k<n;k++){ var q=2*k+1; s+=Math.sin(q*Om*t)/q; }
+    return 4*s/Math.PI;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var L=40,R=18,TOP=34,BOT=28;
+    var iw=w-L-R, ih=h-TOP-BOT;
+    ctx.save(); ctx.translate(L,TOP);
+    var m=mapperEq(iw,ih,-2.2,2.2,-1.7,1.7);
+    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'t','f');
+    var ta=-2.2, tb=2.2, tt;
+    // 理想方波 (灰虚线)
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+    var prev=ideal(ta); ctx.moveTo(m.px(ta),m.py(prev));
+    for(tt=ta;tt<=tb+1e-9;tt+=0.001){
+      var v=ideal(tt);
+      if(v!==prev){ ctx.lineTo(m.px(tt),m.py(prev)); ctx.lineTo(m.px(tt),m.py(v)); prev=v; }
+      else ctx.lineTo(m.px(tt),m.py(v));
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // 部分和 (蓝实线)
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    var first=true;
+    for(tt=ta;tt<=tb+1e-9;tt+=0.002){
+      var y=partial(tt,N), px=m.px(tt), py=m.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,L,24,'T = 2, ω = π: 蓝线为 N 项部分和, 灰虚线为理想方波','#37474f','bold 12.5px Segoe UI');
+    var mx=-9, err=0;
+    for(tt=ta;tt<=tb+1e-9;tt+=0.001){
+      var yy=partial(tt,N);
+      if(yy>mx) mx=yy;
+      var e=Math.abs(yy-ideal(tt)); if(e>err && Math.abs(Math.abs(tt-Math.round(tt))-0.0)>0.02) err=e;
+    }
+    setRO('fouReadout',
+      '谐波项数 $N='+N+'$, 部分和 $f_T(t)\\approx \\frac{4}{\\pi}\\sum\\limits_{k=0}^{'+(N-1)+'}\\frac{\\sin(2k+1)\\pi t}{2k+1}$.<br>'+
+      '部分和最大值 $\\approx '+fmt(mx)+'$ (理想幅值为 $1$) ——<br>'+
+      hl('间断点附近始终有约 $9\\%$ 的吉布斯过冲, 增大 $N$ 只会让它更靠近跳变点, 而不会消失')+'.<br>'+
+      hl2('Dirichlet 定理: 连续点收敛于 $f_T(t)$; 间断点收敛于 $\\frac{1}{2}\\left[f_T(t+0)+f_T(t-0)\\right]$,<br>'+
+      '&nbsp;&nbsp;&nbsp;&nbsp;对方波即为 $0$.'));
+  }
+  bindSlider('fouN',function(v){ N=Math.round(v); badge('fouNV',String(N)); draw(); });
+  badge('fouNV',String(N));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 复指数系数 c_n 在复平面 / 实虚分量上的分布 =================
+module('cvComplex',function(cv){
+  var N=7;
+  function cn(n){ if(n===0) return C(1,0); if(n%2===0) return C(0,0); return C(0,-2/(n*Math.PI)); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 复平面 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.25,1.25,-1.25,1.25);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'Re','Im');
+    for(var n=-N;n<=N;n++){
+      var z=cn(n); if(cabs(z)<1e-9) continue;
+      var col=(n<0)?'#e65100':'#1565c0';
+      arrow(ctx,m1.px(0),m1.py(0),m1.px(z.re),m1.py(z.im),col,2.2,9);
+      dot(ctx,m1.px(z.re),m1.py(z.im),4.5,col,'#fff');
+    }
+    dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
+    tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(1)+7,m1.py(0)+5,'c₀','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0)+7,m1.py(0.64)-6,'c₁','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0)+7,m1.py(-0.64)+14,'c₋₁','#e65100','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'复平面: 各 cₙ 的位置 —— 除 c₀ 外全部落在虚轴上','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: Re c_n / Im c_n 随 n 的分布 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.25,1.25,-0.85,0.85);
+    grid(ctx,halfW,H,m2,0.25); axes(ctx,halfW,H,m2,'n','cₙ');
+    for(var k=-N;k<=N;k++){
+      var zz=cn(k), x0=m2.px(k);
+      if(Math.abs(zz.im)>1e-9){
+        var ci=(zz.im<0)?'#1565c0':'#e65100';
+        ctx.strokeStyle=ci; ctx.lineWidth=3.4;
+        ctx.beginPath(); ctx.moveTo(x0,m2.py(0)); ctx.lineTo(x0,m2.py(zz.im)); ctx.stroke();
+        dot(ctx,x0,m2.py(zz.im),4,ci,'#fff');
+      }
+      if(Math.abs(zz.re)>1e-9){
+        ctx.strokeStyle='#2e7d32'; ctx.lineWidth=3.4;
+        ctx.beginPath(); ctx.moveTo(x0,m2.py(0)); ctx.lineTo(x0,m2.py(zz.re)); ctx.stroke();
+        dot(ctx,x0,m2.py(zz.re),4,'#2e7d32','#fff');
+      }
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'实部 (绿) 与虚部 (蓝/橙) 随 n 的分布','#37474f','bold 12.5px Segoe UI');
+    setRO('cpxReadout',
+      '以例 1.1 的方波为例: $c_0=1$; $n$ 为奇数时 $c_n=-\\frac{2\\mathrm{i}}{n\\pi}$, $n$ 为偶数时 $c_n=0$.<br>'+
+      '该信号的傅里叶系数中 $a_n\\equiv0$, 因此所有 $c_n$ 都是<b>纯虚数</b>, 在复平面上构成虚轴上的一串点.<br>'+
+      hl('实函数情形 $c_{-n}=\\bar c_n$: 频谱关于实轴共轭对称, 故 $\\left|c_{-n}\\right|=\\left|c_n\\right|$, $\\arg c_{-n}=-\\arg c_n$.'));
+  }
+  bindSlider('cpxN',function(v){ N=Math.round(v); badge('cpxNV',String(N)); draw(); });
+  badge('cpxNV',String(N));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 离散振幅谱与离散相位谱 =================
+module('cvSpec',function(cv){
+  var N=7;
+  function cn(n){ if(n===0) return C(1,0); if(n%2===0) return C(0,0); return C(0,-2/(n*Math.PI)); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, step=2;
+    // ---- 左: 离散振幅谱 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-(N+1),N+1,-0.22,1.35);
+    grid(ctx,halfW,H,m1,1); axStep(ctx,halfW,H,m1,'n','|cₙ|',step);
+    for(var n=-N;n<=N;n++){
+      var z=cn(n), a=cabs(z); if(a<1e-9) continue;
+      var x0=m1.px(n);
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=3.4;
+      ctx.beginPath(); ctx.moveTo(x0,m1.py(0)); ctx.lineTo(x0,m1.py(a)); ctx.stroke();
+      dot(ctx,x0,m1.py(a),4,'#1565c0','#fff');
+    }
+    for(var k=1;k<=N;k++){
+      var av=2*cabs(cn(k)); if(av<1e-9) continue;
+      var xk=m1.px(k);
+      ctx.strokeStyle='#e65100'; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(xk,m1.py(0)); ctx.lineTo(xk,m1.py(av)); ctx.stroke();
+      ctx.setLineDash([]);
+      dot(ctx,xk,m1.py(av),4,'#e65100','#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'离散振幅谱: |cₙ| (蓝) 与 Aₙ = 2|cₙ| (橙虚线)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 离散相位谱 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-(N+1),N+1,-2.0,2.0);
+    grid(ctx,halfW,H,m2,1); axStep(ctx,halfW,H,m2,'n','arg cₙ',step);
+    ctx.strokeStyle='#b0bec5'; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(0,m2.py(Math.PI/2)); ctx.lineTo(halfW,m2.py(Math.PI/2)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,m2.py(-Math.PI/2)); ctx.lineTo(halfW,m2.py(-Math.PI/2)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#78909c'; ctx.font='11px Segoe UI';
+    ctx.fillText('π/2',4,m2.py(Math.PI/2)-4);
+    ctx.fillText('−π/2',4,m2.py(-Math.PI/2)+14);
+    for(var q=-N;q<=N;q++){
+      var zz=cn(q); if(cabs(zz)<1e-9) continue;
+      var ph=Math.atan2(zz.im,zz.re), x2=m2.px(q);
+      var cp=(ph<0)?'#1565c0':'#e65100';
+      ctx.strokeStyle=cp; ctx.lineWidth=3.4;
+      ctx.beginPath(); ctx.moveTo(x2,m2.py(0)); ctx.lineTo(x2,m2.py(ph)); ctx.stroke();
+      dot(ctx,x2,m2.py(ph),4,cp,'#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'离散相位谱: arg cₙ 只取 0 与 ∓π/2','#37474f','bold 12.5px Segoe UI');
+    setRO('specReadout',
+      '方波谱线数目 $N='+N+'$: 只有 $n=0$ 与奇数 $n$ 有谱线, 偶数 $n$ 处 $\\left|c_n\\right|=0$.<br>'+
+      hl('振幅谱: $\\left|c_0\\right|=1$, $\\left|c_n\\right|=\\frac{2}{|n|\\pi}$ (n 奇), 幅值按 $\\frac{1}{n}$ 缓慢衰减, 故方波含丰富高频.')+'<br>'+
+      hl2('相位谱: 正奇数 $n$ 为 $-\\frac{\\pi}{2}$, 负奇数 $n$ 为 $+\\frac{\\pi}{2}$, $n=0$ 为 $0$ —— 正是 $c_{-n}=\\bar c_n$ 的体现.'));
+  }
+  bindSlider('specN',function(v){ N=Math.round(v); badge('specNV',String(N)); draw(); });
+  badge('specNV',String(N));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 矩形脉冲波形与频谱对照 (占空比 / 谐波次数) =================
+module('cvSquare',function(cv){
+  var D=0.5, N=9, T=2, Om=Math.PI;
+  function cn(n){ if(n===0) return D; return Math.sin(n*Math.PI*D)/(n*Math.PI); }
+  function fold(t){ return t-T*Math.round(t/T); }
+  function ideal(t){ return (Math.abs(fold(t))<D)?1:0; }
+  function partial(t,n){
+    var s=D;
+    for(var i=1;i<=n;i++){ s+=2*cn(i)*Math.cos(i*Om*t); }
+    return s;
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 波形 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.2,2.2,-0.28,1.32);
+    grid(ctx,halfW,H,m1,0.5); axStep(ctx,halfW,H,m1,'t','f',1);
+    var ta=-2.2,tb=2.2,tt;
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+    var prev=ideal(ta); ctx.moveTo(m1.px(ta),m1.py(prev));
+    for(tt=ta;tt<=tb+1e-9;tt+=0.001){
+      var v=ideal(tt);
+      if(v!==prev){ ctx.lineTo(m1.px(tt),m1.py(prev)); ctx.lineTo(m1.px(tt),m1.py(v)); prev=v; }
+      else ctx.lineTo(m1.px(tt),m1.py(v));
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    var first=true;
+    for(tt=ta;tt<=tb+1e-9;tt+=0.002){
+      var y=partial(tt,N), px=m1.px(tt), py=m1.py(y);
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,12,26,'周期 T = 2 的矩形脉冲: 理想波形 (灰虚线) 与 N 项部分和 (蓝)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 离散振幅谱 ----
+    var sx=halfW+24;
+    var mv=D;
+    for(var q=1;q<=N;q++){ var a=Math.abs(cn(q)); if(a>mv) mv=a; }
+    mv=mv*1.18 + 1e-6;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-0.6,N+0.6,-0.06*mv,mv);
+    grid(ctx,halfW,H,m2,1); axStep(ctx,halfW,H,m2,'n','|cₙ|',2);
+    for(var k=0;k<=N;k++){
+      var c=Math.abs(cn(k)); if(c<1e-9) continue;
+      var xk=m2.px(k);
+      ctx.strokeStyle='#c62828'; ctx.lineWidth=3.2;
+      ctx.beginPath(); ctx.moveTo(xk,m2.py(0)); ctx.lineTo(xk,m2.py(c)); ctx.stroke();
+      dot(ctx,xk,m2.py(c),4,'#c62828','#fff');
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'离散振幅谱 |cₙ|: 包络为 sinc 型曲线','#37474f','bold 12.5px Segoe UI');
+    setRO('sqReadout',
+      '占空比 $D='+fmt(D)+'$: 脉冲宽度为 $\\tau=DT$; $c_0=D='+fmt(D)+'$ 是直流分量 (一个周期内的平均值).<br>'+
+      '系数 $c_n=\\frac{\\sin(n\\pi D)}{n\\pi}$: '+hl('$D$ 越小, 谱线包络的主瓣越宽、高频成分越丰富 —— 这就是"时域越窄, 频域越宽"')+'.<br>'+
+      hl2('谐波次数 $N='+N+'$: 取项越多, 部分和越贴近理想脉冲; 但跳变处的过冲同样不会消失.'));
+  }
+  bindSlider('sqD',function(v){ D=v; badge('sqDV',fmt(v)); draw(); });
+  bindSlider('sqN',function(v){ N=Math.round(v); badge('sqNV',String(N)); draw(); });
+  badge('sqDV',fmt(D)); badge('sqNV',String(N));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'三角形式的傅里叶级数', c:'#1976d2', leaves:['周期实函数 $f_T(t)$, 周期 $T$','Dirichlet 条件: 有限个第一类间断 / 极值点','$f = \\frac{a_0}{2} + \\sum a_n\\cos n\\omega t$','$+ \\sum b_n\\sin n\\omega t$','基频 $\\omega = \\frac{2\\pi}{T}$','$a_n$, $b_n$: 傅里叶系数的积分公式','间断点收敛于 $\\frac{1}{2}[f(t+0)+f(t-0)]$']},
+    {t:'复指数形式', c:'#e65100', leaves:['欧拉公式: 用 $\\mathrm{e}^{\\pm\\mathrm{i}n\\omega t}$ 替换 $\\cos, \\sin$','$c_0 = \\frac{a_0}{2}$, $c_n = \\frac{a_n - \\mathrm{i} b_n}{2}$','$c_n = \\frac{1}{T}\\int f_T \\mathrm{e}^{-\\mathrm{i}n\\omega t}\\,\\mathrm{d}t$, $n = 0, \\pm 1, \\dots$','合并为 $f = \\sum\\limits_{n=-\\infty}^{+\\infty} c_n \\mathrm{e}^{\\mathrm{i}n\\omega t}$','实函数: $c_{-n} = \\overline{c_n}$ (共轭对称)','$|c_{-n}| = |c_n|$, $\\arg c_{-n} = -\\arg c_n$']},
+    {t:'物理意义 · 频谱', c:'#c62828', leaves:['谐波分解: $c_0 + \\sum A_n \\cos(n\\omega t + \\theta_n)$','$A_0 = |c_0|$: 直流分量的振幅','$A_n = \\sqrt{a_n^2 + b_n^2} = 2|c_n|$','$c_n$ 称为频谱 (复频谱)','$|c_n|$: 离散振幅谱','$\\arg c_n$: 离散相位谱']},
+    {t:'例题与延伸', c:'#2e7d32', leaves:['例1.1 方波: $c_0 = 1$ (平均值)','$n$ 偶: $c_n = 0$; $n$ 奇: $c_n = -\\frac{2\\mathrm{i}}{n\\pi}$','$|c_n| = \\frac{2}{|n|\\pi}$ ($n$ 奇); $\\arg c_n = \\mp\\frac{\\pi}{2}$','方波只含奇次谐波, 幅值按 $\\frac{1}{n}$ 衰减','矩形脉冲: $c_n = \\frac{\\sin(n\\pi D)}{n\\pi}$','频谱 $\\to$ 傅里叶变换 (下一节)']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第七章第一节 · 傅里叶级数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; Dirichlet 定理 → 三角形式 → 复指数形式 → 频谱; 一句话: <b>周期信号 $f_T(t)=\\sum\\limits_{n=-\\infty}^{+\\infty}c_n\\mathrm{e}^{\\mathrm{i}n\\omega t}$, 其中 $\\omega=\\frac{2\\pi}{T}$; $\\left|c_n\\right|$ 是振幅谱, $\\arg c_n$ 是相位谱, 且 $A_0=\\left|c_0\\right|$、$A_n=2\\left|c_n\\right|$</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'傅里叶断言"任意周期函数都能表示成一列正弦、余弦函数之和". 为什么用"波"来分解信号, 而不是用别的函数族?',
+     hints:['正弦、余弦具有最简单、最稳定的性质: 求导后仍为同频率的三角函数, 且不同频率之间在整周期上"正交".',
+            '正交性使系数公式可以直接"逐项提取": 把 f_T(t) 与 cos nωt 相乘再积分, 其他项全部消失, 只剩 a_n.',
+            '物理上, 一个单频简谐波对应一个确定的频率、振幅与初相位 —— 这正是工程中"频谱"概念想要的量.',
+            '可迁移的态度: 选择"好的坐标系", 往往比在坏的坐标系里硬算有效得多.']},
+    {q:'傅里叶的论文曾被拉格朗日以"不严格"为由反对, 直到 1829 年才由狄利克雷给出严格条件. 这段公案给我们什么启发?',
+     hints:['拉格朗日的质疑并非无理: 当时"函数""收敛"都还没有严格定义, 断言"任意函数"确实过宽.',
+            '傅里叶的做法是继续深入、把工作写成体系, 并不断用计算与物理事实支撑自己的结论.',
+            '最终的解决方案不是"谁赢谁输", 而是给结论补上条件 (Dirichlet 条件), 让真理变得更精确.',
+            '可迁移的态度: 被质疑时, 把问题做得更清楚, 而不是回避; 同时也要尊重质疑者提出的真实难点.']},
+    {q:'实函数时 c_{-n} = c̄_n, 即频谱关于实轴共轭对称. 为什么说"负频率部分没有携带新信息"? 这对工程计算有什么意义?',
+     hints:['共轭对称意味着 |c_{-n}| = |c_n| 且 arg c_{-n} = −arg c_n, 幅值与相位都被正频率一侧完全决定.',
+            '因此研究实信号的频谱时, 只需计算并绘制 n ≥ 0 的部分即可.',
+            '这也解释了 A_n = 2|c_n|: 三角形式里"一根谱线", 在复指数形式里被平均分给 ±n 两根.',
+            '可迁移的态度: 发现对称就发现"冗余"; 利用对称性简化计算, 是数学与工程共通的智慧.']},
+    {q:'从《管子》的三分损益法、朱载堉的十二平均律, 到 5G 中的 OFDM: 你如何理解"谐波分解"这一思想贯穿古今?',
+     hints:['音律的本质就是频率之间的比例: 三分损益用 2/3、4/3 的整数比生律, 十二平均律用 2^{1/12} 的等比律.',
+            '这与中国古代对"泛音"的直观理解一致: 一根弦上有基音与一系列整数倍频率的泛音叠加, 正是傅里叶级数的物理原型.',
+            '现代 OFDM 把数据切分到许多正交子载波上, 其数学基础正是傅里叶变换; 华为等中国企业在 5G 上的领先是这一思想的工程化.',
+            '可迁移的态度: 基础数学思想没有国界也没有时代, 谁把它用得透、用得实, 谁就能走到前面.']},
+    {q:'傅里叶级数是"用有限逼近无限"的典范: 取前 N 项求和去逼近原函数. 这对你理解"近似与精确"有何启发?',
+     hints:['取项越多逼近越好, 部分和的最大偏差趋于 0 (在均方意义与连续点处), 这就是"收敛".',
+            '但在跳跃点附近, 吉布斯过冲始终存在, 说明"逐点一致"与"均方逼近"是两回事.',
+            '因此"精确"需要被重新定义: 是在每一点精确, 还是在整体意义上精确? 这直接引出了实分析中不同的收敛概念.',
+            '可迁移的态度: 说"差不多"之前, 先想清楚"差在哪里、按什么标准衡量".']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章第四节 傅氏变换的性质</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 1.55; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第七章第四节 傅氏变换的性质</h1>
+    <p>线性与位移、伸缩 &middot; 微分与积分 &middot; 卷积与卷积定理 &middot; 帕塞瓦尔等式 &middot; 用傅氏变换解微分方程</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握傅氏变换的<b>线性性质</b>: $\mathscr{F}[\alpha f_1+\beta f_2]=\alpha F_1+\beta F_2$, 理解"信号相加、频谱相加"的叠加原理;
+2. 掌握<b>位移性质</b>: 时域延迟 $\mathscr{F}[f(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega)$ 与频域位移 (调制) $\mathscr{F}[\mathrm{e}^{\mathrm{i}\omega_0 t}f(t)]=F(\omega-\omega_0)$, 并能用它求出典型函数的逆变换;
+3. 掌握<b>伸缩 (相似) 性质</b> $\mathscr{F}[f(at)]=\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$ 及其证明, 理解"时域越窄, 频域越宽"的物理含义;
+4. 掌握<b>微分性质</b> $\mathscr{F}[f'(t)]=\mathrm{i}\omega F(\omega)$、$\mathscr{F}[f^{(n)}(t)]=(\mathrm{i}\omega)^nF(\omega)$, 像函数的导数公式 $\frac{\mathrm{d}F(\omega)}{\mathrm{d}\omega}=\mathscr{F}[-\mathrm{i}tf(t)]$, 以及<b>积分性质</b> $\mathscr{F}\left[\int_{-\infty}^{t}f(\tau)\mathrm{d}\tau\right]=\frac{F(\omega)}{\mathrm{i}\omega}+\pi F(0)\delta(\omega)$;
+5. 掌握<b>卷积</b>的定义与运算律, 会用<b>卷积定理</b> $\mathscr{F}[f*g]=F(\omega)G(\omega)$ 与 $\mathscr{F}[f\cdot g]=\frac{1}{2\pi}F*G$, 并能计算两个函数的卷积;
+6. 理解<b>帕塞瓦尔等式</b> (能量守恒), 会用傅氏变换解微分方程, 并会借助帕塞瓦尔等式求 $\int_{-\infty}^{+\infty}\frac{\sin^2x}{x^2}\,\mathrm{d}x=\pi$ 这类含参广义积分.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-7d" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-7d" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-7d" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-7d" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-7d" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-7d" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、线性与位移、伸缩性质</label>
+    <label class="tab-btn" for="tab2" id="label2">二、微分与积分性质</label>
+    <label class="tab-btn" for="tab3" id="label3">三、卷积与卷积定理</label>
+    <label class="tab-btn" for="tab4" id="label4">四、帕塞瓦尔等式与综合应用</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 线性与位移、伸缩性质 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 线性性质</div>
+
+<div class="box-key">
+<div class="title">线性性质</div>
+设 $F_1(\omega)=\mathscr{F}[f_1(t)],\quad F_2(\omega)=\mathscr{F}[f_2(t)],\quad \alpha,\beta$ 为常数, 则傅氏变换与傅氏逆变换都是<b>线性运算</b>:
+<div class="box-formula">$$\mathscr{F}[\alpha f_1(t)+\beta f_2(t)]=\alpha\mathscr{F}[f_1(t)]+\beta\mathscr{F}[f_2(t)]=\alpha F_1(\omega)+\beta F_2(\omega),$$</div>
+<div class="box-formula">$$\mathscr{F}^{-1}[\alpha F_1(\omega)+\beta F_2(\omega)]=\alpha\mathscr{F}^{-1}[F_1(\omega)]+\beta\mathscr{F}^{-1}[F_2(\omega)]=\alpha f_1(t)+\beta f_2(t).$$</div>
+说白了就是<b>叠加原理</b>: 信号相加, 频谱相加; 把一个复杂信号拆成几个简单信号之后, 可以<b>分别变换、分别处理, 再叠加</b>. 整个线性系统理论都建立在它之上.
+</div>
+
+<div class="sec-title">1.2 位移性质: 时域延迟与频域位移</div>
+
+<div class="box-key">
+<div class="title">时域延迟</div>
+设 $F(\omega)=\mathscr{F}[f(t)]$, $t_0$ 为实常数, 则
+<div class="box-formula">$$\mathscr{F}[f(t\pm t_0)]=\mathrm{e}^{\pm\mathrm{i}\omega t_0}\mathscr{F}[f(t)]=\mathrm{e}^{\pm\mathrm{i}\omega t_0}F(\omega).$$</div>
+特别地, 把信号<b>向右延迟</b> $t_0$ (即 $f(t-t_0)$) 时
+<div class="box-formula">$$\mathscr{F}[f(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega).$$</div>
+两边取模得 $\left|\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega)\right|=\left|F(\omega)\right|$. 也就是说: <b>时域平移不改变振幅谱, 只给相位谱加上一个线性项 $-\omega t_0$</b>. 这就是"时延只改变相位"这一工程常识的数学根据.
+</div>
+
+<div class="box-key">
+<div class="title">频域位移 (调制)</div>
+与上面成对偶关系的是频域平移 —— 它对应时域乘复指数:
+<div class="box-formula">$$\mathscr{F}\left[\mathrm{e}^{\mathrm{i}\omega_0 t}f(t)\right]=F(\omega-\omega_0),\qquad \mathscr{F}^{-1}\left[F(\omega-\omega_0)\right]=\mathrm{e}^{\mathrm{i}\omega_0 t}f(t).$$</div>
+取实部即得最常用的"<b>调制</b> (频谱搬移) 公式": 用余弦去乘信号, 会把频谱一分为二, 各搬半个到 $\pm\omega_0$ 处:
+<div class="box-formula">$$\mathscr{F}\left[f(t)\cos\omega_0 t\right]=\dfrac{1}{2}\left[F(\omega-\omega_0)+F(\omega+\omega_0)\right].$$</div>
+收音机、手机把语音信号"装"到高频载波上发射出去, 靠的正是这一条.
+</div>
+
+<div class="box-result">
+<div class="res-label">位移性质的证明</div>
+由定义
+<div class="box-formula">$$\mathscr{F}[f(t\pm t_0)]=\int_{-\infty}^{+\infty}f(t\pm t_0)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t\ \stackrel{t\pm t_0=\tau}{=}\ \int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega(\tau\mp t_0)}\,\mathrm{d}\tau$$</div>
+<div class="box-formula">$$=\mathrm{e}^{\pm\mathrm{i}\omega t_0}\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\,\mathrm{d}\tau=\mathrm{e}^{\pm\mathrm{i}\omega t_0}\mathscr{F}[f(t)]=\mathrm{e}^{\pm\mathrm{i}\omega t_0}F(\omega).$$</div>
+第二个结论 (频域位移) 的证法完全类似. 注意证明的关键只有一步: <b>换元后把与 $\tau$ 无关的因子 $\mathrm{e}^{\pm\mathrm{i}\omega t_0}$ 提到积分号外</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.1</div>
+已知
+<div class="box-formula">$$G(\omega)=\dfrac{1}{\beta+\mathrm{i}(\omega+\omega_0)}\qquad(\beta&gt;0,\ \omega_0\ \text{为实常数}),$$</div>
+求 $g(t)=\mathscr{F}^{-1}[G(\omega)]$.
+<input type="checkbox" id="c7s4ans1" class="answer-toggle">
+<label for="c7s4ans1" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+把 $G(\omega)$ 与已知变换对 $H(\omega)=\frac{1}{\beta+\mathrm{i}\omega}$ 比较, 可见 $G(\omega)=H(\omega+\omega_0)$, 即 $G$ 是把 $H$ 沿频率轴平移了 $-\omega_0$. 由<b>频域位移性质</b>
+<div class="box-formula">$$g(t)=\mathscr{F}^{-1}[G(\omega)]=\mathrm{e}^{-\mathrm{i}\omega_0 t}\,\mathscr{F}^{-1}\left[\dfrac{1}{\beta+\mathrm{i}\omega}\right].$$</div>
+而由第二节例 2.1, 指数衰减信号 $\mathrm{e}^{-\beta t}u(t)$ 的傅氏变换正是 $\frac{1}{\beta+\mathrm{i}\omega}$, 故
+<div class="box-formula">$$\mathscr{F}^{-1}\left[\dfrac{1}{\beta+\mathrm{i}\omega}\right]=\begin{cases}\mathrm{e}^{-\beta t},&t&gt;0,\\[6pt]\dfrac{1}{2},&t=0,\\[6pt]0,&t&lt;0.\end{cases}$$</div>
+于是
+<div class="box-formula">$$g(t)=\mathrm{e}^{-\mathrm{i}\omega_0 t}\mathscr{F}^{-1}\left[\dfrac{1}{\beta+\mathrm{i}\omega}\right]=\begin{cases}\mathrm{e}^{-(\beta+\mathrm{i}\omega_0)t},&t&gt;0,\\[6pt]\dfrac{1}{2},&t=0,\\[6pt]0,&t&lt;0.\end{cases}$$</div>
+此题的要害只有一句: <b>频域平移 $\Longleftrightarrow$ 时域乘 $\mathrm{e}^{-\mathrm{i}\omega_0 t}$</b>. 求出的 $g(t)$ 幅度按 $\mathrm{e}^{-\beta t}$ 衰减, 相位以角速度 $\omega_0$ 旋转.
+</div>
+</div>
+</div>
+
+<div class="sec-title">1.3 伸缩性质 (相似性质)</div>
+
+<div class="box-key">
+<div class="title">伸缩 (相似) 性质</div>
+设 $F(\omega)=\mathscr{F}[f(t)]$, $a$ 为非零实常数, 则
+<div class="box-formula">$$\mathscr{F}[f(at)]=\dfrac{1}{|a|}F\left(\dfrac{\omega}{a}\right).$$</div>
+要记住三点:
+<br>
+<span style="color:#c62828"><b>(1)</b></span> 系数是 $\frac{1}{|a|}$, 带<b>绝对值</b> —— 因为 $a&lt;0$ 时换元会使积分限反转, 恰好抵消一个负号;
+<br>
+<span style="color:#c62828"><b>(2)</b></span> 变量是 $\frac{\omega}{a}$, 是"倒数式"的对应;
+<br>
+<span style="color:#c62828"><b>(3)</b></span> $a&gt;1$ 时波形被<b>压窄</b>、频谱被<b>拉宽</b>; $a&lt;1$ 时相反 —— 这就是"<b>时域越窄, 频域越宽</b>".
+</div>
+
+<div class="box-result">
+<div class="res-label">伸缩性质的证明</div>
+由定义 $\mathscr{F}[f(at)]=\int_{-\infty}^{+\infty}f(at)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$, 令 $u=at$, 则 $\mathrm{d}t=\frac{1}{a}\mathrm{d}u$.
+<br><br>
+<b>(1) 当 $a&gt;0$ 时.</b> $t$ 由 $-\infty$ 变到 $+\infty$, 对应 $u$ 也由 $-\infty$ 变到 $+\infty$:
+<div class="box-formula">$$\mathscr{F}[f(at)]=\dfrac{1}{a}\int_{-\infty}^{+\infty}f(u)\mathrm{e}^{-\mathrm{i}\frac{\omega}{a}u}\,\mathrm{d}u=\dfrac{1}{a}F\left(\dfrac{\omega}{a}\right);$$</div>
+<b>(2) 当 $a&lt;0$ 时.</b> 此时 $u=at$ 反向, 积分限由 $+\infty$ 到 $-\infty$, 反转回来多出一个负号:
+<div class="box-formula">$$\mathscr{F}[f(at)]=\dfrac{1}{a}\int_{+\infty}^{-\infty}f(u)\mathrm{e}^{-\mathrm{i}\frac{\omega}{a}u}\,\mathrm{d}u=-\dfrac{1}{a}F\left(\dfrac{\omega}{a}\right).$$</div>
+综合 (1)(2), 因 $a&gt;0$ 时 $\frac{1}{a}=\frac{1}{|a|}$、$a&lt;0$ 时 $-\frac{1}{a}=\frac{1}{|a|}$, 两式统一写成
+<div class="box-formula">$$\mathscr{F}[f(at)]=\dfrac{1}{|a|}F\left(\dfrac{\omega}{a}\right).$$</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 伸缩性质 —— 时域宽窄与频域宽窄的"跷跷板" <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取基准信号 $f(t)=\mathrm{e}^{-t^2}$ (灰虚线), 它的频谱为 $F(\omega)=\sqrt{\pi}\,\mathrm{e}^{-\omega^2/4}$ (灰虚线). 把时间轴压缩 $a$ 倍得到 $f(at)$ (蓝线), 由伸缩性质, 频谱变为 $\frac{1}{a}F\left(\frac{\omega}{a}\right)$ (蓝线). 拖动滑块改变 $a$, 盯住两件事: $a$ 变大时波形变"尖", 频谱反而变"宽"; 以及两条频谱曲线下的面积始终等于时域曲线下的面积.</div>
+<div class="fig-caps">
+<div class="fc">时域: $f(t)=\mathrm{e}^{-t^2}$ (灰虚线) 与 $f(at)$ (蓝)</div>
+<div class="fc">频域: $F(\omega)$ (灰虚线) 与 $\frac{1}{a}F(\frac{\omega}{a})$ (蓝)</div>
+</div>
+<canvas id="cvLinear" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>伸缩因子 $a$:</label>
+<input type="range" id="linA" min="0.9" max="2" step="0.05" value="1.6">
+<span class="val-badge" id="linAV">1.60</span>
+</div>
+<div class="readout" id="linReadout"></div>
+</div>
+</div>
+
+<div class="box-key">
+<div class="title">三条性质的一句话总结</div>
+<b>线性</b>: 组合进、组合出 —— 可以"分而治之".
+<br>
+<b>位移</b>: 时域平移只改相位; 频域平移就是调制 (乘复指数).
+<br>
+<b>伸缩</b>: 时域与频域"此消彼长", 且面积守恒 —— 一条曲线被压窄, 另一条就被拉宽.
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 微分与积分性质 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 时域微分性质</div>
+
+<div class="box-key">
+<div class="title">微分性质</div>
+若 $\lim\limits_{|t|\to+\infty}f(t)=0$, 则
+<div class="box-formula">$$\mathscr{F}[f'(t)]=\mathrm{i}\omega\,\mathscr{F}[f(t)]=\mathrm{i}\omega F(\omega).$$</div>
+一般地, 若 $\lim\limits_{|t|\to+\infty}f^{(k)}(t)=0\ (k=0,1,\cdots,n-1)$, 则
+<div class="box-formula">$$\mathscr{F}[f^{(n)}(t)]=(\mathrm{i}\omega)^n\mathscr{F}[f(t)]=(\mathrm{i}\omega)^nF(\omega).$$</div>
+这条性质的分量最重: 它把<b>"时域求导"变成了"频域乘 $\mathrm{i}\omega$"</b>. 正因为如此, 微分方程在频域里会退化成<b>代数方程</b>, 这正是下一章"用傅氏变换解微分方程"的基本思路.
+</div>
+
+<div class="box-result">
+<div class="res-label">微分性质的证明</div>
+当 $|t|\to+\infty$ 时 $\left|f(t)\mathrm{e}^{-\mathrm{i}\omega t}\right|=|f(t)|\to 0$, 故 $f(t)\mathrm{e}^{-\mathrm{i}\omega t}\to 0$. 于是由分部积分
+<div class="box-formula">$$\mathscr{F}[f'(t)]=\int_{-\infty}^{+\infty}f'(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\left.f(t)\mathrm{e}^{-\mathrm{i}\omega t}\right|_{-\infty}^{+\infty}+\mathrm{i}\omega\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t=\mathrm{i}\omega\mathscr{F}[f(t)].$$</div>
+其中边界项因 $f(t)\to0$ 而消失. 反复使用上式即可得到高阶公式 $\mathscr{F}[f^{(n)}(t)]=(\mathrm{i}\omega)^nF(\omega)$.
+<br><br>
+<b>读法:</b> 系数 $(\mathrm{i}\omega)^n$ 的模是 $|\omega|^n$ —— 频率越高, 放大倍数越大. 这就是为什么对信号求导会<b>强化高频成分</b> (图像处理里的"边缘检测"、音响里的"锐化"都是在干这件事), 也解释了为什么求导对噪声特别敏感.
+</div>
+
+<div class="box-key">
+<div class="title">像函数的导数 (频域微分) 公式</div>
+与微分性质对偶的还有"对参变量 $\omega$ 求导"的公式. 由定义
+<div class="box-formula">$$\dfrac{\mathrm{d}F(\omega)}{\mathrm{d}\omega}=\mathscr{F}[-\mathrm{i}tf(t)]=-\mathrm{i}\,\mathscr{F}[t\,f(t)],$$</div>
+一般地
+<div class="box-formula">$$\dfrac{\mathrm{d}^nF(\omega)}{\mathrm{d}\omega^n}=(-\mathrm{i})^n\,\mathscr{F}[t^nf(t)].$$</div>
+它把"频域求导"换成了"时域乘 $t$": 反过来, 遇到时域上乘了 $t$ 的信号, 也可以在频域上用求导来对付.
+</div>
+
+<div class="sec-title">2.2 积分性质</div>
+
+<div class="box-key">
+<div class="title">积分性质 (讲稿形式)</div>
+设 $g(t)=\int_{-\infty}^{t}f(\tau)\,\mathrm{d}\tau$, 且 $\lim\limits_{t\to+\infty}g(t)=0$, 则
+<div class="box-formula">$$\mathscr{F}[g(t)]=\mathscr{F}\left[\int_{-\infty}^{t}f(\tau)\,\mathrm{d}\tau\right]=\dfrac{1}{\mathrm{i}\omega}\,\mathscr{F}[f(t)]=\dfrac{F(\omega)}{\mathrm{i}\omega}.$$</div>
+证明: 由于 $g'(t)=f(t)$, 由微分性质
+<div class="box-formula">$$\mathscr{F}[f(t)]=\mathscr{F}[g'(t)]=\mathrm{i}\omega\,\mathscr{F}[g(t)]\quad\Longrightarrow\quad \mathscr{F}[g(t)]=\dfrac{1}{\mathrm{i}\omega}\mathscr{F}[f(t)].$$</div>
+系数 $\frac{1}{\mathrm{i}\omega}$ 的模是 $\frac{1}{|\omega|}$ —— 与求导恰好相反, <b>积分会压低高频成分</b>, 所以累加、平滑、去噪都靠它.
+</div>
+
+<div class="box-result">
+<div class="res-label">一般情形: 多出来的 $\delta$ 项</div>
+上面的结论是在 $\lim\limits_{t\to+\infty}g(t)=0$ 的条件下得到的. 若 $g(+\infty)=\int_{-\infty}^{+\infty}f(\tau)\mathrm{d}\tau=F(0)\neq0$, 则 $g(t)$ 中含有一个"直流台阶", 它的变换是一个 $\delta$ 峰. 此时积分性质的一般形式为
+<div class="box-formula">$$\mathscr{F}\left[\int_{-\infty}^{t}f(\tau)\,\mathrm{d}\tau\right]=\dfrac{F(\omega)}{\mathrm{i}\omega}+\pi F(0)\,\delta(\omega).$$</div>
+其中新增的 $\pi F(0)\delta(\omega)$ 正是那个不为零的"终值"贡献的直流分量.
+<br><br>
+把它用到单位阶跃函数上最能看清: 取 $f(\tau)=\delta(\tau)$, 则 $g(t)=u(t)$ 且 $F(0)=1$, 于是
+<div class="box-formula">$$\mathscr{F}[u(t)]=\dfrac{1}{\mathrm{i}\omega}+\pi\delta(\omega),$$</div>
+与第三节用广义函数求出的结果完全一致. 可见两种写法并不矛盾: <b>讲稿的形式是"终值为零"这一特殊情形</b>.
+</div>
+
+<div class="chart-container">
+<h3>交互: 微分性质 —— 求导如何"抬高"高频 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $f(t)=\mathrm{e}^{-at^2}$ (蓝), 其频谱为 $F(\omega)=\sqrt{\frac{\pi}{a}}\,\mathrm{e}^{-\omega^2/(4a)}$ (蓝). 左图给出 $f$ 与它的导数 $f'(t)=-2at\,\mathrm{e}^{-at^2}$ (橙), 右图给出 $|F(\omega)|$ 与导数信号的频谱模 $|F'(\omega)|=|\omega|\cdot|F(\omega)|$ (橙). 拖动滑块改变 $a$, 注意两条频谱曲线在 $\omega=0$ 处"一高一低"、在高频端橙线反而超过蓝线 —— 这正是"<b>求导 $=$ 乘以 $|\omega|$</b>"的直接后果.</div>
+<div class="fig-caps">
+<div class="fc">时域: $f(t)=\mathrm{e}^{-at^2}$ (蓝) 与 $f$ 的导数 (橙)</div>
+</div>
+<canvas id="cvDeriv" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $a$:</label>
+<input type="range" id="derivA" min="0.4" max="2" step="0.05" value="1">
+<span class="val-badge" id="derivAV">1.00</span>
+</div>
+<div class="readout" id="derivReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 卷积与卷积定理 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 卷积的定义与运算律</div>
+
+<div class="box-key">
+<div class="title">定义 4.1 (卷积)</div>
+设函数 $f_1(t),f_2(t)$ 在 $(-\infty,+\infty)$ 内绝对可积, 则积分
+<div class="box-formula">$$f_1(t)*f_2(t)=\int_{-\infty}^{+\infty}f_1(\tau)f_2(t-\tau)\,\mathrm{d}\tau$$</div>
+称为 $f_1(t)$ 与 $f_2(t)$ 的<b>卷积</b>.
+<br><br>
+读法: 把 $f_2$ <b>先翻转</b>成 $f_2(-\tau)$、再<b>平移</b> $t$ 得到 $f_2(t-\tau)$, 与 $f_1(\tau)$ <b>相乘</b>, 最后对 $\tau$ <b>积分</b>. 四步口诀: <b>翻转 — 平移 — 相乘 — 积分</b>.
+</div>
+
+<div class="box-key">
+<div class="title">卷积的运算律</div>
+<span style="color:#c62828"><b>(1)</b></span> <b>交换律</b>: $\quad f_1(t)*f_2(t)=f_2(t)*f_1(t).$
+<br>
+<span style="color:#c62828"><b>(2)</b></span> <b>结合律</b>: $\quad f_1(t)*[f_2(t)*f_3(t)]=[f_1(t)*f_2(t)]*f_3(t).$
+<br>
+<span style="color:#c62828"><b>(3)</b></span> <b>分配律</b>: $\quad f_1(t)*[f_2(t)+f_3(t)]=f_1(t)*f_2(t)+f_1(t)*f_3(t).$
+<br><br>
+卷积的代数性质与普通乘法几乎一样, 但要注意: 它一般<b>不满足消去律</b>, 卷积也不等于逐点相乘.
+</div>
+
+<div class="sec-title">3.2 卷积定理</div>
+
+<div class="box-key">
+<div class="title">定理 4.1 (卷积定理)</div>
+设 $\mathscr{F}[f_1(t)]=F_1(\omega),\quad \mathscr{F}[f_2(t)]=F_2(\omega)$, 则
+<div class="box-formula">$$\mathscr{F}[f_1(t)*f_2(t)]=F_1(\omega)\cdot F_2(\omega),$$</div>
+等价地
+<div class="box-formula">$$f_1(t)*f_2(t)=\mathscr{F}^{-1}\left[F_1(\omega)\cdot F_2(\omega)\right].$$</div>
+<b>注:</b> 两个函数的卷积的傅氏变换, 等于这两个函数各自傅氏变换的<b>乘积</b> —— 这是个"把难算的卷积变成好算的乘法"的定理.
+</div>
+
+<div class="box-result">
+<div class="res-label">卷积定理的证明</div>
+由定义并交换积分次序
+<div class="box-formula">$$\mathscr{F}[f_1(t)*f_2(t)]=\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f_1(\tau)f_2(t-\tau)\,\mathrm{d}\tau\right]\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t$$</div>
+在里层把 $\mathrm{e}^{-\mathrm{i}\omega t}$ 拆成 $\mathrm{e}^{-\mathrm{i}\omega\tau}\cdot\mathrm{e}^{-\mathrm{i}\omega(t-\tau)}$:
+<div class="box-formula">$$=\int_{-\infty}^{+\infty}f_1(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\left[\int_{-\infty}^{+\infty}f_2(t-\tau)\mathrm{e}^{-\mathrm{i}\omega(t-\tau)}\,\mathrm{d}t\right]\mathrm{d}\tau$$</div>
+里层对 $t$ 的积分 (作换元 $u=t-\tau$) 恰是 $F_2(\omega)$, 于是
+<div class="box-formula">$$=\int_{-\infty}^{+\infty}f_1(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}F_2(\omega)\,\mathrm{d}\tau=F_2(\omega)\int_{-\infty}^{+\infty}f_1(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\,\mathrm{d}\tau=F_1(\omega)\cdot F_2(\omega).$$</div>
+</div>
+
+<div class="box-key">
+<div class="title">对偶形式: 乘积的卷积</div>
+与卷积定理对偶的结论同样成立:
+<div class="box-formula">$$\mathscr{F}[f_1(t)\cdot f_2(t)]=\dfrac{1}{2\pi}F_1(\omega)*F_2(\omega)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F_1(\eta)F_2(\omega-\eta)\,\mathrm{d}\eta.$$</div>
+于是一句话记住这一对: <b>时域卷积 $\leftrightarrow$ 频域乘积; 时域乘积 $\leftrightarrow$ 频域卷积 (带因子 $\frac{1}{2\pi}$)</b>. 工程上给信号"加窗"就是典型的时域相乘、频域卷积 (频谱被"抹平") 的过程.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.4</div>
+设
+<div class="box-formula">$$f_1(t)=\begin{cases}0,&t&lt;0,\\1,&t\ge0;\end{cases}\qquad f_2(t)=\begin{cases}0,&t&lt;0,\\\mathrm{e}^{-t},&t\ge0,\end{cases}$$</div>
+求 $f_1(t)*f_2(t)$.
+<input type="checkbox" id="c7s4ans2" class="answer-toggle">
+<label for="c7s4ans2" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+先写出被"翻转并平移"后的 $f_2$:
+<div class="box-formula">$$f_2(t-\tau)=\begin{cases}0,&\tau&gt;t,\\\mathrm{e}^{\tau-t},&\tau\le t.\end{cases}$$</div>
+于是
+<div class="box-formula">$$f_1(\tau)f_2(t-\tau)=\begin{cases}0,&\tau&lt;0,\\0,&\tau&gt;t,\\\mathrm{e}^{\tau-t},&0\le\tau\le t,\end{cases}\qquad f_1(t)*f_2(t)=\int_{-\infty}^{t}f_1(\tau)\mathrm{e}^{\tau-t}\,\mathrm{d}\tau.$$</div>
+<b>当 $t&lt;0$ 时</b>, 积分区间与 $[0,t]$ 无交, 故
+<div class="box-formula">$$f_1(t)*f_2(t)=0.$$</div>
+<b>当 $t\ge0$ 时</b>,
+<div class="box-formula">$$f_1(t)*f_2(t)=\int_{0}^{t}\mathrm{e}^{\tau-t}\,\mathrm{d}\tau=\mathrm{e}^{-t}\int_{0}^{t}\mathrm{e}^{\tau}\,\mathrm{d}\tau=\mathrm{e}^{-t}\left(\mathrm{e}^{t}-1\right)=1-\mathrm{e}^{-t}.$$</div>
+综上
+<div class="box-formula">$$f_1(t)*f_2(t)=\begin{cases}0,&t&lt;0,\\1-\mathrm{e}^{-t},&t\ge0.\end{cases}$$</div>
+<b>要点:</b> 卷积的积分限随 $t$ 移动, 必须<b>按 $t$ 的取值分段讨论</b>; 画图时先定出 $f_1(\tau)$ 与 $f_2(t-\tau)$ 的重叠区间, 再在这个区间上积分.
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.5</div>
+求 $f_1(t)=\frac{\sin\alpha t}{\pi t}$ 与 $f_2(t)=\frac{\sin\beta t}{\pi t}$ 的卷积, 其中 $\alpha&gt;0,\ \beta&gt;0$.
+<input type="checkbox" id="c7s4ans3" class="answer-toggle">
+<label for="c7s4ans3" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由第二节例 2.2 知, 这类"抽样函数"的频谱是理想门函数:
+<div class="box-formula">$$\mathscr{F}\left[\dfrac{\sin\omega_0 t}{\pi t}\right]=F(\omega)=\begin{cases}1,&|\omega|\le\omega_0,\\0,&|\omega|&gt;\omega_0.\end{cases}$$</div>
+于是两个门函数相乘 (取 $\gamma=\min\{\alpha,\beta\}$):
+<div class="box-formula">$$F_1(\omega)F_2(\omega)=\begin{cases}1,&|\omega|\le\gamma,\\0,&|\omega|&gt;\gamma.\end{cases}$$</div>
+由卷积定理
+<div class="box-formula">$$f_1(t)*f_2(t)=\mathscr{F}^{-1}[F_1(\omega)F_2(\omega)]=\dfrac{\sin\gamma t}{\pi t},\qquad \gamma=\min\{\alpha,\beta\}.$$</div>
+<b>要点:</b> 本题若直接积分会非常困难, 但用卷积定理只需<b>把频域的两个门函数相乘</b> —— 窄的那个"说了算", 于是卷积结果就是频率较低的那一项. 这正是卷积定理的威力.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互: 卷积的几何演示 —— 翻转 · 平移 · 相乘 · 积分 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $f_1(t)=f_2(t)=1$ (在 $[0,1]$ 上, 其余为零). 左图把 $f_1(\tau)$ (蓝框) 与翻转平移后的 $f_2(t-\tau)$ (橙框) 画在同一根 $\tau$ 轴上, 两者重叠部分的面积就是卷积值. 右图是完整的卷积结果 —— 一段三角形. 拖动滑块改变平移量 $t$, 看重叠面积如何从 $0$ 线性升到 $1$、再线性降回 $0$.</div>
+<canvas id="cvConv" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>平移量 $t$:</label>
+<input type="range" id="convT" min="-0.4" max="2.4" step="0.02" value="0.8">
+<span class="val-badge" id="convTV">0.80</span>
+</div>
+<div class="readout" id="convReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 帕塞瓦尔等式与综合应用 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 帕塞瓦尔等式</div>
+
+<div class="box-key">
+<div class="title">帕塞瓦尔 (Parseval) 等式</div>
+设 $f_1(t),f_2(t)$ 为可积函数, 即 $\int_{-\infty}^{+\infty}\left|f_k(t)\right|^2\mathrm{d}t&lt;+\infty\ (k=1,2)$, 若 $F_1(\omega)=\mathscr{F}[f_1(t)],\ F_2(\omega)=\mathscr{F}[f_2(t)]$, 则
+<div class="box-formula">$$\int_{-\infty}^{+\infty}f_1(t)\overline{f_2(t)}\,\mathrm{d}t=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F_1(\omega)\overline{F_2(\omega)}\,\mathrm{d}\omega.$$</div>
+其中 $\overline{\ \cdot\ }$ 表示复共轭. 这条等式把"时域里的一个积分"换算成了"频域里的一个积分", 两侧只差一个因子 $\frac{1}{2\pi}$.
+</div>
+
+<div class="box-key">
+<div class="title">特例: 能量守恒</div>
+在帕塞瓦尔等式中取 $f_1=f_2=f$, 则
+<div class="box-formula">$$\int_{-\infty}^{+\infty}|f(t)|^2\,\mathrm{d}t=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}|F(\omega)|^2\,\mathrm{d}\omega.$$</div>
+$\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t$ 称为信号的<b>能量积分</b>, $|F(\omega)|^2$ 称为<b>能量谱密度</b>. 等式告诉我们: <b>能量在时域里算、在频域里算, 结果一样</b>.
+<br><br>
+换句话说, 傅氏变换只是把能量"重新分配"了一下位置, 却没有凭空生出一份、也没有弄丢一份 —— 这是一条彻头彻尾的<b>守恒律</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">帕塞瓦尔等式的证明</div>
+把逆变换公式 $f_2(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F_2(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$ 代入左端并交换积分次序:
+<div class="box-formula">$$\int_{-\infty}^{+\infty}f_1(t)\overline{f_2(t)}\,\mathrm{d}t=\int_{-\infty}^{+\infty}f_1(t)\left[\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F_2(\omega)\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega\right]^{\overline{\ \ }}\,\mathrm{d}t$$</div>
+<div class="box-formula">$$=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\overline{F_2(\omega)}\left[\int_{-\infty}^{+\infty}f_1(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t\right]\mathrm{d}\omega=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}F_1(\omega)\overline{F_2(\omega)}\,\mathrm{d}\omega.$$</div>
+方括号里的积分正是 $F_1(\omega)$, 于是得证.
+</div>
+
+<div class="chart-container">
+<h3>交互: 能量在时域与频域的分布对照 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">取 $f(t)=\mathrm{e}^{-at^2}$. 左图是时域<b>能量密度</b> $|f(t)|^2$, 右图是频域能量密度 $\frac{1}{2\pi}|F(\omega)|^2$. 两个阴影面积都等于同一个数 —— 帕塞瓦尔等式说的就是它们永远相等. 拖动滑块改变 $a$: 信号变窄时, 时域能量更集中, 但频域能量就摊得更开, 两边的<b>总面积却保持不变</b>.</div>
+<canvas id="cvParseval" data-h="380"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>参数 $a$:</label>
+<input type="range" id="parA" min="0.4" max="2" step="0.05" value="1">
+<span class="val-badge" id="parAV">1.00</span>
+</div>
+<div class="readout" id="parReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">4.2 用傅氏变换解微分方程</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.2</div>
+求微分方程
+<div class="box-formula">$$ax'(t)+bx(t)+c\int_{-\infty}^{t}x(\tau)\,\mathrm{d}\tau=h(t)\qquad(-\infty&lt;t&lt;+\infty)$$</div>
+的解, 其中 $a,b,c$ 为常数, $h(t)$ 为已知函数且其傅氏变换存在.
+<input type="checkbox" id="c7s4ans4" class="answer-toggle">
+<label for="c7s4ans4" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $\mathscr{F}[x(t)]=X(\omega),\ \mathscr{F}[h(t)]=H(\omega)$. 对方程两边同取傅氏变换. 逐项用三条性质:
+<br>
+<span style="color:#c62828"><b>·</b></span> 由<b>微分性质</b>: $\mathscr{F}[x'(t)]=\mathrm{i}\omega X(\omega)$;
+<br>
+<span style="color:#c62828"><b>·</b></span> 由<b>线性性质</b>: $\mathscr{F}[bx(t)]=bX(\omega)$;
+<br>
+<span style="color:#c62828"><b>·</b></span> 由<b>积分性质</b>: $\mathscr{F}\left[\int_{-\infty}^{t}x(\tau)\mathrm{d}\tau\right]=\frac{1}{\mathrm{i}\omega}X(\omega)$.
+<br><br>
+于是原微分方程化为<b>频域中的代数方程</b>:
+<div class="box-formula">$$a\,\mathrm{i}\omega X(\omega)+bX(\omega)+c\,\dfrac{1}{\mathrm{i}\omega}X(\omega)=H(\omega),$$</div>
+解出
+<div class="box-formula">$$X(\omega)=\dfrac{H(\omega)}{b+\mathrm{i}\left(a\omega-\dfrac{c}{\omega}\right)}.$$</div>
+再取傅氏逆变换即得解
+<div class="box-formula">$$x(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\dfrac{H(\omega)}{b+\mathrm{i}\left(a\omega-\dfrac{c}{\omega}\right)}\,\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+<b>要点:</b> 全题没有任何"解微分方程"的技巧, 只有三步 —— <b>取变换、解代数方程、取逆变换</b>. 这就是积分变换方法最吸引人的地方: 把微积分问题"翻译"成代数问题.
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.3 用帕塞瓦尔等式求广义积分</div>
+
+<div class="box-example">
+<div class="ex-label">例 4.3</div>
+求积分 $\int_{-\infty}^{+\infty}\frac{\sin^2x}{x^2}\,\mathrm{d}x$.
+<input type="checkbox" id="c7s4ans5" class="answer-toggle">
+<label for="c7s4ans5" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+设 $G(\omega)=\frac{\sin\omega}{\omega}$, 由第二节例 2.2 知它的逆变换为一段矩形脉冲:
+<div class="box-formula">$$g(t)=\mathscr{F}^{-1}[G(\omega)]=\begin{cases}\dfrac{1}{2},&|t|&lt;1,\\[6pt]\dfrac{1}{4},&|t|=1,\\[6pt]0,&|t|&gt;1.\end{cases}$$</div>
+对 $f=g$ 用帕塞瓦尔等式 (能量形式):
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{\sin^2x}{x^2}\,\mathrm{d}x=2\pi\int_{-\infty}^{+\infty}|g(t)|^2\,\mathrm{d}t=2\pi\int_{-1}^{1}\left(\dfrac{1}{2}\right)^2\mathrm{d}t=2\pi\cdot\dfrac{1}{4}\cdot2=\pi.$$</div>
+即
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{\sin^2x}{x^2}\,\mathrm{d}x=\pi.$$</div>
+(单点在 $|t|=1$ 处 $g$ 取 $\frac{1}{4}$, 对积分值无影响.) <b>要点:</b> 这个积分如果硬算 (比如分部积分), 会相当麻烦; 而用帕塞瓦尔等式, 只需"认出"$\frac{\sin\omega}{\omega}$ 对应的时域信号, 再算一个最简单的面积 —— 这就是"<b>用频域的眼光解决时域难题</b>".
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.4 两道练习</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.1</div>
+已知 $f(t)$ 的傅氏变换为 $F(\omega)$, 用性质写出下列各式的傅氏变换: (1) $f(3t-2)$; (2) $f'(t)\cos2t$; (3) $\int_{-\infty}^{t}f(\tau)\mathrm{d}\tau$.
+<input type="checkbox" id="c7s4ans6" class="answer-toggle">
+<label for="c7s4ans6" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> 先平移再伸缩. 记 $f(t-2)$ 的变换为 $\mathrm{e}^{-2\mathrm{i}\omega}F(\omega)$, 再令 $a=3$:
+<div class="box-formula">$$\mathscr{F}[f(3t-2)]=\dfrac{1}{3}\,\mathrm{e}^{-\mathrm{i}\frac{2}{3}\omega}F\left(\dfrac{\omega}{3}\right).$$</div>
+(核对: $f(3t-2)=f\left(3\left(t-\frac{2}{3}\right)\right)$, 故先把 $f$ 右移 $\frac{2}{3}$、再按 $a=3$ 压缩.)
+<br><br>
+<b>(2)</b> 先把 $f'$ 用微分性质化为 $\mathrm{i}\omega F(\omega)$, 再用调制公式:
+<div class="box-formula">$$\mathscr{F}[f'(t)\cos2t]=\dfrac{1}{2}\left[\mathrm{i}(\omega-2)F(\omega-2)+\mathrm{i}(\omega+2)F(\omega+2)\right].$$</div>
+<br>
+<b>(3)</b> 直接用积分性质:
+<div class="box-formula">$$\mathscr{F}\left[\int_{-\infty}^{t}f(\tau)\mathrm{d}\tau\right]=\dfrac{F(\omega)}{\mathrm{i}\omega}+\pi F(0)\delta(\omega).$$</div>
+</div>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">练习 4.2</div>
+设 $f(t)=\mathrm{e}^{-|t|}$, 已知 $\mathscr{F}[f(t)]=\frac{2}{1+\omega^2}$. 用帕塞瓦尔等式求 $\int_{-\infty}^{+\infty}\frac{1}{\left(1+\omega^2\right)^2}\,\mathrm{d}\omega$.
+<input type="checkbox" id="c7s4ans7" class="answer-toggle">
+<label for="c7s4ans7" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+在能量形式的帕塞瓦尔等式中取 $F(\omega)=\frac{2}{1+\omega^2}$, 则左侧的时域能量为
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\left|\mathrm{e}^{-|t|}\right|^2\mathrm{d}t=\int_{-\infty}^{+\infty}\mathrm{e}^{-2|t|}\mathrm{d}t=2\int_{0}^{+\infty}\mathrm{e}^{-2t}\mathrm{d}t=2\cdot\dfrac{1}{2}=1.$$</div>
+于是
+<div class="box-formula">$$1=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left(\dfrac{2}{1+\omega^2}\right)^2\mathrm{d}\omega=\dfrac{4}{2\pi}\int_{-\infty}^{+\infty}\dfrac{1}{\left(1+\omega^2\right)^2}\,\mathrm{d}\omega.$$</div>
+解出
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\dfrac{1}{\left(1+\omega^2\right)^2}\,\mathrm{d}\omega=\dfrac{2\pi}{4}=\dfrac{\pi}{2}.$$</div>
+<b>要点:</b> 用帕塞瓦尔等式求这类有理式积分时, 关键是<b>先在频域认出原来的时域信号</b>, 让右边的能量积分变成数得清的算术.
+</div>
+</div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>线性 · 位移 · 伸缩</b> → <b>微分与积分</b> → <b>卷积与卷积定理</b> → <b>帕塞瓦尔等式与综合应用</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>性质</th><th>公式</th><th>用途与要点</th></tr>
+<tr><td>线性</td><td>$\mathscr{F}[\alpha f_1+\beta f_2]=\alpha F_1(\omega)+\beta F_2(\omega)$</td><td>叠加原理: 复杂信号可拆开分别变换后再相加</td></tr>
+<tr><td>位移 (时域延迟)</td><td>$\mathscr{F}[f(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega)$</td><td>时移只改相位, 不改振幅谱; 用于时延估计、相位测距</td></tr>
+<tr><td>位移 (频域 / 调制)</td><td>$\mathscr{F}[\mathrm{e}^{\mathrm{i}\omega_0 t}f(t)]=F(\omega-\omega_0)$; $\mathscr{F}[f\cos\omega_0 t]=\frac{1}{2}[F(\omega-\omega_0)+F(\omega+\omega_0)]$</td><td>频谱搬移: 载波调制、变频、解调</td></tr>
+<tr><td>伸缩 (相似)</td><td>$\mathscr{F}[f(at)]=\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$</td><td>时宽与带宽此消彼长; 尺度变换与信号压缩</td></tr>
+<tr><td>微分 (时域)</td><td>$\mathscr{F}[f'(t)]=\mathrm{i}\omega F(\omega)$; $\mathscr{F}[f^{(n)}(t)]=(\mathrm{i}\omega)^nF(\omega)$</td><td>微分方程代数化; 抬高高频 (锐化、边缘检测)</td></tr>
+<tr><td>微分 (频域)</td><td>$\frac{\mathrm{d}F(\omega)}{\mathrm{d}\omega}=\mathscr{F}[-\mathrm{i}tf(t)]$; $\frac{\mathrm{d}^nF}{\mathrm{d}\omega^n}=(-\mathrm{i})^n\mathscr{F}[t^nf(t)]$</td><td>频域求导 $\leftrightarrow$ 时域乘 $t$</td></tr>
+<tr><td>积分</td><td>$\mathscr{F}\left[\int_{-\infty}^{t}f(\tau)\mathrm{d}\tau\right]=\frac{F(\omega)}{\mathrm{i}\omega}+\pi F(0)\delta(\omega)$</td><td>压低高频 (平滑、去噪); $\lim\limits_{t\to+\infty}g(t)=0$ 时无 $\delta$ 项</td></tr>
+<tr><td>卷积</td><td>$\mathscr{F}[f_1*f_2]=F_1(\omega)F_2(\omega)$</td><td>时域卷积 $\leftrightarrow$ 频域乘积; 线性系统的核心工具</td></tr>
+<tr><td>乘积</td><td>$\mathscr{F}[f_1\cdot f_2]=\frac{1}{2\pi}F_1(\omega)*F_2(\omega)$</td><td>加窗、抽样 (频域周期延拓)</td></tr>
+<tr><td>帕塞瓦尔</td><td>$\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t=\frac{1}{2\pi}\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</td><td>能量守恒; 用频域计算时域积分</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 已知 $\mathscr{F}[f(t)]=F(\omega)$, 则 $\mathscr{F}[f(2t)]$ 等于?</div>
+<label class="quiz-opt">A. $2F(2\omega)$</label>
+<label class="quiz-opt" data-ok="1">B. $\frac{1}{2}F\left(\frac{\omega}{2}\right)$</label>
+<label class="quiz-opt">C. $\frac{1}{2}F(2\omega)$</label>
+<label class="quiz-opt">D. $2F\left(\frac{\omega}{2}\right)$</label>
+<div class="quiz-explain"><b>解析:</b> 由伸缩性质 $\mathscr{F}[f(at)]=\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$, 取 $a=2$ 得 $\mathscr{F}[f(2t)]=\frac{1}{2}F\left(\frac{\omega}{2}\right)$. 注意系数是 $\frac{1}{2}$, 括号里是 $\frac{\omega}{2}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 已知 $\mathscr{F}[f(t)]=F(\omega)$, 则 $\mathscr{F}[f(t-3)]$ 等于?</div>
+<label class="quiz-opt">A. $F(\omega-3)$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathrm{e}^{-3\mathrm{i}\omega}F(\omega)$</label>
+<label class="quiz-opt">C. $\mathrm{e}^{3\mathrm{i}\omega}F(\omega)$</label>
+<label class="quiz-opt">D. $F(\omega)+3$</label>
+<div class="quiz-explain"><b>解析:</b> 时域延迟 $t_0=3$, 由 $\mathscr{F}[f(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega)$ 得 $\mathrm{e}^{-3\mathrm{i}\omega}F(\omega)$. 时移不改变振幅谱, 只在相位上加线性项.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 若 $\lim\limits_{|t|\to+\infty}f(t)=0$, 则 $\mathscr{F}[f'(t)]$ 等于?</div>
+<label class="quiz-opt">A. $\omega F(\omega)$</label>
+<label class="quiz-opt" data-ok="1">B. $\mathrm{i}\omega F(\omega)$</label>
+<label class="quiz-opt">C. $-\mathrm{i}\omega F(\omega)$</label>
+<label class="quiz-opt">D. $F(\omega)/\omega$</label>
+<div class="quiz-explain"><b>解析:</b> 由分部积分 $\mathscr{F}[f'(t)]=\left.f(t)\mathrm{e}^{-\mathrm{i}\omega t}\right|_{-\infty}^{+\infty}+\mathrm{i}\omega F(\omega)=\mathrm{i}\omega F(\omega)$, 边界项因 $f(t)\to0$ 而消失. 一般地 $\mathscr{F}[f^{(n)}]=(\mathrm{i}\omega)^nF$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 卷积定理指出 $\mathscr{F}[f_1(t)*f_2(t)]$ 等于?</div>
+<label class="quiz-opt">A. $F_1(\omega)+F_2(\omega)$</label>
+<label class="quiz-opt" data-ok="1">B. $F_1(\omega)\cdot F_2(\omega)$</label>
+<label class="quiz-opt">C. $\frac{1}{2\pi}F_1(\omega)F_2(\omega)$</label>
+<label class="quiz-opt">D. $F_1(\omega)*F_2(\omega)$</label>
+<div class="quiz-explain"><b>解析:</b> 卷积定理: 两个函数卷积的傅氏变换等于它们傅氏变换的<b>乘积</b>, $\mathscr{F}[f_1*f_2]=F_1(\omega)F_2(\omega)$. 对偶地, $\mathscr{F}[f_1\cdot f_2]=\frac{1}{2\pi}F_1*F_2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 帕塞瓦尔等式的能量形式是?</div>
+<label class="quiz-opt">A. $\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t=\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</label>
+<label class="quiz-opt" data-ok="1">B. $\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t=\frac{1}{2\pi}\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</label>
+<label class="quiz-opt">C. $\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t=2\pi\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</label>
+<label class="quiz-opt">D. $\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t=\sqrt{2\pi}\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</label>
+<div class="quiz-explain"><b>解析:</b> 能量守恒的因子是 $\frac{1}{2\pi}$: $\int|f(t)|^2\mathrm{d}t=\frac{1}{2\pi}\int|F(\omega)|^2\mathrm{d}\omega$. 这个因子来自逆变换定义中的 $\frac{1}{2\pi}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 已知 $\mathscr{F}[f(t)]=F(\omega)$, 则 $\mathscr{F}[\mathrm{e}^{\mathrm{i}\omega_0 t}f(t)]$ 等于?</div>
+<label class="quiz-opt">A. $\mathrm{e}^{\mathrm{i}\omega_0 t}F(\omega)$</label>
+<label class="quiz-opt" data-ok="1">B. $F(\omega-\omega_0)$</label>
+<label class="quiz-opt">C. $F(\omega+\omega_0)$</label>
+<label class="quiz-opt">D. $\mathrm{e}^{-\mathrm{i}\omega_0\omega}F(\omega)$</label>
+<div class="quiz-explain"><b>解析:</b> 频域位移 (调制) 性质: 时域乘 $\mathrm{e}^{\mathrm{i}\omega_0 t}$ 使频谱整体右移 $\omega_0$, 即 $\mathscr{F}[\mathrm{e}^{\mathrm{i}\omega_0 t}f(t)]=F(\omega-\omega_0)$. 这是频谱搬移的数学表述.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 傅氏变换的线性性质指的是?</div>
+<label class="quiz-opt" data-ok="1">A. $\mathscr{F}[\alpha f_1+\beta f_2]=\alpha F_1+\beta F_2$</label>
+<label class="quiz-opt">B. $\mathscr{F}[f_1 f_2]=F_1 F_2$</label>
+<label class="quiz-opt">C. $\mathscr{F}[f_1*f_2]=F_1 F_2$</label>
+<label class="quiz-opt">D. $\mathscr{F}[f_1(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F_1$</label>
+<div class="quiz-explain"><b>解析:</b> 线性性质即叠加原理 $\mathscr{F}[\alpha f_1+\beta f_2]=\alpha F_1+\beta F_2$. 选项 C 是卷积定理、D 是位移性质, 不要混为一谈.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 像函数的导数公式可写成 $\frac{\mathrm{d}F(\omega)}{\mathrm{d}\omega}=\mathscr{F}[\,?\,]$, 方括号里是?</div>
+<label class="quiz-opt">A. $\mathrm{i}tf(t)$</label>
+<label class="quiz-opt" data-ok="1">B. $-\mathrm{i}tf(t)$</label>
+<label class="quiz-opt">C. $t^2f(t)$</label>
+<label class="quiz-opt">D. $-\mathrm{i}t^2f(t)$</label>
+<div class="quiz-explain"><b>解析:</b> 在定义式 $F(\omega)=\int f(t)\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t$ 两边对 $\omega$ 求导得 $\frac{\mathrm{d}F}{\mathrm{d}\omega}=\mathscr{F}[-\mathrm{i}tf(t)]$; 一般地 $\frac{\mathrm{d}^nF}{\mathrm{d}\omega^n}=(-\mathrm{i})^n\mathscr{F}[t^nf(t)]$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 两个函数 $f_1$ 与 $f_2$ 的卷积 $f_1(t)*f_2(t)$ 定义为?</div>
+<label class="quiz-opt">A. $\int_{-\infty}^{+\infty}f_1(\tau)f_2(\tau)\,\mathrm{d}\tau$</label>
+<label class="quiz-opt" data-ok="1">B. $\int_{-\infty}^{+\infty}f_1(\tau)f_2(t-\tau)\,\mathrm{d}\tau$</label>
+<label class="quiz-opt">C. $\int_{-\infty}^{+\infty}f_1(\tau)f_2(t+\tau)\,\mathrm{d}\tau$</label>
+<label class="quiz-opt">D. $\int_{-\infty}^{+\infty}f_1(t)f_2(t)\,\mathrm{d}t$</label>
+<div class="quiz-explain"><b>解析:</b> 卷积的定义是 $f_1(t)*f_2(t)=\int_{-\infty}^{+\infty}f_1(\tau)f_2(t-\tau)\mathrm{d}\tau$, 即"翻转 — 平移 — 相乘 — 积分". 选项 A 只是两个函数的乘积积分, 与 $t$ 无关.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 由例 4.3, 积分 $\int_{-\infty}^{+\infty}\frac{\sin^2x}{x^2}\,\mathrm{d}x$ 等于?</div>
+<label class="quiz-opt">A. $\frac{\pi}{2}$</label>
+<label class="quiz-opt" data-ok="1">B. $\pi$</label>
+<label class="quiz-opt">C. $2\pi$</label>
+<label class="quiz-opt">D. $1$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $\mathscr{F}^{-1}\left[\frac{\sin\omega}{\omega}\right]$ 是 $[-1,1]$ 上高为 $\frac{1}{2}$ 的矩形脉冲, 用帕塞瓦尔等式得 $\int_{-\infty}^{+\infty}\frac{\sin^2x}{x^2}\mathrm{d}x=2\pi\int_{-1}^{1}\frac{1}{4}\mathrm{d}t=2\pi\cdot\frac{1}{2}=\pi$.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一位把"叠加"写成定律的人</h3>
+<div class="hero-sub">他用一支笔覆盖了力学、热学、电学、磁学与概率论; 他给出了以自己名字命名的分布、方程、核与求和公式; 他说人生只有两件事值得做 —— 做数学, 以及讲授数学.</div>
+<div class="hero-quote">
+泊松的许多成果 —— 泊松核、泊松求和公式、泊松分布 —— 都有一个共同的内核: <b>把无数份"小的影响"按权重叠加成一个整体</b>.<br>
+这与本节要学的<b>卷积</b>是同一个思想: 卷积, 就是"加权叠加"的数学写法. 他把"叠加"从物理现象提升为一条可以反复使用的数学定律.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 泊松: 把"卷积"与"积分"写进物理的人</div>
+
+<div class="person-card">
+<div class="p-av">泊</div>
+<div class="p-main">
+<div class="p-name">西梅翁·德尼·泊松 (Siméon Denis Poisson, 1781—1840)</div>
+<div class="p-meta">法国数学家 · 物理学家 · 巴黎综合工科学校教授 · 巴黎科学院院士 · 泊松分布、泊松核、泊松求和公式与泊松方程的提出者</div>
+<p>他出生在法国卢瓦雷省的皮蒂维耶, 父亲做过地方基层的行政工作, 也一直希望儿子学医. 但泊松在巴黎综合工科学校 (École Polytechnique) 的一次考试中表现突出, 一篇关于"差分方程"的习作被拉普拉斯与拉格朗日看中, 从此走上了数学的道路.</p>
+<p>他是那个时代最高产的数学家之一, 一生横跨数学、力学、热学、电磁学、概率论与天文; 他的名字留在了 <b>泊松分布、泊松方程、泊松核、泊松求和公式、泊松比</b> 这些各不相同的地方. 本节要讲的卷积与积分, 正是他反复使用的工具.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>从"差分方程"的少年到综合工科的教授</h5>
+<p>1798 年, 泊松进入巴黎综合工科学校. 当时的法国正处在科学最辉煌的年代: 拉普拉斯、拉格朗日、蒙日、傅里叶都在巴黎. 泊松的第一篇论文是关于<b>差分方程</b>的, 得到了拉格朗日的高度评价 —— 他因此被留校任教.</p>
+<p><b>1806 年, 泊松接替傅里叶出任巴黎综合工科学校分析学教授</b>. 这一"接替"意味深长: 两人此后长期在同一批问题上各走一路, 既相互借鉴, 又暗暗较劲. 1820 年代, 泊松成为巴黎科学院的院士与核心人物之一, 是当时法国数学界最有权势的名字之一.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>泊松积分: 让"无穷求和"变成可以算的数</h5>
+<p>三个世纪以来最著名的一个积分, 就以体积的形式出现在每一个概率论与物理的课本里 —— 高斯积分, 也叫<b>泊松积分</b>:
+<div class="box-formula">$$\int_{-\infty}^{+\infty}\mathrm{e}^{-x^2}\,\mathrm{d}x=\sqrt{\pi}.$$</div>
+它的困难在于: 被积函数 $\mathrm{e}^{-x^2}$ 没有初等原函数, 无法直接用牛顿-莱布尼茨公式. 泊松所发展的方法 (与拉普拉斯等一同完善) 是靠<b>把二维积分化为极坐标下的逐层叠加</b>来求它:
+<div class="box-formula">$$\left(\int_{-\infty}^{+\infty}\mathrm{e}^{-x^2}\mathrm{d}x\right)^2=\iint_{\mathbb{R}^2}\mathrm{e}^{-(x^2+y^2)}\mathrm{d}x\,\mathrm{d}y=\int_{0}^{2\pi}\mathrm{d}\theta\int_{0}^{+\infty}\mathrm{e}^{-r^2}r\,\mathrm{d}r=\pi.$$</div>
+请注意这个思路: <b>把二维平面上无数个"小份"按极角与半径逐层加起来</b> —— 这已经是一次不折不扣的"叠加积分". 泊松积分后来成为本节一切结论的常客: 我们算 $\mathrm{e}^{-at^2}$ 的傅氏变换、算帕塞瓦尔等式两边的能量, 用的都是它.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>泊松核: 用"加权叠加"解出圆盘上的温度</h5>
+<p>在热传导与位势问题中, 泊松给出了著名的<b>泊松积分公式</b>. 设圆盘 $r&lt;1$ 边缘的温度 (或电位) 分布为 $f(\theta)$, 则圆盘内部的分布由
+<div class="box-formula">$$u(r,\theta)=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}P_r(\theta-t)\,f(t)\,\mathrm{d}t,\qquad P_r(\theta)=\dfrac{1-r^2}{1-2r\cos\theta+r^2}$$</div>
+给出. 这里的 $P_r(\theta)$ 就叫<b>泊松核</b>, 它有一个漂亮的级数展开
+<div class="box-formula">$$P_r(\theta)=\sum\limits_{n=-\infty}^{+\infty}r^{|n|}\mathrm{e}^{\mathrm{i}n\theta}\qquad (0\le r&lt;1).$$</div>
+把公式与本节对照就会发现: <b>右端正是一个卷积</b> $u=f*P_r$. 也就是说, 圆盘内部每一点的温度, 都是边界温度按泊松核给出的权重"叠加"出来的; 越靠近圆心, 权重被"抹得越平".</p>
+<p><b>这就是卷积的物理原型</b>: 一个线性系统的输出, 永远是输入按系统"记忆"的加权叠加.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>泊松求和公式: 从离散采样到连续频谱的桥</h5>
+<p>泊松在 1820 年代研究傅里叶级数时, 得到了一个把"求和"与"变换"联系起来的惊人公式 —— 今天称为<b>泊松求和公式</b>:
+<div class="box-formula">$$\sum\limits_{n=-\infty}^{+\infty}f(n)=\sum\limits_{k=-\infty}^{+\infty}\hat f(k),\qquad \hat f(\xi)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-2\pi\mathrm{i}\xi t}\,\mathrm{d}t.$$</div>
+左边是时域上一串离散采样的和, 右边是频域上一串取值的和, 两者恒等. 它的直接推论, 就是今天数字世界赖以存在的<b>抽样定理</b>: 一个信号的连续频谱, 可以由它的离散采样完全重建.
+<br><br>
+在本节的框架里看, 这条公式说的其实是: <b>时域的"离散化"等价于频域的"周期化"</b> —— 而这正是"乘积 $\leftrightarrow$ 卷积"这组对偶关系的又一次现身 (用周期冲激串去乘, 就是频域作周期延拓卷积).</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">5</span>卷积与概率: 泊松分布里的"叠加"</h5>
+<p>1837 年, 泊松在《关于审判概率的研究》中提出了著名的<b>泊松分布</b>, 用来描述"在大量试验中稀有事件发生的次数":
+<div class="box-formula">$$P(X=k)=\dfrac{\lambda^k\mathrm{e}^{-\lambda}}{k!}\qquad(k=0,1,2,\cdots),$$</div>
+它的期望与方差都等于 $\lambda$. 泊松分布有一个漂亮的可加性: 若 $X\sim\mathrm{Pois}(\lambda)$, $Y\sim\mathrm{Pois}(\mu)$ 且相互独立, 则 $X+Y\sim\mathrm{Pois}(\lambda+\mu)$.
+<br><br>
+这背后站着的正是<b>卷积</b>. 概率论里有一条基本事实: <b>两个独立随机变量之和的分布, 是它们各自分布的卷积</b>:
+<div class="box-formula">$$f_{X+Y}(z)=\int_{-\infty}^{+\infty}f_X(x)f_Y(z-x)\,\mathrm{d}x=(f_X*f_Y)(z).$$</div>
+泊松分布的可加性, 就是这条卷积律在离散情形下的表现. 换句话说, <b>"把很多份独立的随机影响叠加起来", 在数学上就是做一次卷积</b> —— 这与傅氏变换里的卷积是同一个概念.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">6</span>位势论: 泊松方程与"源"的叠加</h5>
+<p>1813 年, 泊松在研究静电学问题时, 把拉普拉斯方程推广为带电的情形, 得到今天称之为<b>泊松方程</b>的公式
+<div class="box-formula">$$\Delta u=f\qquad(\text{在静电学中即}\ \nabla^2V=-4\pi\rho).$$</div>
+它说的是: 空间每一点的"势", 由该点的"源"决定. 而当源分布在一个区域上时, 势就由全部源的贡献叠加而成 —— 用格林函数写出来, 形式上又是一个<b>卷积</b>.</p>
+<p>从静电势到万有引力势, 从热流到流体, 泊松方程是数理方程里出现频率最高的方程之一. 而求解它的标准手段, 恰恰是本节的工具: <b>傅氏变换 (把 $\Delta$ 变成 $-\|\omega\|^2$ 的乘法)</b> 与 <b>卷积 (把分布在源处的贡献叠加起来)</b>.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>关于泊松最有名的一则轶事, 发生在 1818 年巴黎科学院的一次论文评奖上. 那一年的题目是<b>光的衍射</b>. 年轻的菲涅耳 (Fresnel) 提交了一套基于"光是波"的理论, 泊松当时站在"光是粒子"的一方, 是评审之一. 泊松仔细推算了菲涅耳的理论, 得到一个在他看来荒谬之极的推论: <b>如果光真是波, 那么在一块不透明圆盘的阴影正中心, 就应当出现一个亮斑</b>. 他以为这就等于宣判了波动说的死刑.
+<br><br>
+另一位评审、实验物理学家阿拉果 (Arago) 决定把这个推论做出来试一试. 结果 —— <b>亮斑真的出现了</b>. 这个后来被称为"<b>泊松亮斑</b>"的现象, 反而成了波动说最有力的实验证据之一. 泊松用一个严格的数学推论去攻击对手, 却替对手赢得了胜利. 这件事说明: <b>在一个推理严密的数学结论面前, 立场和直觉都不算数 —— 能被实验验证的那个, 才是对的.</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">学术公案: 泊松与傅里叶的"热"之争</div>
+<div class="cc-side"><b>泊松:</b> 他同样长期研究热与电, 并在 1820 年代初提出了自己关于热传导的处理方式, 认为傅里叶的推导<b>缺乏严格性</b>. 作为当时巴黎数学界最有影响力的人物之一, 他的质疑让傅里叶的方法一度承受了不小的压力.</div>
+<div class="cc-side"><b>傅里叶:</b> 他坚持把方法建立在方程与级数之上, 把整套思想写成体系, 用物理事实与越来越细致的计算回应质疑.</div>
+<div class="cc-side"><b>历史的裁决:</b> 傅里叶级数与傅里叶变换最终成为主流工具. 有意思的是, 泊松自己最漂亮的成果 —— <b>泊松核、泊松求和公式</b> —— 恰恰要用傅里叶的工具才能最自然地表述与证明. <b>一场争论的结局, 不是谁压倒谁, 而是两种风格最终合流.</b></div>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 泊松式的信念</div>
+泊松一生写下大量论文与教材, 也长期在讲台上讲授数学与力学. 他留下过一句被后人反复引用的话:
+<br>
+"<em>人生只有两件事是好的: 做数学, 以及讲授数学.</em>"
+<span class="iv-sig">—— 这种"把数学当作毕生事业、也当作毕生乐趣"的态度, 正是本节从一条卷积定义走到整个变换体系背后的精神底色. 泊松用一生的高产证明: 真正的热爱, 是靠一篇一篇算出来的.</span>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">叠加与整体</div>
+<h4>整体的响应, 是无数小份影响的加权叠加</h4>
+<p>卷积 $\int f(\tau)g(t-\tau)\mathrm{d}\tau$ 的每一小块, 是"过去某个时刻的输入"乘以"系统至今还留着的记忆". 把它们全部加起来, 就得到现在这一刻的输出.</p>
+<p>于是"现在"从来不是孤立的: 它承载着全部"过去"按权重的投影. 这正是线性时不变系统的物理图像.</p>
+<div class="pc-math">$(f*g)(t)$<br>$=\int_{-\infty}^{+\infty}f(\tau)g(t-\tau)\,\mathrm{d}\tau$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">对偶与转化</div>
+<h4>换一个"语言", 难的变成易的</h4>
+<p>时域做卷积很难 (要算积分), 频域做乘法很容易 (只要相乘). 卷积定理说: 这两件事本来就是同一件事的两种写法.</p>
+<p>所谓"方法", 常常不是把问题解掉, 而是<b>把问题搬到一个更好算的地方</b> —— 然后在那边把它解掉, 再搬回来.</p>
+<div class="pc-math">$\mathscr{F}[f_1*f_2]=F_1(\omega)F_2(\omega)$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">守恒与等价</div>
+<h4>能量不会因为"换个角度"而改变</h4>
+<p>帕塞瓦尔等式告诉我们: 在时域里量能量, 和在频域里量能量, 得到的数完全一样. 傅氏变换只是把能量重新摆放到不同的频率上.</p>
+<p>找一个"不变量", 往往就找到了理解一个系统的钥匙. 能量守恒, 就是这样一把钥匙.</p>
+<div class="pc-math">$\int_{-\infty}^{+\infty}|f(t)|^2\mathrm{d}t$<br>$=\frac{1}{2\pi}\int_{-\infty}^{+\infty}|F(\omega)|^2\mathrm{d}\omega$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">局部与整体</div>
+<h4>求导, 不过是给高频"加价"</h4>
+<p>微分性质说 $\mathscr{F}[f']=\mathrm{i}\omega F$: 求导不改变信息, 只是把频率为 $\omega$ 的成分放大 $|\omega|$ 倍. 于是细节 (高频) 被凸显, 轮廓 (低频) 被相对压低.</p>
+<p>反过来, 积分要除以 $\mathrm{i}\omega$, 于是高频被压低 —— 平滑与模糊就是这么来的.<b>锐化与模糊, 是同一枚硬币的两面.</b></p>
+<div class="pc-math">$\mathscr{F}[f'(t)]=\mathrm{i}\omega F(\omega)$; $\mathscr{F}\left[\int_{-\infty}^{t}f\right]=\frac{F(\omega)}{\mathrm{i}\omega}$</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">尺度与代价</div>
+<h4>时域越窄, 频域越宽 —— 没有免费的午餐</h4>
+<p>伸缩性质 $\mathscr{F}[f(at)]=\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$ 说明: 想把信号在时间上压得越短, 它在频率上就必然铺得越宽.</p>
+<p>想"又快又准"、想"既省时间又省带宽", 都会碰到这条约束. 它后来以"测不准原理"的形式出现在量子力学里 —— <b>数学与物理, 在这里说的是同一句话.</b></p>
+<div class="pc-math">时间宽度 $\times$ 频率带宽 $\ge$ 常数</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">质疑与完善</div>
+<h4>用严密的推论去反驳, 也可能反过来证实对方</h4>
+<p>泊松为反驳波动说, 推算出"圆盘阴影中心必有亮斑"这一"荒谬"结论; 阿拉果把它做了出来 —— 亮斑真的存在. 反对者的严密推理, 成了对手最有力的证据.</p>
+<p>这段公案提醒我们: <b>在数学里, 严谨的对手往往是最好的合作者.</b> 真正让一门学问前进的, 不是立场, 而是能被检验的推理.</p>
+<div class="pc-math">泊松的"归谬" $\longrightarrow$ 实验证实 $\longrightarrow$ 波动说获胜</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代智慧: 《九章算术》中的"加权叠加"与"重差术"</div>
+卷积的本质是"<b>按不同的权重, 把若干份量叠加起来</b>". 而这个思想在中国古代算书里出现得非常早.
+<br><br>
+《九章算术》中有一章叫"<b>衰分</b>", 专门处理"按一定比例分配"的问题 —— 例如把若干财物按各户的丁口、田亩、赋税多少分下去; 另有一章叫"<b>均输</b>", 处理"远近劳费"不同的运输与赋役问题, 其术文说"<b>均输以御远近劳费</b>". 这些方法的核心, 都是给每一个分量<b>配一个权重</b>, 再把这些"加权份量"加总起来:
+<div class="box-formula">$$\text{总量}=\sum_{k}w_k\,a_k\qquad(w_k\ \text{为权重},\ a_k\ \text{为各分量}).$$</div>
+这与卷积 $\int f(\tau)g(t-\tau)\mathrm{d}\tau$ 的形状何其相似 —— 卷积就是"权重随位置连续变化"的加权叠加. 从离散的衰分、均输, 到连续的卷积, 是同一种思路在两个层次上的写法.
+<br><br>
+更妙的是古人处理"测量"的办法.<b>重差术</b> (刘徽《海岛算经》等) 通过<b>两次或多次观测</b>, 用相似三角形的比例关系反推出不可直接到达的高度与距离. 这种"用两次间接测量算出一个直接得不到的量"的做法, 已经是<b>用间接数据做反演</b>的雏形 —— 而今天 CT 重建、雷达成像里做的事, 本质上也是这类"由测量反推源分布"的数学反演.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 卷积与卷积定理撑起的技术世界</div>
+<ul>
+<li><b>信号处理: 滤波、去噪、边缘检测.</b> 线性滤波器作用于信号, 在数学上就是一次<b>卷积</b>: 输出 $=f*h$. 由卷积定理, 时域的这一次卷积等于频域乘上一个"<b>传递函数</b> $H(\omega)$". 低通滤波 (乘一个低频为 1、高频为 0 的 $H$) 就是平滑去噪; 高通滤波就是锐化; 而"求导"正是最典型的高通 —— 所以图像处理里的边缘检测算子 (如 Sobel、LoG) 都是在近似"<b>求导 $+$ 平滑</b>"这对组合.</li>
+<li><b>图像处理: 卷积神经网络.</b> 今天最热门的人工智能模型"<b>卷积神经网络 (CNN)</b>"的名字, 就是从这个卷积来的: 每一个"卷积核"就是一个小的加权叠加模板, 在图上逐点滑动做加权求和, 从而提取出边缘、纹理、形状等特征. 一部手机里的美颜、识别、翻译, 背后到处是卷积.</li>
+<li><b>雷达: 匹配滤波与脉冲压缩.</b> 为了既"打得远"又"看得清", 雷达发射的是很宽的<b>线性调频脉冲</b>, 而接收端用一个与此脉冲"匹配"的滤波器去处理回波 —— 匹配滤波的本质是一次<b>相关 (即卷积)</b>. 它把宽脉冲"压缩"成极窄的尖峰, 从而同时获得高能量与高距离分辨率. 这就是"<b>脉冲压缩</b>". 我国在机载火控雷达、相控阵与合成孔径雷达 (SAR) 上的自主突破, 与一代代学者的信号处理工作密不可分, 张直中、保铮等先生都长期深耕雷达信号处理与成像的理论与工程实现.</li>
+<li><b>医学影像: CT 的卷积反投影.</b> CT 的核心是"投影重建": X 射线从各个角度穿过人体得到一组投影数据, 再反推出内部切片图像. 由于直接反投影会严重模糊, 实际使用的是先滤波、再反投影的"<b>卷积反投影</b>"算法 —— 其中的关键一步 (滤波) 正是一次卷积. 核磁共振 (MRI) 则直接采集频域数据, 再经傅里叶逆变换成像. 医院里的这些"透视之眼", 处处是本节内容的影子.</li>
+<li><b>国之重器: 北斗、遥感与 5G.</b> <b>北斗卫星导航系统</b>需要在高动态、强干扰条件下完成极精密的捕获与跟踪, 其核心算法是扩频信号的<b>相关 (卷积)</b>运算; <b>高分系列遥感卫星</b>要用 SAR 成像, 靠的就是上面所说的脉冲压缩与二维匹配滤波; <b>5G</b> 则把数据切分到大量正交子载波上 (OFDM), 在频域上完成信道的均衡与估计 —— 数学基础仍是傅氏变换与卷积. 从《九章算术》的"衰分、均输"到今天北斗与遥感卫星上的实时信号处理, 中国人一直在同一类"加权叠加"的思想上前行.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: "叠加"是最朴素的数学, 也是最有力量的数学</div>
+卷积只做了一件事: <b>把很多份"小影响"按权重加起来</b>. 泊松用它写下拉普拉斯方程的解、写下概率分布的可加性、写下抽样定理的原始形式; 而今天, 它变成了手机里的滤波器、雷达里的脉冲压缩、CT 里的卷积反投影、人工智能里的卷积神经网络.
+<br><br>
+这条线索告诉我们: <b>越是把"基础的叠加"想透, 越能撑起最尖端的技术.</b> 从《九章算术》按比例分配粮食, 到北斗卫星上一次微秒级的相关运算, 中间隔了两千年, 却用的是同一种数学.
+<br><br>
+可以说: <b>把"叠加"想明白了, 就能把复杂的系统拆开、把困难的积分算出来、把不可见的影像重建出来.</b> 这是本节的数学, 也是本节的家国情怀.
+</div>
+</div>
+
+<div class="sec-title">6.4 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.5 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"人生只有两件事是好的: 做数学, 以及讲授数学."<span class="q-src">—— 泊松</span></div>
+<div class="quote-item">"对自然的深入研究, 是数学发现最丰富的源泉."<span class="q-src">—— 傅里叶</span></div>
+<div class="quote-item">"数学是科学的皇后, 而数论是数学的皇后."<span class="q-src">—— 高斯</span></div>
+<div class="quote-item">"析理以辞, 解体用图."<span class="q-src">—— 刘徽《九章算术注》</span></div>
+<div class="quote-item">"均输以御远近劳费."<span class="q-src">—— 《九章算术·均输》</span></div>
+<div class="quote-item">"天才在于积累, 聪明在于勤奋."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 泊松用一支笔横跨数学与物理: 他给出了泊松积分 $\int_{-\infty}^{+\infty}\mathrm{e}^{-x^2}\mathrm{d}x=\sqrt{\pi}$、圆盘上的<b>泊松核</b> $P_r(\theta)$ 与<b>泊松求和公式</b>, 也用"随机变量之和的分布是分布的卷积"解释了自己提出的<b>泊松分布</b>; 1818 年他为反驳菲涅耳的波动说, 推算出"圆盘阴影中心必有亮斑"这一"荒谬"结论, 却被阿拉果的实验证实, 反而成了波动说的关键证据. 本节讲的卷积与卷积定理, 正是他反复使用的核心工具.<br>
+<b>一个道理:</b> 从 $\mathscr{F}[f(t-t_0)]=\mathrm{e}^{-\mathrm{i}\omega t_0}F(\omega)$ 到 $\mathscr{F}[f(at)]=\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$, 从 $\mathscr{F}[f']=\mathrm{i}\omega F$ 到 $\mathscr{F}[f*g]=F\cdot G$, 我们做的其实只有一件事: <b>把时域里难做的运算, 搬到频域里变成好做的运算</b>. 而帕塞瓦尔等式 $\int|f|^2\mathrm{d}t=\frac{1}{2\pi}\int|F|^2\mathrm{d}\omega$ 则保证了这个"搬运"过程不丢失能量. 这说明: <b>换个角度看问题, 不是逃避困难, 而是找到让困难消失的坐标.</b><br>
+<b>一份责任:</b> 从《九章算术》"衰分、均输"里的加权叠加、刘徽"重差术"的间接推算, 到泊松的卷积与位势论; 从信号滤波、图像边缘检测、雷达匹配滤波与脉冲压缩, 到 CT 卷积反投影、北斗导航与 5G 通信 —— 同一种"叠加"思想贯穿古今中外. 今天我国在卫星导航、遥感成像与移动通信等领域走向前列, 靠的正是把<b>最基础的数学工具牢牢握在自己手中</b>. 今天我们学习傅氏变换的性质与卷积定理, 既是在为下一节"积分变换的应用"打基础, 也是在承接这份<b>把基础理论与国家需求连在一起</b>的责任.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第七章第四节 傅氏变换的性质 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+var LT='\u003c', GT='\u003e';
+
+// 局部小工具: 在映射 m 下按数据坐标画矩形
+function rectD(ctx,m,x0,x1,y0,y1,fill,stroke,lw){
+  var a=m.px(x0), b=m.px(x1), c=m.py(y1), d=m.py(y0);
+  ctx.beginPath(); ctx.rect(a,c,b-a,d-c);
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=(lw||2); ctx.stroke(); }
+}
+
+// ================= 模块 1: 伸缩性质 —— 时域宽窄与频域宽窄的"跷跷板" =================
+module('cvLinear',function(cv){
+  var a=1.6, SQ=Math.sqrt(Math.PI);
+  function fn(t){ return Math.exp(-a*t*t); }
+  function Fb(om){ return SQ*Math.exp(-om*om/4); }
+  function Fa(om){ return Fb(om/a)/a; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h,tt;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: 时域 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.6,2.6,-0.25,1.3);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'t','f');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+    for(tt=-2.6;tt<=2.6+1e-9;tt+=0.01){
+      var p1=m1.px(tt), q1=m1.py(Math.exp(-tt*tt));
+      if(tt<=-2.6+1e-9) ctx.moveTo(p1,q1); else ctx.lineTo(p1,q1);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-2.6;tt<=2.6+1e-9;tt+=0.008){
+      var p2=m1.px(tt), q2=m1.py(fn(tt));
+      if(tt<=-2.6+1e-9) ctx.moveTo(p2,q2); else ctx.lineTo(p2,q2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // ---- 右: 频域 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-3.8,3.8,-0.25,2.1);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'ω','|F|');
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=2; ctx.setLineDash([7,5]); ctx.beginPath();
+    for(tt=-3.8;tt<=3.8+1e-9;tt+=0.01){
+      var p3=m2.px(tt), q3=m2.py(Fb(tt));
+      if(tt<=-3.8+1e-9) ctx.moveTo(p3,q3); else ctx.lineTo(p3,q3);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-3.8;tt<=3.8+1e-9;tt+=0.008){
+      var p4=m2.px(tt), q4=m2.py(Fa(tt));
+      if(tt<=-3.8+1e-9) ctx.moveTo(p4,q4); else ctx.lineTo(p4,q4);
+    }
+    ctx.stroke();
+    ctx.restore();
+    setRO('linReadout',
+      '伸缩因子 $a='+fmt(a)+'$; 基准信号 $f(t)=\\mathrm{e}^{-t^2}$ 的频谱为 $F(\\omega)=\\sqrt{\\pi}\\,\\mathrm{e}^{-\\omega^2/4}$.<br>'+
+      hl('当 $a&gt;1$ 时波形被压窄 (时宽 $\\sim 1/a$), 频谱却被拉宽 (带宽 $\\sim a$); $a&lt;1$ 时恰好相反 —— 这就是「时域越窄, 频域越宽」')+'<br>'+
+      hl2('频域峰值 $\\frac{1}{a}F(0)=\\frac{\\sqrt{\\pi}}{a}='+fmt(SQ/a)+'$, 恰等于时域曲线下的面积 $\\int_{-\\infty}^{+\\infty}f(at)\\,\\mathrm{d}t='+fmt(SQ/a)+'$ —— 面积守恒.'));
+  }
+  bindSlider('linA',function(v){ a=v; badge('linAV',fmt(v)); draw(); });
+  badge('linAV',fmt(a));
+  return {draw:draw};
+});
+
+// ================= 模块 2: 微分性质 —— 求导如何"抬高"高频 =================
+module('cvDeriv',function(cv){
+  var a=1;
+  function fn(t){ return Math.exp(-a*t*t); }
+  function dfn(t){ return -2*a*t*Math.exp(-a*t*t); }
+  function Fm(om){ return Math.sqrt(Math.PI/a)*Math.exp(-om*om/(4*a)); }
+  function dFm(om){ return Math.abs(om)*Fm(om); }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h,tt;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: f 与 f 的导数 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.6,2.6,-1.7,1.7);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'t','f');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-2.6;tt<=2.6+1e-9;tt+=0.008){
+      var p1=m1.px(tt), q1=m1.py(fn(tt));
+      if(tt<=-2.6+1e-9) ctx.moveTo(p1,q1); else ctx.lineTo(p1,q1);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-2.6;tt<=2.6+1e-9;tt+=0.008){
+      var p2=m1.px(tt), q2=m1.py(dfn(tt));
+      if(tt<=-2.6+1e-9) ctx.moveTo(p2,q2); else ctx.lineTo(p2,q2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // ---- 右: |F| 与 |iωF| ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-3.8,3.8,-0.3,3.1);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'ω','|F|');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-3.8;tt<=3.8+1e-9;tt+=0.008){
+      var p3=m2.px(tt), q3=m2.py(Fm(tt));
+      if(tt<=-3.8+1e-9) ctx.moveTo(p3,q3); else ctx.lineTo(p3,q3);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-3.8;tt<=3.8+1e-9;tt+=0.008){
+      var p4=m2.px(tt), q4=m2.py(dFm(tt));
+      if(tt<=-3.8+1e-9) ctx.moveTo(p4,q4); else ctx.lineTo(p4,q4);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,sx,26,'频域: |F(ω)| (蓝) 与 |iωF(ω)| (橙)','#37474f','bold 12.5px Segoe UI');
+    setRO('derivReadout',
+      '参数 $a='+fmt(a)+'$; 微分性质给出 $\\mathscr{F}[f^{\\prime}(t)]=\\mathrm{i}\\omega F(\\omega)$.<br>'+
+      hl('橙线为 $\\left|\\mathrm{i}\\omega F(\\omega)\\right|=|\\omega|\\cdot|F(\\omega)|$ —— 求导等于在频域上乘以 $|\\omega|$: 在 $\\omega=0$ 处橙线为 $0$, 而在高频端橙线反超蓝线')+'<br>'+
+      hl2('放大倍数恰为 $|\\omega|$: $\\omega=1$ 处放大 $1$ 倍, $\\omega=2$ 处放大 $2$ 倍. 这就是「求导锐化 (边缘检测)、积分平滑 (去噪)」的数学原因.'));
+  }
+  bindSlider('derivA',function(v){ a=v; badge('derivAV',fmt(v)); draw(); });
+  badge('derivAV',fmt(a));
+  return {draw:draw};
+});
+
+// ================= 模块 3: 卷积的几何演示 —— 翻转·平移·相乘·积分 =================
+module('cvConv',function(cv){
+  var t=0.8;
+  function val(q){
+    var lo=Math.max(0,q-1), hi=Math.min(1,q);
+    return Math.max(0,hi-lo);
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h,tt;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70, V=val(t);
+    // ---- 左: f1(τ) 与 f2(t−τ) 的重叠 ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-1.4,2.6,-0.22,1.5);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'τ','f');
+    var lo=Math.max(0,t-1), hi=Math.min(1,t);
+    if(hi>lo) rectD(ctx,m1,lo,hi,0,1,'rgba(198,40,40,.30)',null,0);
+    rectD(ctx,m1,0,1,0,1,'rgba(21,101,192,.13)','#1565c0',2.2);
+    rectD(ctx,m1,t-1,t,0,1,'rgba(230,81,0,.13)','#e65100',2.2);
+    ctx.strokeStyle='#c62828'; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(m1.px(t),m1.py(0)); ctx.lineTo(m1.px(t),m1.py(1.28)); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,m1.px(t)-4,m1.py(1.32),'τ = t','#c62828','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,12,26,'重叠面积 = 卷积值: f₁(τ) 蓝框, f₂(t−τ) 橙框, 红色为重叠','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: 卷积结果曲线 ----
+    var sx=halfW+24;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-1.4,2.6,-0.22,1.5);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'t','(f₁*f₂)');
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.6; ctx.beginPath();
+    var first=true;
+    for(tt=-1.4;tt<=2.6+1e-9;tt+=0.005){
+      var px=m2.px(tt), py=m2.py(val(tt));
+      if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    dot(ctx,m2.px(t),m2.py(V),5,'#c62828','#fff');
+    ctx.restore();
+    tlabel(ctx,sx,26,'卷积结果: 一段三角形 (红点标记当前 t)','#37474f','bold 12.5px Segoe UI');
+    setRO('convReadout',
+      '当前平移量 $t='+fmt(t)+'$; 重叠区间为 $\\left[\\max\\{0,\\ t-1\\},\\ \\min\\{1,\\ t\\}\\right]$, 重叠长度即卷积值:<br>'+
+      '$(f_1*f_2)('+fmt(t)+')='+fmt(V)+'$<br>'+
+      hl('当 $0\\le t\\le 1$ 时值为 $t$ (线性上升); 当 $1&lt;t\\le 2$ 时值为 $2-t$ (线性下降); 其余为 $0$ —— 两个矩形脉冲的卷积是一个<b>三角形</b>')+'<br>'+
+      hl2('整个过程就是四步: 翻转 $f_2$, 平移 $t$, 与 $f_1$ 相乘, 再对 $\\tau$ 积分 (即求重叠面积).'));
+  }
+  bindSlider('convT',function(v){ t=v; badge('convTV',fmt(v)); draw(); });
+  badge('convTV',fmt(t));
+  return {draw:draw};
+});
+
+// ================= 模块 4: 帕塞瓦尔等式 —— 能量在时域与频域的分布对照 =================
+module('cvParseval',function(cv){
+  var a=1;
+  function dens(t){ return Math.exp(-2*a*t*t); }
+  function Fdens(om){ return Math.exp(-om*om/(2*a))/(2*a); }
+  function E(){ return Math.sqrt(Math.PI/(2*a)); }
+  function shade(ctx,m,x0,x1,gn,fill){
+    ctx.beginPath(); ctx.moveTo(m.px(x0),m.py(0));
+    for(var x=x0;x<=x1+1e-9;x+=(x1-x0)/220){ ctx.lineTo(m.px(x),m.py(gn(x))); }
+    ctx.lineTo(m.px(x1),m.py(0)); ctx.closePath();
+    ctx.fillStyle=fill; ctx.fill();
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h,tt;
+    ctx.clearRect(0,0,w,h);
+    var halfW=(w-24)/2, H=h-70;
+    // ---- 左: |f(t)|² ----
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,-2.6,2.6,-0.15,1.2);
+    grid(ctx,halfW,H,m1,0.5); axes(ctx,halfW,H,m1,'t','|f|²');
+    shade(ctx,m1,-2.6,2.6,dens,'rgba(21,101,192,.28)');
+    ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-2.6;tt<=2.6+1e-9;tt+=0.008){
+      var p1=m1.px(tt), q1=m1.py(dens(tt));
+      if(tt<=-2.6+1e-9) ctx.moveTo(p1,q1); else ctx.lineTo(p1,q1);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,12,26,'时域能量密度 |f(t)|² (阴影面积 = 时域能量)','#37474f','bold 12.5px Segoe UI');
+    // ---- 右: |F(ω)|² / 2π ----
+    var sx=halfW+24, ym=Fdens(0)*1.18;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,-3.8,3.8,-0.06*ym,ym);
+    grid(ctx,halfW,H,m2,1); axes(ctx,halfW,H,m2,'ω','|F|²/2π');
+    shade(ctx,m2,-3.8,3.8,Fdens,'rgba(230,81,0,.28)');
+    ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6; ctx.beginPath();
+    for(tt=-3.8;tt<=3.8+1e-9;tt+=0.008){
+      var p2=m2.px(tt), q2=m2.py(Fdens(tt));
+      if(tt<=-3.8+1e-9) ctx.moveTo(p2,q2); else ctx.lineTo(p2,q2);
+    }
+    ctx.stroke();
+    ctx.restore();
+    tlabel(ctx,sx,26,'频域能量密度 |F(ω)|²/2π (阴影面积 = 频域能量)','#37474f','bold 12.5px Segoe UI');
+    setRO('parReadout',
+      '参数 $a='+fmt(a)+'$. 时域能量 $\\int_{-\\infty}^{+\\infty}|f(t)|^2\\mathrm{d}t='+fmt(E(),4)+'$; 频域能量 $\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}|F(\\omega)|^2\\mathrm{d}\\omega='+fmt(E(),4)+'$.<br>'+
+      hl('两者<b>恒等</b> —— 这正是帕塞瓦尔等式: 傅氏变换只把能量在各频率上重新分配, 不会凭空产生, 也不会弄丢')+'<br>'+
+      hl2('$a$ 增大时曲线变窄、能量更集中, 但两边的<b>总面积始终不变</b>; 而能量谱密度 $|F(\\omega)|^2$ 的分布则被摊得越平.'));
+  }
+  bindSlider('parA',function(v){ a=v; badge('parAV',fmt(v)); draw(); });
+  badge('parAV',fmt(a));
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'线性 · 位移 · 伸缩', c:'#1976d2', leaves:['线性: $\\mathscr{F}[\\alpha f_1+\\beta f_2] = \\alpha F_1+\\beta F_2$','时域延迟: $\\mathscr{F}[f(t-t_0)] = \\mathrm{e}^{-\\mathrm{i}\\omega t_0}F(\\omega)$','时移只改相位, 不改振幅谱','频域位移: $\\mathscr{F}[\\mathrm{e}^{\\mathrm{i}\\omega_0 t}f(t)] = F(\\omega-\\omega_0)$','调制: $\\mathscr{F}[f\\cdot\\cos \\omega_0 t]$','$=\\frac{1}{2}[F(\\omega-\\omega_0)$','$+F(\\omega+\\omega_0)]$','伸缩: $\\mathscr{F}[f(at)] = \\frac{1}{|a|}F\\left(\\frac{\\omega}{a}\\right)$']},
+    {t:'微分与积分性质', c:'#e65100', leaves:['微分: $\\mathscr{F}[f\'] = \\mathrm{i}\\omega F(\\omega)$','高阶: $\\mathscr{F}[f^{(n)}] = (\\mathrm{i}\\omega)^n F(\\omega)$','条件: $\\lim\\limits_{|t|\\to\\infty} f^{(k)}(t) = 0$','像函数导数: $\\frac{\\mathrm{d}F}{\\mathrm{d}\\omega} = \\mathscr{F}[-\\mathrm{i} t f(t)]$','积分: $\\mathscr{F}\\left[\\int_{-\\infty}^{t} f\\,\\mathrm{d}\\tau\\right] = \\frac{F(\\omega)}{\\mathrm{i}\\omega}$','一般式: 再加 $\\pi F(0)\\delta(\\omega)$']},
+    {t:'卷积与卷积定理', c:'#c62828', leaves:['定义: $(f_1*f_2)(t)$','$=\\int f_1(\\tau)f_2(t-\\tau)\\,\\mathrm{d}\\tau$','交换律 / 结合律 / 分配律','四步: 翻转—平移—相乘—积分','卷积定理: $\\mathscr{F}[f_1*f_2] = F_1(\\omega)\\cdot F_2(\\omega)$','对偶: $\\mathscr{F}[f_1\\cdot f_2] = \\frac{1}{2\\pi}F_1*F_2$','例: $1*\\mathrm{e}^{-t} = 1-\\mathrm{e}^{-t}$ ($t \\ge 0$)']},
+    {t:'帕塞瓦尔与综合应用', c:'#2e7d32', leaves:['帕塞瓦尔: $\\int f_1 \\overline{f_2}\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int F_1 \\overline{F_2}\\,\\mathrm{d}\\omega$','特例: $\\int |f|^2\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int |F|^2\\,\\mathrm{d}\\omega$','物理意义: 能量守恒','用变换解微分方程: 微分方程 $\\to$ 代数方程','例4.3: $\\int \\frac{\\sin^2 x}{x^2}\\,\\mathrm{d}x = \\pi$','能量谱密度 $|F(\\omega)|^2$']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第七章第四节 · 傅氏变换的性质';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 线性·位移·伸缩 → 微分与积分 → 卷积与卷积定理 → 帕塞瓦尔与应用; 一句话: <b>把时域里难做的运算搬到频域变成乘法 —— $\\mathscr{F}[f_1*f_2]=F_1F_2$、$\\mathscr{F}[f^{\\prime}(t)]=\\mathrm{i}\\omega F(\\omega)$、$\\mathscr{F}[f(at)]=\\frac{1}{|a|}F\\left(\\frac{\\omega}{a}\\right)$, 而帕塞瓦尔等式 $\\int_{-\\infty}^{+\\infty}|f(t)|^2\\mathrm{d}t=\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}|F(\\omega)|^2\\mathrm{d}\\omega$ 保证这个搬运过程不丢失能量</b>.');
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var allQ=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  var qs=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>已完成 0 / '+total+' 题</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'卷积被定义为「翻转—平移—相乘—积分」, 为什么要先翻转再平移, 而不直接相乘后积分? 这样的定义好在哪?',
+     hints:['翻转 f₂(τ) 得到 f₂(−τ), 再平移得到 f₂(t−τ): 于是 τ 越大就对应越接近当前时刻 t 的输入, 权重自然指向最近发生的事.',
+            '这样一来, 积分就是把「过去各时刻的输入 × 系统至今保留的记忆」全部叠加起来 —— 恰好就是线性时不变系统的物理响应.',
+            '数学上也正是这个形式让卷积定理成立: 把 e^(−iωt) 拆成 e^(−iωτ)·e^(−iω(t−τ)) 之后, 两项各归其位.',
+            '可迁移的态度: 定义的形式不是凭空规定的, 好定义一定是「让后面的定理成立、让物理意义显形」的定义.']},
+    {q:'卷积定理把时域的卷积换成了频域的乘法. 这种「换个语言让难题变简单」的思路, 你在别处见过吗?',
+     hints:['对数是同一类思想: 把乘法换成加法, 再换回去; 本质是把运算「降一级」.',
+            '解析几何是另一例: 把几何问题换成代数方程, 解完再翻译回几何.',
+            '本节的整套性质都是这个套路: 微分变成乘 iω, 积分变成除以 iω, 卷积变成乘法 —— 全是代数运算.',
+            '可迁移的态度: 遇到硬骨头, 先问「有没有一个变换, 能把这个问题变成我会做的题」.']},
+    {q:'帕塞瓦尔等式说「能量守恒」, 但傅氏变换把一个时域信号变成了铺满整条频率轴的连续谱. 信息变多了吗? 为什么?',
+     hints:['没有变多. 连续谱上的每一点都由时域信号唯一决定, 反之亦然 —— 两者一一对应, 只是「表示方式」不同.',
+            '能量也一样: |f(t)|² 在时域上的总积分, 等于 |F(ω)|²/(2π) 在频域上的总积分, 一个不多一个不少.',
+            '可以类比「把一笔钱换成另一种货币」: 面额变了、张数变了, 购买力却没有变.',
+            '可迁移的态度: 判断信息有没有变化, 要看是否存在可逆的对应关系, 而不是看它「看起来有多少个数字」.']},
+    {q:'1818 年泊松用严密的推理推出「圆盘阴影中心必有亮斑」, 想以此否定波动说, 结果实验证实了亮斑. 这件事对「质疑」有什么启发?',
+     hints:['泊松的推理并没有错, 错的是他对结论的直觉判断: 他觉得荒谬, 但数学不管你觉得荒不荒谬.',
+            '阿拉果的价值在于: 他没有停留在争论里, 而是把这个推论变成了一个可以动手做的实验.',
+            '于是「反对者的严格论证」反而成了「被反对理论的最强证据」 —— 这是科学史上最漂亮的反转之一.',
+            '可迁移的态度: 质疑要「可检验」; 一个能被实验或数据判决的质疑, 无论结果如何, 都在推动认识前进.']},
+    {q:'伸缩性质说「时域越窄, 频域越宽」 —— 想同时拥有很短的时间和很窄的带宽是不可能的. 你如何看待这种「二者不可兼得」?',
+     hints:['这不是技术不够好, 而是数学上的必然: f(at) 的频谱宽度与 1/a 成反比, 两者之积有下界.',
+            '所以工程上必须做权衡: 通信系统在带宽与速率之间取舍, 雷达在脉冲宽度与距离分辨率之间取舍.',
+            '这条不等式在量子力学里以「不确定性原理」的形式再次出现 —— 同一个数学结构, 跨越了不同学科.',
+            '可迁移的态度: 面对「既要又要」的诉求, 先弄清约束在哪里; 说清代价, 才能做出理性的取舍.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.textContent='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    item.hints.forEach(function(h){
+      var li=document.createElement('li');
+      li.textContent=h;
+      ul.appendChild(li);
+    });
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

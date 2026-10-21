@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章第二节 解析函数的充要条件</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* ===== 判别流程图 (HTML 卡片 + MathJax) ===== */
+.flow-steps { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; }
+.fs-card { position: relative; border: 2px solid var(--fc); border-radius: 8px; background: #fff;
+  padding: 10px 16px 12px 22px; animation: kgIn .35s ease both; }
+.fs-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+  background: var(--fc); border-radius: 6px 0 0 6px; }
+.fs-t { font-weight: 700; font-size: 1.02em; color: var(--fc); margin-bottom: 5px; }
+.fs-b { font-size: .94em; color: #546e7a; line-height: 1.7; }
+.fs-b mjx-container, .fs-t mjx-container { margin: 0 !important; }
+
+/* ===== 调参实验室: HTML 公式层 (canvas 只画条形) ===== */
+.param-wrap { position: relative; }
+.param-overlay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.param-overlay .po-title { position: absolute; left: 16px; top: 5px; font-size: .95em; font-weight: 700; color: #37474f; }
+.param-overlay .po-item { position: absolute; left: 16px; width: calc(40% - 34px); font-size: .95em; line-height: 1.45; padding-left: 8px; border-left: 3px solid #cfd8dc; }
+.po-item.po-b { border-left-color: #1565c0; }
+.po-item.po-r { border-left-color: #c62828; }
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle {
+    display:none;
+}
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer {
+    text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px;
+}
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-tabs { margin:18px 0; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag {
+    display:inline-block; font-weight:800; color:#92400e; margin-right:6px;
+}
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title {
+    font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em;
+}
+.clash-card .cc-side {
+    background:rgba(255,255,255,.72); border-radius:8px;
+    padding:10px 16px; margin:8px 0; font-size:.92em;
+}
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label {
+    color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em;
+    letter-spacing:1px;
+}
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item {
+    background:#fff; border-radius:10px; padding:14px 18px;
+    border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em;
+}
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>第二章 第2节 解析函数的充要条件</h1>
+    <p>柯西—黎曼方程 &middot; 判别定理 &middot; 交互探索</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握柯西—黎曼方程 (C—R 方程) 的形式与含义, 理解它是"复变函数可导"的必要条件;
+2. 理解定理 2.1: $f(z)=u+\mathrm{i}v$ 在一点可导的充要条件是 $u,v$ 可微且满足 C—R 方程, 并能复述必要性、充分性的证明思路;
+3. 熟记可导的导数公式 $f'(z)=u_x+\mathrm{i}v_x$ 及其四种等价写法;
+4. 掌握判别解析性的实用判据 (四偏导连续 + C—R 方程), 会用 C—R 方程判断给定函数在何处可导、何处解析;
+5. 理解 C—R 方程的几何背景: 保角性与正交等值线, 为后续保角映射作准备.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-2b" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-2b" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-2b" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-2b" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-2b" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-2b" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、柯西—黎曼方程</label>
+    <label class="tab-btn" for="tab2" id="label2">二、充分性与判别定理</label>
+    <label class="tab-btn" for="tab3" id="label3">三、典型例题（基础）</label>
+    <label class="tab-btn" for="tab4" id="label4">四、综合应用与方法</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 柯西—黎曼方程 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 从"路径无关"到"两个方程"</div>
+
+<div class="box-think">
+<div class="think-label">思考: 一条极限的存在性, 怎么会等价于两个偏微分方程?</div>
+上一节我们知道: $f(z)$ 可导, 要求差商 $\frac{\Delta w}{\Delta z}$ 沿<b>任意路径</b>趋于 $0$ 时极限都相同. 这是一个"几何"的、无穷多条件的限制.
+<br><br>
+而下面这个定理却告诉我们: 这个无穷多的限制, 竟然可以压缩成<b>两个简单的偏微分方程</b>! 更妙的是, 一旦 $u$ 与 $v$ 可微, 只需验证这对在<b>一个点</b>上成立的方程, 就足以保证"所有路径"都给出同一个极限.
+<br><br>
+这就是复分析最有力的工具 —— <b>柯西—黎曼方程</b>的威力所在.
+</div>
+
+<div class="box-key">
+<div class="title">定理 2.1 (可导的充要条件)</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 定义在区域 $D$ 内, $z=x+y\mathrm{i}$ 是 $D$ 内一点. 则 $f(z)$ 在 $z$ 处<b>可导</b>的充要条件是:
+<br><br>
+<b>(1)</b> $u(x,y)$ 与 $v(x,y)$ 在点 $(x,y)$ 处<b>可微</b>;
+<br><b>(2)</b> 且满足 <b>柯西—黎曼 (Cauchy—Riemann) 方程</b>
+<div class="box-formula">$$\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}, \qquad \frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}.$$</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">记忆要点</div>
+口诀: "<b>实部对 $x$ 的偏导 = 虚部对 $y$ 的偏导; 实部对 $y$ 的偏导 = 负的虚部对 $x$ 的偏导</b>".
+<br><br>
+注意第二个方程右端的<b>负号</b>是最容易写错的地方. 一个实用的检查方法: 若 $f(z)=z=x+\mathrm{i}y$, 则 $u=x$, $v=y$, 有 $u_x=1=v_y$ ✓, $u_y=0=-v_x$ ✓ —— 所以 $z$ 本身可导, 且 $f'(z)=1$, 与实变一致.
+</div>
+
+<div class="box-example">
+<div class="ex-label">必要性证明</div>
+设 $f(z)$ 在 $z=x+y\mathrm{i}$ 处可导, 证明 $u,v$ 可微且满足 C—R 方程.
+<input type="checkbox" id="ans21" class="answer-toggle">
+<label for="ans21" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】必要性</div>
+设 $f(z)$ 在 $z$ 处可导, 记 $f'(z)=a+\mathrm{i}b$. 由可导的定义, 有
+$$f(z+\Delta z)-f(z)=f'(z)\Delta z+\rho(\Delta z)\Delta z, \qquad \lim\limits_{\Delta z\to 0}\rho(\Delta z)=0.$$
+记 $f(z+\Delta z)-f(z)=\Delta u+\mathrm{i}\Delta v$, $\rho(\Delta z)=\rho_1+\mathrm{i}\rho_2$, 代入上式并展开:
+$$\Delta u+\mathrm{i}\Delta v=(a+\mathrm{i}b)(\Delta x+\mathrm{i}\Delta y)+(\rho_1+\mathrm{i}\rho_2)(\Delta x+\mathrm{i}\Delta y)$$
+$$=(a\Delta x-b\Delta y+\rho_1\Delta x-\rho_2\Delta y)+\mathrm{i}\,(b\Delta x+a\Delta y+\rho_2\Delta x+\rho_1\Delta y).$$
+比较实部与虚部, 得
+$$\Delta u=a\Delta x-b\Delta y+\rho_1\Delta x-\rho_2\Delta y,$$
+$$\Delta v=b\Delta x+a\Delta y+\rho_2\Delta x+\rho_1\Delta y.$$
+由于 $\lim\limits_{\Delta z\to 0}\rho(\Delta z)=0$, 故 $\rho_1\to 0$, $\rho_2\to 0$ (当 $\Delta x\to 0,\Delta y\to 0$). 按可微的定义, 这说明 $u(x,y)$ 与 $v(x,y)$ 在点 $(x,y)$ 处<b>可微</b>, 并且
+$$a=\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}, \qquad -b=\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}.$$
+即 C—R 方程成立. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>C—R 方程的来历: 沿两条特殊路径取极限 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">"路径无关"意味着: 沿<b>实轴方向</b>与沿<b>虚轴方向</b>趋于 $z$ 时, 差商的极限必须相等. 点击两个按钮分别观察这两条路径下差商的表达式, 它们的相等正是柯西—黎曼方程.</div>
+<canvas id="cvCR" data-h="400"></canvas>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="crBx">沿 $x$ 轴方向 ($\Delta z=\Delta x$)</button>
+<button class="control-btn" id="crBy">沿 $y$ 轴方向 ($\Delta z=\mathrm{i}\Delta y$)</button>
+<button class="control-btn" id="crBb">两者相等 ⇒ C—R 方程</button>
+</div>
+<div class="readout" id="crReadout"></div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">两条路径给出的差商</div>
+沿实轴方向 ($\Delta z=\Delta x$, $\Delta y=0$):
+$$f'(z)=\lim\limits_{\Delta x\to 0}\frac{\Delta u+\mathrm{i}\Delta v}{\Delta x}=\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}.$$
+沿虚轴方向 ($\Delta z=\mathrm{i}\Delta y$, $\Delta x=0$):
+$$f'(z)=\lim\limits_{\Delta y\to 0}\frac{\Delta u+\mathrm{i}\Delta v}{\mathrm{i}\Delta y}=\frac{\partial u}{\partial y}\cdot\frac{1}{\mathrm{i}}+\mathrm{i}\frac{\partial v}{\partial y}\cdot\frac{1}{\mathrm{i}}=\frac{\partial v}{\partial y}-\mathrm{i}\frac{\partial u}{\partial y}.$$
+两者相等, 比较实部与虚部即得
+$$\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}, \qquad \frac{\partial v}{\partial x}=-\frac{\partial u}{\partial y}.$$
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 充分性与判别定理 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 充分性证明</div>
+
+<div class="box-example">
+<div class="ex-label">充分性证明</div>
+设 $u,v$ 在点 $(x,y)$ 处可微且满足 C—R 方程, 证明 $f(z)=u+\mathrm{i}v$ 在 $z=x+y\mathrm{i}$ 处可导.
+<input type="checkbox" id="ans22" class="answer-toggle">
+<label for="ans22" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】充分性</div>
+由 $u,v$ 在 $(x,y)$ 处可微, 有
+$$\Delta u=\frac{\partial u}{\partial x}\Delta x+\frac{\partial u}{\partial y}\Delta y+\varepsilon_1\Delta x+\varepsilon_2\Delta y,$$
+$$\Delta v=\frac{\partial v}{\partial x}\Delta x+\frac{\partial v}{\partial y}\Delta y+\varepsilon_3\Delta x+\varepsilon_4\Delta y,$$
+其中当 $\Delta x\to 0,\Delta y\to 0$ 时 $\varepsilon_k\to 0$ $(k=1,2,3,4)$. 于是
+$$\Delta u+\mathrm{i}\Delta v=\left(\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}\right)\Delta x+\left(\frac{\partial u}{\partial y}+\mathrm{i}\frac{\partial v}{\partial y}\right)\Delta y+(\varepsilon_1+\mathrm{i}\varepsilon_3)\Delta x+(\varepsilon_2+\mathrm{i}\varepsilon_4)\Delta y.$$
+由 C—R 方程, $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$, $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}=\mathrm{i}^2\frac{\partial v}{\partial x}$, 故
+$$\frac{\partial u}{\partial y}+\mathrm{i}\frac{\partial v}{\partial y}=-\frac{\partial v}{\partial x}+\mathrm{i}\frac{\partial u}{\partial x}=\mathrm{i}\left(\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}\right),$$
+从而
+$$f(z+\Delta z)-f(z)=\left(\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}\right)(\Delta x+\mathrm{i}\Delta y)+(\varepsilon_1+\mathrm{i}\varepsilon_3)\Delta x+(\varepsilon_2+\mathrm{i}\varepsilon_4)\Delta y.$$
+两端除以 $\Delta z=\Delta x+\mathrm{i}\Delta y$:
+$$\frac{f(z+\Delta z)-f(z)}{\Delta z}=\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}+(\varepsilon_1+\mathrm{i}\varepsilon_3)\frac{\Delta x}{\Delta z}+(\varepsilon_2+\mathrm{i}\varepsilon_4)\frac{\Delta y}{\Delta z}.$$
+因为 $\left|\frac{\Delta x}{\Delta z}\right|\le 1$, $\left|\frac{\Delta y}{\Delta z}\right|\le 1$, 所以
+$$\lim\limits_{\Delta z\to 0}\left[(\varepsilon_1+\mathrm{i}\varepsilon_3)\frac{\Delta x}{\Delta z}+(\varepsilon_2+\mathrm{i}\varepsilon_4)\frac{\Delta y}{\Delta z}\right]=0,$$
+于是
+$$f'(z)=\lim\limits_{\Delta z\to 0}\frac{f(z+\Delta z)-f(z)}{\Delta z}=\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}.$$
+即 $f(z)$ 在 $z=x+y\mathrm{i}$ 处可导. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="sec-title">2.2 导数公式与实用判据</div>
+
+<div class="box-key">
+<div class="title">导数公式 (在 $z=x+y\mathrm{i}$ 处的四种等价写法)</div>
+<div class="box-formula">$$f'(z)=\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}=\frac{\partial v}{\partial y}-\mathrm{i}\frac{\partial u}{\partial y}=\frac{\partial u}{\partial x}-\mathrm{i}\frac{\partial u}{\partial y}=\frac{\partial v}{\partial y}+\mathrm{i}\frac{\partial v}{\partial x}.$$</div>
+四式之所以相等, 全靠 C—R 方程. 计算时优先选用<b>偏导最容易算</b>的那个形式.
+</div>
+
+<div class="box-key">
+<div class="title">推论 2.1 (点上的实用判据)</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$. 如果 $u(x,y)$ 和 $v(x,y)$ 的四个偏导数
+$$\frac{\partial u}{\partial x},\quad \frac{\partial u}{\partial y},\quad \frac{\partial v}{\partial x},\quad \frac{\partial v}{\partial y}$$
+在点 $(x,y)$ 处<b>连续</b>, 且满足 C—R 方程, 则 $f(z)$ 在点 $z=x+y\mathrm{i}$ 处<b>可导</b>.
+<br><br>
+<span style="color:#c62828"><b>提示:</b></span> "偏导连续"这一条件在实际计算中几乎总是自动满足 (初等函数的偏导都是连续函数), 所以实际操作时通常只需验证 C—R 方程.
+</div>
+
+<div class="box-key">
+<div class="title">定理 2.2 (区域内解析的充要条件)</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 在区域 $D$ 内解析的充要条件是: $u(x,y)$ 和 $v(x,y)$ 在区域 $D$ 内<b>可微</b>, 而且满足 C—R 方程.
+</div>
+
+<div class="box-key">
+<div class="title">推论 2.1′ (区域内解析的实用判据)</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 在区域 $D$ 内有定义. 如果在 $D$ 内 $u(x,y)$ 和 $v(x,y)$ 的四个偏导数
+$$\frac{\partial u}{\partial x},\quad \frac{\partial u}{\partial y},\quad \frac{\partial v}{\partial x},\quad \frac{\partial v}{\partial y}$$
+<b>存在且连续</b>, 且满足 C—R 方程, 则 $f(z)$ 在 $D$ 内解析.
+</div>
+
+<div class="box-warning">
+<div class="warn-label">点到为止: 局部 vs 整体</div>
+请注意"<b>在一点可导</b>"与"<b>在区域内解析</b>"的差别:
+<br>
+&nbsp;&nbsp;• 定理 2.1 / 推论 2.1 解决的是"<b>在一点</b>是否可导";
+<br>
+&nbsp;&nbsp;• 定理 2.2 / 推论 2.1′ 解决的是"<b>在区域 $D$ 内</b>是否解析".
+<br><br>
+由于区域是开集, 只要 C—R 方程在 $D$ 内<b>处处</b>成立, 就可保证 $D$ 内每一点及其邻域都可导, 从而解析.
+</div>
+
+<div class="chart-container">
+<h3>C—R 检验器: 逐点扫描"哪里满足方程" <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">选择函数, 图中标出四个偏导数 $u_x,u_y,v_x,v_y$, 并逐点检验 C—R 方程. <b>绿点</b>表示该点满足 C—R, <b>灰点</b>表示不满足; <b>橙色曲线/点集</b>是满足 C—R 的全部位置 —— 那正是函数可能可导的地方.</div>
+<canvas id="cvCheck" data-h="430"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>函数:</label>
+<button class="control-btn" id="ckZ2">$z^2$</button>
+<button class="control-btn" id="ckConj">$\bar z$</button>
+<button class="control-btn" id="ckAbs">$|z|^2$</button>
+<button class="control-btn" id="ckZrez">$z\operatorname{Re} z$</button>
+</div>
+<div class="readout" id="ckReadout"></div>
+</div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 典型例题（基础） ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 判定函数的可导性与解析性</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.1</div>
+判定下列函数在何处可导, 在何处解析:
+<br>(1) $w=\overline{z}$; &nbsp;&nbsp; (2) $f(z)=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$; &nbsp;&nbsp; (3) $w=z\operatorname{Re}(z)$.
+<input type="checkbox" id="ans23" class="answer-toggle">
+<label for="ans23" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+<b>(1)</b> $w=\overline{z}=x-\mathrm{i}y$, 故 $u=x$, $v=-y$,
+$$\frac{\partial u}{\partial x}=1,\quad \frac{\partial u}{\partial y}=0,\quad \frac{\partial v}{\partial x}=0,\quad \frac{\partial v}{\partial y}=-1.$$
+$u_x=1\neq -1=v_y$, <b>不满足</b>柯西—黎曼方程, 故 $w=\overline{z}$ 在复平面内<b>处处不可导, 处处不解析</b>.
+<br><br>
+<b>(2)</b> $f(z)=\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$, 故 $u=\mathrm{e}^x\cos y$, $v=\mathrm{e}^x\sin y$, 且
+$$\frac{\partial u}{\partial x}=\mathrm{e}^x\cos y,\quad \frac{\partial u}{\partial y}=-\mathrm{e}^x\sin y,\quad \frac{\partial v}{\partial x}=\mathrm{e}^x\sin y,\quad \frac{\partial v}{\partial y}=\mathrm{e}^x\cos y.$$
+四个偏导数均连续, 且
+$$\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y},\qquad \frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$$
+处处成立, 故 $f(z)$ 在复平面<b>处处可导, 处处解析</b>. 且
+$$f'(z)=\mathrm{e}^x\cos y+\mathrm{i}\,\mathrm{e}^x\sin y=f(z).$$
+<br>
+<b>(3)</b> $w=z\operatorname{Re}(z)=(x+\mathrm{i}y)x=x^2+xy\mathrm{i}$, 故 $u=x^2$, $v=xy$,
+$$\frac{\partial u}{\partial x}=2x,\quad \frac{\partial u}{\partial y}=0,\quad \frac{\partial v}{\partial x}=y,\quad \frac{\partial v}{\partial y}=x.$$
+四个偏导数均连续, 而 C—R 方程要求 $2x=x$ 且 $0=-y$, 即 $x=0$ 且 $y=0$. 故 $w=z\operatorname{Re}(z)$ <b>仅在 $z=0$ 处可导, 在复平面内处处不解析</b>.
+</div>
+</div>
+</div>
+
+<div class="sec-title">3.2 待定常数: 让函数处处解析</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.2</div>
+设 $f(z)=x^2+axy+by^2+\mathrm{i}(cx^2+dxy+y^2)$, 问常数 $a,b,c,d$ 取何值时, $f(z)$ 在复平面内处处解析?
+<input type="checkbox" id="ans24" class="answer-toggle">
+<label for="ans24" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由 $u=x^2+axy+by^2$, $v=cx^2+dxy+y^2$ 得
+$$\frac{\partial u}{\partial x}=2x+ay,\qquad \frac{\partial u}{\partial y}=ax+2by,$$
+$$\frac{\partial v}{\partial x}=2cx+dy,\qquad \frac{\partial v}{\partial y}=dx+2y.$$
+由柯西—黎曼方程 $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$, $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$, 得
+$$2x+ay=dx+2y, \qquad ax+2by=-(2cx+dy).$$
+即
+$$2x+ay=dx+2y, \qquad -2cx-dy=ax+2by.$$
+比较两端各项系数 (要求对任意 $x,y$ 都成立):
+$$\begin{cases} d=2 \\ a=2 \end{cases} \qquad \begin{cases} a=-2c \\ 2b=-d \end{cases}$$
+解得
+$$a=2,\qquad b=-1,\qquad c=-1,\qquad d=2.$$
+此时 $f(z)$ 在复平面内处处解析.
+</div>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>调参实验室: 让 C—R 方程"恰好"成立 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">取例 2.2 中的函数 $f(z)=x^2+axy+by^2+\mathrm{i}(cx^2+dxy+y^2)$, 拖动四个滑块调节 $a,b,c,d$, 实时观察 C—R 方程的两个残差 $u_x-v_y$ 与 $u_y+v_x$ 何时同时为零.</div>
+<div class="param-wrap">
+<div class="param-overlay">
+  <div class="po-title">四个残差系数 (需全部为零)</div>
+  <div class="po-item po-b" style="top:36px">$u_x-v_y$ 中 $x$ 的系数: $2-d$</div>
+  <div class="po-item po-b" style="top:89px">$u_x-v_y$ 中 $y$ 的系数: $a-2$</div>
+  <div class="po-item po-r" style="top:151px">$u_y+v_x$ 中 $x$ 的系数: $a+2c$</div>
+  <div class="po-item po-r" style="top:213px">$u_y+v_x$ 中 $y$ 的系数: $2b+d$</div>
+</div>
+<canvas id="cvParam" data-h="360"></canvas>
+</div>
+<div class="control-panel">
+<div class="row">
+<label>$a$:</label><input type="range" id="pa" min="-4" max="4" step="0.5" value="0"><span class="val-badge" id="paV">0.0</span>
+<label>$b$:</label><input type="range" id="pb" min="-4" max="4" step="0.5" value="0"><span class="val-badge" id="pbV">0.0</span>
+</div>
+<div class="row">
+<label>$c$:</label><input type="range" id="pc" min="-4" max="4" step="0.5" value="0"><span class="val-badge" id="pcV">0.0</span>
+<label>$d$:</label><input type="range" id="pd" min="-4" max="4" step="0.5" value="0"><span class="val-badge" id="pdV">0.0</span>
+</div>
+<div class="row">
+<button class="control-btn" id="btnPaSol">填入正确答案 (2, −1, −1, 2)</button>
+<button class="control-btn" id="btnPaZero">清零</button>
+</div>
+<div class="readout" id="paReadout"></div>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 综合应用与方法 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 由解析性反求函数</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.3</div>
+设 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 在区域 $D$ 内解析, 并且 $v=u^2$, 求 $f(z)$.
+<input type="checkbox" id="ans25" class="answer-toggle">
+<label for="ans25" class="answer-btn">显示解答</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【解】</div>
+由 $v=u^2$ 得
+$$\frac{\partial v}{\partial x}=2u\frac{\partial u}{\partial x},\qquad \frac{\partial v}{\partial y}=2u\frac{\partial u}{\partial y}.$$
+由柯西—黎曼方程 $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$, $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$, 得
+$$\frac{\partial u}{\partial x}=2u\frac{\partial u}{\partial y} \qquad (1)$$
+$$\frac{\partial u}{\partial y}=-2u\frac{\partial u}{\partial x}. \qquad (2)$$
+将 (2) 代入 (1):
+$$\frac{\partial u}{\partial x}=2u\left(-2u\frac{\partial u}{\partial x}\right) \implies \frac{\partial u}{\partial x}(4u^2+1)=0.$$
+由 $4u^2+1\neq 0$ 知 $\frac{\partial u}{\partial x}=0$; 再由 (2) 得 $\frac{\partial u}{\partial y}=0$. 故 $u$ 为常数, 记 $u=c$, 于是 $v=c^2$, 所求函数为
+$$f(z)=c+\mathrm{i}c^2 \qquad (c \text{ 为任意实常数}).$$
+</div>
+</div>
+</div>
+
+<div class="sec-title">4.2 导数为零的解析函数必为常数</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.4</div>
+如果 $f'(z)$ 在区域 $D$ 内处处为零, 则 $f(z)$ 在区域 $D$ 内为一常数.
+<input type="checkbox" id="ans26" class="answer-toggle">
+<label for="ans26" class="answer-btn">显示证明</label>
+<div class="answer-body">
+<div class="box-result">
+<div class="res-label">【证】</div>
+由导数公式
+$$f'(z)=\frac{\partial u}{\partial x}+\mathrm{i}\frac{\partial v}{\partial x}=\frac{\partial v}{\partial y}-\mathrm{i}\frac{\partial u}{\partial y}=0,$$
+故
+$$\frac{\partial u}{\partial x}=\frac{\partial v}{\partial x}=0, \qquad \frac{\partial v}{\partial y}=\frac{\partial u}{\partial y}=0.$$
+即 $u$ 与 $v$ 的四个一阶偏导数在 $D$ 内全为零, 故 $u\equiv$ 常数, $v\equiv$ 常数, 因此 $f(z)=u+\mathrm{i}v$ 在 $D$ 内是常数. $\blacksquare$
+</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">一个重要而深刻的推论</div>
+例 2.4 告诉我们: <b>解析函数不允许"导数为零却不恒定"</b>. 这与实变函数形成鲜明对比 —— 实变函数完全可以导数为零而函数不恒定 (例如任何分段常值函数).
+<br><br>
+这正是解析函数"刚性"的最初体现: 局部条件 (导数) 对整体行为 (函数值) 有极强的约束. 后续将看到更惊人的结论: <b>解析函数由它在任意小的一段弧或一个小圆内的值完全确定</b>.
+</div>
+
+<div class="sec-title">4.3 判断解析性的标准流程</div>
+
+<div class="chart-container">
+<h3>判别流程图: 拿到函数该怎么办 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">点击"逐步展开", 按照标准流程一步步走: 拆出 $u,v$ → 求四个偏导 → 代入 C—R → 判断结论.</div>
+<div id="cvFlow" class="flow-steps"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnFlowAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnFlowAll">显示全部</button>
+</div>
+<div class="readout" id="flowReadout"></div>
+</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">常见陷阱</div>
+<ol>
+<li><b>负号写错</b>: C—R 方程第二个式子是 $u_y=-v_x$, 不是 $u_y=v_x$;</li>
+<li><b>把"满足 C—R"当成"可导"的充分条件而忘记可微性</b>: 严格来说定理要求 $u,v$ 可微 (实际计算中由偏导连续保证);</li>
+<li><b>混淆"在一点可导"与"处处解析"</b>: 如 $z\operatorname{Re}(z)$ 只在 $z=0$ 满足 C—R, 它只在这一点可导, 处处不解析;</li>
+<li><b>误以为"实部虚部都是调和函数就解析"</b>: 还需要它们满足 C—R 方程 (即互为共轭调和函数).</li>
+</ol>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>C—R 方程</b> → <b>必要性</b> → <b>充分性</b> → <b>导数公式与判据</b> → <b>典型应用</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">显示全部</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+实对实, 虚对虚 —— $u_x=v_y$;<br>
+交叉还得加负号 —— $u_y=-v_x$;<br>
+可微加上这两条, 可导充要才算齐;<br>
+导数即为 $u_x+\mathrm{i}v_x$, 四个写法任你挑;<br>
+偏导连续配 C—R, 区域之内便解析.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心结论/公式</th><th>要点与易错</th></tr>
+<tr><td>定理 2.1</td><td>可导 $\iff$ $u,v$ 可微 + C—R 方程</td><td>两个条件缺一不可</td></tr>
+<tr><td>C—R 方程</td><td>$u_x=v_y$, &nbsp; $u_y=-v_x$</td><td>第二个式子有负号</td></tr>
+<tr><td>必要性</td><td>沿 $x$ 轴得 $u_x+\mathrm{i}v_x$; 沿 $y$ 轴得 $v_y-\mathrm{i}u_y$</td><td>两条路径极限必须相等</td></tr>
+<tr><td>充分性</td><td>$u,v$ 可微 + C—R $\Rightarrow$ 可导</td><td>关键用 $\left|\Delta x/\Delta z\right|\le1$</td></tr>
+<tr><td>导数公式</td><td>$f'=u_x+\mathrm{i}v_x=v_y-\mathrm{i}u_y$</td><td>四种等价写法</td></tr>
+<tr><td>推论 2.1</td><td>四偏导连续 + C—R $\Rightarrow$ 可导</td><td>实际计算只用验 C—R</td></tr>
+<tr><td>定理 2.2</td><td>区域内解析 $\iff$ 区域内可微 + C—R</td><td>"处处"即可导 $\Rightarrow$ 解析</td></tr>
+<tr><td>例 2.1(2)</td><td>$\mathrm{e}^x(\cos y+\mathrm{i}\sin y)$ 处处解析, 导数等于自身</td><td>这就是复指数函数</td></tr>
+<tr><td>例 2.4</td><td>$f'\equiv 0$ 在区域内 $\Rightarrow$ $f$ 为常数</td><td>解析函数"刚性"的最初体现</td></tr>
+</table>
+
+<div class="sec-title">3. 自测 · 小试身手 <span class="tag-pill">交互</span></div>
+
+<div class="quiz-q">
+<div class="q-title">1. 柯西—黎曼方程的正确形式是?</div>
+<label class="quiz-opt">A. $u_x=v_x$, &nbsp; $u_y=v_y$</label>
+<label class="quiz-opt" data-ok="1">B. $u_x=v_y$, &nbsp; $u_y=-v_x$</label>
+<label class="quiz-opt">C. $u_x=-v_y$, &nbsp; $u_y=v_x$</label>
+<label class="quiz-opt">D. $u_x=v_y$, &nbsp; $u_y=v_x$</label>
+<div class="quiz-explain"><b>解析:</b> C—R 方程为 $\frac{\partial u}{\partial x}=\frac{\partial v}{\partial y}$, $\frac{\partial u}{\partial y}=-\frac{\partial v}{\partial x}$. 第二个式子的负号是关键, D 少了一个负号.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $f(z)=u+\mathrm{i}v$ 在一点可导的充要条件是?</div>
+<label class="quiz-opt">A. $u,v$ 在该点连续</label>
+<label class="quiz-opt">B. $u,v$ 在该点满足 C—R 方程</label>
+<label class="quiz-opt" data-ok="1">C. $u,v$ 在该点可微且满足 C—R 方程</label>
+<label class="quiz-opt">D. $u,v$ 在该点二阶可导</label>
+<div class="quiz-explain"><b>解析:</b> 定理 2.1 要求两个条件同时成立: <b>可微性</b> + <b>C—R 方程</b>. 仅满足 C—R 而不保证可微时, 结论不一定成立.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 函数 $w=\overline{z}$ 在复平面内?</div>
+<label class="quiz-opt">A. 处处可导且处处解析</label>
+<label class="quiz-opt" data-ok="1">B. 处处不可导, 处处不解析</label>
+<label class="quiz-opt">C. 仅在原点可导</label>
+<label class="quiz-opt">D. 在实轴上可导</label>
+<div class="quiz-explain"><b>解析:</b> $\overline{z}=x-\mathrm{i}y$, 故 $u=x$, $v=-y$, 得 $u_x=1$, $v_y=-1$, 不满足 $u_x=v_y$, 故处处不可导、处处不解析.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 若 $f(z)$ 在 $z_0$ 处可导, 则由沿 $x$ 轴方向的差商极限可得 $f'(z_0)=?$</div>
+<label class="quiz-opt">A. $u_y+\mathrm{i}v_y$</label>
+<label class="quiz-opt" data-ok="1">B. $u_x+\mathrm{i}v_x$</label>
+<label class="quiz-opt">C. $u_x-\mathrm{i}v_x$</label>
+<label class="quiz-opt">D. $v_x+\mathrm{i}u_x$</label>
+<div class="quiz-explain"><b>解析:</b> 沿 $x$ 轴 $\Delta z=\Delta x$ (实数), 差商 $\frac{\Delta u+\mathrm{i}\Delta v}{\Delta x}\to u_x+\mathrm{i}v_x$. 沿 $y$ 轴则得 $v_y-\mathrm{i}u_y$, 二者由 C—R 方程保证相等.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 函数 $f(z)=x^2-y^2+2xy\mathrm{i}$ 在复平面内?</div>
+<label class="quiz-opt" data-ok="1">A. 处处解析</label>
+<label class="quiz-opt">B. 处处不解析</label>
+<label class="quiz-opt">C. 仅在原点解析</label>
+<label class="quiz-opt">D. 仅在实轴上解析</label>
+<div class="quiz-explain"><b>解析:</b> $u=x^2-y^2$, $v=2xy$, 则 $u_x=2x=v_y$ ✓, $u_y=-2y=-v_x$ ✓, 四偏导连续, 故处处解析. 事实上 $f(z)=(x+\mathrm{i}y)^2=z^2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 设 $f(z)=u+\mathrm{i}v$ 在区域 $D$ 内解析, 且 $u$ 在 $D$ 内为常数, 则 $f(z)$ 在 $D$ 内?</div>
+<label class="quiz-opt" data-ok="1">A. 必为常数</label>
+<label class="quiz-opt">B. 必为纯虚数</label>
+<label class="quiz-opt">C. 可以不是常数</label>
+<label class="quiz-opt">D. 仅在实轴上为常数</label>
+<div class="quiz-explain"><b>解析:</b> $u\equiv c$ 时 $u_x=u_y=0$; 由 C—R 方程 $v_y=u_x=0$, $v_x=-u_y=0$, 故 $v$ 也是常数, 从而 $f$ 为常数. 这是"解析函数刚性"的又一体现.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 已知 $u(x,y)=x^2-y^2$ 是某解析函数 $f(z)$ 的实部, 则 $v_y=?$</div>
+<label class="quiz-opt">A. $-2y$</label>
+<label class="quiz-opt" data-ok="1">B. $2x$</label>
+<label class="quiz-opt">C. $-2x$</label>
+<label class="quiz-opt">D. $2y$</label>
+<div class="quiz-explain"><b>解析:</b> 由 C—R 方程 $v_y=u_x=2x$. 相应地 $v_x=-u_y=2y$, 积分可得 $v=2xy+C$, 即 $f(z)=z^2+\mathrm{i}C$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 下列函数中, 在复平面内处处解析的是?</div>
+<label class="quiz-opt">A. $f(z)=|z|^2$</label>
+<label class="quiz-opt">B. $f(z)=\operatorname{Re} z$</label>
+<label class="quiz-opt" data-ok="1">C. $f(z)=z^3-2z+1$</label>
+<label class="quiz-opt">D. $f(z)=\overline{z}^2$</label>
+<div class="quiz-explain"><b>解析:</b> 多项式 $z^3-2z+1$ 处处解析. $|z|^2$、$\operatorname{Re}z$、$\bar z^2$ 都含 $z$ 的共轭或模, 均不满足 C—R 方程, 处处不解析.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 设 $f(z)$ 在区域 $D$ 内解析, 则下列说法正确的是?</div>
+<label class="quiz-opt">A. $u,v$ 在 $D$ 内必为常数</label>
+<label class="quiz-opt" data-ok="1">B. $u,v$ 在 $D$ 内都满足拉普拉斯方程 $\Delta u=0$, $\Delta v=0$</label>
+<label class="quiz-opt">C. $f$ 在 $D$ 内必有零点</label>
+<label class="quiz-opt">D. $f'$ 在 $D$ 内必不为零</label>
+<div class="quiz-explain"><b>解析:</b> 由 C—R 方程可推出 $u_{xx}=v_{yx}=v_{xy}=-u_{yy}$, 即 $u_{xx}+u_{yy}=0$, 故 $u$ 是调和函数; 同理 $v$ 也是. 这称为 $u$ 与 $v$ 互为<b>共轭调和函数</b>.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 函数 $w=z\operatorname{Re}(z)$ 的可导与解析情况是?</div>
+<label class="quiz-opt">A. 处处可导且处处解析</label>
+<label class="quiz-opt">B. 处处不可导</label>
+<label class="quiz-opt" data-ok="1">C. 仅在 $z=0$ 处可导, 处处不解析</label>
+<label class="quiz-opt">D. 在实轴上处处可导</label>
+<div class="quiz-explain"><b>解析:</b> $w=z\operatorname{Re}z=x^2+xy\mathrm{i}$, 得 $u_x=2x$, $v_y=x$, 要求 $2x=x\Rightarrow x=0$; $u_y=0$, $v_x=y$, 要求 $y=0$. 故只在 $z=0$ 满足 C—R, 即仅在原点可导; 因原点邻域内不满足, 故处处不解析.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="hero-card">
+<h3>一个把"局部与整体"彻底打通的方程</h3>
+<div class="hero-sub">柯西—黎曼方程看上去只是两条偏微分关系, 它却规定了复变函数能被"解析"的全部秘密.</div>
+<div class="hero-quote">
+一个贫困、多病、只活了 39 岁的人, 用一篇博士论文改写了整个复分析, 又用一次就职演讲改写了整个几何学.<br>
+他的名字, 今天同时出现在黎曼曲面、黎曼几何、黎曼积分与<b>黎曼猜想</b>之中.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 黎曼: 39 年, 改写了三座数学大厦</div>
+
+<div class="person-card">
+<div class="p-av">黎</div>
+<div class="p-main">
+<div class="p-name">波恩哈德·黎曼 (Georg Friedrich Bernhard Riemann, 1826—1866)</div>
+<div class="p-meta">德国数学家 · 哥廷根大学教授 · 黎曼曲面的创立者 · 黎曼几何的奠基人 · 解析函数理论的完成者之一</div>
+<p>他出生在德国汉诺威王国一个偏僻乡村的牧师家庭, 家中有六个孩子, 他排行第二. 母亲在他少年时便去世, 家境清贫到连学费都要靠亲戚接济. 他从小体弱、羞怯、极度敏感, 却拥有一种罕见的、近乎"看见"的几何直觉.</p>
+<p>在短短 39 年的人生里, 他几乎独自开辟了现代数学的四五个主要方向. 今天任何一本复分析教材的核心章节 (柯西—黎曼方程、黎曼曲面、保角映射) 都来自他的博士论文; 而物理学界的广义相对论, 则建立在他在一次就职演讲中提出的几何学之上.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 牧师家庭里沉默的天才</h5>
+<p>1826 年 9 月 17 日, 黎曼出生于汉诺威王国塞勒附近的布雷斯伦茨村. 父亲是一位参加过拿破仑战争的乡村牧师, 收入微薄却深得乡民敬重. 黎曼是六个孩子中的第二个, 母亲出身于一个法官家庭, 在他十几岁时去世.</p>
+<p>童年的黎曼极度敏感而内向, 一生都伴随着对死亡的恐惧与深重的自卑 —— 他曾在信中写道, 自己"总是害怕被人误解". 但他在数学上的天赋却早早显露: 为了替家里省钱, 他自学了全部的数学教材, 并在中学时就能讲解高深的几何, 让老师惊叹不已.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>求学: 从神学到数学的转身</h5>
+<p>1846 年, 黎曼进入哥廷根大学. 父亲希望他成为一名牧师, 于是他先注册了<b>神学与哲学</b>. 但数学的吸引力终究无法抗拒 —— 他旁听了高斯的讲座, 又去了柏林大学学习, 师从<b>狄利克雷、雅可比、爱森斯坦</b>等一流数学家.</p>
+<p>1851 年, 他在高斯指导下完成博士论文《论复变函数的一般理论基础》(<i>Grundlagen für eine allgemeine Theorie der Functionen einer veränderlichen complexen Größe</i>). 这篇论文系统地建立了"<b>保角映射</b>"的理论基础, 并把 C—R 方程确立为解析函数的核心判据 —— <b>从此这对方程被合称为"柯西—黎曼方程"</b>.</p>
+<p>据说高斯在评审这份论文时给出了罕见的评价: "<b>论文的表述方式清晰而简洁, 内容深刻 —— 作者不仅达到了对论文提出的要求, 而且展现了极具创造力的头脑.</b>"</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>1854: 一场就职演讲与一门新几何</h5>
+<p>1854 年, 为了取得讲师资格, 黎曼按照惯例要作一场就职演讲. 高斯亲自为他指定了题目 —— 关于几何学的基础假设. 在那个几何学被欧几里得"统治"了两千年的年代, 黎曼却提出了一个石破天惊的思想:</p>
+<p><b>几何学不一定是关于"空间"的, 它可以是一类满足特定度量法则的<b>任意</b>的"流形"; 而欧氏几何只是其中最简单的一个特例.</b> 他引入了度量张量、曲率等概念, 建立起一套全新的几何体系, 这就是后世所说的<b>黎曼几何</b>.</p>
+<p>六十年后, 爱因斯坦在寻找引力理论的数学语言时, 发现黎曼几何已经等在那里了. 广义相对论的全部结构, 都建立在这套几何之上 —— <b>一次为求职而作的就职演讲, 成了二十世纪物理学的数学基础.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>1859: 一个至今无人解决的猜想</h5>
+<p>1859 年, 黎曼在一篇仅仅八页的论文《论小于给定数值的素数个数》中, 提出了一个关于 ζ 函数零点分布的猜想 —— 这就是著名的<b>黎曼猜想</b>: ζ 函数的所有非平凡零点都位于复平面上 $\operatorname{Re}(s)=\tfrac12$ 这条直线上.</p>
+<p>这个猜想至今仍未被证明或推翻, 它是克雷数学研究所悬赏一百万美元的"七大千禧年难题"之一. 它与素数的分布规律紧密相关 —— 而素数是整个数论的基石. <b>一篇八页的论文, 悬在了人类智慧面前一百六十余年.</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>1859 年, 黎曼因长期过度劳累与贫困导致的健康恶化, 前往意大利疗养, 此后反复往返于德国与意大利之间. 传说他为了节省经费, 常常徒步长途跋涉. 即便在病中, 他仍在研究数学. 有一次他对朋友说: "<b>我的健康状况也许并不允许我去完成这些工作 —— 但思想本身是自由的.</b>" 1866 年 7 月 20 日, 他在意大利马焦雷湖畔的塞拉斯卡村去世, 年仅 39 岁.
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 一个概念的对峙: "几何是描述空间的" vs "几何是度量结构的总称"</div>
+<div class="cc-side"><b>传统观点 (康德以来):</b> 欧几里得几何是关于现实空间的<b>先天真理</b>, 是必然的、唯一的; 非欧几何不过是逻辑游戏.</div>
+<div class="cc-side"><b>黎曼的立场:</b> 几何的全部内容就是"如何测量微小的距离"; 只要给出一个度量规则, 就得到一种几何. 空间究竟是欧氏的、球面的还是双曲的, 这是一<b>物理问题</b>, 需要实验来回答, 而不是靠直觉宣布.</div>
+<div class="cc-side"><b>历史结论:</b> 黎曼赢了. 六十年后广义相对论用引力场方程证实了这一点 —— 我们生活的时空确实是弯曲的. <b>把"数学命题"与"物理事实"分开, 是黎曼留给后人最重要的思想遗产之一.</b></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">场景还原: 一篇"平平无奇"的博士论文</div>
+1851 年, 黎曼向哥廷根大学提交博士论文. 题目平平无奇 —— 论复变函数的基础. 当时复分析已经有柯西的积分定理、有阿贝尔的工作, 看上去地盘已经被人占完了.
+<br><br>
+但黎曼做了一件别人没做的事: 他不再从"差商极限"入手, 而是直接从<b>保角映射</b>这一几何要求出发, 把解析函数的理论建立在几何直观之上. 他引入了"C—R 方程作为判据"、"黎曼曲面来处理多值函数", 并提出了关键的<b>黎曼映射定理</b> —— 任何单连通区域都能保角地映成单位圆.
+<br><br>
+这篇论文当年并未引起轰动, 却在之后的五十年里成为整个复分析的地基. <b>真正的革命, 有时看起来只是一次题目选择上的"另辟蹊径".</b>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 黎曼的心声</div>
+在给父亲的一封信中, 这个 25 岁的年轻人一边报喜一边诉苦:
+"<em>我很幸运, 高斯先生对我论文的评价很好, 他说这是我做得很出色的一项工作. 但我依然害怕自己无法胜任更难的题目 —— 我需要更长时间、更需要安静.</em>"
+<br>
+而在 1859 年, 当他已因肺结核而严重衰弱时, 他仍在给朋友的信中写道:
+"<em>我尽力把自己关于素数分布的思考写了下来. 我不知道它们是否有价值, 但它们是真诚的.</em>"
+<span class="iv-sig">—— 一个几乎用生命换数学的人, 留给世界的谦逊, 比他的任何定理都更打动人心.</span>
+</div>
+
+<div class="legacy-grid">
+<div class="legacy-item"><div class="lg-t">复分析</div>博士论文奠定保角映射理论, 确立 C—R 方程的核心地位; 提出黎曼曲面, 让多值函数 (如 $\operatorname{Ln}z$、$z^{1/n}$) 有了统一的几何模型; 黎曼映射定理至今是复分析最深刻的定理之一.</div>
+<div class="legacy-item"><div class="lg-t">几何学</div>1854 年的就职演讲创立黎曼几何, 引入度量张量与曲率; 这是广义相对论的数学语言, 也是现代微分几何的起点.</div>
+<div class="legacy-item"><div class="lg-t">数论</div>1859 年提出黎曼猜想; 引入 ζ 函数的复分析方法, 开创"解析数论"这一分支.</div>
+<div class="legacy-item"><div class="lg-t">分析基础</div>以"黎曼积分"为实分析奠基; 研究三角级数并给出可积性的判据, 推动了 19 世纪分析严格化运动.</div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">一个耐人寻味的对照</div>
+黎曼一生贫困、多病、羞怯, 从未担任过显赫的职务, 也没有培养出一大批弟子. 他甚至很少发表论文 —— 许多思想只是写在讲义与遗稿里.
+<br><br>
+但今天, "黎曼"这个名字出现在几乎所有高等数学分支的教科书中: 黎曼曲面、黎曼几何、黎曼积分、黎曼猜想、黎曼映射定理……<b>一个内向、清贫、只活了 39 岁的人, 靠着极致的深度, 成了现代数学绕不开的名字.</b>
+<br><br>
+这提醒我们: <b>衡量一个人的贡献, 从来不是数量、地位或口才, 而是思想的穿透力.</b>
+</div>
+
+<div class="chart-container">
+<h3>交互: 看见"保角性" —— 黎曼的几何眼光 <span class="tag-pill">交互</span></h3>
+<div class="chart-desc">黎曼在博士论文中把解析函数理解为<b>保角映射</b>: 它把 $z$ 平面上的网格映到 $w$ 平面, 网格虽然被拉伸、弯曲, 但<b>任意两条曲线的夹角保持不变</b>. 拖动滑块改变参数, 观察右上角的网格始终正交 —— 这正是 C—R 方程在几何上的样子.</div>
+<canvas id="cvConformal" data-h="420"></canvas>
+<div class="control-panel">
+<div class="row">
+<label>映射:</label>
+<button class="control-btn" id="cfB1">$w=z^2$</button>
+<button class="control-btn" id="cfB2">$w=\mathrm{e}^z$</button>
+<button class="control-btn" id="cfB3">$w=1/z$</button>
+</div>
+<div class="row">
+<label>网格尺度:</label>
+<input type="range" id="cfScale" min="0.15" max="1.2" step="0.01" value="0.4">
+<span class="val-badge" id="cfScaleV">0.40</span>
+</div>
+<div class="readout" id="cfReadout"></div>
+</div>
+</div>
+
+<div class="sec-sub">附一 · 黎曼生平年表</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1826</span><span class="tl-title">出生于汉诺威布雷斯伦茨村, 牧师家庭</span></div>
+<div class="tl-body">家境清贫, 六兄妹中排行第二; 母亲早逝, 终身受对死亡的恐惧与自卑困扰.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1846</span><span class="tl-title">入哥廷根大学, 先学神学后转数学</span></div>
+<div class="tl-body">遵父愿注册神学, 却因痴迷数学而旁听高斯讲座, 最终转向数学.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1847—1849</span><span class="tl-title">赴柏林大学, 师从狄利克雷、雅可比</span></div>
+<div class="tl-body">在柏林接触到最前沿的数学研究, 与爱森斯坦结下友谊也产生竞争.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1851</span><span class="tl-title">博士论文: 复变函数的一般理论基础</span></div>
+<div class="tl-body">提出保角映射理论, 确立 C—R 方程的核心地位, 引入黎曼曲面的初步想法. 获高斯极高评价.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1854</span><span class="tl-title">就职演讲: 论几何学的基础假设</span></div>
+<div class="tl-body">创立黎曼几何, 提出"空间几何由度量决定"的革命性思想; 同年发表关于三角级数的论文.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1859</span><span class="tl-title">《论小于给定数值的素数个数》: 黎曼猜想</span></div>
+<div class="tl-body">把 ζ 函数引入复域, 提出至今未解的黎曼猜想 —— 悬赏百万美元的七大千禧年难题之一.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1866</span><span class="tl-title">逝世于意大利塞拉斯卡, 年仅 39 岁</span></div>
+<div class="tl-body">长期肺结核与贫困损害了他的健康. 他去世时, 好友戴德金整理出版了他的遗稿, 人们才逐渐认识到这些思想的份量.</div>
+</div>
+</div>
+
+<div class="sec-sub">附二 · 解析函数判别理论的形成</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<div><span class="tl-year">1752</span><span class="tl-title">达朗贝尔: 从流体力学得到那对方程</span></div>
+<div class="tl-body">在无旋流动研究中写出 $u_x=v_y$, $u_y=-v_x$, 但未与"复变函数可导"建立联系.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1777</span><span class="tl-title">欧拉: 也得到同一对方程</span></div>
+<div class="tl-body">欧拉在研究复变函数的积分时独立写出了同样的条件, 这对方程因此也有"达朗贝尔—欧拉方程"之称.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1814—1825</span><span class="tl-title">柯西: 建立严格的可导理论</span></div>
+<div class="tl-body">柯西从"差商极限"出发定义导数, 并证明积分定理, 让复分析第一次成为严密的学科.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">1851</span><span class="tl-title">黎曼: 把方程写进解析函数的定义</span></div>
+<div class="tl-body">黎曼在博士论文中把 C—R 方程确立为解析性的核心判据, 并从保角映射的角度重建整个理论. 这对方程从此被称为<b>柯西—黎曼方程</b>.</div>
+</div>
+<div class="tl-item">
+<div><span class="tl-year">今天</span><span class="tl-title">从保角映射到芯片与航空设计</span></div>
+<div class="tl-body">C—R 方程 + 保角映射被用于机翼剖面设计、电磁场与温度场求解、图像形变与网格生成. 黎曼的开创性几何思想, 成了工程计算的日常工具.</div>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">思政启示一: 真正深刻的东西, 往往形式极简</div>
+柯西—黎曼方程只有两行, 却完整刻画了"复变函数可导"这一极强的要求 —— 它把"无穷多条路径给出同一极限"这一几何限制, 压缩为两条偏微分关系.
+<br><br>
+黎曼的一生也是这种"极简而极深"的写照: 论文数量不多, 却几乎每一篇都开辟一个方向. <b>在信息过载的时代, 我们更要学习这种"少而深"的定力 —— 与其浅尝辄止地涉猎十个领域, 不如在一处挖到见水.</b>
+<br><br>
+当然, 简洁的形式背后是极不简洁的思考. 黎曼为得到那两行方程, 花掉的是整个青春与健康. <b>简洁不是省力, 而是繁复思考之后的结晶.</b>
+</div>
+
+<div class="sec-title">6.2 数学中的哲学: 从 C—R 方程看辩证思维</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<div class="pc-tag">对立统一</div>
+<h4>实与虚: 一对被方程牢牢锁定的伙伴</h4>
+<p>C—R 方程把 $u$ 与 $v$ 牢牢绑在一起: 知道 $u$ 就几乎确定了 $v$ (只差一个常数), 反之亦然. 实部与虚部不再是两个独立的量, 而是同一解析函数的不可分割的两面.</p>
+<p>这正是<b>对立面相互规定</b>的数学写照: 任何一方的变化都要由另一方"匹配"才能保持解析性.</p>
+<div class="pc-math">$u_x=v_y$, $u_y=-v_x$ &nbsp;⇒&nbsp; $u,v$ 互为共轭调和函数</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">量变质变</div>
+<h4>局部条件 → 整体性质</h4>
+<p>例 2.4 告诉我们: 只要导数在区域 $D$ 内处处为零, 函数就必为常数. 一个局部的、逐点的条件 (导数为零) 竟然完全决定了函数的整体形态.</p>
+<p>这是<b>局部约束产生整体刚性</b>的典范 —— 与物理中"局部守恒律决定全局演化"异曲同工.</p>
+<div class="pc-math">$f'(z)\equiv 0\ (z\in D)$<br>$\Longrightarrow\ f\equiv$ 常数</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">内容与形式</div>
+<h4>两条方程, 三种语言</h4>
+<p>同一件事可以用三种语言说: <b>几何</b>上"差商沿任意路径趋于同一极限"; <b>分析</b>上"$u,v$ 可微且满足 C—R"; <b>几何映射</b>上"映射是保角的". 它们互为表里, 指向同一个对象.</p>
+<p>数学的力量正来自这种<b>多表征的统一</b>: 换一种表述, 就能换一套工具来解决问题.</p>
+<div class="pc-math">可导 $\iff$ C—R 方程 $\iff$ 保角映射</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">普遍联系</div>
+<h4>调和函数: 一条方程贯通静电、流体与热</h4>
+<p>由 C—R 可推出 $\Delta u=0$, $\Delta v=0$ —— 即 $u,v$ 都是调和函数. 而拉普拉斯方程 $\Delta u=0$ 同时描述静电场、稳态温度场与不可压缩无旋流动.</p>
+<p><b>同一个数学结构, 在不同物理领域中反复出现</b> —— 认出它, 就获得了跨领域迁徙方法的能力.</p>
+<div class="pc-math">C—R $\Longrightarrow$ $\Delta u=0$, $\Delta v=0$ (Laplace 方程)</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">否定之否定</div>
+<h4>必要条件与充分条件: 两步才能到达</h4>
+<p>C—R 方程既可导的<b>必要条件</b>, 又在加上"可微"后成为<b>充分条件</b>. 先必要、后充分, 定理的证明被自然地劈成两半 —— 这是数学追求严格性的典型套路.</p>
+<p>它提示我们: 判断一个条件是否"够用", 需要从两个方向各走一遍.<b>只走一个方向, 结论就不牢靠.</b></p>
+<div class="pc-math">必要性: 可导 $\Rightarrow$ 可微 + C—R; &nbsp; 充分性: 可微 + C—R $\Rightarrow$ 可导</div>
+</div>
+
+<div class="philo-card">
+<div class="pc-tag">整体观</div>
+<h4>一个点上的方程, 决定一片邻域的命运</h4>
+<p>C—R 方程在区域内处处成立, 就换来"在区域内解析". 从"逐点"到"整片", 靠的是区域是开集这一拓扑事实 —— 每一点都带着自己的邻域.</p>
+<p>这提示我们:<b>当一个条件能在"每个点的周围"都成立时, 它就会产生远超自身的推论.</b> 这与"制度要落在一线"的道理相通.</p>
+<div class="pc-math">C—R 在 $D$ 内处处成立 $\Longrightarrow$ $f$ 在 $D$ 内解析</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.3 数学思维: 本节蕴含的科学方法论</div>
+
+<table class="value-table">
+<tr><th>思维方法</th><th>在本节中的体现</th><th>可迁移到哪里</th></tr>
+<tr><td>必要条件与充分条件</td><td>定理 2.1 分两步证明: 先必要性, 再充分性</td><td>判断条件是否"够用", 需从两个方向各验证一遍</td></tr>
+<tr><td>化归与降维</td><td>把"任意路径极限相同"化归为两条路径 + 可微性</td><td>把无穷多个约束压缩为有限个可验证条件</td></tr>
+<tr><td>特殊化</td><td>沿 $x$ 轴、$y$ 轴两个特殊方向取极限, 得到 C—R</td><td>用特殊情形探路, 再论证一般情形</td></tr>
+<tr><td>反例法</td><td>$\bar z$、$|z|^2$、$z\operatorname{Re}z$ 都不满足 C—R</td><td>用反例划定理论边界</td></tr>
+<tr><td>数形结合</td><td>C—R 方程 $\iff$ 保角映射 (网格正交)</td><td>把代数条件翻译成几何图像, 反之亦然</td></tr>
+<tr><td>类比推广</td><td>由"一点可导"推广到"区域内解析"</td><td>把局部结论在邻域/区域内推广, 注意前提变化</td></tr>
+</table>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+实对实, 虚对虚 —— $u_x=v_y$;<br>
+交叉还得加负号 —— $u_y=-v_x$;<br>
+可微加上这两条, 可导充要才算齐;<br>
+导数即为 $u_x+\mathrm{i}v_x$, 四个写法任你挑;<br>
+偏导连续配 C—R, 区域之内便解析.
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 数学精神与家国情怀</div>
+
+<div class="box-key">
+<div class="title">中国古代数学中的"对应"智慧</div>
+中国古代数学在"两个量之间的相互规定"上早有深刻实践. 《周髀算经》与刘徽的"<b>出入相补原理</b>"把面积、长度、体积之间的关系整理成一套严密的对应法则; 宋元时期的"<b>天元术</b>"与"<b>四元术</b>"更把多个未知量之间的相互约束写成了方程组 —— <b>这正是一种"用一个量确定另一个量"的思想</b>, 与 C—R 方程中 $u$ 与 $v$ 相互规定在精神上相通.
+<br><br>
+此外, 中国古代历法中的"<b>日月合朔</b>""<b>二十四节气</b>"体系, 本质上是在两个周期运动之间建立精确对应关系; 这种"从一个量推算另一个量"的方法论, 与解析函数通过 C—R 方程由实部确定虚部, 是同一类思想的古代形态.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 中国数学家在函数论上的接续</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 在<b>多复变函数论</b>领域做出奠基性贡献, 其《多复变函数论中的典型域的调和分析》被公认为该领域的经典. 他把解析函数理论从单复变推广到高维, 让"分析"与"几何"在高维情形下再度统一 —— 这正是黎曼精神的直接延续.</li>
+<li><b>陈省身</b> (1911—2004): 创立"陈类", 把微分几何与拓扑学融为一体, 被誉为"整体微分几何之父". 他的工作使黎曼几何的思想在现代数学与理论物理中获得了全新的表达.</li>
+<li><b>面向国家重大需求</b>: C—R 方程与保角映射不仅是理论工具, 更是<b>工程利器</b> —— 从飞机机翼的绕流分析、电磁器件的场分布计算, 到地质勘探与医疗成像中的反问题求解, 都要用到解析函数的这套语言. 本课程后续的保角映射与傅里叶分析, 正是这些技术的数学内核.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示二: 用最朴素的工具, 解最复杂的问题</div>
+柯西—黎曼方程只有两条偏导数等式, 却承担了判别解析性的全部重任. 黎曼一生没有先进的计算机, 没有团队, 甚至连健康的身体都没有, 却靠着"把问题想到底"的功夫, 造出了现代数学的地基.
+<br><br>
+今天的我们拥有远比他优越的条件, 却常常在"工具太多、选择太多"中迷失. <b>黎曼的启示是: 真正决定高度的, 不是工具的先进, 而是把一个问题追问到底的决心.</b> 在芯片、航空、通信这些需要长期积累的领域, 这种决心, 才是最稀缺的资源.
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"如果我能解释清楚我的思想, 那只是因为我在其中思考了很久."<span class="q-src">—— 黎曼 (致父亲的信, 意译)</span></div>
+<div class="quote-item">"几何学的一切都取决于度量 —— 给出度量, 就给出了几何."<span class="q-src">—— 黎曼 1854 年就职演讲的思想</span></div>
+<div class="quote-item">"最深刻的真理, 往往有最简单的表述."<span class="q-src">—— 数学的普遍经验</span></div>
+<div class="quote-item">"一个数学概念的价值, 在于它能把多少个不同领域连接起来."<span class="q-src">—— 关于 C—R 方程的启示</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"科学是老老实实的学问, 任何一点调皮都是不行的."<span class="q-src">—— 毛泽东</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 一个出生于清贫牧师家庭、体弱多病的年轻人, 用一篇博士论文重建了复分析的地基, 用一次就职演讲开创了黎曼几何, 用八页论文留下了至今无人解决的黎曼猜想 —— 他只活了 39 岁.<br>
+<b>一个道理:</b> 柯西—黎曼方程只有两行, 却把"任意路径极限相同"这一几何要求压缩成了两条偏微分方程; <b>真正深刻的东西, 形式往往极简, 而简洁是繁复思考之后的结晶.</b><br>
+<b>一份责任:</b> 从刘徽的"出入相补"到华罗庚的多复变函数论、陈省身的整体微分几何, 中华民族从未停止在"数与形"上的深耕. 今天我们学习解析函数的充要条件, 既是在掌握一个判别工具, 更是在接续这份<b>把问题追问到底</b>的精神.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第二章第二节 解析函数的充要条件 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+function rad(d){ return d*Math.PI/180; }
+function deg(r){ return r*180/Math.PI; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function carg(a){ return Math.atan2(a.im,a.re); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function grid(ctx,w,h,m,step){
+  step=step||1;
+  ctx.save();
+  ctx.strokeStyle='rgba(120,144,156,.18)'; ctx.lineWidth=1;
+  var x0=Math.ceil(m.ix(0)/step)*step, x;
+  for(x=x0;m.px(x)<w+10;x+=step){ var px=m.px(x); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke(); }
+  var y0=Math.ceil(m.iy(h)/step)*step, y;
+  for(y=y0;m.py(y)>-10;y+=step){ var py=m.py(y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke(); }
+  ctx.restore();
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  // ticks
+  ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var lo=m.ix(0), hi=m.ix(w);
+  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+    ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(x),m.px(x)-4,y0+16); }
+  lo=m.iy(h); hi=m.iy(0);
+  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+    ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
+    ctx.fillText(String(y),x0-22,m.py(y)+4); }
+  ctx.restore();
+}
+function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+  lw=lw||2.6; head=head||11;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  var a=Math.atan2(y2-y1,x2-x1);
+  if(Math.hypot(x2-x1,y2-y1)<2) return;
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.45),y2-head*Math.sin(a-0.45));
+  ctx.lineTo(x2-head*Math.cos(a+0.45),y2-head*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function mathArc(ctx,cx,cy,r,t1,t2,color,lw){
+  ctx.beginPath();ctx.arc(cx,cy,r,-t1,-t2,true);
+  ctx.strokeStyle=color;ctx.lineWidth=lw||2;ctx.stroke();
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
+function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+
+// ================= 模块 1: C—R 方程的来历 =================
+module('cvCR',function(cv){
+  var mode='x';
+  var z0=C(1.2,1.0);
+  function u(x,y){ return x*x-y*y; }
+  function v(x,y){ return 2*x*y; }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var halfW=w/2;
+    // ---------- 左: z 平面路径 ----------
+    ctx.save(); ctx.translate(14,42);
+    var m1=mapperEq(halfW-40,h-88,-0.3,2.5,-0.5,2.3);
+    grid(ctx,halfW-40,h-88,m1,0.5); axes(ctx,halfW-40,h-88,m1,'x','y');
+    var px=m1.px(z0.re), py=m1.py(z0.im);
+    dot(ctx,px,py,7,'#263238','#fff');
+    tlabel(ctx,px+10,py-10,'z₀','#263238');
+    var span=0.7;
+    if(mode==='x'||mode==='both'){
+      arrow(ctx,m1.px(z0.re+span),py,px,py,'#e53935',2.4,10);
+      dot(ctx,m1.px(z0.re+span),py,6,'#e53935','#fff');
+      tlabel(ctx,m1.px(z0.re+span)-8,py-12,'Δz = Δx','#e53935','bold 12px Segoe UI');
+    }
+    if(mode==='y'||mode==='both'){
+      arrow(ctx,px,m1.py(z0.im+span),px,py,'#1976d2',2.4,10);
+      dot(ctx,px,m1.py(z0.im+span),6,'#1976d2','#fff');
+      tlabel(ctx,px+10,m1.py(z0.im+span)+4,'Δz = iΔy','#1976d2','bold 12px Segoe UI');
+    }
+    ctx.restore();
+    tlabel(ctx,14,26,'① 在 z 平面上沿两条特殊路径趋近 z₀','#37474f','bold 13px Segoe UI');
+    // ---------- 右: 差商 ----------
+    var sx=halfW+16;
+    ctx.save(); ctx.translate(sx,42);
+    var m2=mapperEq(halfW-46,h-88,-0.5,3.5,-1.2,3.2);
+    grid(ctx,halfW-46,h-88,m2,0.5); axes(ctx,halfW-46,h-88,m2,'Re','Im');
+    var ux=2*z0.re, uy=-2*z0.im, vx=2*z0.im, vy=2*z0.re;
+    var dx=C(ux,vx), dy=C(vy,-uy);
+    var ox=m2.px(0), oy=m2.py(0);
+    ctx.save(); ctx.setLineDash([8,6]);
+    arrow(ctx,ox,oy,m2.px(dy.re),m2.py(dy.im),'#1976d2',2.6,11);
+    ctx.restore();
+    arrow(ctx,ox,oy,m2.px(dx.re),m2.py(dx.im),'#e53935',2.8,11);
+    dot(ctx,m2.px(dx.re),m2.py(dx.im),6,'#e53935','#fff');
+    dot(ctx,m2.px(dy.re),m2.py(dy.im),6,'#1976d2','#fff');
+    tlabel(ctx,m2.px(dx.re)+9,m2.py(dx.im)-10,'沿 x 轴','#e53935','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(dy.re)+9,m2.py(dy.im)+18,'沿 y 轴 (虚线)','#1976d2','bold 12px Segoe UI');
+    ctx.restore();
+    tlabel(ctx,sx,26,'② 两个差商极限必须重合','#37474f','bold 13px Segoe UI');
+    var gap=cabs(csub(dx,dy));
+    var msg;
+    if(mode==='x') msg='<b>沿 $x$ 轴方向</b> ($\\Delta z=\\Delta x$): 差商 $\\to \\frac{\\partial u}{\\partial x}+\\mathrm{i}\\frac{\\partial v}{\\partial x}$';
+    else if(mode==='y') msg='<b>沿 $y$ 轴方向</b> ($\\Delta z=\\mathrm{i}\\Delta y$): 差商 $\\to \\frac{\\partial v}{\\partial y}-\\mathrm{i}\\frac{\\partial u}{\\partial y}$';
+    else msg='<b>两者相等</b>, 比较实部与虚部 ⇒ '+hl('$u_x=v_y$ , $u_y=-v_x$')+' 即柯西—黎曼方程';
+    setRO('crReadout',
+      msg+'<br>'+
+      '以 $f(z)=z^2$ , $z_0=1.2+\\mathrm{i}$ 为例: $u_x='+fmt(ux)+'$, $v_x='+fmt(vx)+'$ ⇒ 沿 $x$ 轴得 $'+fmt(dx.re)+'+'+fmt(dx.im)+'\\mathrm{i}$<br>'+
+      '$v_y='+fmt(vy)+'$, $u_y='+fmt(uy)+'$ ⇒ 沿 $y$ 轴得 $'+fmt(dy.re)+'+'+fmt(dy.im)+'\\mathrm{i}$ &nbsp;|&nbsp; 两者之差 $='+hl2(fmt(gap))+'$'+
+      (gap<1e-9?' &nbsp;→&nbsp; <b>完全相同, 验证了 C—R 方程 ✓</b>':''));
+  }
+  [['crBx','x'],['crBy','y'],['crBb','both']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ mode=p[1]; draw(); });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 2: C—R 检验器 =================
+module('cvCheck',function(cv){
+  var cur='z2';
+  var FN={
+    z2:{lab:'f(z)=z²', u:'x² − y²', v:'2xy', ux:'2x', uy:'−2y', vx:'2y', vy:'2x',
+      kind:'all', cond:'2x = 2x ✓ , &nbsp; −2y = −2y ✓',
+      d:'四偏导连续, 且 C—R 方程<b>处处成立</b> ⇒ 在复平面内处处解析.'},
+    conj:{lab:'f(z)=z̄', u:'x', v:'−y', ux:'1', uy:'0', vx:'0', vy:'−1',
+      kind:'none', cond:'1 = −1 ✗',
+      d:'$u_x=1$ 而 $v_y=-1$, C—R 方程<b>处处不成立</b> ⇒ 处处不可导, 处处不解析.'},
+    abs:{lab:'f(z)=|z|²', u:'x² + y²', v:'0', ux:'2x', uy:'2y', vx:'0', vy:'0',
+      kind:'one', cond:'2x = 0 且 2y = 0 ⇒ x = y = 0',
+      d:'仅当 $x=y=0$ 即 $z=0$ 时 C—R 成立 ⇒ <b>仅在 $z=0$ 可导</b>. 因邻域内不成立, 处处不解析.'},
+    zrez:{lab:'f(z)=z·Re z', u:'x²', v:'xy', ux:'2x', uy:'0', vx:'y', vy:'x',
+      kind:'one', cond:'2x = x 且 0 = −y ⇒ x = y = 0',
+      d:'仅当 $x=y=0$ 时 C—R 成立 ⇒ <b>仅在 $z=0$ 可导</b>, 处处不解析.'}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var pw=w*0.56;
+    ctx.save();
+    var R=2.4;
+    var m=mapperEq(pw,h-40,-R,R,-R*(h/pw),R*(h/pw));
+    ctx.translate(8,24);
+    // 点阵
+    var o=FN[cur], step=0.115;
+    for(var x=-R;x<=R;x+=step){
+      for(var yy=-R;yy<=R;yy+=step){
+        var px=m.px(x),py=m.py(yy);
+        if(px<0||px>pw||py<0||py>h-40) continue;
+        var satisfy=false;
+        if(o.kind==='all') satisfy=true;
+        else if(o.kind==='one') satisfy=(Math.hypot(x,yy)<0.055);
+        else satisfy=false;
+        ctx.fillStyle=satisfy?'rgba(46,125,50,.75)':'rgba(120,144,156,.28)';
+        ctx.beginPath(); ctx.arc(px,py,satisfy?3:2.1,0,TAU); ctx.fill();
+      }
+    }
+    grid(ctx,pw,h-40,m,1); axes(ctx,pw,h-40,m,'x','y');
+    if(o.kind==='one'){ dot(ctx,m.px(0),m.py(0),9,'#e65100','#fff'); tlabel(ctx,m.px(0)+13,m.py(0)-12,'z=0','#e65100'); }
+    ctx.restore();
+    // 右侧信息
+    var tx=pw+22;
+    ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
+    ctx.fillText(o.lab,tx,46);
+    var rows=[['u = '+o.u,'#1565c0'],['v = '+o.v,'#1565c0'],
+              ['u_x = '+o.ux,'#546e7a'],['u_y = '+o.uy,'#546e7a'],
+              ['v_x = '+o.vx,'#546e7a'],['v_y = '+o.vy,'#546e7a']];
+    rows.forEach(function(r,i){
+      ctx.font=(i<2?'bold ':'')+'13px Consolas, Segoe UI'; ctx.fillStyle=r[1];
+      ctx.fillText(r[0],tx,74+i*22);
+    });
+    ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#c62828';
+    ctx.fillText('C—R 检验:',tx,220);
+    ctx.font='13px Segoe UI'; ctx.fillStyle='#455a64';
+    var cnd=o.cond.replace(/&nbsp;/g,' ');
+    ctx.fillText(cnd,tx,242);
+    ctx.font='bold 13px Segoe UI'; ctx.fillStyle=(o.kind==='all'?'#2e7d32':(o.kind==='none'?'#c62828':'#e65100'));
+    ctx.fillText(o.kind==='all'?'结论: 处处解析 ✓':(o.kind==='none'?'结论: 处处不解析 ✗':'结论: 仅在一点可导'),tx,272);
+    tlabel(ctx,10,h-12,'绿点: 满足 C—R 方程   灰点: 不满足','#78909c','12px Segoe UI');
+    setRO('ckReadout', hl2(o.lab)+' &nbsp;|&nbsp; '+o.d);
+  }
+  [['ckZ2','z2'],['ckConj','conj'],['ckAbs','abs'],['ckZrez','zrez']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 3: 例 2.2 调参实验室 =================
+module('cvParam',function(cv){
+  var A=0,B=0,Cc=0,D=0;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    // 残差系数
+    var r1a=2-D, r1b=A-2;      // u_x − v_y = (2−d)x + (a−2)y
+    var r2a=A+2*Cc, r2b=2*B+D; // u_y + v_x = (a+2c)x + (2b+d)y
+    var items=[
+      {t:'u_x − v_y 中 x 的系数: 2 − d', val:r1a, col:'#1565c0'},
+      {t:'u_x − v_y 中 y 的系数: a − 2', val:r1b, col:'#1565c0'},
+      {t:'u_y + v_x 中 x 的系数: a + 2c', val:r2a, col:'#c62828'},
+      {t:'u_y + v_x 中 y 的系数: 2b + d', val:r2b, col:'#c62828'}
+    ];
+    var x0=w*0.40, y0=52, gap=62, maxLen=w*0.5;
+    items.forEach(function(it,i){
+      var y=y0+i*gap;
+      // 条
+      var zero=x0;
+      var px=zero+Math.max(-maxLen,Math.min(maxLen,it.val*(maxLen/6)));
+      ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(zero,y+10); ctx.lineTo(zero+maxLen*0.6,y+10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(zero,y+10); ctx.lineTo(zero-maxLen*0.35,y+10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(zero,y+2); ctx.lineTo(zero,y+18); ctx.stroke();
+      ctx.strokeStyle=it.col; ctx.lineWidth=7; 
+      ctx.beginPath(); ctx.moveTo(zero,y+10); ctx.lineTo(px,y+10); ctx.stroke();
+      ctx.font='bold 13px Consolas, Segoe UI'; ctx.fillStyle=Math.abs(it.val)<1e-9?'#2e7d32':it.col;
+      ctx.fillText(fmt(it.val,1),zero+maxLen*0.62,y+15);
+    });
+    var allZero=Math.abs(r1a)<1e-9&&Math.abs(r1b)<1e-9&&Math.abs(r2a)<1e-9&&Math.abs(r2b)<1e-9;
+    ctx.font='bold 15px Segoe UI'; ctx.fillStyle=allZero?'#2e7d32':'#e65100';
+    ctx.fillText(allZero?'✓ 四条残差全为零 —— f(z) 在复平面内处处解析':'✗ 仍有残差不为零 —— 不能保证处处解析',16,h-22);
+    setRO('paReadout',
+      '当前 $a='+fmt(A,1)+'$ , $b='+fmt(B,1)+'$ , $c='+fmt(Cc,1)+'$ , $d='+fmt(D,1)+'$<br>'+
+      '$u_x-v_y=('+fmt(r1a,1)+')x+('+fmt(r1b,1)+')y$ &nbsp;&nbsp; $u_y+v_x=('+fmt(r2a,1)+')x+('+fmt(r2b,1)+')y$<br>'+
+      (allZero
+        ? '<b>'+hl('处处解析!')+'</b> 此时 $a=2$ , $b=-1$ , $c=-1$ , $d=2$ —— 正是例 2.2 的答案. 事实上 $f(z)=(1+\\mathrm{i})z^2$.'
+        : '要让残差对<b>任意</b> $x,y$ 都为零, 必须四个系数同时为零: $2-d=0$, $a-2=0$, $a+2c=0$, $2b+d=0$.'));
+  }
+  [['pa','A'],['pb','B'],['pc','Cc'],['pd','D']].forEach(function(p){
+    bindSlider(p[0],function(v){ if(p[1]==='A')A=v; if(p[1]==='B')B=v; if(p[1]==='Cc')Cc=v; if(p[1]==='D')D=v;
+      badge(p[0]+'V',fmt(v,1)); draw(); });
+    badge(p[0]+'V',fmt(0,1));
+  });
+  var bs=document.getElementById('btnPaSol');
+  if(bs) bs.addEventListener('click',function(){
+    A=2;B=-1;Cc=-1;D=2;
+    [['pa',2],['pb',-1],['pc',-1],['pd',2]].forEach(function(p){ setSlider(p[0],p[1]); badge(p[0]+'V',fmt(p[1],1)); });
+    draw();
+  });
+  var bz=document.getElementById('btnPaZero');
+  if(bz) bz.addEventListener('click',function(){
+    A=B=Cc=D=0;
+    ['pa','pb','pc','pd'].forEach(function(k){ setSlider(k,0); badge(k+'V',fmt(0,1)); });
+    draw();
+  });
+  return {draw:draw};
+});
+
+// ================= 模块 4: 判别流程图 =================
+module('cvFlow',function(cv){
+  var stage=0;
+  var steps=[
+    {t:'第 1 步: 拆出实部与虚部', b:'把 $f(z)$ 写成 $f(z)=u(x,y)+\\mathrm{i}v(x,y)$ 的形式 (必要时先令 $z=x+\\mathrm{i}y$ 展开).', c:'#1976d2'},
+    {t:'第 2 步: 求四个一阶偏导', b:'计算 $u_x,\ u_y,\ v_x,\ v_y$, 并检查它们是否连续 (初等函数的偏导通常连续).', c:'#1976d2'},
+    {t:'第 3 步: 检验 $u_x=v_y$ ?', b:'若恒不成立 → 无处可导; 若只在个别点成立 → 仅这些点可能可导.', c:'#e65100'},
+    {t:'第 4 步: 检验 $u_y=-v_x$ ?', b:'两个方程同时成立的位置, 才是可能可导的位置.', c:'#e65100'},
+    {t:'第 5 步: 判断是否"处处"成立', b:'若 C—R 方程在区域 $D$ 内处处成立 → $f$ 在 $D$ 内解析; 若只在孤立点成立 → 不解析, 那些点是奇点.', c:'#2e7d32'},
+    {t:'结论: 计算导数', b:'在可导处, $f\'(z)=u_x+\\mathrm{i}v_x$ (也可用 $v_y-\\mathrm{i}u_y$ 等等价形式).', c:'#2e7d32'}
+  ];
+  function build(){
+    if(cv.dataset.built) return;
+    cv.innerHTML='';
+    steps.forEach(function(st){
+      var d=document.createElement('div');
+      d.className='fs-card';
+      d.style.setProperty('--fc',st.c);
+      var t=document.createElement('div');
+      t.className='fs-t'; t.textContent=st.t;
+      var b=document.createElement('div');
+      b.className='fs-b'; b.textContent=st.b;
+      d.appendChild(t); d.appendChild(b);
+      cv.appendChild(d);
+    });
+    cv.dataset.built='1';
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    var cards=cv.querySelectorAll('.fs-card');
+    for(var i=0;i<cards.length;i++){ cards[i].style.display=(i<stage?'':'none'); }
+  }
+  var ab=document.getElementById('btnFlowAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%26===0 && stage<steps.length){ stage++; draw(); }
+      return stage<steps.length; });
+  });
+  var ba=document.getElementById('btnFlowAll');
+  if(ba) ba.addEventListener('click',function(){ stage=steps.length; draw(); });
+  stage=steps.length;
+  setRO('flowReadout', hl2('标准流程')+' &nbsp;|&nbsp; 拆 $u,v$ → 求四偏导 → 验 $u_x=v_y$ → 验 $u_y=-v_x$ → 是否处处成立 → 结论; 一句话: <b>C—R 方程是判别解析性的唯一核心工具</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 5: 知识图谱树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'柯西—黎曼方程', c:'#1976d2', leaves:['可导 ⟺ $u,v$ 可微 + C—R','$u_x=v_y$ (实对实)','$u_y=-v_x$ (交叉加负号)','沿 $x$ 轴: 差商 $\\to u_x+\\mathrm{i}v_x$','沿 $y$ 轴: 差商 $\\to v_y-\\mathrm{i}u_y$']},
+    {t:'必要性证明', c:'#e65100', leaves:['$\\Delta f=f\'(z)\\Delta z+\\rho\\Delta z$','记 $\\rho=\\rho_1+\\mathrm{i}\\rho_2$','展开比较实部与虚部','$\\rho_1,\\rho_2 \\to 0$ ⇒ $u,v$ 可微','$a=u_x=v_y$','$-b=u_y=-v_x$']},
+    {t:'充分性与判据', c:'#c62828', leaves:['$u,v$ 可微 + C—R ⇒ 可导','关键: $\\left|\\frac{\\Delta x}{\\Delta z}\\right| \\le 1$','$f\'=u_x+\\mathrm{i}v_x$ (四种写法)','推论: 四偏导连续 + C—R ⇒ 可导','定理 2.2: 区域内解析的充要条件']},
+    {t:'典型应用', c:'#2e7d32', leaves:['$\\bar{z}$ : 处处不解析','$\\mathrm{e}^x(\\cos y+\\mathrm{i}\\sin y)$: 处处解析','$z\\cdot\\operatorname{Re} z$ : 仅 $z=0$ 可导, 不解析','$v=u^2$ ⟹ $f=c+\\mathrm{i}c^2$','$f\'\\equiv 0$ ⟹ $f$ 为常数']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第二章第二节 · 解析函数的充要条件';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw();
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; C—R 方程 → 必要性 → 充分性与判据 → 典型应用; 一句话: <b>可微 + C—R 方程 ⟺ 可导, 处处成立 ⟺ 解析</b>.');
+  return {draw:draw};
+});
+
+// ================= 模块 6: 保角映射（黎曼的几何眼光） =================
+module('cvConformal',function(cv){
+  var cur='sq', scale=0.4;
+  var MAPS={
+    sq:{lab:'w = z²', zr:[-1.35,1.35,-1.35,1.35], wr:[-2.1,2.1,-2.1,2.1],
+        f:function(z){ return cmul(z,z); }},
+    exp:{lab:'w = e^z', zr:[-1.2,1.2,-3.14,3.14], wr:[-3.6,3.6,-3.6,3.6],
+        f:function(z){ return cexp(Math.exp(z.re),z.im); }},
+    inv:{lab:'w = 1/z', zr:[0.35,1.8,-0.8,0.8], wr:[-3.4,3.4,-2.6,2.6],
+        f:function(z){ return cdiv(C(1,0),z); }}
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var o=MAPS[cur];
+    var halfW=(w-30)/2;
+    var H=h-70;
+    // 左: z 平面
+    ctx.save(); ctx.translate(12,40);
+    var m1=mapperEq(halfW,H,o.zr[0],o.zr[1],o.zr[2],o.zr[3]);
+    grid(ctx,halfW,H,m1,scale); axes(ctx,halfW,H,m1,'x','y');
+    // 网格线
+    var i0=Math.ceil(o.zr[0]/scale)*scale, i1=Math.floor(o.zr[1]/scale)*scale;
+    ctx.strokeStyle='rgba(21,101,192,.55)'; ctx.lineWidth=1.4;
+    for(var x=i0;x<=i1+1e-9;x+=scale){
+      ctx.beginPath();
+      ctx.moveTo(m1.px(x),m1.py(o.zr[2])); ctx.lineTo(m1.px(x),m1.py(o.zr[3])); ctx.stroke();
+    }
+    var j0=Math.ceil(o.zr[2]/scale)*scale, j1=Math.floor(o.zr[3]/scale)*scale;
+    for(var y=j0;y<=j1+1e-9;y+=scale){
+      ctx.beginPath();
+      ctx.moveTo(m1.px(o.zr[0]),m1.py(y)); ctx.lineTo(m1.px(o.zr[1]),m1.py(y)); ctx.stroke();
+    }
+    ctx.restore();
+    tlabel(ctx,12,26,'① z 平面: 正方形网格','#1976d2','bold 13px Segoe UI');
+    // 右: w 平面
+    var sx=halfW+30;
+    ctx.save(); ctx.translate(sx,40);
+    var m2=mapperEq(halfW,H,o.wr[0],o.wr[1],o.wr[2],o.wr[3]);
+    grid(ctx,halfW,H,m2,0.5); axes(ctx,halfW,H,m2,'Re w','Im w');
+    ctx.strokeStyle='rgba(198,40,40,.55)'; ctx.lineWidth=1.3;
+    function clipLine(pts){
+      ctx.beginPath();
+      var started=false;
+      pts.forEach(function(p){
+        var px=m2.px(p.re),py=m2.py(p.im);
+        if(px<-50||px>halfW+50||py<-50||py>H+50){ started=false; return; }
+        if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+      });
+      ctx.stroke();
+    }
+    for(var x=i0;x<=i1+1e-9;x+=scale){
+      var pts=[];
+      for(var y=o.zr[2];y<=o.zr[3]+1e-9;y+=(o.zr[3]-o.zr[2])/160) pts.push(o.f(C(x,y)));
+      clipLine(pts);
+    }
+    for(var y=j0;y<=j1+1e-9;y+=scale){
+      var pts2=[];
+      for(var x2=o.zr[0];x2<=o.zr[1]+1e-9;x2+=(o.zr[1]-o.zr[0])/160) pts2.push(o.f(C(x2,y)));
+      clipLine(pts2);
+    }
+    ctx.restore();
+    tlabel(ctx,sx,26,'② w 平面: 像网格仍处处正交 (保角)','#c62828','bold 13px Segoe UI');
+    setRO('cfReadout',
+      '映射 '+hl2(o.lab)+' 是解析函数, 因而在每个导数非零的点处都是<b>保角映射</b>:<br>'+
+      '任意两条曲线的<b>夹角</b>经映射后保持不变 (大小与方向都保持).<br>'+
+      '白色左图中互相垂直的网格线, 映射到右图后虽然弯曲、疏密变化, 但<b>仍然处处正交</b>.<br>'+
+      '这就是黎曼在博士论文中把解析函数理解为"保角映射"的直观依据, 也是 C—R 方程的几何面貌.');
+  }
+  [['cfB1','sq'],['cfB2','exp'],['cfB3','inv']].forEach(function(p){
+    var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
+  });
+  bindSlider('cfScale',function(v){ scale=v; badge('cfScaleV',fmt(v)); draw(); });
+  badge('cfScaleV',fmt(scale));
+  return {draw:draw};
+});
+
+// ================= 小测验（静态结构, 统一判分） =================
+(function(){
+  var qs=Array.prototype.slice.call(document.querySelectorAll('.quiz-q'));
+  qs=qs.filter(function(q){ return q.querySelector('.quiz-opt'); });
+  if(!qs.length) return;
+  var total=qs.length, done=0, right=0;
+  qs.forEach(function(div){
+    var opts=Array.prototype.slice.call(div.querySelectorAll('.quiz-opt'));
+    var okIdx=-1;
+    opts.forEach(function(o,i){ if(o.hasAttribute('data-ok')) okIdx=i; });
+    var explained=false;
+    opts.forEach(function(lab,oi){
+      lab.addEventListener('click',function(){
+        if(explained) return;
+        explained=true; done++;
+        if(oi===okIdx){ lab.classList.add('correct'); right++; }
+        else { lab.classList.add('wrong'); if(opts[okIdx]) opts[okIdx].classList.add('correct'); }
+        var ex=div.querySelector('.quiz-explain');
+        if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
+        setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
+          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+      });
+    });
+  });
+  setRO('quizScore','<b>共 '+total+' 题, 点击选项即时判分</b>');
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'柯西—黎曼方程只有两行, 却完整刻画了"复变函数可导"这一极强的要求. 这种"极简形式承载极深内容"的现象, 在科学中常见吗?',
+     hints:['牛顿第二定律 F = ma 只有三个字母, 却统摄了从苹果落地到行星运行的全部经典力学.',
+            'E = mc² 把质量与能量两个看似无关的概念用最简洁的形式连接起来.',
+            '极简形式的背后, 往往是极其繁复的思考过程 —— 黎曼为得到那两行方程, 花掉的是整个青春.',
+            '可迁移的态度: 追求"把复杂问题想简单"的能力, 而不是"把简单问题讲复杂"的技巧.']},
+    {q:'定理 2.1 的证明分"必要性"与"充分性"两步. 为什么数学证明总要两个方向都走一遍?',
+     hints:['必要性与充分性回答的是两个不同问题: "可导能推出什么"与"什么能推出可导".',
+            '只证一个方向, 结论就不完整 —— 例如只知道 C—R 是必要条件时, 不能用它来判定可导.',
+            '这种"双向验证"的思维在工程与生活中同样重要: 光是"条件 A 成立时结果 B 出现"还不够, 还要验证"结果 B 出现时条件 A 是否必然".',
+            '可迁移的态度: 面对任何"充分/必要"的争论, 先明确讨论的是哪一个方向.']},
+    {q:'黎曼一生贫困、多病、羞怯, 论文数量不多, 却几乎每篇都开辟一个新方向. 这对我们"如何做研究"有什么启示?',
+     hints:['深度比广度更能产生原创性成果 —— 与其浅尝辄止地涉猎十个领域, 不如在一处挖到见水.',
+            '黎曼的成功来自极强的几何直觉 + 把问题想到底的功夫, 而非靠数量堆积.',
+            '今天的学术评价体系常常鼓励"多产出", 但真正留得下来的, 往往是那些"慢工出细活"的工作.',
+            '可迁移的态度: 在需要长期积累的领域, 保持"少而深"的定力.']},
+    {q:'达朗贝尔、欧拉早就得到了那对方程, 却没有把它与"复变函数可导"联系起来; 柯西、黎曼做到了. 这说明什么?',
+     hints:['同一事实放在不同框架里, 价值完全不同 —— 关键在于是否找到了正确的"视角".',
+            '柯西的价值在于从"差商极限"出发建立严格理论; 黎曼的价值在于从"保角映射"给出几何理解.',
+            '科学发现常常需要"迟到一步"的人来点破 —— 不必因为"不是第一人"而否定后来者的贡献.',
+            '可迁移的态度: 既要重视具体问题的解决, 也要有意识地去构建统一的框架.']},
+    {q:'结合华罗庚、陈省身的事迹, 谈谈基础数学研究对国家的意义.',
+     hints:['华罗庚的多复变函数论、陈省身的整体微分几何, 都是国际公认的原创贡献, 让中国数学在世界舞台上有了自己的位置.',
+            '基础数学看似"无用", 却是所有工程技术的根基 —— 从密码学到人工智能, 底层都依赖数论、分析与几何.',
+            '重大技术突破往往需要几十年的基础积累, 不可能靠短期突击完成.',
+            '可迁移的态度: 把个人学术追求与国家长远需求结合起来, 甘坐冷板凳.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    inner.innerHTML='<div class="res-label">参考思路 (非唯一答案)</div><ul>'+
+      item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('')+'</ul>';
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+
+})();
+
+</script>
+</body>
+</html>

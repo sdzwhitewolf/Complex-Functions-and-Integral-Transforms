@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四章第一节 复级数</title>
+<link rel="icon" href="data:,">
+<script>
+/* MathJax 配置: 启用 $...$ 行内公式 */
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+/* MathJax 加载: 优先本地副本, 失败时依次回退到各 CDN */
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50;
+    line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff;
+    padding: 52px 48px 44px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.header::after {
+    content: '';
+    position: absolute; right: -60px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content: '';
+    position: absolute; left: 8%; top: -90px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+.header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
+.sec-title, h2 {
+    color: #1a237e; font-size: 1.3em;
+    border-bottom: 3px solid #3949ab;
+    padding-bottom: 8px; margin: 28px 0 15px; font-weight: bold;
+}
+.sec-sub {
+    color: #283593; font-size: 1.12em; font-weight: 700;
+    margin: 22px 0 10px; padding-left: 12px;
+    border-left: 5px solid #5c6bc0;
+}
+.problem-box, .box-example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 20px 24px; border-radius: 12px;
+    border-left: 5px solid #1976d2; margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background: #fff; padding: 16px 18px; border-radius: 10px;
+    margin: 12px 0; text-align: left; font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+.box-key {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #1976d2;
+}
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 12px; padding: 18px 22px; margin: 15px 0;
+    border-left: 5px solid #388e3c;
+}
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning {
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 10px; padding: 14px 20px; margin: 12px 0;
+    border-left: 5px solid #e53935;
+}
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-radius: 12px; padding: 16px 22px; margin: 15px 0;
+    border-left: 5px solid #ff8f00;
+}
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box {
+    background: #e8eaf6; border-radius: 8px; padding: 10px 16px;
+    margin: 10px 0; font-size: 0.9em; color: #1a237e;
+    border-left: 4px solid #3949ab; line-height: 1.7;
+}
+.info-box strong { color: #0d47a1; }
+table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container {
+    background: #fff; padding: 22px; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
+}
+.chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    padding: 18px 20px; border-radius: 12px; margin: 18px 0;
+    border-left: 5px solid #7b1fa2;
+}
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom: 10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding: 7px 15px; border: 1px solid #1976d2;
+    background: #fff; color: #1976d2;
+    cursor: pointer; border-radius: 6px; font-size: 0.9em; margin-right: 8px;
+    font-family: inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width: 200px; vertical-align: middle; }
+.val-badge {
+    display:inline-block; background:#7b1fa2; color:#fff;
+    padding:2px 10px; border-radius:4px; font-weight:bold;
+    min-width:52px; text-align:center; font-size:.88em;
+}
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin: 20px 0; }
+.tab-radio { display: none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding: 12px 24px; border:none; background:#e3f2fd;
+    color:#1976d2; border-radius:8px; cursor:pointer; font-size:0.95em;
+    font-weight: 600; font-family: inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6 { display:block; }
+.tab-content {
+    display:none; padding:22px; background:rgba(255,255,255,.55);
+    border:1px solid #e0e0e0; border-radius:10px;
+}
+.answer-toggle { display:none; }
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px;
+    background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d;
+    border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q {
+    background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1;
+}
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt {
+    display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5;
+    border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em;
+}
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain {
+    display:none; margin-top:10px; padding:10px 16px; border-radius:8px;
+    background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em;
+}
+.footer { text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px; }
+.legend-line { display:flex; flex-wrap:wrap; gap:14px; font-size:.85em; color:#455a64; margin:8px 0 14px; }
+.legend-line span { display:inline-flex; align-items:center; gap:6px; }
+.legend-line i { width:24px; height:4px; border-radius:2px; display:inline-block; }
+.tag-pill {
+    display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em;
+    background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle;
+}
+/* ---------- 思政栏目 ---------- */
+.hero-card {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+    color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0;
+    box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden;
+}
+.hero-card::after {
+    content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px;
+    border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%);
+}
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote {
+    background:rgba(255,255,255,.14); border-left:4px solid #fde68a;
+    padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9;
+}
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before {
+    content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px;
+    background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px;
+}
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before {
+    content:''; position:absolute; left:7px; top:6px; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:4px solid #dc2626;
+    box-shadow:0 0 0 3px rgba(220,38,38,.14);
+}
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card {
+    display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed);
+    border:1px solid #fed7aa; border-left:5px solid #f59e0b;
+    border-radius:12px; padding:20px 24px; margin:16px 0;
+    box-shadow:0 3px 14px rgba(180,83,9,.10);
+}
+.person-card .p-av {
+    flex:0 0 66px; height:66px; border-radius:50%;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5em; font-weight:800; letter-spacing:1px;
+}
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-block {
+    background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0;
+    border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08);
+}
+.bio-block h5 {
+    margin:0 0 10px; color:#7f1d1d; font-size:1.02em;
+    display:flex; align-items:center; gap:8px;
+}
+.bio-block h5 .bio-ico {
+    display:inline-flex; width:24px; height:24px; border-radius:6px;
+    background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff;
+    align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px;
+}
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote {
+    background:linear-gradient(135deg,#fffbeb,#fef3c7);
+    border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0;
+    font-size:.93em; color:#78350f;
+}
+.anecdote .an-tag { display:inline-block; font-weight:800; color:#92400e; margin-right:6px; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card {
+    background:#fff; border-radius:12px; padding:18px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c;
+    transition:transform .18s ease, box-shadow .18s ease;
+}
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag {
+    display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c;
+    background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px;
+}
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math {
+    background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
+    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+}
+.mnemonic {
+    background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
+    border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center;
+}
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+@media (max-width: 760px) {
+    .person-card { flex-direction:column; gap:12px; }
+    .hero-card { padding:20px; }
+}
+@media (max-width: 900px) {
+    body { font-size:17px; padding:10px; }
+    .header { padding:30px 16px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; }
+}
+/* ---------- 思政补充组件 (与第一章一致) ---------- */
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title { font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em; }
+.clash-card .cc-side { background:rgba(255,255,255,.72); border-radius:8px; padding:10px 16px; margin:8px 0; font-size:.92em; }
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label { color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em; letter-spacing:1px; }
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item { background:#fff; border-radius:10px; padding:14px 18px; border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em; }
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.sec-sub { font-weight:800; color:#7f1d1d; font-size:1.06em; margin:24px 0 10px; padding-left:12px; border-left:5px solid #dc2626; letter-spacing:1px; }
+/* ---------- 本节新增组件 ---------- */
+.def-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:14px; margin:16px 0; }
+.def-card {
+    background:#fff; border-radius:12px; padding:16px 20px;
+    box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #1976d2; font-size:.93em;
+}
+.def-card .dc-t { font-weight:800; color:#0d47a1; margin-bottom:8px; font-size:1.0em; }
+.def-card p { margin:6px 0; }
+.cond-list { counter-reset:cd; list-style:none; padding-left:0; margin:10px 0; }
+.cond-list > li {
+    counter-increment:cd; position:relative; padding:8px 6px 8px 42px; margin:8px 0;
+    background:rgba(255,255,255,.72); border-radius:8px; font-size:.94em;
+}
+.cond-list > li::before {
+    content:counter(cd); position:absolute; left:10px; top:8px;
+    width:24px; height:24px; border-radius:50%;
+    background:linear-gradient(135deg,#1976d2,#42a5f5); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.8em; font-weight:800;
+}
+.proof-steps { margin:12px 0; padding-left:0; list-style:none; }
+.proof-steps li {
+    padding:10px 16px 10px 18px; margin:8px 0; border-radius:8px;
+    background:rgba(255,255,255,.78); border-left:3px solid #5c6bc0; font-size:.92em;
+}
+.proof-steps li b.step-tag { color:#283593; margin-right:6px; }
+.vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0; }
+.vs-card { border-radius:12px; padding:16px 20px; font-size:.92em; box-shadow:0 3px 12px rgba(0,0,0,.07); }
+.vs-card.single { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-left:5px solid #2e7d32; }
+.vs-card.multi  { background:linear-gradient(135deg,#fce4ec,#f8bbd0); border-left:5px solid #c2185b; }
+.vs-card .vs-t { font-weight:800; margin-bottom:8px; font-size:1.0em; }
+.vs-card.single .vs-t { color:#1b5e20; }
+.vs-card.multi .vs-t { color:#880e4f; }
+@media (max-width: 720px) { .vs-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>第四章 第1节 复级数</h1>
+    <p>复数项级数 &middot; 幂级数与阿贝尔定理 &middot; 收敛圆与收敛半径</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解复数列极限的定义, 掌握"复化实"的判别方法 (定理1.1);
+2. 理解复数项级数收敛的概念, 掌握收敛的充要条件与必要条件;
+3. 理解绝对收敛与条件收敛, 会用正项级数判别法处理 $\sum |c_n|$;
+4. 理解复变函数项级数、幂级数与阿贝尔定理, 建立收敛圆的几何图像;
+5. 熟练掌握收敛半径的比值法与根值法, 会讨论收敛圆周上的敛散性;
+6. 掌握幂级数的四则运算、代换运算与和函数在收敛圆内的解析性质.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-41" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-41" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-41" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-41" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-41" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-41" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、复数项级数</label>
+    <label class="tab-btn" for="tab2" id="label2">二、幂级数与阿贝尔定理</label>
+    <label class="tab-btn" for="tab3" id="label3">三、收敛半径与例题</label>
+    <label class="tab-btn" for="tab4" id="label4">四、幂级数的运算与和函数</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 复数项级数 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 复数序列的极限</div>
+
+<div class="box-formula">
+设 $\{z_n\}$ 为一复序列, 其中 $z_n = x_n + \mathrm{i}y_n$ ($x_n, y_n$ 为实数列),<br>
+又设 $z_0 = x_0 + \mathrm{i}y_0$ 为一确定的复数. 如果当 $n \to \infty$ 时, 有 $\ |z_n - z_0| \to 0\ $ 成立,<br>
+则称复序列 $\{z_n\}$ <b>收敛</b>于复数 $z_0$, 或称 $z_n$ 以 $z_0$ 为极限, 记作 $\lim\limits_{n \to \infty} z_n = z_0$.
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.1 (复数列极限的充要条件 —— "复化实")</div>
+<p>设 $z_n = x_n + \mathrm{i}y_n$, $z_0 = x_0 + \mathrm{i}y_0$, 则 $\lim\limits_{n \to \infty} z_n = z_0$ 的充要条件是</p>
+<div class="formula-box">$\lim\limits_{n \to \infty} x_n = x_0, \qquad \lim\limits_{n \to \infty} y_n = y_0$</div>
+<p><b>证明</b> (必要性) 由于当 $n \to \infty$ 时 $|z_n - z_0| \to 0$, 即</p>
+<div class="formula-box">$|(x_n - x_0) + \mathrm{i}(y_n - y_0)| = \sqrt{(x_n - x_0)^2 + (y_n - y_0)^2} \to 0$</div>
+<p>从而 $|x_n - x_0| \le |z_n - z_0| \to 0$, $|y_n - y_0| \le |z_n - z_0| \to 0$, 即有 $\lim\limits_{n\to\infty} x_n = x_0$, $\lim\limits_{n\to\infty} y_n = y_0$.</p>
+<p><b>(充分性)</b> 由于当 $n \to \infty$ 时 $|x_n - x_0| \to 0$, $|y_n - y_0| \to 0$, 从而</p>
+<div class="formula-box">$|z_n - z_0| \le |x_n - x_0| + |y_n - y_0| \to 0$, 即 $\lim\limits_{n\to\infty} z_n = z_0$. $\blacksquare$</div>
+</div>
+
+<div class="box-think">
+<span class="think-label">注:</span> 该定理说明可将复数列的敛散性转化为判别<b>两个实数列</b>的敛散性 —— 又一次体现"复变问题实变化"的基本思想.
+</div>
+
+<div class="box-think">
+<span class="think-label">人物 · 柯西 (A. Cauchy, 1789—1857):</span>
+"收敛"这个概念今天看来理所当然, 但在柯西之前, 数学家是<b>没有</b>它的. 十八世纪的欧拉可以毫无顾虑地写下 $1-1+1-1+\cdots = \frac12$ —— 在他眼里级数是一个"可以操作的形式", 不是一个"需要求极限的对象".<br>
+柯西在 1820 年代第一次给出<b>收敛的严格定义</b> (部分和数列的极限, 正是本节 1.2 开头的那个定义), 并建立了比值法、根值法. 本节定理 1.1—1.4 的思想全部源于他.<br>
+不过他也犯过错: 他一度以为"通项趋于零"就足以保证收敛, 直到 1826 年前后才发现反例 (如 $\sum 1/n$). 这提醒我们: <b>即便最伟大的头脑, 也要靠反例来校正直觉</b>.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.1 &nbsp;下列数列是否收敛? 如果收敛, 求出其极限.</div>
+<p>(1) $z_n = \frac{(-1)^n \, n}{n+1} + \frac{n}{n+1}\,\mathrm{i}$;&nbsp;&nbsp;&nbsp; (2) $z_n = \frac{(-1)^n}{n} + \frac{1}{n}\,\mathrm{i}$.</p>
+<input type="checkbox" id="ansC411" class="answer-toggle">
+<label class="answer-btn" for="ansC411">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>(1) 实部数列 $x_n = \frac{(-1)^n n}{n+1}$ 交替取 $\pm\frac{n}{n+1}$, 不收敛, 故 $\{z_n\}$ <b>发散</b>.</p>
+<p>(2) 由于 $x_n = \frac{(-1)^n}{n} \to 0$, $y_n = \frac{1}{n} \to 0$ 都收敛, 由定理 1.1 知 $\{z_n\}$ <b>收敛</b>, 且 $\lim\limits_{n\to\infty} z_n = 0$.</p>
+</div>
+</div>
+
+<div class="sec-title">1.2 复数项级数</div>
+
+<div class="box-formula">
+设 $\{z_n\}$ 为一复序列, 表达式
+$$\sum_{n=1}^{\infty} z_n = z_1 + z_2 + \cdots + z_n + \cdots$$
+称为<b>复数项无穷级数</b>. 其最前面 $n$ 项的和
+$$S_n = z_1 + z_2 + \cdots + z_n = \sum_{k=1}^{n} z_k$$
+称为级数的<b>部分和</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">收敛与发散</div>
+<p>如果级数的部分和数列 $\{S_n\}$ 收敛, 且 $\lim\limits_{n \to \infty} S_n = S$, 则称级数 $\sum\limits_{n=1}^{\infty} z_n$ <b>收敛</b>, $S$ 为级数的和; 否则称级数<b>发散</b>.</p>
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.2 (收敛的充要条件)</div>
+<p>设 $z_n = x_n + \mathrm{i}y_n$, 则级数 $\sum\limits_{n=1}^{\infty} z_n$ 收敛的充要条件是: 级数 $\sum\limits_{n=1}^{\infty} x_n$ 和 $\sum\limits_{n=1}^{\infty} y_n$ 都收敛.</p>
+<p><b>注:</b> 复数项级数的审敛问题转化为实数项级数的审敛问题.</p>
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.3 (收敛的必要条件)</div>
+<p>设 $z_n = x_n + \mathrm{i}y_n$, 则级数 $\sum\limits_{n=1}^{\infty} z_n$ 收敛的必要条件是 $\lim\limits_{n \to \infty} z_n = 0$.</p>
+<p><b>注:</b> 若 $\lim\limits_{n \to \infty} z_n \ne 0$, 则级数 $\sum\limits_{n=1}^{\infty} z_n$ 发散.</p>
+</div>
+
+<div class="sec-sub">绝对收敛与条件收敛</div>
+
+<div class="box-key">
+<div class="title">定理 1.4 (绝对收敛必收敛)</div>
+<p>如果 $\sum\limits_{n=1}^{\infty} |z_n|$ 收敛, 则 $\sum\limits_{n=1}^{\infty} z_n$ 也收敛.</p>
+<p><b>证明</b> 由于 $|z_n| = \sqrt{x_n^2 + y_n^2} \le |x_n| + |y_n|$, 而由 $\sum |z_n|$ 收敛及正项级数的比较判别法知 $\sum |x_n|$ 与 $\sum |y_n|$ 都收敛, 从而 $\sum x_n$ 与 $\sum y_n$ 都收敛, 由定理 1.2 知 $\sum z_n$ 收敛. $\blacksquare$</p>
+</div>
+
+<div class="def-grid">
+<div class="def-card"><div class="dc-t">绝对收敛</div><p>如果 $\sum\limits_{n=1}^{\infty} |z_n|$ 收敛, 则称级数 $\sum\limits_{n=1}^{\infty} z_n$ 为<b>绝对收敛</b>.</p></div>
+<div class="def-card"><div class="dc-t">条件收敛</div><p>非绝对收敛的收敛级数称为<b>条件收敛</b>.</p></div>
+<div class="def-card"><div class="dc-t">判别要点</div><p>$\sum |z_n|$ 是正项级数, 故可用正项级数判别法(比较、比值、根值)来判别其敛散性.</p></div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.2 &nbsp;判别下列级数的收敛性.</div>
+<p>(1) $\sum\limits_{n=1}^{\infty} \frac{(1+\mathrm{i})^n}{n^2}$;&nbsp;&nbsp;&nbsp;
+   (2) $\sum\limits_{n=1}^{\infty} \frac{(8\mathrm{i})^n}{n!}$;&nbsp;&nbsp;&nbsp;
+   (3) $\sum\limits_{n=1}^{\infty} \left[ \frac{(-1)^n}{n} + \frac{\mathrm{i}}{n^2} \right]$.</p>
+<input type="checkbox" id="ansC412" class="answer-toggle">
+<label class="answer-btn" for="ansC412">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>(1) 记 $a_n = \frac{(1+\mathrm{i})^n}{n^2}$, 由于 $\sum |a_n| = \sum \frac{(\sqrt{2})^n}{n^2}$ 发散 (比值极限 $\sqrt{2} > 1$, 通项不趋于零), 故原级数<b>发散</b>.</p>
+<p>(2) 由正项级数比值判别法, $\frac{|a_{n+1}|}{|a_n|} = \frac{8}{n+1} \to 0 < 1$, 知 $\sum |a_n|$ 收敛, 故原级数<b>绝对收敛</b>.</p>
+<p>(3) 因 $\sum \frac{1}{n^2}$ 收敛, $\sum \frac{(-1)^n}{n}$ 也收敛 (莱布尼茨型), 故原级数收敛; 但 $\sum \left|\frac{(-1)^n}{n}\right| = \sum \frac{1}{n}$ 条件发散(调和级数发散), 故原级数<b>条件收敛</b>.</p>
+</div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 幂级数与阿贝尔定理 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 复变函数项级数</div>
+
+<div class="box-formula">
+设 $\{f_n(z)\}$ 为区域 $D$ 内的函数, 则称表达式
+$$\sum_{n=1}^{\infty} f_n(z) = f_1(z) + f_2(z) + \cdots + f_n(z) + \cdots$$
+为区域 $D$ 内的<b>复变函数项级数</b>. 其最前面 $n$ 项的和
+$$S_n(z) = f_1(z) + f_2(z) + \cdots + f_n(z)$$
+称为级数的部分和.
+</div>
+
+<div class="box-result">
+<div class="res-label">和函数</div>
+<p>如果对于 $D$ 内的某一点 $z_0$, 极限 $\lim\limits_{n \to \infty} S_n(z_0) = S(z_0)$ 存在, 则称级数在 $z_0$ 收敛, $S(z_0)$ 为它的和.</p>
+<p>如果级数在 $D$ 内处处收敛, 则它的和一定是 $z$ 的一个函数 $S(z)$, 即 $S(z) = \lim\limits_{n \to \infty} S_n(z)$, 称为级数 $\sum\limits_{n=1}^{\infty} f_n(z)$ 的<b>和函数</b>.</p>
+</div>
+
+<div class="sec-title">2.2 幂级数</div>
+
+<div class="box-formula">
+当 $f_n(z) = c_n (z - a)^n$ ($c_n$ 为复常数) 时, 复变函数项级数
+$$\sum_{n=0}^{\infty} c_n (z-a)^n = c_0 + c_1 (z-a) + c_2 (z-a)^2 + \cdots$$
+称为<b>幂级数</b>. 若 $a = 0$, 幂级数为
+$$\sum_{n=0}^{\infty} c_n z^n = c_0 + c_1 z + c_2 z^2 + \cdots$$
+显然 $z = 0$ 是该级数的收敛点.
+</div>
+
+<div class="box-key">
+<div class="title">定理 1.5 (Abel 定理)</div>
+<p>(i) 如果级数 $\sum\limits_{n=0}^{\infty} c_n z^n$ 在非零点 $z_1$ ($|z_1| > h > 0$) 收敛, 则级数在圆域 $|z| < h$ 内绝对收敛;</p>
+<p>(ii) 如果级数在点 $z_2$ 发散, 则级数在满足 $|z| > |z_2|$ 的点 $z$ 发散.</p>
+<p><b>证明</b> 由于级数 $\sum c_n z_1^n$ 收敛, 有 $\lim\limits_{n \to \infty} c_n z_1^n = 0$, 因此存在常数 $M > 0$, 使得 $|c_n z_1^n| \le M$ 对一切 $n$ 成立.</p>
+<p>如果 $|z| < h$, 则有 $\ |c_n z^n| = |c_n z_1^n| \cdot \left| \frac{z}{z_1} \right|^n \le M q^n$, 其中 $q = \left| \frac{z}{z_1} \right| < \frac{h}{|z_1|} < 1$, 即有 $\sum |c_n z^n| \le \sum M q^n$.</p>
+<p>由于 $\sum q^n$ 收敛, 由正项级数比较判别法知 $\sum |c_n z^n|$ 收敛, 从而 $\sum c_n z^n$ 绝对收敛.</p>
+<p>另一部分证明可采用反证法, 结合上面结论证明. $\blacksquare$</p>
+</div>
+
+<div class="box-think">
+<span class="think-label">人物 · 阿贝尔 (N. H. Abel, 1802—1829):</span>
+这条定理之所以叫阿贝尔定理, 是因为 1826 年阿贝尔在研究二项式级数时, <b>第一次明确指出</b>: 幂级数存在一个确定的收敛半径 —— 圆内绝对收敛, 圆外发散. 本节 2.3 讲的"收敛圆", 就是从这条定理<b>推出来</b>的, 而不是额外假设的.<br>
+阿贝尔是最早发现柯西"通项趋于零即收敛"这一错误的人之一. 他 1829 年因贫困与肺病去世, 年仅 <b>26 岁</b> —— 却在死前几年改写了整个分析的基础. 他留下的另一项遗产是:<b>"发散级数是魔鬼的发明"</b> —— 一句提醒后人别滥用形式操作的名言.
+</div>
+
+<div class="sec-title">2.3 收敛圆与收敛半径</div>
+
+<p>由 Abel 定理可知, 必有一个圆域 $|z| < R$, 使幂级数在圆内<b>绝对收敛</b>, 而在 $|z| > R$ 的范围级数发散. 称 $|z| < R$ 为<b>收敛圆</b>, $R$ 为<b>收敛半径</b>.</p>
+
+<div class="box-warning">
+<span class="warn-label">两点注意:</span>
+(1) $R = 0$ 表示仅在原点处收敛; $R = +\infty$ 表示在整个复平面处处收敛.<br>
+(2) 在收敛圆周 $|z| = R$ 上, 级数的敛散性需具体分析判断 —— 可能收敛, 可能发散, 也可能部分收敛部分发散.
+</div>
+
+<div class="chart-container">
+<h3>交互 · 阿贝尔定理与收敛圆 <span class="tag-pill">拖动 $z_1$ 观察收敛范围</span></h3>
+<div class="chart-desc">设幂级数 $\sum c_n z^n$ 已知在某点 $z_1$ 收敛. 拖动蓝点 $z_1$: 凡是 $|z| < |z_1|$ 的圆内区域(绿色)级数绝对收敛; 圆外(红色)发散; 圆周上的点(黄色)需要具体分析 —— 这正是阿贝尔定理的几何内容.</div>
+<canvas id="cvDisc" data-h="420"></canvas>
+<div class="readout" id="discReadout"></div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 收敛半径与例题 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 收敛半径的求法</div>
+
+<div class="vs-grid">
+<div class="vs-card single">
+<div class="vs-t">（1）比值法</div>
+<p>若 $\lim\limits_{n \to \infty} \left| \frac{c_{n+1}}{c_n} \right| = \lambda$, 则收敛半径</p>
+<div class="formula-box">$R = \frac{1}{\lambda}$</div>
+</div>
+<div class="vs-card multi">
+<div class="vs-t">（2）根值法</div>
+<p>若 $\lim\limits_{n \to \infty} \sqrt[n]{|c_n|} = \lambda$, 则收敛半径</p>
+<div class="formula-box">$R = \frac{1}{\lambda}$</div>
+</div>
+</div>
+
+<div class="box-warning">
+<span class="warn-label">端点约定:</span>
+当 $\lambda = 0$ 时, $R = +\infty$ (处处收敛); 当 $\lambda = +\infty$ 时, $R = 0$ (仅在原点收敛).
+</div>
+
+<div class="chart-container">
+<h3>交互 · 收敛半径实测实验室 <span class="tag-pill">数值验证比值法 / 根值法</span></h3>
+<div class="chart-desc">比值法与根值法的公式看起来是"代入即得", 但 $\lambda$ 到底是怎么"长"出来的? 把两个判别法<b>数值地跑一遍</b>: 每算一项就更新一次 $|c_{n+1}/c_n|$ (蓝) 与 $\sqrt[n]{|c_n|}$ (绿), 看这两列数如何逐步逼近同一个 $\lambda$ (紫色虚线), 而 $1/\lambda$ 又如何给出真实的收敛半径 $R$. 选一个级数, 拖动滑块增加项数 $N$.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择级数:</label>
+    <button class="control-btn active" id="btnRad1">$\sum\limits_{n=0}^{\infty}\frac{z^n}{n!}$</button>
+    <button class="control-btn" id="btnRad2">$\sum\limits_{n=0}^{\infty} n!\, z^n$</button>
+    <button class="control-btn" id="btnRad3">$\sum\limits_{n=1}^{\infty}\frac{z^n}{n^3}$</button>
+    <button class="control-btn" id="btnRad4">$\sum\limits_{n=0}^{\infty} 2^n z^n$</button>
+  </div>
+  <div class="row">
+    <label>项数 $N$ = <span class="val-badge" id="badgeRadN">6</span></label>
+    <input type="range" id="rngRadN" min="1" max="40" value="6">
+  </div>
+</div>
+<canvas id="cvRadiusLab" data-h="460"></canvas>
+<div class="readout" id="radLabReadout"></div>
+</div>
+
+<div class="box-think">
+<span class="think-label">实验室说明:</span>
+(1) <b>两法同源</b> —— 比值法与根值法给出的 $\lambda$ 是同一个数 (柯西–阿达马公式), 只是计算路径不同; 当比值极限不存在时, 根值法往往仍然可用, 这是根值法更强的表现.
+(2) <b>逼近不是单调的</b> —— 两个数列通常<b>振荡趋近</b> $\lambda$, 所以"只看前几项就下结论"不可靠.
+(3) <b>数值 $\neq$ 证明</b> —— 实验室演示的是"猜出 $R$", 严格的 $R$ 仍由极限给出. 这正是数学与物理实验的区别.
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.8 (拓展 · 系数为幂塔, 根值法显威) &nbsp;求 $\sum\limits_{n=1}^{\infty} \left(1 + \frac{1}{n}\right)^{n^2} z^n$ 的收敛半径.</div>
+<input type="checkbox" id="ansR73" class="answer-toggle">
+<label class="answer-btn" for="ansR73">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>系数 $c_n = \left(1 + \frac{1}{n}\right)^{n^2}$, 用根值法:
+$$\sqrt[n]{|c_n|} = \left(1 + \dfrac{1}{n}\right)^{n} \longrightarrow \mathrm{e}$$
+故 $\lambda = \mathrm{e}$, 收敛半径 $R = \frac{1}{\mathrm{e}}$.</p>
+<p><b>要点:</b> 这是重要极限 $\lim\limits_{n\to\infty}\left(1+\frac{1}{n}\right)^n = \mathrm{e}$ 的典型用法. 系数是"幂塔"形式时, <b>根值法几乎是唯一选择</b> —— 比值法会算出极其复杂的分式.</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.3 &nbsp;求幂级数 $\sum\limits_{n=0}^{\infty} z^n$ 的收敛范围与和函数.</div>
+<input type="checkbox" id="ansC413" class="answer-toggle">
+<label class="answer-btn" for="ansC413">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>级数的部分和
+$$S_n = 1 + z + z^2 + \cdots + z^{n-1} = \begin{cases} \dfrac{1 - z^n}{1 - z}, & z \ne 1 \\[2mm] n, & z = 1 \end{cases}$$</p>
+<p>当 $|z| < 1$ 时, $\lim\limits_{n \to \infty} S_n = \frac{1}{1 - z}$; 当 $|z| \ge 1$ 时, 部分和数列极限不存在, 故级数的收敛范围是 $|z| < 1$, 和函数为 $S(z) = \frac{1}{1-z}$.</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.4 &nbsp;求下列幂级数的收敛半径, 并讨论收敛圆周上的情形.</div>
+<p>(1) $\sum\limits_{n=1}^{\infty} \frac{z^n}{n^3}$;&nbsp;&nbsp;&nbsp;(2) $\sum\limits_{n=1}^{\infty} \frac{(-1)^n}{n} z^{n}$.</p>
+<input type="checkbox" id="ansC414" class="answer-toggle">
+<label class="answer-btn" for="ansC414">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>(1) 因为 $\left| \frac{c_{n+1}}{c_n} \right| = \left( \frac{n}{n+1} \right)^3 \to 1$, 故原级数收敛半径 $R = 1$.</p>
+<p>在圆周 $|z| = 1$ 上, $\sum \left| \frac{z^n}{n^3} \right| = \sum \frac{1}{n^3}$ 收敛, 故原级数在闭圆 $|z| \le 1$ 内收敛, 在圆外发散, 收敛范围为 $|z| \le 1$.</p>
+<p>(2) 由于 $\left| \frac{c_{n+1}}{c_n} \right| = \frac{n}{n+1} \to 1$, 所以此级数收敛半径 $R = 1$, 级数在圆域 $|z| < 1$ 内收敛, 在圆域外发散.</p>
+<p>当 $z = 1$ 时, 原级数成为 $\sum \frac{(-1)^n}{n}$, 收敛; 当 $z = -1$ 时, 原级数成为 $-\sum \frac{1}{n}$, 发散. 故收敛范围为 $-1 < z \le 1$.</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.6 (拓展 · 缺项级数) &nbsp;求 $\sum\limits_{n=0}^{\infty} \frac{z^{2n}}{4^n}$ 的收敛半径.</div>
+<input type="checkbox" id="ansR71" class="answer-toggle">
+<label class="answer-btn" for="ansR71">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b><b>陷阱:</b> 若直接对"通项"用比值法, 会因奇偶项系数为 $0$ 而算出 $\lambda = 1$ (错误).</p>
+<p>令 $w = z^2$, 则级数为 $\sum \frac{w^n}{4^n}$, 其收敛半径 $|w| < 4$, 即 $|z^2| < 4$, 故 $|z| < 2$ —— 收敛半径 $R = 2$.</p>
+<p><b>要点:</b> 遇缺项 (只有 $z^{2n}$、$z^{3n}$ 等) 先<b>换元</b>, 再回代; 此时也可用根值法, 但要注意下标与幂次的对应关系.</p>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 收敛圆周上的敛散性 <span class="tag-pill">切换级数 · 点击圆周上的点</span></h3>
+<div class="chart-desc">同样 $R = 1$, 圆周上的表现可以完全不同: $\sum z^n/n^3$ 在整个圆周上绝对收敛; $\sum (-1)^n z^n / n$ 在 $z = 1$ 收敛、$z = -1$ 发散; $\sum z^n$ 在整个圆周上都发散. 点击画布切换示例并观察.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择级数:</label>
+    <button class="control-btn active" id="btnConv1">$\sum\limits_{n=1}^{\infty}\frac{z^n}{n^3}$</button>
+    <button class="control-btn" id="btnConv2">$\sum\limits_{n=1}^{\infty}\frac{(-1)^n z^n}{n}$</button>
+    <button class="control-btn" id="btnConv3">$\sum\limits_{n=0}^{\infty} z^n$</button>
+  </div>
+</div>
+<canvas id="cvCircle" data-h="420"></canvas>
+<div class="readout" id="circleReadout"></div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.7 (拓展 · 带参数级数与端点验算) &nbsp;求 $\sum\limits_{n=1}^{\infty} \frac{(z-1)^n}{n \cdot 2^n}$ 的收敛半径, 并判断 $z = 3$ 处是否收敛.</div>
+<input type="checkbox" id="ansR72" class="answer-toggle">
+<label class="answer-btn" for="ansR72">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>这是以 $z_0 = 1$ 为中心的幂级数, 令 $w = z - 1$, 则 $\sum \frac{w^n}{n 2^n}$.</p>
+<p>由比值法: $\left|\frac{c_{n+1}}{c_n}\right| = \frac{n}{n+1} \cdot \frac{1}{2} \to \frac{1}{2}$, 故 $R = 2$, 即收敛圆盘 $|z - 1| < 2$.</p>
+<p>$z = 3$ 时 $|z - 1| = 2 = R$, 落在圆周上, 需单独判断: 此时级数为 $\sum \frac{2^n}{n 2^n} = \sum \frac{1}{n}$, 是调和级数, <b>发散</b>.</p>
+<p><b>要点:</b> 收敛半径只管"圆内必收敛、圆外必发散"; <b>圆周上的每一点都要单独验</b>. 这正是上面那个交互演示的核心结论.</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 1.5 (拓展) &nbsp;把函数 $\frac{1}{(z-a)(z-b)}$ ($a, b$ 是不相等的复常数) 表成形如 $\sum\limits_{n=0}^{\infty} c_n z^n$ 的幂级数, 并指出收敛范围.</div>
+<input type="checkbox" id="ansC415" class="answer-toggle">
+<label class="answer-btn" for="ansC415">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>把函数写成如下的形式:
+$$\frac{1}{(z-a)(z-b)} = \frac{1}{a-b}\left( \frac{1}{z-a} - \frac{1}{z-b} \right)$$</p>
+<p>当 $|z| < |a|$ 时, $\frac{1}{z-a} = -\frac{1}{a} \cdot \frac{1}{1 - z/a} = -\frac{1}{a} \sum\limits_{n=0}^{\infty} \frac{z^n}{a^n}$; 同理当 $|z| < |b|$ 时, $\frac{1}{z-b} = -\frac{1}{b} \sum\limits_{n=0}^{\infty} \frac{z^n}{b^n}$.</p>
+<p>从而当 $|z| < |a|$ 且 $|z| < |b|$, 即 $|z| < \min(|a|, |b|)$ 时, 有
+$$\frac{1}{(z-a)(z-b)} = \sum_{n=0}^{\infty} \frac{1}{a-b}\left( \frac{1}{a^{n+1}} - \frac{1}{b^{n+1}} \right) z^n$$</p>
+</div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 幂级数的运算与和函数 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 幂级数的加、减、乘运算</div>
+
+<div class="box-formula">
+设 $f(z) = \sum\limits_{n=0}^{\infty} a_n z^n$, $g(z) = \sum\limits_{n=0}^{\infty} b_n z^n$, 收敛半径分别为 $r_1, r_2$,
+则当 $|z| < r = \min(r_1, r_2)$ 时, 两级数可像多项式那样逐项相加、相减、相乘:
+$$f(z) \pm g(z) = \sum_{n=0}^{\infty} (a_n \pm b_n) z^n, \qquad
+f(z) \cdot g(z) = \sum_{n=0}^{\infty} \left( a_n b_0 + a_{n-1} b_1 + \cdots + a_0 b_n \right) z^n$$
+</div>
+
+<div class="sec-title">4.2 幂级数的代换(复合)运算</div>
+
+<div class="box-formula">
+设 $f(z) = \sum\limits_{n=0}^{\infty} a_n z^n$ 在 $|z| < R$ 内解析, 又设 $g(z)$ 在 $|z| < r$ 内解析且满足 $|g(z)| < R$,<br>
+则当 $|z| < r$ 时, 复合函数 $f(g(z))$ 解析且满足
+$$f(g(z)) = \sum_{n=0}^{\infty} a_n [g(z)]^n$$
+</div>
+<div class="info-box"><strong>注:</strong> 此代换运算常应用于将函数展开成幂级数 —— "把已知展开式中的 $z$ 换成合适的解析函数".</div>
+
+<div class="sec-title">4.3 复变幂级数在收敛圆内的性质</div>
+
+<div class="box-key">
+<div class="title">定理 1.6</div>
+<p>设幂级数 $\sum\limits_{n=0}^{\infty} c_n (z - a)^n$ 的收敛半径为 $R$, 则</p>
+<ol class="cond-list">
+<li>它的和函数 $f(z) = \sum\limits_{n=0}^{\infty} c_n (z-a)^n$ 是收敛圆 $|z - a| < R$ 内的<b>解析函数</b>;</li>
+<li>在收敛圆 $|z - a| < R$ 内可<b>逐项求导</b>, 即
+$$f'(z) = \sum_{n=1}^{\infty} n c_n (z-a)^{n-1}$$</li>
+<li>在收敛圆内可以<b>逐项积分</b>, 即
+$$\int_{a}^{z} f(\zeta)\, \mathrm{d}\zeta = \sum_{n=0}^{\infty} \frac{c_n}{n+1} (z-a)^{n+1}$$</li>
+</ol>
+</div>
+
+<div class="box-think">
+<span class="think-label">注:</span> 在收敛圆内, 幂级数的和函数解析; 幂级数可逐项求导、逐项积分. 求导与积分后收敛半径不变, 仍是 $R$.
+</div>
+
+<div class="box-think">
+<span class="think-label">人物 · 魏尔斯特拉斯 (K. Weierstrass, 1815—1897):</span>
+定理 1.6 看起来只是一条"技术性"结论, 但它在思想史上的地位极高 —— 因为它把幂级数从"计算工具"提升成了<b>解析函数的定义方式</b>.<br>
+魏尔斯特拉斯系统引入 $\varepsilon$–$\delta$ 语言与<b>一致收敛</b>概念, 证明了: 幂级数的和函数在收敛圆内解析, 且逐项求导、逐项积分后收敛半径不变 (正是本定理的三条结论). 从此"解析"可以被定义为"局部能展成幂级数".<br>
+他还有一项更著名的贡献: 构造出<b>处处连续但处处不可导</b>的函数, 彻底击碎了"连续曲线总能求切线"的直觉. 从此数学界明白: <b>直觉必须让位于证明</b>.
+</div>
+
+<div class="box-result">
+<div class="res-label">思想脉络: 本节四个定理背后的四代人</div>
+<b>欧拉</b> (1730s—1750s) 让级数变成了工具, 却不问它何时成立; <b>柯西</b> (1810s—1820s) 给级数装上了"收敛"的定义与比值/根值判别法; <b>阿贝尔</b> (1826) 为幂级数划出了收敛圆, 并纠正了柯西的错误; <b>魏尔斯特拉斯</b> (1850s—) 用一致收敛把这一切变成了新函数的语言; 最后由 <b>阿达马</b> 给出普适的柯西–阿达马公式 $\frac1R = \limsup\limits_{n\to\infty}\sqrt[n]{|c_n|}$, 把比值法与根值法统一为它的特例.<br>
+本节 1.1—1.4、1.5、1.6 三条主线, 恰好对应这条脉络的四级台阶 —— <b>我们用一个上午学完的, 是人类走了 160 年才走通的路</b>.
+</div>
+
+<div class="box-think">
+<span class="think-label">拓展思考:</span>
+<ul>
+<li><b>为什么必须在圆内逐项求导?</b> 请回想阿贝尔定理的结论: 圆外必发散. 若在 $|z| > R$ 处仍可逐项求导, 会与阿贝尔定理产生什么矛盾?</li>
+<li><b>圆周为什么要一个个验?</b> 因为圆周上的点既"够远"(不能用圆内的绝对收敛), 又"不够远"(不能断言发散) —— 它恰好是收敛与发散的<b>边界</b>, 而数学上的"边界"总需要单独处理.</li>
+<li><b>对工程意味着什么?</b> 信号处理中 Taylor 展开的"有效范围"就是收敛半径; 一个滤波器传递函数在单位圆上有极点, 其级数展开就会在 $|z| = 1$ 上失效 —— 这正是 Z 变换"收敛域"概念的来源.</li>
+</ul>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 部分和逼近和函数 <span class="tag-pill">拖动 $z$ 点 · 调节项数 $N$</span></h3>
+<div class="chart-desc">取 $\sum z^n$, 其和函数为 $S(z) = \frac{1}{1-z}$ ($|z| < 1$). 拖动红点选取 $z$, 再拖动滑块增加部分和的项数 $N$, 观察部分和 $S_N(z)$ 如何一步步逼近 $S(z)$ —— 越靠近圆周, 逼近越慢.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>项数 $N$ = <span class="val-badge" id="badgeN">5</span></label>
+    <input type="range" id="rngN" min="1" max="60" value="5">
+  </div>
+</div>
+<canvas id="cvPartial" data-h="400"></canvas>
+<div class="readout" id="partialReadout"></div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（知识图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>复级数 · 知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>复数项级数</b> → <b>幂级数与阿贝尔定理</b> → <b>收敛半径与收敛圆</b> → <b>幂级数的运算与和函数</b>. 点击"逐步展开"看知识如何逐层生长, 点击"重新生长"从头演示.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">↻ 重新生长</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+复级数, 化实判, 实虚两部同收敛;<br>
+幂级数, 收敛圆, 阿贝尔里定方圆;<br>
+比值根值求半径, 圆周敛散细分辨;<br>
+圆内解析和函数, 逐项求导积分半径不变.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心公式/结论</th><th>几何图像</th></tr>
+<tr><td>复数项级数</td><td>$\sum z_n$ 收敛 $\iff$ $\sum x_n$ 与 $\sum y_n$ 同时收敛</td><td>实部、虚部两条实级数</td></tr>
+<tr><td>收敛必要条件</td><td>$z_n \to 0$, 即通项趋于零 (定理 1.3)</td><td>部分和趋于定点</td></tr>
+<tr><td>绝对收敛</td><td>$\sum |z_n|$ 收敛 $\Rightarrow$ $\sum z_n$ 收敛</td><td>模级数控制方向</td></tr>
+<tr><td>柯西准则</td><td>任给 $\varepsilon &gt; 0$, 存在 $N$, 当 $n &gt; N$ 时 $\left|\sum\limits_{k=n+1}^{n+p} z_k\right| &lt; \varepsilon$</td><td>尾部任意长片段一致变小</td></tr>
+<tr><td>阿贝尔定理</td><td>在 $z_1$ 收敛 $\Rightarrow$ $|z| &lt; |z_1|$ 内绝对收敛</td><td>收敛圆 $|z| &lt; R$</td></tr>
+<tr><td>收敛半径</td><td>$\frac1R=\lim\limits_{n\to\infty}\left|\frac{c_{n+1}}{c_n}\right|$ 或 $\frac1R=\lim\limits_{n\to\infty}\sqrt[n]{|c_n|}$</td><td>半径由系数唯一决定</td></tr>
+<tr><td>和函数解析性</td><td>幂级数在收敛圆内解析, 可逐项求导与积分 (定理 1.6)</td><td>圆内处处可微</td></tr>
+<tr><td>圆周敛散</td><td>在 $|z|=R$ 上敛散需逐点讨论</td><td>边界情形依点而定</td></tr>
+</table>
+
+<!-- ===== 自测题 ===== -->
+<div class="sec-title">3. 自测 · 小试身手</div>
+
+<div class="quiz-q">
+<div class="q-title">1. 若 $\sum\limits_{n=1}^{\infty} z_n$ 收敛, 则 $\lim\limits_{n \to \infty} z_n =$ ?</div>
+<span class="quiz-opt" data-ok="1">必等于 0</span>
+<span class="quiz-opt" data-ok="0">可能不为 0</span>
+<span class="quiz-opt" data-ok="0">必等于 1</span>
+<span class="quiz-opt" data-ok="0">无法确定</span>
+<div class="quiz-explain">定理 1.3: 级数收敛的必要条件是通项趋于零. 注意反之不成立(如 $\sum \frac{1}{n}$).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. 幂级数 $\sum\limits_{n=0}^{\infty} \frac{z^n}{3^n}$ 的收敛半径为?</div>
+<span class="quiz-opt" data-ok="0">$R = 1$</span>
+<span class="quiz-opt" data-ok="1">$R = 3$</span>
+<span class="quiz-opt" data-ok="0">$R = \frac{1}{3}$</span>
+<span class="quiz-opt" data-ok="0">$R = +\infty$</span>
+<div class="quiz-explain">比值法: $\left|\frac{c_{n+1}}{c_n}\right| = \frac{1}{3}$, 故 $R = 3$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 级数 $\sum\limits_{n=1}^{\infty} \frac{(8\mathrm{i})^n}{n!}$ 的敛散性是?</div>
+<span class="quiz-opt" data-ok="0">发散</span>
+<span class="quiz-opt" data-ok="1">绝对收敛</span>
+<span class="quiz-opt" data-ok="0">条件收敛</span>
+<span class="quiz-opt" data-ok="0">仅收敛于原点</span>
+<div class="quiz-explain">$\frac{|a_{n+1}|}{|a_n|} = \frac{8}{n+1} \to 0 &lt; 1$, 绝对收敛 (例 1.2(2)).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 若幂级数在 $z_1 = 3$ 处收敛, 则它在 $z = 2\mathrm{i}$ 处?</div>
+<span class="quiz-opt" data-ok="0">可能收敛可能发散</span>
+<span class="quiz-opt" data-ok="1">绝对收敛</span>
+<span class="quiz-opt" data-ok="0">发散</span>
+<span class="quiz-opt" data-ok="0">条件收敛</span>
+<div class="quiz-explain">阿贝尔定理: 在非零点 $z_1$ 收敛 ⇒ 在 $|z| &lt; |z_1|$ 内绝对收敛, 而 $|2\mathrm{i}| = 2 &lt; 3$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 已知 $\sum |z_n|$ 收敛, 则 $\sum z_n$?</div>
+<span class="quiz-opt" data-ok="1">必收敛 (绝对收敛)</span>
+<span class="quiz-opt" data-ok="0">可能发散</span>
+<span class="quiz-opt" data-ok="0">必条件收敛</span>
+<span class="quiz-opt" data-ok="0">需进一步判断</span>
+<div class="quiz-explain">绝对收敛必收敛: $\left|\sum\limits_{k=1}^{n} z_k\right| \le \sum\limits_{k=1}^{n}|z_k|$, 由柯西准则即得. 反之(收敛但不绝对收敛)可能发生.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. 幂级数 $\sum\limits_{n=1}^{\infty} \left(\frac{n}{2n+1}\right)^{n} z^{n}$ 的收敛半径 $R =$ ?</div>
+<span class="quiz-opt" data-ok="0">$1$</span>
+<span class="quiz-opt" data-ok="1">$2$</span>
+<span class="quiz-opt" data-ok="0">$1/2$</span>
+<span class="quiz-opt" data-ok="0">$+\infty$</span>
+<div class="quiz-explain">根值法: $\sqrt[n]{|c_n|} = \frac{n}{2n+1} \to \frac{1}{2}$, 故 $R = 1/\frac{1}{2} = 2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. 幂级数 $\sum\limits_{n=1}^{\infty} \frac{z^{n}}{n^{2}}$ 在收敛圆周 $|z|=1$ 上的敛散性是?</div>
+<span class="quiz-opt" data-ok="0">处处发散</span>
+<span class="quiz-opt" data-ok="1">处处绝对收敛</span>
+<span class="quiz-opt" data-ok="0">仅在 $z=1$ 处收敛</span>
+<span class="quiz-opt" data-ok="0">无法确定</span>
+<div class="quiz-explain">$R=1$; 圆周上 $|z|=1$ 时 $\sum \frac{1}{n^2}$ 为 $p=2&gt;1$ 的收敛正项级数, 故在 $|z|=1$ 上处处绝对收敛 (注意这与 $\sum z^n/n$ 的圆周行为不同).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 级数 $\sum\limits_{n=1}^{\infty} \frac{n!}{n^{n}} z^{n}$ 的收敛半径 $R =$ ?</div>
+<span class="quiz-opt" data-ok="0">$0$</span>
+<span class="quiz-opt" data-ok="1">$\mathrm{e}$</span>
+<span class="quiz-opt" data-ok="0">$1$</span>
+<span class="quiz-opt" data-ok="0">$+\infty$</span>
+<div class="quiz-explain">比值法: $\left|\frac{c_{n+1}}{c_n}\right| = \frac{n^{n}}{(n+1)^{n}} = \left(\frac{n}{n+1}\right)^{n} \to \frac{1}{\mathrm{e}}$, 故 $R = \mathrm{e}$ (用到 $\lim(1+1/n)^n = \mathrm{e}$).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 设 $\sum c_n z^n$ 的收敛半径为 $R$, 则其逐项求导所得级数 $\sum n c_n z^{n-1}$ 的收敛半径是?</div>
+<span class="quiz-opt" data-ok="0">$R/2$</span>
+<span class="quiz-opt" data-ok="0">$\sqrt{R}$</span>
+<span class="quiz-opt" data-ok="1">仍为 $R$</span>
+<span class="quiz-opt" data-ok="0">$+\infty$</span>
+<div class="quiz-explain">逐项求导、逐项积分均<b>不改变</b>收敛半径(定理 1.6). 求导相当于对系数乘以 $n$, 而 $\sqrt[n]{n} \to 1$, 故 $R$ 不变.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 级数 $\sum\limits_{n=1}^{\infty}\frac{z^{n}}{n}$ 的收敛圆周上, 下列哪点处级数收敛?</div>
+<span class="quiz-opt" data-ok="1">$z = -1$</span>
+<span class="quiz-opt" data-ok="0">$z = 1$</span>
+<span class="quiz-opt" data-ok="0">$z = \mathrm{i}$</span>
+<span class="quiz-opt" data-ok="0">处处收敛</span>
+<div class="quiz-explain">$R=1$; $z=1$ 时为调和级数 $\sum 1/n$ 发散; $z=-1$ 时为交错级数 $\sum (-1)^n/n$ 收敛(莱布尼茨判别法). 故收敛圆周上的敛散性<b>必须逐点讨论</b>.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="sec-title">思政园地 · 数学与家国</div>
+
+<div class="hero-card">
+<h3>无穷之美 · 一尺之棰与收敛圆</h3>
+<div class="hero-sub">从两千年前中国哲人的"无限分割", 到柯西、阿贝尔为幂级数划出的收敛圆 —— 人类用两千年学会了一件事: 给"无穷"划一条清晰的边界.</div>
+<div class="hero-quote">
+<b>《庄子 · 天下》:</b> "一尺之棰, 日取其半, 万世不竭。"<br>
+一尺之棰每天所取之长, 恰构成数列 $\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, \cdots$, 其和为 $1$ —— 一个最朴素又最深刻的<b>收敛级数</b>.<br>
+然而"无限多项相加竟得有限值"这件事, 在数学上被真正<b>说清楚</b>, 却要等到 19 世纪的柯西与阿贝尔. 无穷不是玄谈, 它需要定义、需要判别法、需要一条$\;|z| &lt; R\;$的边界 —— 这正是本节的主题.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 柯西: 为"无穷"立法的法官</div>
+
+<div class="person-card">
+<div class="p-av">柯</div>
+<div class="p-main">
+<div class="p-name">奥古斯丁-路易·柯西 (Augustin-Louis Cauchy, 1789—1857)</div>
+<div class="p-meta">法国数学家、物理学家 · 巴黎综合理工学院教授 · 复变函数论的奠基人 · 分析严格化运动的旗手</div>
+<p>如果说 18 世纪的数学是一座华丽而地基不稳的宫殿, 那么柯西就是那位<b>重新夯实地基</b>的工程师. 在他之前, "极限"、"收敛"、"连续"这些词只是直觉上的说法; 在他之后, 它们成了可以用 $\varepsilon$ 与 $\delta$ 严格写下的定义.</p>
+<p>本节的<b>复数列极限定义</b>、<b>级数收敛的充要条件</b>、<b>幂级数的收敛半径</b>, 乃至第五章将要学的<b>柯西积分定理</b>与<b>柯西积分公式</b>, 几乎都是他一手奠定的. 今天复变函数课程里出现频率最高的姓氏, 恐怕就是"柯西".</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世与成长: 动荡年代里的神童</h5>
+<p>柯西生于巴黎, 父亲是一名虔诚的天主教徒、坚定的保皇党人, 在法国大革命的风暴中曾一度流亡. 年幼的柯西在动荡中长大, 却显示出惊人的数学天赋 —— 据说他十几岁时就与拉格朗日、拉普拉斯等大师有过交往, 拉格朗日甚至提醒他的父亲: <b>"不要让他过早翻开任何一本数学书, 先把人文学科读好."</b></p>
+<p>1805 年, 柯西考入著名的巴黎综合理工学院, 毕业后先任工程师, 参与港口与军事工程的建设. 但工程无法留住他 —— 1816 年, 他回到学术舞台, 被任命为巴黎科学院院士与综合理工学院教授, 从此开启了他长达四十年的高产期.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>核心贡献: 让"极限"变成可计算的对象</h5>
+<p>18 世纪的数学家其实一直在<b>使用</b>极限, 却没有人能说清它究竟是什么. 欧拉、达朗贝尔的著作中常有"无限趋近"、"最终相等"这类模糊表述, 由此闹出过不少笑话(例如对发散级数 $1-1+1-1+\cdots$ 究竟"等于" $\frac{1}{2}$ 还是别的什么, 长期争论不休).</p>
+<p>柯西在 1821 年的《分析教程》中第一次给出极限的严格定义: 当 $n$ 无限增大时, $x_n$ 与某定值之差可以<b>任意小</b>. 以此为基础, 他建立了数列收敛的判据、级数收敛的<b>柯西准则</b>($\sum |c_n|$ 的部分和有界即绝对收敛)、根值判别法($\lim\sqrt[n]{|c_n|}$)与比值判别法($\lim|c_{n+1}/c_n|$) —— <b>本节收敛半径的两个求法, 正是他的名字.</b></p>
+<p>他还把复数从"符号游戏"提升为真正的分析对象: 复变函数的连续性、导数、积分, 都在他手中第一次有了严格定义. 可以说, <b>没有柯西, 就没有今天的复变函数论.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>一个著名的"失误": 通项趋零 $\neq$ 收敛</h5>
+<p>即便是柯西这样的大师, 也曾在这里栽过跟头. 他在早期的著作中曾一度认为: 若级数 $\sum u_n$ 的通项满足 $u_n \to 0$, 则级数收敛. 这个论断是<b>错的</b> —— 调和级数 $\sum \frac{1}{n}$ 的通项趋零, 级数却发散.</p>
+<p>1826 年, 年轻的<b>阿贝尔</b>在自己的论文中公开指出了这一错误, 并给出了反例. 柯西没有恼羞成怒, 而是坦然接受了批评 —— 这在当时的学术圈并不多见. 这件事本身也成了数学史上的一句箴言: <b>"必要条件的成立, 不等于充分条件的成立."</b> 今天我们在课堂上反复强调"通项趋零只是收敛的必要条件", 正是从这段公案而来.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>性格与争议: 虔诚的天主教徒与"数学警察"</h5>
+<p>柯西是一位极为虔诚的天主教徒与保皇党人, 一生严格遵守教规, 甚至因为拒绝向新政权宣誓而一度失去教职、流亡国外数年(1830—1838). 他能在教堂与实验室之间来回切换, 对信仰与科学的界限毫不含糊.</p>
+<p>但在学界, 他的作风也招致不少非议: 他极其高产(全集达 27 卷), 却常常把论文<b>塞给巴黎科学院的一本又一本期刊</b>, 挤占了其他人的版面; 他对自己提出的新方法的严格性要求极高, 却有时在改写他人成果时未充分标注出处. 他被一些同行称为"数学警察" —— 一个既整顿了秩序、也带来了争议的角色.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>据说柯西讲课时常常一口气写完整个黑板, 再一口气擦掉重写, 速度之快令学生无暇记录. 有一次他在课堂上突然停顿, 转身对学生们说: "<b>对不起, 我刚才说的那句话是错的.</b>" —— 然后从第一行重新推起. 这份对<b>严谨</b>的执拗, 正是他留给数学最珍贵的东西.
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 学术公案: 柯西与两位年轻人的"错位"</div>
+<div class="cc-side"><b>柯西 vs 阿贝尔:</b> 1826 年, 阿贝尔把关于幂级数收敛半径的奠基性论文呈送巴黎科学院, 由柯西审阅. 柯西读后评价"非常好", 却<b>把它放进了抽屉</b>, 迟迟未安排发表. 阿贝尔至死没能看到这篇论文面世 —— 收敛半径理论竟是在作者去世后才逐渐被人知晓的.</div>
+<div class="cc-side"><b>柯西 vs 洛朗:</b> 1843 年, 洛朗(本书第四章第三节的主角)把"洛朗级数"的论文呈送科学院, 负责审阅的仍是柯西. 这篇划时代的论文同样被搁置, 直到 1863 年洛朗去世后才得以发表.</div>
+<div class="cc-side"><b>历史公论:</b> 柯西的眼力无疑是顶尖的 —— 他两次都<b>立刻判断出论文的价值</b>. 问题出在他手上积压的论文太多、又事务缠身. 这提醒我们: 识别出好成果固然可贵, 但让好成果<b>及时被看见</b>, 同样是一种责任.</div>
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 柯西的自我要求</div>
+他在《分析教程》的序言里写下这样一段话, 道出了分析严格化的初心:<br>
+"<em>至于方法, 我试图赋予它们以几何方法所要求的全部严格性, 同时避免在推理中借用代数的普遍性.</em>"<br>
+换句话说: 结论可以靠直觉猜出来, 但<b>证明必须一步一个脚印</b>. 他接着说:<br>
+"<em>这类讨论的优点在于, 它们能让真理不容置疑地显现出来.</em>"
+<span class="iv-sig">—— 从"看起来对"到"证明它必然对", 这是 19 世纪数学最重要的一次转向. 柯西是这场转向的主将.</span>
+</div>
+
+<div class="sec-title">6.2 数学家故事 · 阿贝尔: 26 年生命的收敛半径</div>
+
+<div class="person-card">
+<div class="p-av">阿</div>
+<div class="p-main">
+<div class="p-name">尼尔斯·亨利克·阿贝尔 (Niels Henrik Abel, 1802—1829)</div>
+<div class="p-meta">挪威数学家 · 五次方程不可解性的证明者 · 阿贝尔定理与阿贝尔群的命名者 · 27 岁贫病早逝</div>
+<p>他是数学史上最悲壮的年轻人之一: 生于挪威一个穷困的牧师家庭, 一生几乎都在<b>饥饿与病痛</b>中度过, 却在短短二十多年里解决了困扰人类三百年的难题, 并为整个现代代数与复分析奠定了基础.</p>
+<p>本节最重要的一条定理 —— <b>"在一点收敛, 则在圆内处处绝对收敛, 且存在唯一的收敛半径 $R$"</b> —— 就是以他命名的<b>阿贝尔定理</b>. 它把"幂级数的发散域与收敛域被一个圆分开"这件事变成了严格的结论, 也是我们画收敛圆的理论依据.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 七个孩子中的次子, 穷人的天才</h5>
+<p>1802 年 8 月 5 日, 阿贝尔出生在挪威芬岛附近的一个小村庄. 父亲是一名牧师, 家境清贫, 共有七个孩子. 13 岁时他进入克里斯蒂安尼亚(今奥斯陆)的教会学校, 起初成绩平平, 直到遇见了后来改变他一生的老师<b>霍尔姆博</b> (Bernt Michael Holmboe).</p>
+<p>霍尔姆博很快发现了这个孩子的天赋, 于是自掏腰包为他买书、单独给他讲授高等数学. 阿贝尔在短短几年里自学了牛顿、欧拉、拉格朗日、高斯的著作 —— <b>而当时他连一本像样的教材都买不起.</b> 他的数学, 几乎完全是在贫困中"啃"出来的.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>19 岁的突破: 五次方程为什么解不出来</h5>
+<p>从 16 世纪起, 人类已会解三次、四次方程. 此后三百年, 无数数学家试图找出<b>五次方程的求根公式</b>, 一无所获. 1824 年, 年仅 22 岁的阿贝尔证明了: <b>一般的五次方程不可能用根式求解.</b></p>
+<p>他自费印刷了一份只有六页的小册子, 因为没钱印更多, 只能<b>把论文压缩到极简</b>, 结果晦涩难懂, 寄出后几乎无人理会. 这篇论文今天被视为<b>近世代数的起点</b> —— 它第一次把人们的注意力从"求解"转向"结构".</p>
+<p>顺着这条思路, 他研究了"什么样的方程可以用根式解", 由此催生了交换群理论 —— 今天被称为<b>阿贝尔群</b>, 是群论与代数拓扑最基本的对象之一.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>本节的定理: 一点微光, 照亮一片圆</h5>
+<p>阿贝尔定理说的是一件非常漂亮的事: 若幂级数 $\sum c_n z^n$ 在某点 $z_1 \neq 0$ 处收敛, 则它在一切满足 $|z| &lt; |z_1|$ 的点处<b>绝对收敛</b>; 反之若在某点发散, 则在更远处处处发散.</p>
+<p>正是这条定理保证了: 幂级数的收敛域必然是<b>一个以原点为中心的圆(盘)</b>, 圆内绝对收敛、圆外发散、圆周上情况各异. 这就是我们画出"收敛圆"、并谈论"收敛半径 $R$"的全部根据.</p>
+<p>一个<b>点</b>处的收敛信息, 竟然决定了一整个<b>圆</b>内的命运 —— 这是复分析中最迷人的"局部决定整体"的思想雏形, 也预示了后续<b>解析延拓</b>与<b>唯一性定理</b>的深刻结果.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>晚境: 死于贫困与寒冷的天才</h5>
+<p>1826 年, 阿贝尔把幂级数理论的论文寄给巴黎科学院, 也寄了一份给"数学之王"高斯. 但高斯<b>没有拆开</b>那篇论文, 巴黎方面则交给了柯西审阅 —— 而柯西审阅后就把它搁置了. 阿贝尔的成就, 在生前几乎没有得到应有的承认.</p>
+<p>回国后他找不到正式教职, 只能靠做家教与替人代课勉强糊口. 1829 年 4 月 6 日, 阿贝尔因肺结核在弗罗兰德去世, <b>年仅 26 岁</b>. 两天后, 他的好友克雷勒来信告诉他: 柏林大学已决定聘他为教授. 这封信到得晚了两天.</p>
+<p>同年, 他关于"椭圆函数"的论文终于发表, 数学界这才如梦初醒. 法国数学家埃尔米特后来感叹: <b>"阿贝尔留给数学家的东西, 够他们忙碌五百年."</b></p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>阿贝尔曾说过一句流传极广的话: "<b>发散级数是魔鬼的发明.</b>" 在 18 世纪, 数学家们常常随意地给发散级数"赋予"一个和, 得出各种混乱结论. 阿贝尔和柯西的严格化工作, 正是要把这种"魔鬼的发明"逐出数学 —— 从此, "这个级数收敛吗?收敛半径是多少?" 成了必须先回答的问题.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 阿贝尔的心路</div>
+他在给老师霍尔姆博的信中写道:<br>
+"<em>我研究数学, 并非为了成名, 也不是为了获得职位, 而只是因为我觉得这很有趣.</em>"<br>
+而当他的论文屡屡被人搁置时, 他又写道:<br>
+"<em>我的工作被人忽视了 —— 但我不在乎. 真理迟早会被人发现, 我的名字会被人记住的.</em>"
+<span class="iv-sig">—— 一个 26 岁的年轻人, 在贫病交加中依然相信"真理会被发现". 事实也正是如此: 今天每一个学过幂级数的学生, 都会写下"阿贝尔定理"这五个字.</span>
+</div>
+
+<div class="sec-title">6.3 两条定理, 两个人生</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<span class="tl-year">1789</span><span class="tl-title">柯西出生于巴黎</span>
+<div class="tl-body">出身保皇党家庭, 自幼显露数学天赋, 拉格朗日曾亲自告诫其父"勿过早让他读数学书".</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1802</span><span class="tl-title">阿贝尔出生于挪威芬岛</span>
+<div class="tl-body">牧师家庭, 家中有七个孩子, 家境清贫. 13 岁遇见老师霍尔姆博, 从此走上数学之路.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1821</span><span class="tl-title">柯西《分析教程》出版 —— 极限严格化</span>
+<div class="tl-body">第一次给出极限、连续、级数收敛的严格定义; 收敛判别法(根值法、比值法)由此奠定 —— 本节收敛半径求法的源头.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1824</span><span class="tl-title">阿贝尔证明五次方程不可解</span>
+<div class="tl-body">22 岁的阿贝尔自费印刷六页小册子, 宣告一般五次方程无根式解 —— 近世代数的起点.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1826</span><span class="tl-title">阿贝尔定理问世, 却被放进抽屉</span>
+<div class="tl-body">阿贝尔把幂级数收敛性论文呈送巴黎科学院, 由柯西审阅后搁置; 同年他还公开指出了柯西"通项趋零即收敛"的错误.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1829</span><span class="tl-title">阿贝尔病逝, 年仅 26 岁</span>
+<div class="tl-body">死于肺结核. 两天后, 柏林大学的聘任通知才寄到. 同年其椭圆函数论文发表, 数学界为之震动.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1830—1838</span><span class="tl-title">柯西流亡, 复变函数论走向成熟</span>
+<div class="tl-body">因拒绝宣誓而离开法国教职, 其间继续推进复分析研究; 归国后成为巴黎综合理工学院与科学院的灵魂人物.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1857</span><span class="tl-title">柯西逝世, 留下 27 卷全集</span>
+<div class="tl-body">一生发表论文近 800 篇, 全集 27 卷. 复变函数课程中"柯西"一姓出现之频繁, 正是他奠基地位的证明.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">今天</span><span class="tl-title">收敛圆成为通用语言</span>
+<div class="tl-body">卫星轨道摄动的级数展开、5G 信号处理的傅里叶级数、高铁桥梁应力的泰勒近似 —— 级数是工程与科学的通用语言. 把每一个收敛半径算准, 就是对"大国重器"最扎实的贡献.</div>
+</div>
+</div>
+
+<div class="sec-title">6.4 数学中的哲学: 边界、过程与严谨</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<span class="pc-tag">哲学视角</span>
+<h4>有限与无限</h4>
+<p>级数是"有限步"与"无限步"的桥梁: 我们永远写不完无穷多项, 却能精确说出它的和. 收敛半径画出的圆, 是理性为"无穷"划定的疆界.</p>
+<div class="pc-math">在 $|z| &lt; R$ 内一切安好(绝对收敛), 在 $|z| &gt; R$ 一切失效 —— 知道边界在哪里, 是一种科学素养, 也是一种处世智慧.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">方法论</span>
+<h4>化归思想</h4>
+<p>复级数的敛散性, 通过定理 1.1、1.2 转化为两个实数列/实级数的问题; 绝对收敛又把它交给正项级数判别法. "把新问题化成老问题"是数学最重要的方法论.</p>
+<div class="pc-math">$z_n = x_n + \mathrm{i}y_n \Rightarrow$ 实部虚部各自收敛 —— 复杂问题的拆解, 就像把大目标分解为小目标.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">量变质变</span>
+<h4>必要条件 vs 充分条件</h4>
+<p>阿贝尔指出柯西的错误, 点破了一个深刻的道理: $u_n \to 0$ 只是收敛的<b>必要条件</b>, 不是充分条件. 调和级数 $\sum \frac{1}{n}$ 就是反例.</p>
+<div class="pc-math">"通项趋零"保证不了收敛; 差一点都不行 —— 数学对精度的要求, 恰恰是它可靠的原因.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">整体观</span>
+<h4>局部决定整体</h4>
+<p>阿贝尔定理: 幂级数在<b>一点</b>的收敛性, 决定了整个<b>圆盘</b>内的敛散格局. 一个局部信息, 竟能约束一大片区域 —— 这是复分析最迷人的特性.</p>
+<div class="pc-math">$z_1$ 处收敛 $\Rightarrow$ 一切 $|z|&lt;|z_1|$ 处绝对收敛 &nbsp;·&nbsp; 后来发展为解析延拓与唯一性定理</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">家国情怀</span>
+<h4>严谨即担当</h4>
+<p>圆周上的敛散性"需具体分析" —— 不能凭感觉下结论. 航天器轨道计算、电网潮流分析中, 一个级数项取舍的疏忽都可能被无限放大.</p>
+<div class="pc-math">"差不多先生"做不了级数; 逐项验算的严谨, 是科技工作者对家国最基本的担当.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">科学精神</span>
+<h4>承认错误与让路于人</h4>
+<p>柯西坦然接受了阿贝尔的批评; 但他也两次让年轻人的论文在抽屉里蒙尘. 学术共同体既需要<b>敢批评</b>的勇气, 也需要<b>肯让路</b>的胸怀.</p>
+<div class="pc-math">阿贝尔定理被搁置了三十年才广为人知 —— 好成果的价值不会消失, 但"及时被看见"需要制度与人心的共同守护.</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.5 古今对话: 从割圆术到收敛圆</div>
+
+<div class="box-key">
+<div class="title">中国古代数学中的"无穷"智慧</div>
+中国古代对"无限逼近"的思考与实践, 远早于欧洲: <b>《庄子·天下》</b>"一尺之棰, 日取其半, 万世不竭"; <b>刘徽</b>在公元 263 年创"割圆术", 主张"割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆周合体而无所失矣", 用内接正多边形面积逼近圆面积; <b>祖冲之</b>以"缀术"把圆周率精确到小数点后七位, 密率 $\frac{355}{113}$ 领先世界近千年.<br>
+这些工作都已经包含了"部分和数列趋于极限"的朴素思想 —— 但古代中国数学更偏重<b>算法与实用</b>, 没有走向"用 $\varepsilon$-$\delta$ 严格定义极限"这一步. 而柯西、阿贝尔所做的, 正是把这种朴素的直觉<b>上升为普遍而严格的定理</b>. 两种传统各有所长: 一个教我们如何"算", 一个教我们如何"证".
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 中国人自己的级数故事</div>
+<ul>
+<li><b>华罗庚</b> (1910—1985): 从杂货铺学徒到世界级数学家, 在解析数论、矩阵几何学、多复变函数论等领域做出开创性工作. 多复变函数论中的"华氏算子"与"典型域"理论, 直接建立在幂级数展开的现代推广之上.</li>
+<li><b>陈景润</b> (1933—1996): 在六平方米的陋室里, 用一支笔、几麻袋草稿纸攻克哥德巴赫猜想的"1+2", 其成果被国际同行称为"陈氏定理" —— 这本身就是一场关于"无穷"的艰苦战役.</li>
+<li><b>面向国家重大需求</b>: 从卫星轨道摄动的级数展开、雷达信号的傅里叶分析, 到高铁桥梁应力的泰勒近似与数值天气预报 —— 幂级数与收敛半径是这些"大国重器"背后沉默的数学基础.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"边界"算准, 把"冷板凳"坐热</div>
+柯西花了一辈子给"无穷"划定边界, 阿贝尔在贫病中给出收敛半径的奠基定理 —— 他们的工作在当时都算不上"实用". 然而今天, 任何一项高精度的工程计算, 都依赖于他们当年划下的那条 $|z| &lt; R$.<br>
+真正的基础研究, 是为国家和人类<b>储备未来的能力</b>. 拒绝浮躁、甘坐冷板凳、坚持长期主义, 是科技自立自强最需要的品质.
+</div>
+</div>
+
+<div class="sec-title">6.6 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一“标准答案”, 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.7 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"发散级数是魔鬼的发明."<span class="q-src">—— 阿贝尔 (N. H. Abel)</span></div>
+<div class="quote-item">"我研究数学, 不是为了成名, 也不是为了职位, 而是因为它有趣."<span class="q-src">—— 阿贝尔</span></div>
+<div class="quote-item">"在数学中, 我们必须把话说清楚, 而不是说得漂亮."<span class="q-src">—— 柯西精神的写照</span></div>
+<div class="quote-item">"割之弥细, 所失弥少, 割之又割, 以至于不可割, 则与圆周合体而无所失矣."<span class="q-src">—— 刘徽《九章算术注》</span></div>
+<div class="quote-item">"一尺之棰, 日取其半, 万世不竭."<span class="q-src">—— 《庄子 · 天下》</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 柯西用严格定义给"无穷"立法, 却把阿贝尔的收敛半径论文放进抽屉三十年; 阿贝尔在贫病中写下阿贝尔定理, 26 岁病逝, 死前两天还不知道自己已被聘为教授 —— 而今天每一个学幂级数的人都要写下他的名字.<br>
+<b>一个道理:</b> "无穷"不能凭直觉, 必须靠定义、判别法与一条 $|z| &lt; R$ 的边界来把握. 必要条件不等于充分条件($u_n \to 0 \nRightarrow$ 收敛), 差一点都不行 —— 数学的可靠, 正来自这种对精度的执拗. 同时, 局部信息可以约束整体格局(一点收敛, 全圆绝对收敛), 这是复分析最深刻的思想之一.<br>
+<b>一份责任:</b> 从庄子的"万世不竭"、刘徽的割圆术, 到柯西与阿贝尔为收敛圆立下的定理, 人类对"无穷"的探索从未停歇. 今天我们学习复级数, 既是掌握工程与科学通用的数学语言, 也是接续这份<b>为无穷划界、为真理守夜</b>的精神 —— 把每一个收敛半径算准, 就是对"大国重器"最扎实的贡献.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第四章第一节 复级数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+var SUB='₀₁₂₃₄₅₆₇₈₉', SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+function sup(n){ return String(n).split('').map(function(c){return SUP[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cmul(a,b){ return C(a.re*b.re-a.im*b.im,a.re*b.im+a.im*b.re); }
+function cdiv(a,b){ var d=b.re*b.re+b.im*b.im; return C((a.re*b.re+a.im*b.im)/d,(a.im*b.re-a.re*b.im)/d); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- draw helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  ctx.restore();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function makeDraggable(cv,onMove,onUp){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ if(dragging){ dragging=false; if(onUp) onUp(); } }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+(function(){
+// ================= 模块 1: 阿贝尔定理与收敛圆 =================
+module('cvDisc',function(cv){
+  var R0=2.6;                       // 已知收敛点 |z1|
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-5.6,5.6,-2.6,2.6);
+    // background: outside red
+    // disc |z|<|z1|
+    var cx=m.px(0),cy=m.py(0);
+    ctx.fillStyle='rgba(229,57,53,0.10)';
+    ctx.fillRect(0,0,w,h);
+    ctx.beginPath(); ctx.arc(cx,cy,R0*m.s,0,TAU);
+    ctx.fillStyle='rgba(46,125,50,0.22)'; ctx.fill();
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.4; ctx.stroke();
+    ctx.setLineDash([6,4]); ctx.strokeStyle='rgba(230,81,0,.85)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,R0*m.s,0,TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,cx+R0*m.s*0.72,cy-R0*m.s*0.72,'|z| < |z₁| 绝对收敛','#1b5e20','bold 14px Segoe UI');
+    tlabel(ctx,w-238,26,'|z| > |z₁| 发散 (反证部分)','#b71c1c','bold 14px Segoe UI');
+    // axes
+    axes(ctx,w,h,m);
+    // drag point z1
+    var p1x=cx+R0*Math.cos(-0.5)*m.s, p1y=cy+R0*Math.sin(-0.5)*m.s;
+    // draw z1 at fixed angle
+    var z1=cexp(R0,-0.5);
+    dot(ctx,m.px(z1.re),m.py(z1.im),8,'#1565c0','#fff');
+    tlabel(ctx,m.px(z1.re)+12,m.py(z1.im)-8,'z₁ = '+cstr(z1,2),'#0d47a1');
+    // sample interior point z and conclusion
+    tlabel(ctx,14,h-14,'蓝色点 z₁ 已知收敛 ⇒ 绿色圆内每一点都绝对收敛 (阿贝尔定理)','rgba(38,50,56,.85)','13px Segoe UI');
+    setRO('discReadout',
+      '<b>已知收敛点</b> z₁ = '+hl(cstr(z1,2))+' &nbsp;&nbsp; |z₁| = '+hl(fmt(R0,2))+'<br>'+
+      '<b>阿贝尔定理结论:</b> '+hl2('在圆域 |z| < |z₁| 内绝对收敛')+' &nbsp;|&nbsp; '+
+      '<b>在 |z| &gt; |z₁| 内发散</b> (反证法)'+ '<br>'+
+      '<span style="color:#80deea">圆周 |z| = |z₁| 上的点不受定理约束, 敛散性需具体分析 —— 收敛半径 R ≥ |z₁|.</span>');
+  }
+  return {draw:draw};
+});
+
+// ================= 模块 2: 收敛圆周上的敛散性 =================
+module('cvCircle',function(cv){
+  var which=1;   // 1: Σ z^n/n^3  2: Σ (-1)^n z^n/n  3: Σ z^n
+  function regionAt(t){
+    // returns 0 diverge, 1 converge, 2 abs converge on unit circle at angle t
+    var zr=Math.cos(t), zi=Math.sin(t);
+    if(which===1) return 2;                       // Σ1/n^3 abs conv everywhere
+    if(which===2){
+      if(Math.abs(zr-1)<1e-9 && Math.abs(zi)<1e-9) return 1;     // z=1: Σ(-1)^n/n conv
+      if(Math.abs(zr+1)<1e-9 && Math.abs(zi)<1e-9) return 0;     // z=-1: -Σ1/n div
+      return 1;                                                   // other points conv (not abs)
+    }
+    return 0;                                     // Σ z^n diverges everywhere on circle
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-2.2,2.2,-1.6,1.6);
+    var cx=m.px(0),cy=m.py(0),R=m.s;
+    // disc
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU);
+    ctx.fillStyle='rgba(46,125,50,0.15)'; ctx.fill();
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=1.6; ctx.stroke();
+    // circle points colored
+    for(var k=0;k<180;k++){
+      var t=k/180*TAU, rg=regionAt(t);
+      ctx.beginPath();
+      ctx.arc(cx+R*Math.cos(t),cy+R*Math.sin(t),3.4,0,TAU);
+      ctx.fillStyle = rg===2?'#1b5e20': rg===1?'#ff8f00':'#c62828';
+      ctx.fill();
+    }
+    axes(ctx,w,h,m);
+    // labels
+    tlabel(ctx,cx+R*0.72,cy-R*0.72,'|z| < 1 收敛','#1b5e20','bold 13px Segoe UI');
+    var titles={1:'∑ zⁿ/n³ — 圆周上处处绝对收敛',2:'∑ (−1)ⁿ zⁿ/n — 圆周上部分收敛',3:'∑ zⁿ — 圆周上处处发散'};
+    tlabel(ctx,14,24,titles[which],'#0d47a1','bold 14px Segoe UI');
+    // legend
+    tlabel(ctx,w-260,h-56,'● 绝对收敛 (深绿)','#1b5e20','12px Segoe UI');
+    tlabel(ctx,w-260,h-36,'● 条件收敛 (橙)','#e65100','12px Segoe UI');
+    tlabel(ctx,w-260,h-16,'● 发散 (红)','#c62828','12px Segoe UI');
+    setRO('circleReadout',
+      '<b>当前级数</b> '+hl(titles[which])+'<br>'+
+      '<b>收敛半径</b> R = 1; &nbsp; <b>圆内</b> '+hl2('绝对收敛')+
+      ' &nbsp;|&nbsp; <b>圆外</b> 发散 &nbsp;|&nbsp; <b>圆周</b> '+
+      (which===1?hl2('处处绝对收敛'): which===2?hl('z=1 收敛, z=−1 发散, 其余点条件收敛'):hl('处处发散'))+'<br>'+
+      '<span style="color:#80deea">结论: 收敛圆周是"灰色地带", 必须逐点(或整体)具体分析.</span>');
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v;
+    ['btnConv1','btnConv2','btnConv3'].forEach(function(x){ var el=document.getElementById(x); if(el) el.classList.remove('active'); });
+    b.classList.add('active'); draw(); }); }
+  bind('btnConv1',1); bind('btnConv2',2); bind('btnConv3',3);
+  return {draw:draw};
+});
+
+// ================= 模块 3: 部分和逼近和函数 =================
+module('cvPartial',function(cv){
+  var z=C(0.5,0.4), N=5;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-2.6,2.2,-2.0,2.0);
+    var cx=m.px(0),cy=m.py(0);
+    // unit disc
+    ctx.beginPath(); ctx.arc(cx,cy,m.s,0,TAU);
+    ctx.fillStyle='rgba(46,125,50,0.10)'; ctx.fill();
+    ctx.setLineDash([6,4]);
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=1.8; ctx.stroke();
+    ctx.setLineDash([]);
+    tlabel(ctx,cx-m.s*0.96,cy-m.s*0.80,'|z| < 1','#1b5e20','bold 13px Segoe UI');
+    axes(ctx,w,h,m);
+    if(cabs(z)>=1){
+      dot(ctx,m.px(z.re),m.py(z.im),8,'#c62828','#fff');
+      tlabel(ctx,m.px(z.re)+12,m.py(z.im)-10,'z='+cstr(z,2)+' 在圆外: 发散!','#c62828');
+      setRO('partialReadout',
+        '<b>z</b> = '+hl(cstr(z,2))+' , &nbsp; |z| = '+hl(fmt(cabs(z),3))+' ≥ 1<br>'+
+        '<b>结论:</b> '+hl('点在收敛圆之外或圆周上, 部分和不收敛, 逼近失效.')+'<br>'+
+        '<span style="color:#80deea">请把红点拖回绿色圆内继续观察.</span>');
+      return;
+    }
+    // polygonal path of partial sums
+    var s=C(0,0), prev=C(0,0);
+    ctx.beginPath(); ctx.moveTo(m.px(0),m.py(0));
+    for(var k=1;k<=N;k++){
+      s=cadd(s,cmul(C(Math.pow(cabs(z),k-1),0),z));   // z^{k-1} * z = z^k accumulate: simpler: add z^k
+    }
+    // recompute properly
+    s=C(0,0);
+    var path=[C(0,0)];
+    var zk=C(1,0);
+    for(k=1;k<=N;k++){
+      zk=cmul(zk,z);
+      s=cadd(s,zk);
+      path.push(s);
+    }
+    ctx.beginPath();
+    path.forEach(function(p,i){ var px=m.px(p.re),py=m.py(p.im); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); });
+    ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=2.2; ctx.stroke();
+    path.forEach(function(p,i){ dot(ctx,m.px(p.re),m.py(p.im),3.2,'#7b1fa2'); });
+    // true sum
+    var S=cdiv(C(1,0),csub(C(1,0),z));
+    // draw target
+    dot(ctx,m.px(S.re),m.py(S.im),7,'#e65100','#fff');
+    tlabel(ctx,m.px(S.re)+11,m.py(S.im)-10,'S(z)=1/(1−z)','#e65100');
+    // z point
+    dot(ctx,m.px(z.re),m.py(z.im),8,'#c62828','#fff');
+    tlabel(ctx,m.px(z.re)+12,m.py(z.im)+16,'z='+cstr(z,2),'#b71c1c');
+    setRO('partialReadout',
+      '<b>z</b> = '+hl(cstr(z,2))+' &nbsp;&nbsp; <b>项数 N</b> = '+hl(String(N))+'<br>'+
+      '<b>部分和 S_N(z)</b> = '+hl(cstr(s,4))+'<br>'+
+      '<b>和函数 S(z)</b> = 1/(1−z) = '+hl(cstr(S,4))+'<br>'+
+      '<b>误差</b> |S − S_N| = '+hl(fmt(cabs(csub(S,s)),5))+' &nbsp; (理论上 ≈ |z|^{N+1}/|1−z| = '+fmt(Math.pow(cabs(z),N+1)/cabs(csub(C(1,0),z)),5)+')<br>'+
+      '<span style="color:#80deea">紫色折线是部分和在复平面上走出的一条螺线路径 —— 它正螺旋收向橙色点 S(z).</span>');
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m=mapperEq(f.w,f.h,-2.6,2.2,-2.0,2.0);
+    z=C(m.ix(px),m.iy(py)); draw();
+  });
+  bindSlider('rngN',function(v){ N=v; badge('badgeN',v); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 5: 收敛半径实测实验室 =================
+module('cvRadiusLab',function(cv){
+  // 每个级数: 系数 cn(n) 与理论 lambda / R
+  var CASES={
+    rad1:{ name:'∑ zⁿ/n!', color:'#2e7d32', lambda:0, Rlab:'+∞',
+           cn:function(n){ var f=1; for(var k=2;k<=n;k++) f*=k; return 1/f; },
+           note:'eᶻ 的展开: 比值 |cₙ₊₁/cₙ| = 1/(n+1) → 0, 故 R = +∞' },
+    rad2:{ name:'∑ n! zⁿ', color:'#c62828', lambda:'∞', Rlab:'0',
+           cn:function(n){ var f=1; for(var k=2;k<=n;k++) f*=k; return f; },
+           note:'比值 |cₙ₊₁/cₙ| = n+1 → +∞, λ = +∞, 故 R = 0 (仅在原点收敛)' },
+    rad3:{ name:'∑ zⁿ/n³', color:'#1976d2', lambda:1, Rlab:'1',
+           cn:function(n){ return n===0 ? 1 : 1/Math.pow(n,3); },
+           note:'比值 → 1, 故 R = 1; 且圆周上 ∑1/n³ 收敛, 收敛范围是 |z| ≤ 1' },
+    rad4:{ name:'∑ 2ⁿ zⁿ', color:'#e65100', lambda:2, Rlab:'1/2',
+           cn:function(n){ return Math.pow(2,n); },
+           note:'比值 |cₙ₊₁/cₙ| = 2 恒为常数, λ = 2, 故 R = 1/2' }
+  };
+
+  var cur='rad1', N=6;
+
+  function lamVal(cas,n){
+    // 数值 lambda = |c_{n+1}/c_n| 与 n 次根值
+    var c0=cas.cn(n), c1=cas.cn(n+1);
+    var ratio = (c0===0)? NaN : Math.abs(c1/c0);
+    var root  = Math.pow(Math.abs(cas.cn(n)), 1/n);
+    return {ratio:ratio, root:root};
+  }
+
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var cas=CASES[cur];
+
+    var padL=64, padR=30, padT=54, padB=74;
+    var gw=w-padL-padR, gh=h-padT-padB;
+
+    // ---- 顶部标题 ----
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
+    ctx.fillText('级数 '+cas.name+'  ·  逐项观察 λ 的收敛', padL-36, 26);
+    ctx.font='13px Segoe UI'; ctx.fillStyle='#546e7a';
+    ctx.fillText('蓝: 比值法 |cₙ₊₁/cₙ|    绿: 根值法 ⁿ√|cₙ|    虚线: 真实 λ', padL-36, 45);
+
+    // ---- 数值计算 ----
+    var M=Math.min(N,40);
+    var rs=[], ro=[];
+    var lamNum = (cas.lambda==='∞') ? null : cas.lambda;
+    var maxY=1e-9;
+    for(var i=1;i<=M;i++){
+      var L=lamVal(cas,i);
+      rs.push(L.ratio); ro.push(L.root);
+      if(isFinite(L.ratio)) maxY=Math.max(maxY,L.ratio);
+      if(isFinite(L.root))  maxY=Math.max(maxY,L.root);
+    }
+    // 确定 y 轴上限: 让曲线占据 30%~90% 高度
+    var yMax;
+    if(lamNum===0){
+      // λ=0: 曲线单调趋于 0, 上限取第一项附近的值, 保证曲线铺满
+      yMax = maxY*1.08 || 1;
+    } else if(lamNum===null){
+      yMax = maxY*1.10 || 10;
+    } else {
+      yMax = Math.max(maxY*1.08, lamNum*1.18);
+    }
+    if(!isFinite(yMax)||yMax<=0) yMax=1;
+
+    var X=function(i){ return padL + (M<=1?0:gw*(i-1)/(M-1)); };
+    var Y=function(v){ return padT + gh*(1 - Math.min(v,yMax)/yMax); };
+
+    // ---- 网格 ----
+    ctx.save();
+    ctx.strokeStyle='rgba(120,144,156,.16)'; ctx.lineWidth=1;
+    for(var k=0;k<=4;k++){
+      var yy=padT+gh*k/4;
+      ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(padL+gw,yy); ctx.stroke();
+    }
+    ctx.restore();
+
+    // ---- 坐标轴 ----
+    ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+gh); ctx.lineTo(padL+gw,padT+gh); ctx.stroke();
+
+    // y 轴刻度
+    ctx.font='11px Segoe UI'; ctx.fillStyle='#607d8b'; ctx.textAlign='right';
+    for(var k2=0;k2<=4;k2++){
+      var v=yMax*k2/4, yy2=padT+gh*(1-k2/4);
+      ctx.fillText(v.toFixed(v<0.1?3:(v<10?2:1)), padL-8, yy2+4);
+    }
+    // x 轴刻度
+    ctx.textAlign='center';
+    var stepX = M<=10?1:Math.ceil(M/8);
+    for(var i2=1;i2<=M;i2+=stepX){ ctx.fillText(String(i2), X(i2), padT+gh+18); }
+    ctx.fillText('项数 n', padL+gw/2, padT+gh+38);
+
+    // ---- 真实 lambda 虚线 ----
+    if(lamNum!==null && lamNum>0 && lamNum<=yMax){
+      ctx.save();
+      ctx.setLineDash([7,5]); ctx.strokeStyle='#8e24aa'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(padL,Y(lamNum)); ctx.lineTo(padL+gw,Y(lamNum)); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle='#8e24aa'; ctx.font='bold 12px Segoe UI'; ctx.textAlign='left';
+      ctx.fillText('λ = '+lamNum, padL+gw-72, Y(lamNum)-7);
+    }
+
+    // ---- 曲线 ----
+    function plot(arr,color){
+      ctx.strokeStyle=color; ctx.lineWidth=2.4;
+      ctx.beginPath(); var started=false;
+      for(var i=0;i<arr.length;i++){
+        var v=arr[i];
+        if(!isFinite(v)) { started=false; continue; }
+        var xx=X(i+1), yy=Y(v);
+        if(!started){ ctx.moveTo(xx,yy); started=true; } else ctx.lineTo(xx,yy);
+      }
+      ctx.stroke();
+      // 数据点
+      for(var j=0;j<arr.length;j++){
+        var vv=arr[j]; if(!isFinite(vv)) continue;
+        if(arr.length>16 && j%2===1) continue;
+        ctx.beginPath(); ctx.arc(X(j+1),Y(vv),3,0,TAU);
+        ctx.fillStyle=color; ctx.fill();
+      }
+    }
+    plot(rs,'#1976d2');
+    plot(ro,'#2e7d32');
+
+    // ---- 末项读数 ----
+    var last=rs.length-1;
+    var lr = rs[last], lo = ro[last];
+    ctx.textAlign='left'; ctx.font='12px Segoe UI';
+    var boxY=padT+gh+46;
+    ctx.fillStyle='#1976d2';
+    ctx.fillText('比值 → '+(isFinite(lr)?lr.toFixed(4):'∞'), padL, boxY);
+    ctx.fillStyle='#2e7d32';
+    ctx.fillText('根值 → '+(isFinite(lo)?lo.toFixed(4):'∞'), padL+150, boxY);
+    ctx.fillStyle='#8e24aa';
+    ctx.fillText('理论 λ = '+(cas.lambda==='∞'?'+∞':cas.lambda)+'   ⇒   R = '+(cas.lambda===0?'+∞':(cas.lambda==='∞'?'0':(1/cas.lambda).toFixed(3))), padL+300, boxY);
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    return {lr:lr, lo:lo};
+  }
+
+  // 初次绘制后更新读数
+  function updateRO(){
+    var cas=CASES[cur];
+    var L=lamVal(cas,N);
+    var Rst = cas.lambda===0 ? '+∞' : (cas.lambda==='∞' ? '0' : (1/cas.lambda).toFixed(3));
+    var ratioSt = isFinite(L.ratio)? L.ratio.toFixed(4) : '∞';
+    var rootSt  = isFinite(L.root )? L.root.toFixed(4)  : '∞';
+    setRO('radLabReadout',
+      '当前级数 <b>'+cas.name+'</b>, 取前 <span class="hl">'+N+'</span> 项 &nbsp;|&nbsp; '+
+      '第 N 项 比值 = '+hl(ratioSt)+', 根值 = '+hl2(rootSt)+' &nbsp;|&nbsp; '+
+      '理论 λ = <b>'+(cas.lambda==='∞'?'+∞':cas.lambda)+'</b>, 收敛半径 R = <b>'+Rst+'</b><br>'+
+      '<span style="color:#80deea">'+cas.note+'</span>');
+  }
+
+  var btns={rad1:'btnRad1', rad2:'btnRad2', rad3:'btnRad3', rad4:'btnRad4'};
+  Object.keys(btns).forEach(function(k){
+    var b=document.getElementById(btns[k]);
+    if(b) b.addEventListener('click',function(){
+      cur=k; N=parseInt(document.getElementById('rngRadN').value,10)||6;
+      Object.keys(btns).forEach(function(k2){
+        var bb=document.getElementById(btns[k2]);
+        if(bb){ if(k2===cur) bb.classList.add('active'); else bb.classList.remove('active'); }
+      });
+      draw(); updateRO();
+    });
+  });
+  bindSlider('rngRadN',function(v){ N=v; badge('badgeRadN',v); draw(); updateRO(); });
+
+  raf(function(){ updateRO(); });
+  return {draw:function(){ draw(); updateRO(); }};
+});
+
+// ================= 模块 4: 知识结构树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'复数项级数', c:'#1976d2', leaves:['复数列极限 (定理1.1)','级数 · 部分和','定理1.2 充要条件','定理1.3 必要条件','定理1.4 绝对⇒收敛','绝对 / 条件收敛']},
+    {t:'幂级数与收敛圆', c:'#e65100', leaves:['函数项级数 · 和函数','幂级数 $\\sum c_n z^n$','Abel 定理','收敛圆 $|z|\u003cR$','$R=0$ / $R=+\\infty$','圆周需具体分析']},
+    {t:'收敛半径', c:'#c62828', leaves:['比值法 $R=\\frac{1}{\\lambda}$','根值法 $R=\\frac{1}{\\lambda}$','$\\lambda=0\\Rightarrow R=+\\infty$','$\\lambda=\\infty\\Rightarrow R=0$','例1.3 $\\sum z^n\\to\\frac{1}{1-z}$','例1.4 圆周讨论']},
+    {t:'运算与和函数', c:'#2e7d32', leaves:['加 / 减 / 乘 (逐项)','代换(复合)运算','定理1.6 和函数解析','逐项求导','逐项积分','$R$ 不变']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第四章第一节 · 复级数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  function sumRO(st){
+    var txt;
+    if(st<1) txt='舞台一 · 顶层结构: 复数项级数 → 幂级数 → 收敛半径 → 和函数, 四层知识正在生长...';
+    else if(st<2) txt='舞台二 · 逐层展开: 各分支的定义、判别法与定理依次显形, 收敛圆由阿贝尔定理给出.';
+    else txt='<b>本节要点</b> &nbsp;复数项级数: 化实判敛, 通项趋零必要, 绝对收敛必收敛<br>'+
+      '幂级数: 阿贝尔定理给出收敛圆 $|z| &lt; R$<br>'+
+      '收敛半径: $\\frac1R=\\lim\\limits_{n\\to\\infty}\\left|\\frac{c_{n+1}}{c_n}\\right|$ (或根值式)<br>'+
+      '和函数: 圆内解析, 逐项求导 / 求积且 $R$ 不变';
+    setRO('sumReadout', txt);
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw(); sumRO(0);
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); sumRO(stage); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); sumRO(2); });
+  raf(function(){ sumRO(stage); });
+  return {draw:draw};
+});
+
+// ================= 小测验交互 =================
+(function(){
+  var qs=[].slice.call(document.querySelectorAll('.quiz-q .quiz-opt'));
+  // per-question logic
+  var allQ=[].slice.call(document.querySelectorAll('.quiz-q'));
+  var total=allQ.filter(function(q){ return q.querySelector('.quiz-opt'); }).length;
+  var done=0, right=0;
+  allQ.forEach(function(q){
+    if(!q.querySelector('.quiz-opt')) return;   // skip 思辨题
+    var opts=[].slice.call(q.querySelectorAll('.quiz-opt'));
+    var expl=q.querySelector('.quiz-explain');
+    var answered=false;
+    opts.forEach(function(o){
+      o.addEventListener('click',function(){
+        if(answered) return;
+        answered=true; done++;
+        var ok = o.getAttribute('data-ok')==='1';
+        if(ok) right++;
+        opts.forEach(function(oo){
+          if(oo.getAttribute('data-ok')==='1') oo.classList.add('correct');
+        });
+        if(!ok) o.classList.add('wrong');
+        if(expl) expl.style.display='block';
+        setRO('quizScore','已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+hl(String(right))+' 题'+
+          (done===total ? (right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffab91">建议再复习对应知识点.</span>') : ''));
+      });
+    });
+  });
+  setRO('quizScore','已完成 0 / '+total+' 题');
+})();
+
+})();
+
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'无穷级数的收敛为什么要区分“绝对收敛”与“条件收敛”? 二者的本质差别在哪里?',
+     hints:['绝对收敛由模级数 $\\sum |z_n|$ 控制, 收敛稳健且与顺序无关; 条件收敛只保证部分和有极限, 相对脆弱.',
+            '绝对收敛级数可以任意重排而不改变其和; 条件收敛级数重排后甚至可以收敛到任意指定的值.',
+            '几何上, 绝对收敛意味着各项“长度”之和有限, 路径总长可控; 条件收敛靠方向相互抵消才勉强收敛.',
+            '可迁移的态度: 分清“本质牢固”与“勉强可行”, 在工程与决策中优先依赖稳健的那一类结论.']},
+    {q:'阿贝尔定理说“收敛圆边界上至少有一个奇点”, 这句话的哲学意味是什么?',
+     hints:['收敛半径由幂级数自身的系数唯一决定, 边界不是人为规定, 而是内在结构的客观显现.',
+            '圆内处处解析、圆外一概失效, 边界的奇点像一道天然分界, 说明“能走多远”由事物本身的性质决定.',
+            '极限的存在与破坏往往发生在边界处: 圆内一切良好, 圆外全部失灵, 提醒我们关注临界点而非平均值.',
+            '可迁移的态度: 认清自身能力的边界在哪里, 边界之内做到极致, 边界之外保持敬畏.']},
+    {q:'为什么幂级数在收敛圆内可以逐项求导、逐项积分, 而许多级数却不能随意这样做?',
+     hints:['幂级数在收敛圆内一致收敛且和函数解析, 这种“强收敛”保证了极限与导数、积分可交换次序.',
+            '逐项求导相当于对系数乘以 $n$, 而 $\\sqrt[n]{n}\\to 1$, 故收敛半径 $R$ 不变, 运算始终留在同一收敛圆内.',
+            '反例: 一般的函数项级数在闭区域上未必一致收敛, 交换次序会出错; 傅里叶级数逐项求导也常常失效.',
+            '可迁移的态度: 任何“交换次序”的操作都有前提条件, 先确认条件再动手, 是严谨思维的基本功.']},
+    {q:'从“把函数展开成幂级数”这一思想看, 人类认识复杂事物的一般方法论是什么?',
+     hints:['把复杂对象分解为简单成分的叠加: 幂级数用 $z^n$ 这样最简单的一族函数去逼近复杂的 $f(z)$.',
+            '局部信息可以刻画整体: 知道 $f$ 在一点的各阶导数, 就能在收敛圆内还原整个函数.',
+            '近似与精度可控: 部分和给出任意精度逼近, 余项刻画误差, 把“大概像”变成“差多少”.',
+            '可迁移的态度: 化繁为简、由局部推整体、量化误差, 是分析任何复杂系统的通用思路.']},
+    {q:'结合柯西与阿贝尔的经历, 谈谈基础研究中“坚持”与“被承认”之间的关系.',
+     hints:['柯西建立了严格的极限与收敛理论, 却曾把阿贝尔的论文压置多年, 说明“被承认”并不总与贡献同步.',
+            '阿贝尔在贫病中写下阿贝尔定理, 26 岁病逝, 生前未获应有声誉, 但真理最终以他的名字被铭记.',
+            '科学的评价体系需要时间检验; 一时的冷遇不等于价值的否定, 历史最终会给出公允的答复.',
+            '可迁移的态度: 做学问要有“功成不必在我”的定力, 也要有推动评价机制公正透明的责任意识.']},
+    {q:'“发散级数是魔鬼的发明”这句感叹, 对今天的数学学习者有什么警示?',
+     hints:['阿贝尔的话提醒我们: 不收敛的级数不能随意当作“和”来使用, 形式操作必须以收敛性为前提.',
+            '早期数学家因滥用发散级数得出过荒谬结论, 正是这些错误催生了柯西的严格化, 错误是严格性的催化剂.',
+            '数学的力量来自严谨: 定义清晰、条件明确, 才能让推理可靠地延伸到无穷.',
+            '可迁移的态度: 任何时候都不要跳过前提去做推理, 对“看起来对”的结论保持一份审慎.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    ul.innerHTML=item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('');
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>

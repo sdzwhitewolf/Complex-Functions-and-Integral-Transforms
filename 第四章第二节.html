@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四章第二节 泰勒级数</title>
+<link rel="icon" href="data:,">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px; max-width: 1400px; margin: 0 auto; padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50; line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff; padding: 52px 48px 44px; text-align: center;
+    border-radius: 14px; margin-bottom: 30px; overflow: hidden;
+}
+.header::after {
+    content:''; position:absolute; right:-60px; bottom:-80px;
+    width:320px; height:320px; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+}
+.header::before {
+    content:''; position:absolute; left:8%; top:-90px;
+    width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
+}
+.header h1 { font-size:2.3em; letter-spacing:4px; margin-bottom:12px; text-shadow:0 2px 8px rgba(0,0,0,0.25); color:#fff; }
+.header p { font-size:1.05em; opacity:0.92; margin:0; }
+.sec-title, h2 {
+    color:#1a237e; font-size:1.3em; border-bottom:3px solid #3949ab;
+    padding-bottom:8px; margin:28px 0 15px; font-weight:bold;
+}
+.sec-sub { color:#283593; font-size:1.12em; font-weight:700; margin:22px 0 10px; padding-left:12px; border-left:5px solid #5c6bc0; }
+.problem-box, .box-example {
+    background:linear-gradient(135deg,#e3f2fd 0%,#bbdefb 100%);
+    padding:20px 24px; border-radius:12px; border-left:5px solid #1976d2;
+    margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.08);
+}
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula {
+    background:#fff; padding:16px 18px; border-radius:10px; margin:12px 0;
+    text-align:left; font-size:1.1em; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    border:1px solid #e0e0e0; overflow-x:auto;
+}
+.box-key { background:linear-gradient(135deg,#e3f2fd,#bbdefb); border-radius:12px; padding:18px 22px; margin:15px 0; border-left:5px solid #1976d2; }
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius:12px; padding:18px 22px; margin:15px 0; border-left:5px solid #388e3c; }
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning { background:linear-gradient(135deg,#ffebee,#ffcdd2); border-radius:10px; padding:14px 20px; margin:12px 0; border-left:5px solid #e53935; }
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think { background:linear-gradient(135deg,#fff8e1,#ffecb3); border-radius:12px; padding:16px 22px; margin:15px 0; border-left:5px solid #ff8f00; }
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box { background:#e8eaf6; border-radius:8px; padding:10px 16px; margin:10px 0; font-size:.9em; color:#1a237e; border-left:4px solid #3949ab; line-height:1.7; }
+.info-box strong { color:#0d47a1; }
+table { width:100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.chart-container { background:#fff; padding:22px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin:24px 0; }
+.chart-container h3 { margin:0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel { background:linear-gradient(135deg,#f3e5f5 0%,#e1bee7 100%); padding:18px 20px; border-radius:12px; margin:18px 0; border-left:5px solid #7b1fa2; }
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom:10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn {
+    padding:7px 15px; border:1px solid #1976d2; background:#fff; color:#1976d2;
+    cursor:pointer; border-radius:6px; font-size:.9em; margin-right:8px; font-family:inherit;
+}
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width:200px; vertical-align:middle; }
+.val-badge { display:inline-block; background:#7b1fa2; color:#fff; padding:2px 10px; border-radius:4px; font-weight:bold; min-width:52px; text-align:center; font-size:.88em; }
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout {
+    background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
+    overflow-x:auto; white-space:normal;
+}
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin:20px 0; }
+.tab-radio { display:none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn {
+    padding:12px 24px; border:none; background:#e3f2fd; color:#1976d2;
+    border-radius:8px; cursor:pointer; font-size:.95em; font-weight:600; font-family:inherit;
+}
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1,
+#tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3,
+#tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5,
+#tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1, #tab2:checked ~ #content2, #tab3:checked ~ #content3,
+#tab4:checked ~ #content4, #tab5:checked ~ #content5, #tab6:checked ~ #content6 { display:block; }
+.tab-content { display:none; padding:22px; background:rgba(255,255,255,.55); border:1px solid #e0e0e0; border-radius:10px; }
+.answer-toggle { display:none; }
+.answer-btn {
+    display:inline-block; padding:8px 18px; margin-top:10px; background:#fff3e0; color:#e65100;
+    border:1.5px solid #ffb74d; border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit;
+}
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q { background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0; box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1; }
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt { display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5; border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em; }
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain { display:none; margin-top:10px; padding:10px 16px; border-radius:8px; background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em; }
+.footer { text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px; }
+.tag-pill { display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em; background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle; }
+/* 思政 */
+.hero-card { background:linear-gradient(135deg,#7f1d1d 0%,#b91c1c 55%,#dc2626 100%); color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0; box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden; }
+.hero-card::after { content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%); }
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote { background:rgba(255,255,255,.14); border-left:4px solid #fde68a; padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9; }
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before { content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px; background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px; }
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before { content:''; position:absolute; left:7px; top:6px; width:19px; height:19px; border-radius:50%; background:#fff; border:4px solid #dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.14); }
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card { display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed); border:1px solid #fed7aa; border-left:5px solid #f59e0b; border-radius:12px; padding:20px 24px; margin:16px 0; box-shadow:0 3px 14px rgba(180,83,9,.10); }
+.person-card .p-av { flex:0 0 66px; height:66px; border-radius:50%; background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5em; font-weight:800; letter-spacing:1px; }
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-block { background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0; border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08); }
+.bio-block h5 { margin:0 0 10px; color:#7f1d1d; font-size:1.02em; display:flex; align-items:center; gap:8px; }
+.bio-block h5 .bio-ico { display:inline-flex; width:24px; height:24px; border-radius:6px; background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff; align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px; }
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0; font-size:.93em; color:#78350f; }
+.anecdote .an-tag { display:inline-block; font-weight:800; color:#92400e; margin-right:6px; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c; transition:transform .18s ease, box-shadow .18s ease; }
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag { display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px; }
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math { background:#f8fafc; border-left:3px solid #64748b; border-radius:6px; padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155; }
+.mnemonic { background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b; border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center; }
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+@media (max-width:760px){ .person-card{flex-direction:column;gap:12px;} .hero-card{padding:20px;} }
+@media (max-width:900px){ body{font-size:17px;padding:10px;} .header{padding:30px 16px;} .header h1{font-size:1.5em;letter-spacing:2px;} }
+/* ---------- 思政补充组件 (与第一章一致) ---------- */
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title { font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em; }
+.clash-card .cc-side { background:rgba(255,255,255,.72); border-radius:8px; padding:10px 16px; margin:8px 0; font-size:.92em; }
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label { color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em; letter-spacing:1px; }
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item { background:#fff; border-radius:10px; padding:14px 18px; border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em; }
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.sec-sub { font-weight:800; color:#7f1d1d; font-size:1.06em; margin:24px 0 10px; padding-left:12px; border-left:5px solid #dc2626; letter-spacing:1px; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+/* 本节组件 */
+.def-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:14px; margin:16px 0; }
+.def-card { background:#fff; border-radius:12px; padding:16px 20px; box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #1976d2; font-size:.93em; }
+.def-card .dc-t { font-weight:800; color:#0d47a1; margin-bottom:8px; font-size:1.0em; }
+.def-card p { margin:6px 0; }
+.proof-steps { margin:12px 0; padding-left:0; list-style:none; }
+.proof-steps li { padding:10px 16px 10px 18px; margin:8px 0; border-radius:8px; background:rgba(255,255,255,.78); border-left:3px solid #5c6bc0; font-size:.92em; }
+.proof-steps li b.step-tag { color:#283593; margin-right:6px; }
+.expand-table td:first-child { font-family:'Cambria Math',Georgia,serif; font-size:1.02em; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>第四章 第2节 泰勒级数</h1>
+    <p>泰勒展开定理 &middot; 直接法与间接法 &middot; 常用展开式</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 掌握泰勒展开定理的条件、结论与系数公式, 理解收敛半径与最近边界点的关系;
+2. 理解"函数解析 ⟺ 可展开为幂级数"这一解析函数的本质刻画;
+3. 理解解析函数幂级数展开的唯一性;
+4. 掌握直接展开法 ($\mathrm{e}^z$, $\sin z$, $\cos z$ 等) 与间接展开法 (逐项求导、逐项积分、代换);
+5. 熟记 $\frac{1}{1-z}$、$\ln(1+z)$、$\mathrm{e}^z$、$\sin z$、$\cos z$ 等常用展开式;
+6. 借助交互直观感受"多项式部分和逼近解析函数"与"奇点决定收敛半径".
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-42" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-42" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-42" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-42" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-42" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-42" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、泰勒展开定理</label>
+    <label class="tab-btn" for="tab2" id="label2">二、直接展开法</label>
+    <label class="tab-btn" for="tab3" id="label3">三、间接展开法</label>
+    <label class="tab-btn" for="tab4" id="label4">四、典型例题</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1: 泰勒展开定理 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 泰勒展开定理</div>
+
+<div class="box-key">
+<div class="title">定理 2.1 (泰勒展开定理)</div>
+<p>设 $f(z)$ 在区域 $D$ 内解析, $z_0$ 为 $D$ 内的一点, $d$ 为 $z_0$ 到 $D$ 的边界上各点的最短距离, 则当 $|z - z_0| &lt; d$ 时,</p>
+<div class="formula-box">
+$f(z) = \sum\limits_{n=0}^{\infty} c_n (z - z_0)^n$, &nbsp;其中
+$c_n = \frac{1}{2\pi \mathrm{i}} \oint_{K} \frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\, \mathrm{d}\zeta = \frac{f^{(n)}(z_0)}{n!}$ &nbsp; ($n = 0, 1, 2, \cdots$)
+</div>
+<p>上式称为 $f(z)$ 在 $z_0$ 的<b>泰勒展开式</b>, 其右端的级数称为<b>泰勒级数</b>.</p>
+</div>
+
+<div class="sec-sub">证明思路 (以 $z_0$ 为心、$r &lt; d$ 为半径)</div>
+<ul class="proof-steps">
+<li><b class="step-tag">第一步</b> 以 $z_0$ 为心、适当长 $r$ 为半径作正向圆周 $K: |\zeta - z_0| = r$, 则 $K$ 及其内部含于 $D$. 设 $z$ 为 $K$ 内任一点, 由柯西积分公式
+$$f(z) = \frac{1}{2\pi \mathrm{i}} \oint_K \frac{f(\zeta)}{\zeta - z}\, \mathrm{d}\zeta$$</li>
+<li><b class="step-tag">第二步</b> 由于 $\left| \frac{z - z_0}{\zeta - z_0} \right| = \frac{|z - z_0|}{r} &lt; 1$, 有几何级数展开
+$$\frac{1}{\zeta - z} = \frac{1}{(\zeta - z_0) - (z - z_0)} = \frac{1}{\zeta - z_0} \left[ 1 + \frac{z-z_0}{\zeta-z_0} + \cdots + \frac{(z-z_0)^n}{(\zeta-z_0)^n} + \cdots \right]$$</li>
+<li><b class="step-tag">第三步</b> 将上式代入柯西积分公式, 逐项积分并利用高阶导数公式
+$$\oint_K \frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\, \mathrm{d}\zeta = \frac{2\pi \mathrm{i}}{n!} f^{(n)}(z_0)$$
+得 $f(z) = \sum\limits_{n=0}^{\infty} \frac{f^{(n)}(z_0)}{n!} (z - z_0)^n$ 与余项 $R_N(z)$ 之差.</li>
+<li><b class="step-tag">第四步</b> 由于 $f(z)$ 在 $D$ 内解析, $f(\zeta)$ 在 $K$ 上连续, 于是 $f(\zeta)$ 在 $K$ 上有界: $|f(\zeta)| \le M$, 从而
+$$|R_N(z)| \le \left| \frac{1}{2\pi \mathrm{i}} \oint_K \frac{f(\zeta)\,\mathrm{d}\zeta}{(\zeta - z)^{N+1} (\zeta - z_0)} \right| \cdot r \le \frac{M \cdot q^{N+1}}{1 - q} \cdot \frac{1}{r - |z - z_0|} \to 0 \quad (N \to \infty)$$
+其中 $q = \frac{|z - z_0|}{r} &lt; 1$. 故泰勒展开式成立. $\blacksquare$</li>
+</ul>
+
+<div class="sec-title">1.2 展开的条件与收敛半径</div>
+
+<div class="box-think">
+<span class="think-label">注:</span>
+(1) 若 $f(z)$ 在 $z_0$ 解析, 且 $z_0$ 是 $f(z)$ 在 $D$ 内距离最近的一个边界点, 则 $f(z)$ 在 $z_0$ 的泰勒展开式成立的圆域半径为 $R = d$.<br>
+(2) <b>函数解析的充要条件是它在该点的邻域内可以展开为幂级数</b> —— 这个性质从级数角度反映了解析函数的本质.
+</div>
+
+<div class="box-think">
+<span class="think-label">思想史 · 泰勒级数为何"迟到"了一百多年?</span>
+<b>1715 年</b>, 英国数学家<b>泰勒</b> (B. Taylor, 1685—1731) 在《正的和反的增量方法》中写出了这条公式 —— 比柯西建立"收敛"概念早了整整一百年.<br>
+但泰勒当年<b>既没有讨论收敛性, 也没有要求函数解析</b>. 在他看来, 这只是"用导数把函数拼出来"的一种形式技巧, 能不能用、在多大范围内能用, 统统不管. 十八世纪的数学家 (包括欧拉) 大量使用这类级数, 并因此得出过不少错误结论.<br>
+真正把这条公式变成"定理"的是<b>柯西与魏尔斯特拉斯</b>: 他们补上了两个关键条件 —— ① 函数必须在 $z_0$ 的邻域内<b>解析</b>; ② 展开只在 $z_0$ 到<b>最近奇点</b>的距离 $d$ 之内成立. 定理 2.1 的"$R = d$"正是这一点的精确表述.<br>
+<b>一句话:</b> 泰勒发现了公式, 柯西与魏尔斯特拉斯赋予了它生命. <b>一个数学结论的价值, 不仅在于它"写出来好看", 更在于它"在什么条件下成立"</b> —— 这也是本课程反复强调"解析"二字的原因.
+</div>
+
+<div class="box-key">
+<div class="title">展开式的唯一性</div>
+<p><b>问题:</b> 利用泰勒级数可以将函数展开为幂级数, 展开式是否唯一?</p>
+<p><b>答: 唯一.</b> 假设 $f(z)$ 在 $z_0$ 处展开为幂级数 $f(z) = \sum\limits_{n=0}^{\infty} a_n (z-z_0)^n$, 逐次求导并令 $z = z_0$:</p>
+<div class="formula-box">
+$f(z_0) = a_0, \quad f'(z_0) = a_1, \quad f''(z_0) = 2! \, a_2, \ \cdots, \quad f^{(k)}(z_0) = k! \, a_k$
+</div>
+<p>即 $a_k = \frac{f^{(k)}(z_0)}{k!}$ —— 与泰勒系数完全一致. 故<b>解析函数展开成的幂级数就是泰勒级数</b>, 不存在第二种系数.</p>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 奇点决定收敛半径 <span class="tag-pill">拖动 $z_0$ 观察可展范围</span></h3>
+<div class="chart-desc">泰勒展开定理说: 展开成立的范围, 以 $z_0$ 到<b>最近边界点/奇点</b>的距离 $d$ 为半径. 拖动蓝点 $z_0$: 绿色圆盘 (半径 $d$) 就是泰勒级数保证收敛的范围; $z_0$ 越靠近红色 ✕ (奇点), 圆盘越小.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择函数:</label>
+    <button class="control-btn active" id="btnTz1">$f(z) = \frac{1}{z}$</button>
+    <button class="control-btn" id="btnTz2">$f(z) = \frac{1}{z^2+1}$</button>
+  </div>
+</div>
+<canvas id="cvRadius" data-h="400"></canvas>
+<div class="readout" id="radiusReadout"></div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2: 直接法与间接法 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 直接展开法</div>
+
+<div class="def-grid">
+<div class="def-card"><div class="dc-t">直接展开法</div><p>由泰勒展开定理计算系数 $c_n = \frac{f^{(n)}(z_0)}{n!}$, 然后将函数展成幂级数 $f(z) = \sum\limits_{n=0}^{\infty} \frac{f^{(n)}(z_0)}{n!}(z - z_0)^n$.</p><p>适用于导数规律明显的函数.</p></div>
+</div>
+
+<div class="sec-sub">直接法: 三个最基本的展开式</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.1 &nbsp;将 $f(z) = \mathrm{e}^z$ 在 $z_0 = 0$ 处展成幂级数.</div>
+<input type="checkbox" id="ansT21" class="answer-toggle">
+<label class="answer-btn" for="ansT21">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>由于 $f^{(n)}(z) = \mathrm{e}^z$, 从而 $f^{(n)}(0) = \mathrm{e}^0 = 1$ ($n = 0, 1, 2, \cdots$), 故</p>
+<div class="formula-box">$\mathrm{e}^z = \sum\limits_{n=0}^{\infty} \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \cdots + \frac{z^n}{n!} + \cdots$</div>
+<p>因为 $\mathrm{e}^z$ 在复平面内处处解析, 故幂级数收敛半径 $R = +\infty$.</p>
+</div>
+</div>
+
+<div class="box-formula">
+用直接展开法可得 $\sin z$ 和 $\cos z$ 在 $z_0 = 0$ 的泰勒展开式 ($R = +\infty$):
+$$\sin z = \sum_{n=0}^{\infty} \frac{(-1)^n z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots$$
+$$\cos z = \sum_{n=0}^{\infty} \frac{(-1)^n z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots$$
+</div>
+
+<div class="sec-title">2.2 系数与常用展开式</div>
+
+<div class="sec-sub">五个必背母式 (间接法的"原子")</div>
+
+<div class="value-table">
+<table class="value-table">
+<tr><th style="width:26%;">母式</th><th style="width:40%;">展开式</th><th>收敛范围</th></tr>
+<tr><td>$\frac{1}{1-z}$</td><td>$\sum\limits_{n=0}^{\infty} z^n = 1 + z + z^2 + \cdots$</td><td>$|z| &lt; 1$</td></tr>
+<tr><td>$\mathrm{e}^z$</td><td>$\sum\limits_{n=0}^{\infty} \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \cdots$</td><td>$|z| &lt; +\infty$</td></tr>
+<tr><td>$\sin z$</td><td>$\sum\limits_{n=0}^{\infty} \frac{(-1)^n z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \cdots$</td><td>$|z| &lt; +\infty$</td></tr>
+<tr><td>$\cos z$</td><td>$\sum\limits_{n=0}^{\infty} \frac{(-1)^n z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \cdots$</td><td>$|z| &lt; +\infty$</td></tr>
+<tr><td>$\ln(1+z)$</td><td>$\sum\limits_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} z^n = z - \frac{z^2}{2} + \frac{z^3}{3} - \cdots$</td><td>$|z| &lt; 1$</td></tr>
+</table>
+</div>
+
+<div class="box-think">
+<span class="think-label">小结:</span> 第二节的绝大多数例题, 本质都是把待展开的函数<b>化归到上面五个式子</b>之一. 熟记这五个母式 + 三板斧, 泰勒展开题基本可以"一眼定位".
+</div>
+
+<div class="chart-container">
+<h3>交互 · 泰勒部分和逼近 <span class="tag-pill">拖动滑块增加项数</span></h3>
+<div class="chart-desc">在实轴上观察泰勒多项式对解析函数的逼近: 项数 $N$ 越大, 多项式曲线(紫色)与函数曲线贴合得越好. 切换函数, 观察 $\sin z$ 与 $\cos z$ 如何被多项式"逐段占领".</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择函数:</label>
+    <button class="control-btn" id="btnTf1">$\mathrm{e}^z$</button>
+    <button class="control-btn active" id="btnTf2">$\sin z$</button>
+    <button class="control-btn" id="btnTf3">$\cos z$</button>
+  </div>
+  <div class="row">
+    <label>项数 $N$ = <span class="val-badge" id="badgeTayN">3</span></label>
+    <input type="range" id="rngTayN" min="0" max="15" value="3">
+  </div>
+</div>
+<canvas id="cvTaylor" data-h="400"></canvas>
+<div class="readout" id="taylorReadout"></div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3: 间接展开法 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 间接展开法</div>
+
+<div class="def-grid">
+<div class="def-card"><div class="dc-t">间接展开法</div><p>借助于一些<b>已知函数的展开式</b>, 结合解析函数的性质、幂级数运算性质 (逐项求导、积分等) 和复合运算 (代换等), 求函数的泰勒展开式.</p><p>最常用、最高效的方法.</p></div>
+</div>
+
+<div class="sec-sub">间接法: 两个最常用的母公式</div>
+
+<div class="box-formula">
+(1) 几何级数 ($|z| &lt; 1$):
+$$\frac{1}{1-z} = \sum_{n=0}^{\infty} z^n = 1 + z + z^2 + \cdots$$
+(2) 对数函数的主支 ($|z| &lt; 1$), 由逐项积分得到:
+$$\ln(1+z) = \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} z^n = z - \frac{z^2}{2} + \frac{z^3}{3} - \cdots$$
+</div>
+
+<div class="info-box"><strong>间接法三板斧:</strong> ① 代换 — 把 $z$ 换成 $-z,\ z^2,\ \frac{z}{2}$ 等; ② 逐项求导 / 逐项积分 — 在收敛圆内合法 (定理 1.6); ③ 部分分式分解 — 处理有理函数. 每一步都要重新确认收敛范围!</div>
+
+<div class="sec-title">3.2 派生展开式一览</div>
+
+<div class="chart-container">
+<h3>交互 · 间接法派生树 <span class="tag-pill">切换手段看派生</span></h3>
+<div class="chart-desc">所有常用的幂级数, 都可以从一条母式 $\frac{1}{1-z} = \sum\limits_{n=0}^{\infty} z^n$ 派生出来. 点击左侧按钮, 观察不同的间接法手段如何"长"出新的展开式 —— 派生之后, 收敛范围必须重新确认.</div>
+<div class="control-panel">
+  <div class="row">
+    <button class="control-btn active" id="btnInd1">① 代换 $z \to -z$</button>
+    <button class="control-btn" id="btnInd2">② 逐项求导</button>
+    <button class="control-btn" id="btnInd3">③ 逐项求积</button>
+  </div>
+</div>
+<canvas id="cvIndirect" data-h="380"></canvas>
+<div class="readout" id="indReadout"></div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4: 典型例题 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 例题精讲</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.2 &nbsp;将函数 $\frac{1}{(1-z)^2}$ 展开为 $z$ 的幂级数.</div>
+<input type="checkbox" id="ansT22" class="answer-toggle">
+<label class="answer-btn" for="ansT22">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>由于 $\frac{1}{1-z}$ 在单位圆周 $|z| = 1$ 上有一个奇点 $z = 1$, 而在 $|z| &lt; 1$ 内处处解析, 所以在 $|z| &lt; 1$ 内可展成幂级数. 利用已知展开式</p>
+<div class="formula-box">$\frac{1}{1-z} = 1 + z + z^2 + \cdots \quad (|z| &lt; 1)$</div>
+<p>对上式两端逐项求导, 得</p>
+<div class="formula-box">
+$\frac{1}{(1-z)^2} = 1 + 2z + 3z^2 + \cdots + n z^{n-1} + \cdots = \sum\limits_{n=1}^{\infty} n\, z^{n-1} \quad (|z| &lt; 1)$
+</div>
+<p><b>要点:</b> 收敛范围由"最近奇点"决定, 与逐项求导无关 —— 求导不改变收敛半径.</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 2.3 &nbsp;求对数函数的主值 $\ln(1+z)$ 在 $z_0 = 0$ 处的泰勒展开式.</div>
+<input type="checkbox" id="ansT23" class="answer-toggle">
+<label class="answer-btn" for="ansT23">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>$\ln(1+z)$ 在从 $z = -1$ 向左沿负实轴剪开的平面内是解析的, 因为 $z = -1$ 是距离原点最近的奇点, 所以它在 $|z| &lt; 1$ 内可以展成 $z$ 的幂级数.</p>
+<p>在单位圆内任取从 $0$ 到 $z$ 的积分路线 $C$, 将展开式
+$$\frac{1}{1+z} = \sum_{n=0}^{\infty} (-1)^n z^n = 1 - z + z^2 - \cdots \quad (|z| &lt; 1)$$
+两端沿 $C$ 逐项积分, 得</p>
+<div class="formula-box">
+$\ln(1+z) = \sum\limits_{n=0}^{\infty} \frac{(-1)^n}{n+1} z^{n+1} = z - \frac{z^2}{2} + \frac{z^3}{3} - \cdots \quad (|z| &lt; 1)$
+</div>
+<p><b>要点:</b> 逐项积分在收敛圆内合法; 积分下限给出常数项 $c_0 = \ln(1) = 0$.</p>
+</div>
+</div>
+
+<div class="sec-title">4.2 综合技巧</div>
+
+<div class="box-example">
+<div class="ex-label">拓展例题 &nbsp;将 $\frac{1}{(1+z)(1-z)}$ 与 $\frac{z}{(1+z)^2}$ 展开为 $z$ 的幂级数 (综合训练).</div>
+<input type="checkbox" id="ansT24" class="answer-toggle">
+<label class="answer-btn" for="ansT24">查看解答</label>
+<div class="answer-body">
+<p><b>【解】(1)</b> $\frac{1}{(1+z)(1-z)} = \frac{1}{1-z^2} = \sum\limits_{n=0}^{\infty} z^{2n} = 1 + z^2 + z^4 + \cdots$ &nbsp; ($|z^2| &lt; 1$ 即 $|z| &lt; 1$).</p>
+<p><b>(2)</b> 对 $\frac{1}{1+z} = \sum\limits_{n=0}^{\infty} (-1)^n z^n$ 两端逐项求导:
+$-\frac{1}{(1+z)^2} = \sum\limits_{n=1}^{\infty} (-1)^n n z^{n-1}$, 故
+$$\frac{z}{(1+z)^2} = \sum_{n=0}^{\infty} (-1)^n (n+1) z^{n+1} = z - 2z^2 + 3z^3 - \cdots \quad (|z| &lt; 1)$$</p>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 间接法决策树 <span class="tag-pill">点选函数类型, 看展开路线</span></h3>
+<div class="chart-desc">拿到一个函数要展成幂级数, 先判断它属于哪一类: 有理分式? 指数/三角? 带对数? 还是复合形式? 点击按钮, 决策树会把该类函数的<b>推荐展开路线</b>高亮出来 —— 每一步都注明用的是哪条性质、收敛范围怎么定.</div>
+<div class="control-panel">
+  <div class="row">
+    <button class="control-btn active" id="btnTree1">① 有理分式</button>
+    <button class="control-btn" id="btnTree2">② 指数 / 三角</button>
+    <button class="control-btn" id="btnTree3">③ 含 $\ln$</button>
+    <button class="control-btn" id="btnTree4">④ 复合 / 幂函数</button>
+  </div>
+</div>
+<canvas id="cvTree" data-h="430"></canvas>
+<div class="readout" id="treeReadout"></div>
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（知识图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>泰勒级数 · 知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>泰勒展开定理</b> → <b>展开的唯一性</b> → <b>直接展开法</b> → <b>间接展开法</b>. 点击"逐步展开"看知识如何逐层生长, 点击"重新生长"从头演示.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">↻ 重新生长</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+解析函数泰勒展, 邻域之内幂级数;<br>
+系数除以阶乘记, 收敛半径是奇距;<br>
+直接求导套公式, 间接代换求积导;<br>
+五大母式心中记, 展开唯一不变更.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心公式/结论</th><th>几何图像</th></tr>
+<tr><td>泰勒展开定理</td><td>$f(z)=\sum\limits_{n=0}^{\infty}\frac{f^{(n)}(z_0)}{n!}(z-z_0)^n$</td><td>以 $z_0$ 为心的收敛圆盘</td></tr>
+<tr><td>收敛半径</td><td>$R=|z_0-z_1|$ ($z_1$ 为最近的奇点)</td><td>圆盘被奇点"顶住"的最大半径</td></tr>
+<tr><td>系数公式</td><td>$c_n=\frac{f^{(n)}(z_0)}{n!}=\frac{1}{2\pi\mathrm{i}}\oint_{K}\frac{f(\zeta)}{(\zeta-z_0)^{n+1}}\,\mathrm{d}\zeta$</td><td>一点处的导数决定整个邻域</td></tr>
+<tr><td>常用母式 $\frac{1}{1-z}$</td><td>$\frac{1}{1-z}=\sum\limits_{n=0}^{\infty}z^n$ ($|z| &lt; 1$)</td><td>单位圆内等比叠加</td></tr>
+<tr><td>$\mathrm{e}^z,\ \sin z,\ \cos z$</td><td>$\mathrm{e}^z=\sum\limits_{n=0}^{\infty}\frac{z^n}{n!}$, $\sin z=\sum\limits_{n=0}^{\infty}\frac{(-1)^n z^{2n+1}}{(2n+1)!}$, $\cos z=\sum\limits_{n=0}^{\infty}\frac{(-1)^n z^{2n}}{(2n)!}$</td><td>整函数, $R=+\infty$</td></tr>
+<tr><td>$\ln(1+z)$</td><td>$\ln(1+z)=\sum\limits_{n=1}^{\infty}\frac{(-1)^{n-1}}{n}z^n$ ($|z| &lt; 1$)</td><td>由逐项积分得到</td></tr>
+<tr><td>间接法三种手段</td><td>代换 / 逐项求导 / 逐项求积</td><td>都由母式"派生"而出</td></tr>
+</table>
+
+<!-- ===== 自测题 ===== -->
+<div class="sec-title">3. 自测 · 小试身手</div>
+
+<div class="quiz-q">
+<div class="q-title">1. $f(z)$ 在 $z_0$ 的泰勒展开式成立的圆域半径 $R$ 由什么决定?</div>
+<span class="quiz-opt" data-ok="1">$z_0$ 到最近奇点(边界点)的距离</span>
+<span class="quiz-opt" data-ok="0">导数的最大值</span>
+<span class="quiz-opt" data-ok="0">积分路线的长度</span>
+<span class="quiz-opt" data-ok="0">无法确定</span>
+<div class="quiz-explain">定理 2.1 注(1): $R = d$, 即 $z_0$ 到 $D$ 的边界(最近奇点)的最短距离.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $\sin z$ 的泰勒展开式的收敛半径是?</div>
+<span class="quiz-opt" data-ok="0">$R = 1$</span>
+<span class="quiz-opt" data-ok="0">$R = \pi$</span>
+<span class="quiz-opt" data-ok="1">$R = +\infty$</span>
+<span class="quiz-opt" data-ok="0">$R = 2\pi$</span>
+<div class="quiz-explain">$\sin z$ 在全平面解析(无奇点), 收敛半径 $R = +\infty$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. $\ln(1+z)$ 在 $z_0 = 0$ 处展开的收敛范围是?</div>
+<span class="quiz-opt" data-ok="0">$|z| &lt; +\infty$</span>
+<span class="quiz-opt" data-ok="1">$|z| &lt; 1$</span>
+<span class="quiz-opt" data-ok="0">$|z| &lt; 2$</span>
+<span class="quiz-opt" data-ok="0">$0 &lt; |z| &lt; 1$</span>
+<div class="quiz-explain">最近奇点是 $z = -1$, 距原点距离为 1, 故 $|z| &lt; 1$ (例 2.3).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 解析函数的幂级数展开式是唯一的吗?</div>
+<span class="quiz-opt" data-ok="0">不唯一, 系数可任意</span>
+<span class="quiz-opt" data-ok="1">唯一, 系数必为 $f^{(n)}(z_0)/n!$</span>
+<span class="quiz-opt" data-ok="0">仅在圆内唯一</span>
+<span class="quiz-opt" data-ok="0">与展开方法有关</span>
+<div class="quiz-explain">逐项求导并令 $z = z_0$, 得 $a_k = f^{(k)}(z_0)/k!$, 与方法无关 —— 唯一.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 母式 $\frac{1}{1-z} = \sum\limits_{n=0}^{\infty} z^{n}$ 成立的区域是?</div>
+<span class="quiz-opt" data-ok="0">整个复平面</span>
+<span class="quiz-opt" data-ok="1">$|z| &lt; 1$</span>
+<span class="quiz-opt" data-ok="0">$0 &lt; |z| &lt; 1$</span>
+<span class="quiz-opt" data-ok="0">$|z| &gt; 1$</span>
+<div class="quiz-explain">最近奇点为 $z=1$(距原点 1), 故收敛半径 $R=1$, 收敛域 $|z|&lt;1$. 这是最常用的母展开式.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. $\cos z$ 在 $z_0=0$ 处的泰勒展开式中, $z^{4}$ 的系数是?</div>
+<span class="quiz-opt" data-ok="0">$1/4!$</span>
+<span class="quiz-opt" data-ok="1">$1/4!$ 且符号为 $+$</span>
+<span class="quiz-opt" data-ok="0">$-1/4!$</span>
+<span class="quiz-opt" data-ok="0">$0$</span>
+<div class="quiz-explain">$\cos z = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots$, 只有偶次项, $z^4$ 系数为 $+\frac{1}{4!}=\frac{1}{24}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. $f(z) = \frac{1}{z-2}$ 在 $z_0 = 0$ 处展开的收敛半径是?</div>
+<span class="quiz-opt" data-ok="0">$1$</span>
+<span class="quiz-opt" data-ok="1">$2$</span>
+<span class="quiz-opt" data-ok="0">$+\infty$</span>
+<span class="quiz-opt" data-ok="0">$1/2$</span>
+<div class="quiz-explain">$f$ 唯一的奇点是 $z=2$, 到 $z_0=0$ 的距离为 $2$, 故 $R=2$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. 用间接法展开 $f(z) = z^{2}\mathrm{e}^{z}$, 其 $z^{5}$ 项系数为?</div>
+<span class="quiz-opt" data-ok="0">$1/5!$</span>
+<span class="quiz-opt" data-ok="1">$1/3!$</span>
+<span class="quiz-opt" data-ok="0">$1/2!$</span>
+<span class="quiz-opt" data-ok="0">$0$</span>
+<div class="quiz-explain">$\mathrm{e}^z = \sum \frac{z^n}{n!}$, 乘 $z^2$ 后 $z^5$ 项来自 $\frac{z^3}{3!}$, 系数为 $\frac{1}{3!}=\frac{1}{6}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. $f(z) = \frac{1}{1+z^{2}}$ 在 $z_0=0$ 处展开的收敛半径是?</div>
+<span class="quiz-opt" data-ok="0">$2$</span>
+<span class="quiz-opt" data-ok="0">$1/2$</span>
+<span class="quiz-opt" data-ok="1">$1$</span>
+<span class="quiz-opt" data-ok="0">$+\infty$</span>
+<div class="quiz-explain">奇点为 $z=\pm\mathrm{i}$, 距原点均为 $1$, 故 $R=1$. 注意: 虽然 $\frac{1}{1+z^2}=\frac{1}{1-(-z^2)}=\sum(-1)^n z^{2n}$, 展开中无 $z^{2n+1}$ 项, 但收敛半径仍由奇点决定.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 若 $f(z)$ 在 $|z|&lt;R$ 内解析, 且 $f(z) = \sum\limits_{n=0}^{\infty} a_n z^{n}$, 则 $a_2$ 等于?</div>
+<span class="quiz-opt" data-ok="0">$f''(0)$</span>
+<span class="quiz-opt" data-ok="1">$\frac{f''(0)}{2!}$</span>
+<span class="quiz-opt" data-ok="0">$2f''(0)$</span>
+<span class="quiz-opt" data-ok="0">$f''(0)\cdot 2$</span>
+<div class="quiz-explain">泰勒系数公式 $a_n = \frac{f^{(n)}(z_0)}{n!}$, 故 $a_2 = \frac{f''(0)}{2!}$. 这是"系数唯一"的直接体现.</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="sec-title">思政园地 · 数学与家国</div>
+
+<div class="hero-card">
+<h3>割圆弥细 · 逼近之道</h3>
+<div class="hero-sub">泰勒多项式的"以直代曲", 与刘徽割圆术"以多边形逼近圆" —— 东西方逼近思想殊途同归</div>
+<div class="hero-quote">
+<b>"割之弥细, 所失弥少; 割之又割, 以至于不可割, 则与圆周合体而无所失矣."</b> —— 刘徽<br>
+泰勒级数正是这句话的现代形式: 用多项式(直线段的推广)无限逼近解析曲线, "所失"即余项 $R_N(z)$, 它随 $N \to \infty$ 归于"无所失".<br>
+但要把这句古老的直觉变成<b>定理</b>, 人类还需要泰勒、欧拉与魏尔斯特拉斯三代人的工作 —— 这正是本节思政栏要讲的故事.
+</div>
+</div>
+
+<div class="sec-title">6.1 数学家故事 · 泰勒: 被名字选中的"迟到者"</div>
+
+<div class="person-card">
+<div class="p-av">泰</div>
+<div class="p-main">
+<div class="p-name">布鲁克·泰勒 (Brook Taylor, 1685—1731)</div>
+<div class="p-meta">英国数学家 · 皇家学会秘书 · 《增量法》与《直线透视》作者 · 泰勒级数与有限差分的奠基人</div>
+<p>今天每一个学微积分和复变函数的人都写过"泰勒展开", 但很少有人知道: 泰勒<b>并不是第一个</b>发现这个展开的人, 他甚至<b>从未写出过收敛条件</b>.</p>
+<p>然而历史把这项发现冠上了他的名字. 这背后既有某种幸运, 也提醒我们一个耐人寻味的问题: <b>一项发现的价值, 究竟由"谁先想到"决定, 还是由"谁把它说清楚、写下来、传出去"决定?</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 英国绅士数学家</h5>
+<p>泰勒出生于英格兰肯特郡一个富裕的家庭, 父亲是一位乡绅. 他自幼受到良好教育, 1701 年进入剑桥大学圣约翰学院, 1709 年获得法学博士(LL.D.). 他曾在皇家学会担任秘书(1714—1718), 是牛顿与哈雷的同时代人, 也与当时的英国学界交往甚密.</p>
+<p>与阿贝尔、洛朗这些"寒门天才"不同, 泰勒一生衣食无忧, 却有另一重不幸: 他的第一任妻子在婚后不久去世, 第二任妻子也在生育后离世. 家庭的接连变故让他心灰意冷, 晚年一度放弃数学研究, 转向宗教与艺术问题, 45 岁便去世.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>核心贡献: 用无穷多项式"造"出任意函数</h5>
+<p>1715 年, 泰勒在《增量法》(<i>Methodus Incrementorum Directa et Inversa</i>) 中给出了这个展开式, 并把"增量"(即微分)与"无穷级数"这两个观念结合了起来 —— 这在当时是一项创举.</p>
+<p>但必须说明: <b>在泰勒之前, 已经有很多人触及过这个想法.</b> 苏格兰数学家<b>格雷果里</b>(James Gregory)在 1671 年前后就用类似级数算过 $\arctan$ 等的展开; <b>莱布尼茨</b>、<b>约翰·伯努利</b>也都沿这条思路做过工作. 泰勒的贡献在于系统、清晰地写出了它. 也正因为如此, 后世才把这项荣誉给了他的名字.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>一个遗憾: 他没有管收敛</h5>
+<p>泰勒在书中<b>完全没有讨论</b>这个级数"什么时候收敛"、"收敛到原函数吗". 他只是把它当作一个形式上的展开来用 —— 这在他那个年代是常态. 直到一个多世纪后, 柯西、阿贝尔、魏尔斯特拉斯才一步步把它变成能被信任的定理.</p>
+<p>今天我们写泰勒展开时, 第一步就是"注明收敛范围"; 求收敛半径时还要看"离最近奇点的距离". 这些要求, <b>都是泰勒之后一百多年才补上的</b>. 这也正说明: 数学的进步常常是"先有工具, 后有标准".</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>泰勒还研究过一个与数学无关的问题: 什么是"更好的透视画法"? 他在《直线透视》(<i>Linear Perspective</i>, 1715) 中用几何原理给出了严格的透视法则, 被誉为西方绘画透视理论的奠基之作之一. <b>同一个用无穷级数描述函数的人, 也用同样的"几何眼光"去描述世界如何被看见</b> —— 数学与艺术在他身上并不冲突.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 从泰勒到我们的课堂</div>
+今日课堂上一句"把 $f(z)$ 在 $z_0$ 处展成幂级数", 背后其实是三百年的层层追问:<br>
+<em>泰勒: 能不能写成 $\sum a_n (z-z_0)^n$ ?</em><br>
+<em>柯西: 什么时候它收敛? 收敛到谁?</em><br>
+<em>魏尔斯特拉斯: 收敛域内, 它和原函数是不是"同一个东西"?</em>
+<span class="iv-sig">—— 每一个看似"顺理成章"的公式, 都有一段被反复追问的历史. 知道这一点, 公式就活了.</span>
+</div>
+
+<div class="sec-title">6.2 数学家故事 · 欧拉: 失明后仍在运算的巨人</div>
+
+<div class="person-card">
+<div class="p-av">欧</div>
+<div class="p-main">
+<div class="p-name">莱昂哈德·欧拉 (Leonhard Euler, 1707—1783)</div>
+<div class="p-meta">瑞士数学家、物理学家 · 圣彼得堡科学院与柏林科学院院士 · 史上最高产的数学家 · 全字母常数 $e$ 的命名者</div>
+<p>如果要在数学史上选出"最多产"的人, 答案几乎没有争议 —— 欧拉. 他一生发表著作与论文<b>超过 800 篇(部)</b>, 全集出版至今仍未完全整理完毕. 后来的数学家开玩笑说: "欧拉写论文就像别人写信一样容易."</p>
+<p>本节最常用的几个"母展开式" —— $\mathrm{e}^z$, $\sin z$, $\cos z$, $\frac{1}{1-z}$, $\ln(1+z)$ —— 几乎都是欧拉亲手处理定型的. 而 $\mathrm{e}^{\mathrm{i}\pi} + 1 = 0$ 这一被反复评为"最美"的公式, 走的正是无穷级数这条路.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 牧师的儿子与伯努利的学生</h5>
+<p>欧拉出生于瑞士巴塞尔, 父亲是一名牧师. 他听从父亲的安排进大学读神学, 却忍不住去听<b>约翰·伯努利</b>的数学课. 伯努利很快发现这个安静的孩子有着惊人的计算力, 于是每周六下午单独给他答疑 —— 这成了欧拉一生中最重要的"私人辅导".</p>
+<p>20 岁时, 欧拉受聘前往俄国圣彼得堡科学院. 彼得的严寒与动乱没有动摇他, 他在那里工作了 14 年; 后来应腓特烈大帝之邀前往柏林科学院(1741—1766), 晚年又回到圣彼得堡, 直到生命的最后一刻.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>核心贡献: 让级数成为"可以放心使用的工具"</h5>
+<p>1748 年, 欧拉出版《无穷分析引论》(<i>Introductio in analysin infinitorum</i>), 这是分析学史上的里程碑. 他把函数、级数、指数与三角函数<b>放进同一个框架</b>: 由幂级数定义 $\mathrm{e}^z$, 由幂级数定义 $\sin z$ 与 $\cos z$, 二者相加即得</p>
+<div class="box-result" style="margin:10px 0"><div class="res-label">欧拉公式</div>$\mathrm{e}^{\mathrm{i}\theta} = \cos\theta + \mathrm{i}\sin\theta$, 取 $\theta=\pi$ 即得 $\mathrm{e}^{\mathrm{i}\pi} + 1 = 0$.</div>
+<p>他还用级数求出了 $\sum \frac{1}{n^2} = \frac{\pi^2}{6}$ —— 这个问题("巴塞尔问题")曾难倒伯努利家族整整一代人, 欧拉用级数展开一举解决. 更惊人的是, 他还算出了 $\sum \frac{1}{n^4}$, $\sum \frac{1}{n^6}$ 等一大批和式.</p>
+<p><b>为什么本节要特别提欧拉?</b> 因为我们求泰勒展开用的"母式"和"间接法", 本质上是欧拉建立起来的技术体系. 你写下的每一行 $\frac{1}{1-z} = \sum z^n$, 都踩在欧拉铺的路上.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>失明之后: 心算完成一半的著作</h5>
+<p>1735 年, 欧拉因长期过度工作导致右眼失明; 1766 年, 左眼也失去视力, 他<b>完全失明</b>. 但接下来的十七年, 竟是他创作力最旺盛的时期之一.</p>
+<p>他凭借惊人的记忆与心算能力继续工作: 让人记录他口述的论文, 在脑中完成复杂的级数与积分运算. 他著名的《代数学引论》《积分学原理》等著作, 有相当一部分就是在失明后完成的. 他的助手曾说: <b>欧拉可以在脑中背诵整页的《埃涅阿斯纪》, 并记得每一版的印刷差异.</b></p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">4</span>晚境: 在纸页与烟斗之间离去</h5>
+<p>1783 年 9 月 18 日, 76 岁的欧拉在一次家庭聚会上与人讨论新发现的天王星轨道, 并随手在纸上画着计算. 之后他停下来喝了一口茶, 抱起孙子玩耍, 忽然说了一句"我要死了", 随后因脑溢血去世 —— <b>算题算到了生命的最后一刻</b>.</p>
+<p>法国数学家孔多塞为他写下墓志铭般的评语: "<b>欧拉停止了计算, 也就停止了生活.</b>"</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>欧拉在双目失明后仍然坚持推演级数. 当他宣布 $\mathrm{e}^{\mathrm{i}\pi} + 1 = 0$ 以及众多级数和的结论时, 同行先是<b>质疑</b>(一个盲人怎么能算出这么复杂的和?), 继而<b>验证</b>, 最后<b>叹服</b>. 科学不相信权威, 只相信可验证的严谨 —— 这也正是我们做每一步泰勒展开都要"注明收敛范围、检查条件"的原因.
+</div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 欧拉的治学心法</div>
+他在困难面前留下的态度, 至今仍是数学工作者的座右铭:<br>
+"<em>因为世界上的事务, 都要服从于某种最大或最小的规律, 所以毫无疑问, 每一个数学问题都可以用某种极大或极小的方法来求解.</em>"<br>
+而面对"无法继续计算"的处境, 他的做法是:<br>
+"<em>我计算, 一直计算, 直到我看见了光.</em>"
+<span class="iv-sig">—— 天才不是不需要努力, 而是把努力变成了一种本能. 这是欧拉留给"勤奋"二字最有力的注解.</span>
+</div>
+
+<div class="sec-title">6.3 数学家故事 · 魏尔斯特拉斯: 让泰勒级数"名副其实"的人</div>
+
+<div class="person-card">
+<div class="p-av">魏</div>
+<div class="p-main">
+<div class="p-name">卡尔·魏尔斯特拉斯 (Karl Weierstrass, 1815—1897)</div>
+<div class="p-meta">德国数学家 · 柏林大学教授 · "现代分析之父" · $\varepsilon$-$\delta$ 语言的创立者 · 解析函数论的奠基人</div>
+<p>本书第四章的几个关键概念 —— <b>收敛半径</b>、<b>幂级数的收敛域</b>、以及泰勒级数与解析函数的<b>等价性</b> —— 背后站着的正是魏尔斯特拉斯. 他是把 19 世纪的分析从"直觉"彻底带向"严格"的人.</p>
+<p>他证明了一件极其重要的事: 在复平面上, "<b>解析</b>"与"<b>可以展成局部幂级数</b>"是<b>同一件事</b>. 这句话把泰勒级数从"计算技巧"提升为<b>复分析的定义性工具</b>.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 大器晚成的中学教师</h5>
+<p>魏尔斯特拉斯生于德国威斯特法伦一个天主教家庭. 他的父亲希望他做公务员, 于是把他送进波恩大学读法律与财政 —— 但他几乎不听课, 把时间花在击剑、喝酒与自学数学上. 结果是: 他没拿到学位就离开了大学.</p>
+<p>更艰难的是, 此后他<b>当了 14 年中学教师</b>. 他教过数学、物理、德文、地理甚至体育, 白天上课、批作业, 只能在<b>深夜</b>研究数学. 正是这段被后人称为"深夜的数学"的岁月里, 他完成了关于阿贝尔函数与解析函数论的最重要工作.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>核心贡献: $\varepsilon$-$\delta$ 语言与解析函数论</h5>
+<p>魏尔斯特拉斯最大的功绩, 是把柯西等人还留有"无限趋近"模糊性的语言, 改造成今天教科书里的 <b>$\varepsilon$-$\delta$ 定义</b>: "对任意 $\varepsilon &gt; 0$, 存在 $\delta &gt; 0$, 使得……" 这套语言让极限、连续、收敛第一次有了<b>完全无歧义</b>的表述.</p>
+<p>在复分析中, 他提出了以幂级数为基础的解析函数理论: 解析函数就是局部可以展开成收敛幂级数的函数; 两个解析函数若在一个有极限点的集合上相等, 则<b>处处相等</b>(唯一性定理). 本节学到的"泰勒展开唯一"、"系数由导数唯一决定", 正是这套理论的直接推论.</p>
+<p>他还发现了著名的<b>魏尔斯特拉斯函数</b> —— 处处连续但处处不可微的函数, 一举击碎了"连续曲线必然大部分可微"的直觉, 成为数学严格化运动中最有力的"反例武器".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>晚境: 从中学讲台到柏林大学</h5>
+<p>1854 年, 魏尔斯特拉斯在《克雷勒杂志》上发表了一篇关于阿贝尔函数的论文 —— 署名只是一个"中学教师". 论文立刻震动了数学界, 柯尼斯堡大学很快授予他荣誉博士学位, 柏林大学随即聘任他为教授.</p>
+<p>此后他成为柏林学派的核心人物, 培养出<b>柯瓦列夫斯卡娅</b>(人类历史上第一位数学女博士、第一位女教授)、<b>康托尔</b>、<b>施瓦茨</b>等一批杰出学生. 他讲课极其严谨, 一句"我们必须在每一步都问: 这真的成立吗?" 成了柏林学派的风格标志.</p>
+</div>
+
+<div class="anecdote">
+<span class="an-tag">轶事</span>魏尔斯特拉斯年轻时把研究成果寄给著名数学家古德曼, 古德曼看后大为赞赏, 称他为"<b>数学的秘密王者</b>". 一个默默无闻的中学教师, 就这样被同行一眼认出. 这段故事常被用来提醒年轻人: <b>真正的才华藏不住, 但准备好被看见, 同样重要.</b>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 一次"直觉"与"严格"的对撞</div>
+<div class="cc-side"><b>旧直觉的说法:</b> "连续曲线总能画出来, 画得出来的曲线当然至少大部分地方是光滑的." —— 这是 19 世纪以前几乎所有数学家的默认信念.</div>
+<div class="cc-side"><b>魏尔斯特拉斯的反例:</b> 1872 年, 他构造出一个处处连续、却处处不可导的函数. 换句话说: 一条"一笔画得出"的曲线, 处处都不光滑, 处处都没有切线.</div>
+<div class="cc-side"><b>历史公论:</b> 这个反例让当时的大数学家埃尔米特都感到"惊骇", 称它是"令人厌恶的祸害". 但正是它, 逼着人们放弃"画得出来就光滑"的直觉, 转向严格的 $\varepsilon$-$\delta$ 定义 —— <b>数学不是关于画图, 而是关于逻辑.</b></div>
+</div>
+
+<div class="sec-title">6.4 数学家故事 · 刘徽: 割圆术里的东方极限思想</div>
+
+<div class="person-card">
+<div class="p-av">刘</div>
+<div class="p-main">
+<div class="p-name">刘徽 (约 225 — 295)</div>
+<div class="p-meta">魏晋时期数学家 · 《九章算术注》与《海岛算经》作者 · 中国古典数学理论的奠基人之一 · 割圆术创立者</div>
+<p>当欧洲还在用罗马数字、几何学尚未系统化的时候, 中国已经有一位数学家提出了一套<b>可以操作、可以检验、可以无限精细</b>的逼近方法 —— 割圆术. 它的思想内核, 与今天的"部分和数列趋于极限"完全一致.</p>
+<p>刘徽的割圆术与泰勒级数, 相隔一千五百多年、跨越万水千山, 却讲着同一个故事: <b>用有限去逼近无限, 用可算出的事物去把握算不出的事物.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>身世: 流传甚少的巨人</h5>
+<p>关于刘徽本人, 史书留下的记载极少 —— 我们甚至不知道他的确切生卒年与生平事迹. 我们只知道他生活于魏晋时期, 是山东一带的学者, 在公元 263 年为《九章算术》作了详尽的注释, 并撰写了《海岛算经》.</p>
+<p>但正是这部注释, 让《九章算术》从一本"算法手册"升华为有理论、有证明的数学著作. 他在中国数学史上的地位, 常被比作"东方的欧几里得".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>割圆术: 一次真正的"极限"实践</h5>
+<p>刘徽从圆内接正六边形出发, 不断把边数加倍 —— 12 边、24 边、48 边…… 随着边数增多, 正多边形面积越来越接近圆面积. 他用正 192 边形算出 $\pi \approx 3.14$, 又算到正 3072 边形, 得到 $\pi \approx 3.1416$.</p>
+<p>关键在于他那句名言: "<b>割之弥细, 所失弥少; 割之又割, 以至于不可割, 则与圆周合体而无所失矣.</b>" —— 这句话包含了三重深刻的思想: ① 误差可以<b>任意小</b>(所失弥少); ② 这个过程可以<b>无限进行</b>(割之又割); ③ 无限进行的结果是<b>精确相等</b>(与圆周合体). 这就是"部分和数列趋于极限"的东方表达.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>与泰勒级数的对话</h5>
+<p>把"以多边形逼近圆"换成"以多项式逼近曲线", 割圆术立刻变成了泰勒级数: 多项式是"直线段的推广", 每增加一项就相当于把多边形多切一刀; 余项 $R_N(z)$ 就是"所失"; $N \to \infty$ 时 $R_N \to 0$, 就是"无所失".</p>
+<p>两者的差异在于: 刘徽的方法给出了<b>可算的误差估计</b>(他能说出"所失"有多少), 而泰勒级数的一般理论要到柯西、魏尔斯特拉斯才补上余项估计与收敛条件. 从这个角度看, 中国古代数学在"逼近的算法化"这一点上, 并不落后.</p>
+</div>
+
+<div class="sec-title">6.5 数学中的哲学: 局部、唯一与精度</div>
+
+<div class="philo-grid">
+
+<div class="philo-card">
+<span class="pc-tag">哲学视角</span>
+<h4>局部与整体</h4>
+<p>泰勒展开只用 $z_0$ 一点的各阶导数, 就重构了整个邻域内的函数 —— "见微知著". 而奇点决定收敛半径: 局部的缺陷, 划定了整体的边界.</p>
+<div class="pc-math">$R = d$ (到最近奇点的距离): 一个人的"可展开范围", 常常由最近的短板决定.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">方法论</span>
+<h4>唯一性精神</h4>
+<p>无论直接求导还是间接代换, 最终系数必然相同 —— "条条大路通罗马"的前提是罗马坐标唯一. 数学结果的唯一性, 支撑了科学结论的客观性.</p>
+<div class="pc-math">$a_k = \frac{f^{(k)}(z_0)}{k!}$: 方法可以灵活, 标准必须唯一.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">量变质变</span>
+<h4>加一项, 精度升一档</h4>
+<p>泰勒多项式的每一次"加项", 都让逼近精度提升一阶(误差从 $O(h^N)$ 变为 $O(h^{N+1})$). 这是最典型的"量变引起质变" —— 在数值计算里, 多一项往往就是"能不能用"的分界线.</p>
+<div class="pc-math">$|R_N| \le \frac{M\,|z-z_0|^{N+1}}{(N+1)!} \to 0$: 每一项都在为最终的可靠买单.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">科学精神</span>
+<h4>先有工具, 后有标准</h4>
+<p>泰勒本人从不讨论收敛. 从 1715 到 1870 年代, 人类用了一百五十年才把"什么时候可信"说清楚 —— 这条补课之路由柯西、阿贝尔、魏尔斯特拉斯共同完成.</p>
+<div class="pc-math">工具的出现往往领先于它的理论基础 —— 但这不意味着可以跳过严格性.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">整体观</span>
+<h4>解析 = 可展成幂级数</h4>
+<p>魏尔斯特拉斯的核心洞见: 在复平面上, "在一个邻域内可导"与"可展成收敛幂级数"竟是<b>同一件事</b>. 复分析的全部威力, 都源自这个"看似巧合"的等价性.</p>
+<div class="pc-math">$f$ 解析 $\iff$ $f$ 局部等于某个收敛幂级数 —— 这不是定理之外的东西, 而是解析性的定义本身.</div>
+</div>
+
+<div class="philo-card">
+<span class="pc-tag">家国情怀</span>
+<h4>精度即实力</h4>
+<p>从刘徽的 3.14 到祖冲之的 3.1415926, 再到今天芯片仿真需要的十几个有效数字, "逼近精度"的每一步提升都由级数理论支撑.</p>
+<div class="pc-math">泰勒余项估计 $|R_N| \to 0$: 把"差不多"变成"差多少可算", 是大国工程的最小语言单位.</div>
+</div>
+
+</div>
+
+<div class="sec-title">6.6 古今对话: 从割圆术到国产大飞机</div>
+
+<div class="box-key">
+<div class="title">中国古代的逼近传统</div>
+<b>《周髀算经》</b>中已有"周三径一"的粗略说法; <b>刘徽</b>创割圆术, 把 $\pi$ 算到 $3.1416$; <b>祖冲之</b>更进一步, 得到 $3.1415926 &lt; \pi &lt; 3.1415927$, 并提出密率 $\frac{355}{113}$ 与约率 $\frac{22}{7}$, 领先世界近千年. 祖冲之的"缀术"虽然失传, 但其精神 —— <b>用越来越精细的有理逼近去锁定无理数</b> —— 正是级数逼近思想的中国版本.<br>
+中国古代数学在"算法化、实用化、可计算"上有独特优势; 而柯西、魏尔斯特拉斯一脉的工作则补上了"公理化、严格化"这一环. 两种传统合流, 才有了现代科学计算的面貌.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 泰勒展开在"大国重器"中的身影</div>
+<ul>
+<li><b>嫦娥探月与北斗导航</b>: 轨道预报需要反复求解非线性微分方程, 其数值解法(如龙格-库塔法)的核心, 正是泰勒展开的截断与误差控制. 少算一项, 轨道就可能偏出几百米.</li>
+<li><b>C919 大飞机</b>: 翼型气动力的计算依赖计算流体力学, 网格点上的通量重构几乎都建立在局部多项式逼近之上. "多算一项、误差降一档"直接关系到气动效率与安全余量.</li>
+<li><b>国产 EDA 与芯片仿真</b>: 器件模型的求解需要极高精度, 十几个有效数字的背后, 是对泰勒展开阶数与收敛性的精确控制.</li>
+<li><b>华罗庚与多复变函数论</b>: 华罗庚在"典型域"与"华氏算子"上的工作, 建立在多元幂级数展开的现代推广之上 —— 中国数学家在级数理论的前沿从未缺席.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 把"逼近"做到极致</div>
+从刘徽割圆到魏尔斯特拉斯的 $\varepsilon$-$\delta$, 从泰勒那个"不管收敛"的形式展开, 到今天卫星轨道与飞机翼型的精密计算 —— 人类花了近两千年, 只为把"逼近"这件事做到可靠.<br>
+<b>精度的竞争就是国家的竞争力</b>. 学会"多算一项、把误差说清楚", 不只是做数学题的要求, 更是科技工作者对国家的一份责任.
+</div>
+</div>
+
+<div class="sec-title">6.7 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.8 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"割之弥细, 所失弥少; 割之又割, 以至于不可割, 则与圆周合体而无所失矣."<span class="q-src">—— 刘徽《九章算术注》</span></div>
+<div class="quote-item">"欧拉停止了计算, 也就停止了生活."<span class="q-src">—— 孔多塞 (Condorcet)</span></div>
+<div class="quote-item">"我计算, 一直计算, 直到我看见了光."<span class="q-src">—— 欧拉治学精神的写照</span></div>
+<div class="quote-item">"我们必须在每一步都问: 这真的成立吗?"<span class="q-src">—— 魏尔斯特拉斯 (K. Weierstrass)</span></div>
+<div class="quote-item">"数学的秘密王者."<span class="q-src">—— 古德曼对青年魏尔斯特拉斯的评价</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 泰勒在 1715 年写下了那个展开, 却从未讨论它是否收敛 —— 这个"补课"花了整整一百五十年: 柯西给出收敛判别法, 阿贝尔划出收敛半径, 魏尔斯特拉斯最终证明"解析"与"可展成幂级数"本是一回事; 而在东方, 刘徽早在公元 263 年就用"割之弥细, 所失弥少"道出了同一个思想.<br>
+<b>一个道理:</b> 用有限逼近无限, 是人类掌握复杂世界的根本方法. 泰勒展开用"一点的局部信息"刻画整个邻域, 用"加一项"换取"精度升一档" —— 这既是局部与整体的辩证法, 也是量变到质变的生动写照. 而更要紧的是: 一个公式真正的价值, 不取决于它被发现得多早, 而取决于它<b>是否被严谨地说清楚、有多少人真正理解它</b>.<br>
+<b>一份责任:</b> 从刘徽的割圆术、祖冲之的密率, 到欧拉失明后仍在推演的级数、魏尔斯特拉斯为分析立下的严格标准, 再到今天嫦娥探月、C919 翼型计算背后沉默的多项式逼近 —— 数学的严格性从来不是"学术洁癖", 而是"大国重器"能否可靠运行的底线. 学会把误差说清楚、把条件写完整, 是我们这一代科技工作者对国家最实在的担当.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第四章第二节 泰勒级数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+var SUB='₀₁₂₃₄₅₆₇₈₉';
+function sub(n){ return String(n).split('').map(function(c){return SUB[+c]||c;}).join(''); }
+
+// ---------- complex ----------
+function C(re,im){ return {re:re,im:im}; }
+function cadd(a,b){ return C(a.re+b.re,a.im+b.im); }
+function csub(a,b){ return C(a.re-b.re,a.im-b.im); }
+function cabs(a){ return Math.hypot(a.re,a.im); }
+function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
+  if(Math.abs(z.im)<eps) return fmt(z.re,d);
+  var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
+  if(Math.abs(z.re)<eps) return sg+im+'i';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  ctx.restore();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function makeDraggable(cv,onMove){
+  var dragging=false;
+  function handle(e){
+    var r=cv.getBoundingClientRect();
+    onMove(e.clientX-r.left,e.clientY-r.top,r.width,r.height);
+  }
+  cv.addEventListener('pointerdown',function(e){ dragging=true; cv.setPointerCapture(e.pointerId); handle(e); });
+  cv.addEventListener('pointermove',function(e){ if(dragging) handle(e); });
+  function end(){ dragging=false; }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',end);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+(function(){
+// ================= 模块 1: 奇点决定收敛半径 =================
+module('cvRadius',function(cv){
+  var which=1;   // 1: 1/z  2: 1/(z^2+1)
+  var z0=C(0.5,0.4);
+  function poles(){
+    return which===1 ? [C(0,0)] : [C(0,1),C(0,-1)];
+  }
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-2.6,2.6,-2.0,2.0);
+    axes(ctx,w,h,m);
+    var ps=poles();
+    ps.forEach(function(p){
+      var px=m.px(p.re), py=m.py(p.im);
+      ctx.strokeStyle='#d32f2f'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(px-8,py-8); ctx.lineTo(px+8,py+8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px-8,py+8); ctx.lineTo(px+8,py-8); ctx.stroke();
+    });
+    var dmin=Infinity;
+    ps.forEach(function(p){ dmin=Math.min(dmin, Math.hypot(z0.re-p.re,z0.im-p.im)); });
+    // Taylor disc
+    ctx.beginPath(); ctx.arc(m.px(z0.re),m.py(z0.im),dmin*m.s,0,TAU);
+    ctx.fillStyle='rgba(46,125,50,0.20)'; ctx.fill();
+    ctx.strokeStyle='#2e7d32'; ctx.lineWidth=2.2; ctx.stroke();
+    dot(ctx,m.px(z0.re),m.py(z0.im),8,'#1565c0','#fff');
+    tlabel(ctx,m.px(z0.re)+11,m.py(z0.im)-10,'z₀','#0d47a1');
+    var fname = which===1?'f(z) = 1/z':'f(z) = 1/(z²+1)';
+    tlabel(ctx,14,24,fname+' — 绿盘: |z−z₀| < d 内可展开为泰勒级数','#0d47a1','bold 14px Segoe UI');
+    setRO('radiusReadout',
+      '<b>函数</b> '+hl(fname)+' &nbsp;&nbsp; <b>z₀</b> = '+hl(cstr(z0))+'<br>'+
+      '<b>最近奇点距离</b> d = '+hl(fmt(dmin,3))+' &nbsp;&nbsp; <b>泰勒级数收敛半径</b> R = d = '+hl(fmt(dmin,3))+'<br>'+
+      '<b>展开范围:</b> '+hl2('|z − z₀| < '+fmt(dmin,3))+' —— 圆内一切安好, 圆周穿过奇点, 圆外失效<br>'+
+      '<span style="color:#80deea">拖动 z₀ 靠近红色 ✕, 绿盘被"挤压"变小 —— 奇点是泰勒展开的天花板.</span>');
+  }
+  makeDraggable(cv,function(px,py){
+    var f=fitCanvas(cv); if(!f) return;
+    var m=mapperEq(f.w,f.h,-2.6,2.6,-2.0,2.0);
+    z0=C(m.ix(px),m.iy(py)); draw();
+  });
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v; z0 = v===1?C(0.6,0.35):C(0.6,0.0);
+    ['btnTz1','btnTz2'].forEach(function(x){ var el=document.getElementById(x); if(el) el.classList.remove('active'); });
+    b.classList.add('active'); draw(); }); }
+  bind('btnTz1',1); bind('btnTz2',2);
+  return {draw:draw};
+});
+
+// ================= 模块 2: 泰勒部分和逼近 (实轴) =================
+module('cvTaylor',function(cv){
+  var which=2, N=3;   // 1: e^z  2: sin  3: cos  (N = 最高次数)
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-6.5,6.5,-2.2,2.2);
+    // grid lines
+    ctx.save(); ctx.strokeStyle='rgba(120,144,156,.15)'; ctx.lineWidth=1;
+    for(var gx=-6;gx<=6;gx++){ ctx.beginPath();ctx.moveTo(m.px(gx),0);ctx.lineTo(m.px(gx),h);ctx.stroke(); }
+    for(var gy=-2;gy<=2;gy++){ ctx.beginPath();ctx.moveTo(0,m.py(gy));ctx.lineTo(w,m.py(gy));ctx.stroke(); }
+    ctx.restore();
+    axes(ctx,w,h,m,'x','y');
+    function Y(v){ return m.py(v); }
+    function plot(fn,color,lw,dash){
+      ctx.save();
+      if(dash) ctx.setLineDash([7,4]);
+      ctx.strokeStyle=color; ctx.lineWidth=lw||2.4;
+      ctx.beginPath();
+      var first=true;
+      for(var px=0;px<=w;px+=2){
+        var x=m.ix(px), y=fn(x);
+        if(!isFinite(y)){ first=true; continue; }
+        var py=Y(y);
+        if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    function term(x,n){ return Math.pow(x,n)/ (function(k){ var r=1; for(var i=2;i<=k;i++)r*=i; return r; })(n); }
+    function taylor(x){
+      var s=0;
+      if(which===1){ for(var n=0;n<=N;n++) s+=term(x,n); }
+      if(which===2){ for(var n=0;n<=N;n++){ if(n%2===1) s+= ((n+1)/2%2===1?1:-1)*term(x,n); } }
+      if(which===3){ for(var n=0;n<=N;n++){ if(n%2===0) s+= (n/2%2===0?1:-1)*term(x,n); } }
+      return s;
+    }
+    var ftrue = which===1?Math.exp: which===2?Math.sin:Math.cos;
+    plot(ftrue,'#1976d2',2.6);
+    plot(taylor,'#7b1fa2',2.4,true);
+    var namesTxt={1:'e^z',2:'sin z',3:'cos z'};
+    var namesTex={
+      1:'$\\mathrm{e}^z = 1 + z + \\frac{z^2}{2!} + \\frac{z^3}{3!} + \\cdots$',
+      2:'$\\sin z = z - \\frac{z^3}{3!} + \\frac{z^5}{5!} - \\cdots$',
+      3:'$\\cos z = 1 - \\frac{z^2}{2!} + \\frac{z^4}{4!} - \\cdots$'};
+    tlabel(ctx,14,24,'蓝: '+namesTxt[which]+' (真函数)　紫: 泰勒多项式 (N='+N+')','#0d47a1','bold 14px Segoe UI');
+    tlabel(ctx,w-170,h-14,'紫线随 N 增大逐段贴合蓝线','#7b1fa2','12px Segoe UI');
+    // readout values at x=1
+    var x1=1, a=taylor(x1), b=ftrue(x1);
+    setRO('taylorReadout',
+      '<b>函数</b> '+hl(namesTex[which])+'<br>'+
+      '<b>在 x = 1 处:</b> 真值 = '+hl(fmt(b,6))+' &nbsp;&nbsp; 泰勒多项式(N='+N+') = '+hl(fmt(a,6))+' &nbsp;&nbsp; 误差 = '+hl(fmt(Math.abs(a-b),6))+'<br>'+
+      '<span style="color:#80deea">拖动 N 滑块, 观察紫色多项式如何逐项"占领"蓝色曲线 —— 这就是泰勒级数的逼近本质.</span>');
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v;
+    ['btnTf1','btnTf2','btnTf3'].forEach(function(x){ var el=document.getElementById(x); if(el) el.classList.remove('active'); });
+    b.classList.add('active'); draw(); }); }
+  bind('btnTf1',1); bind('btnTf2',2); bind('btnTf3',3);
+  bindSlider('rngTayN',function(v){ N=v; badge('badgeTayN',v); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 4: 间接法决策树 =================
+module('cvTree',function(cv){
+  var cur=1;
+  // 每条路线: 节点数组 (level 0=入口, 1=方法, 2=母式, 3=收敛范围)
+  var ROUTES={
+    1:{ name:'有理分式', color:'#1976d2',
+        steps:[
+          ['待展开: 有理分式 P(z)/Q(z)', 0],
+          ['① 部分分式分解 → 拆成 ∑ A/(z−a) 之和', 1],
+          ['② 每个分式配成 A/(1 − z/b) 的标准形', 1],
+          ['③ 套母式  1/(1−w) = ∑ wⁿ', 2],
+          ['④ 收敛范围: |z/b| < 1, 取各分式公共圆域', 3]
+        ],
+        tip:'关键: 分母因式分解 + 部分分式. 若要求以 z₀ 为中心展开, 先把 z−z₀ 作为整体提出来.' },
+    2:{ name:'指数 / 三角', color:'#e65100',
+        steps:[
+          ['待展开: e^z, sin z, cos z 及其线性组合', 0],
+          ['① 直接套母式(系数已知, 无需分解)', 1],
+          ['② 若含 z 的线性变换, 用代换 z → az+b', 1],
+          ['③ 套母式  eʷ = ∑ wⁿ/n!,  sin w, cos w', 2],
+          ['④ 收敛范围: R = +∞ (整函数)', 3]
+        ],
+        tip:'eᶻ、sin z、cos z 都是整函数, 收敛半径恒为 +∞. 这就是欧拉公式 e^{iz} = cos z + i sin z 的来源.' },
+    3:{ name:'含 ln', color:'#c62828',
+        steps:[
+          ['待展开: 含 ln(1+z) 或 ln(1−z) 的函数', 0],
+          ['① 先写成 ln 与已知式的组合', 1],
+          ['② 用逐项积分: ln(1+z) = ∫₀ᶻ 1/(1+w) dw', 1],
+          ['③ 套母式  ln(1+z) = ∑ (−1)ⁿ⁻¹zⁿ/n', 2],
+          ['④ 收敛范围: |z| < 1 (z = 1 处条件收敛)', 3]
+        ],
+        tip:'ln 不能直接代换 —— 它本质是"积出来的". 先用 1/(1+w) 展开再逐项积分, 是最稳的路线.' },
+    4:{ name:'复合 / 幂函数', color:'#2e7d32',
+        steps:[
+          ['待展开: f(g(z)) 或 z^k·f(z) 形式', 0],
+          ['① 代入运算: 把已知式的 z 换成 g(z)', 1],
+          ['② 或逐项求导 / 积分得到新级数', 1],
+          ['③ 套母式(复合后仍是幂级数)', 2],
+          ['④ 收敛范围: 由 |g(z)| < R 反解出 z 的范围', 3]
+        ],
+        tip:'复合是"把已知展开式中的 z 换成合适的解析函数". 收敛范围必须回到原变量 —— 这一步最容易漏.' }
+  };
+
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var R=ROUTES[cur];
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+
+    var padL=30, padT=54, rowH=Math.min(66,(h-padT-40)/R.steps.length);
+    var bw=w-padL*2;
+
+    // 标题
+    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238'; ctx.textBaseline='alphabetic';
+    ctx.fillText('决策路线 · '+R.name, padL, 28);
+    ctx.font='12px Segoe UI'; ctx.fillStyle='#607d8b';
+    ctx.fillText('按顺序自上而下执行; 每一步都要重新确认收敛范围', padL, 46);
+
+    // 节点
+    var cols=['#37474f','#37474f',R.color,R.color,R.color];
+    var fills=['#eceff1','#f5f5f5','#ffffff','#ffffff','#ffffff'];
+    R.steps.forEach(function(st,i){
+      var y=padT+i*rowH;
+      var bh=rowH-10;
+      // 连接线
+      if(i>0){
+        ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.moveTo(padL+26,y-rowH+bh); ctx.lineTo(padL+26,y); ctx.stroke();
+        // 箭头
+        ctx.beginPath(); ctx.moveTo(padL+26,y); ctx.lineTo(padL+21,y-7); ctx.lineTo(padL+31,y-7); ctx.closePath();
+        ctx.fillStyle='#b0bec5'; ctx.fill();
+      }
+      // 盒子
+      ctx.beginPath();
+      var lv = st[1];
+      var bx = padL + (lv===0?0: lv*14);
+      var bbw = bw - (lv===0?0: lv*14);
+      if(ctx.roundRect) ctx.roundRect(bx,y,bbw,bh,9); else ctx.rect(bx,y,bbw,bh);
+      ctx.fillStyle=fills[lv]; ctx.fill();
+      ctx.strokeStyle=cols[lv]; ctx.lineWidth=(lv===0?2.4:1.8); ctx.stroke();
+      // 左侧色条
+      ctx.fillStyle=cols[lv];
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(bx,y,6,bh,3); else ctx.rect(bx,y,6,bh);
+      ctx.fill();
+      // 文字
+      var txt=st[0];
+      var px=13;
+      ctx.font=(lv===0?'bold ':'')+px+'px Segoe UI';
+      while(ctx.measureText(txt).width>bbw-30 && px>9){ px--; ctx.font=(lv===0?'bold ':'')+px+'px Segoe UI'; }
+      ctx.fillStyle=(lv===0?'#263238':(lv===3?R.color:'#455a64'));
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText(txt, bx+20, y+bh/2);
+    });
+
+    // 底部提示
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='italic 12px Segoe UI'; ctx.fillStyle='#00695c';
+    ctx.fillText('※ '+R.tip, padL, h-14);
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+
+  function updateRO(){
+    var R=ROUTES[cur];
+    setRO('treeReadout','当前路线 <b>'+R.name+'</b> &nbsp;|&nbsp; 共 <span class="hl">'+R.steps.length+'</span> 步 &nbsp;|&nbsp; '+
+      '<span style="color:#80deea">'+R.tip+'</span>');
+  }
+
+  ['btnTree1','btnTree2','btnTree3','btnTree4'].forEach(function(id,i){
+    var b=document.getElementById(id);
+    if(b) b.addEventListener('click',function(){
+      cur=i+1;
+      ['btnTree1','btnTree2','btnTree3','btnTree4'].forEach(function(id2,j){
+        var bb=document.getElementById(id2);
+        if(bb){ if(j+1===cur) bb.classList.add('active'); else bb.classList.remove('active'); }
+      });
+      draw(); updateRO();
+    });
+  });
+  raf(function(){ updateRO(); });
+  return {draw:function(){ draw(); updateRO(); }};
+});
+
+// ================= 模块 5: 间接法派生树 =================
+module('cvIndirect',function(cv){
+  var cur=1;   // 1: 代换 z→−z   2: 逐项求导   3: 逐项求积
+  var DERIVED={
+    1:{ title:'代换 (z → −z)', color:'#1976d2',
+        from:'1/(1−z) = Σ zⁿ  (|z| < 1)',
+        to:'1/(1+z) = Σ (−1)ⁿ zⁿ  (|z| < 1)',
+        lines:['① 在母式中把 z 换成 −z',
+               '② 1/(1−(−z)) = 1/(1+z)',
+               '③ ⇒ 1/(1+z) = 1 − z + z² − z³ + ⋯',
+               '④ 收敛范围: |−z| < 1 即 |z| < 1'],
+        ro:'<b>手段: 代换 z → −z</b><br>母式 $\\frac{1}{1-z}=\\sum\\limits_{n=0}^{\\infty}z^n$ &nbsp;→&nbsp; $\\frac{1}{1+z}=\\sum\\limits_{n=0}^{\\infty}(-1)^n z^n$ ($|z| &lt; 1$)<br>'+
+           '<span style="color:#80deea">代换不改变「离最近奇点距离」的判据 —— 收敛半径仍由 $z=-1$ 决定.</span>' },
+    2:{ title:'逐项求导', color:'#e65100',
+        from:'1/(1−z) = Σ zⁿ  (|z| < 1)',
+        to:'1/(1−z)² = Σ n zⁿ⁻¹  (|z| < 1)',
+        lines:['① 母式两端逐项求导',
+               '② d/dz [1/(1−z)] = 1/(1−z)²',
+               '③ ⇒ 1/(1−z)² = 1 + 2z + 3z² + ⋯',
+               '④ 求导不改变收敛半径: 仍为 |z| < 1'],
+        ro:'<b>手段: 逐项求导</b><br>母式 $\\frac{1}{1-z}$ &nbsp;→&nbsp; $\\frac{1}{(1-z)^2}=\\sum\\limits_{n=1}^{\\infty} n\\,z^{n-1}$ ($|z| &lt; 1$)<br>'+
+           '<span style="color:#80deea">逐项求导相当于对系数乘以 $n$, 而 $\\sqrt[n]{n}\\to 1$ —— 收敛半径 $R$ 不变.</span>' },
+    3:{ title:'逐项求积', color:'#2e7d32',
+        from:'1/(1+z) = Σ (−1)ⁿ zⁿ  (|z| < 1)',
+        to:'ln(1+z) = Σ (−1)ⁿ⁻¹ zⁿ/n  (|z| < 1)',
+        lines:['① 先由代换得 1/(1+z) 的展开式',
+               '② 两端沿 0→z 的路线逐项积分',
+               '③ ⇒ ln(1+z) = z − z²/2 + z³/3 − ⋯',
+               '④ 收敛半径不变: 仍为 |z| < 1'],
+        ro:'<b>手段: 逐项求积</b><br>母式 $\\frac{1}{1+z}$ &nbsp;→&nbsp; $\\ln(1+z)=\\sum\\limits_{n=1}^{\\infty}\\frac{(-1)^{n-1}}{n}z^n$ ($|z| &lt; 1$)<br>'+
+           '<span style="color:#80deea">积分下限给出常数项; 收敛半径不变, 但端点要单独讨论.</span>' }
+  };
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var D=DERIVED[cur];
+    function fitText(txt,maxW,basePx,bold){
+      var px=basePx;
+      ctx.font=(bold?'bold ':'')+px+'px Segoe UI';
+      while(ctx.measureText(txt).width>maxW && px>9){ px--; ctx.font=(bold?'bold ':'')+px+'px Segoe UI'; }
+      return px;
+    }
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
+    ctx.fillText('派生树 · '+D.title, 24, 28);
+    ctx.font='12px Segoe UI'; ctx.fillStyle='#607d8b';
+    ctx.fillText('一条母式, 三种派生手段; 每一步都要重新确认收敛范围', 24, 48);
+    var bw=Math.min(w-120,440), bx=(w-bw)/2;
+    function rbox(by,bh,col,fill){
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,10); else ctx.rect(bx,by,bw,bh);
+      ctx.fillStyle=fill; ctx.fill();
+      ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.stroke();
+      ctx.fillStyle=col;
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(bx,by,6,bh,3); else ctx.rect(bx,by,6,bh);
+      ctx.fill();
+    }
+    var rootY=72, rootH=44;
+    rbox(rootY,rootH,'#37474f','#eceff1');
+    var rt='母式: '+D.from, px1=fitText(rt,bw-28,13.5,true);
+    ctx.font='bold '+px1+'px Segoe UI'; ctx.fillStyle='#263238'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(rt, w/2, rootY+rootH/2);
+    var arrowTop=rootY+rootH, arrowBot=arrowTop+34;
+    ctx.strokeStyle=D.color; ctx.lineWidth=2.6;
+    ctx.beginPath(); ctx.moveTo(w/2,arrowTop); ctx.lineTo(w/2,arrowBot); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w/2,arrowBot); ctx.lineTo(w/2-8,arrowBot-11); ctx.lineTo(w/2+8,arrowBot-11); ctx.closePath();
+    ctx.fillStyle=D.color; ctx.fill();
+    var derY=arrowBot+8, derH=46;
+    rbox(derY,derH,D.color,'#fff');
+    var dt='派生: '+D.to, px2=fitText(dt,bw-28,13.5,true);
+    ctx.font='bold '+px2+'px Segoe UI'; ctx.fillStyle=D.color; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(dt, w/2, derY+derH/2);
+    var sy=derY+derH+26;
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    D.lines.forEach(function(t,i){
+      var px=12; ctx.font=px+'px Segoe UI';
+      while(ctx.measureText(t).width>w-70 && px>9){ px--; ctx.font=px+'px Segoe UI'; }
+      ctx.fillStyle='#455a64';
+      ctx.fillText(t, 30, sy+i*22);
+    });
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  function updateRO(){ setRO('indReadout', DERIVED[cur].ro); }
+  ['btnInd1','btnInd2','btnInd3'].forEach(function(id,i){
+    var b=document.getElementById(id);
+    if(b) b.addEventListener('click',function(){
+      cur=i+1;
+      ['btnInd1','btnInd2','btnInd3'].forEach(function(id2,j){
+        var bb=document.getElementById(id2);
+        if(bb){ if(j+1===cur) bb.classList.add('active'); else bb.classList.remove('active'); }
+      });
+      draw(); updateRO();
+    });
+  });
+  raf(function(){ updateRO(); });
+  return {draw:function(){ draw(); updateRO(); }};
+});
+
+// ================= 模块 3: 知识结构树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'泰勒展开定理', c:'#1976d2', leaves:['条件: $D$ 内解析','$|z-z_0|\u003cd$ 可展','$c_n=\\frac{f^{(n)}(z_0)}{n!}$','$c_n$ = 圆周积分公式','$R=d$ 最近边界点','解析 ⟺ 可展幂级数']},
+    {t:'展开的唯一性', c:'#e65100', leaves:['设 $f=\\sum a_n(z-z_0)^n$','逐次求导','令 $z=z_0$','$a_k=\\frac{f^{(k)}(z_0)}{k!}$','与泰勒系数一致','展开唯一']},
+    {t:'直接法', c:'#c62828', leaves:['$\\mathrm{e}^z=\\sum\\frac{z^n}{n!}$','$\\sin z,\\ \\cos z$','$R=+\\infty$','系数规律明显时用']},
+    {t:'间接法', c:'#2e7d32', leaves:['母式: $\\frac{1}{1-z}$','逐项求导: $\\frac{1}{(1-z)^2}$','逐项积分: $\\ln(1+z)$','代换 / 部分分式','重验收敛范围']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第四章第二节 · 泰勒级数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  function sumRO(st){
+    var txt;
+    if(st<1) txt='舞台一 · 顶层结构: 泰勒展开定理 → 展开的唯一性 → 直接法 → 间接法, 四层知识正在生长...';
+    else if(st<2) txt='舞台二 · 逐层展开: 定理条件、系数公式与各分支方法依次显形, 收敛半径由最近奇点给出.';
+    else txt='<b>本节要点</b> &nbsp;泰勒定理: $f(z)=\\sum\\limits_{n=0}^{\\infty}\\frac{f^{(n)}(z_0)}{n!}(z-z_0)^n$<br>'+
+      '收敛半径: $R=|z_0-z_1|$ ($z_1$ 为最近奇点)<br>'+
+      '系数公式: $c_n=\\frac{f^{(n)}(z_0)}{n!}$ (展开唯一)<br>'+
+      '间接法三板斧: 代换 / 逐项求导 / 逐项求积';
+    setRO('sumReadout', txt);
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw(); sumRO(0);
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); sumRO(stage); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); sumRO(2); });
+  raf(function(){ sumRO(stage); });
+  return {draw:draw};
+});
+
+// ================= 小测验交互 =================
+(function(){
+  var allQ=[].slice.call(document.querySelectorAll('.quiz-q'));
+  var done=0, right=0, total=0;
+  allQ.forEach(function(q){
+    if(!q.querySelector('.quiz-opt')) return;
+    total++;
+    var opts=[].slice.call(q.querySelectorAll('.quiz-opt'));
+    var expl=q.querySelector('.quiz-explain');
+    var answered=false;
+    opts.forEach(function(o){
+      o.addEventListener('click',function(){
+        if(answered) return;
+        answered=true; done++;
+        var ok = o.getAttribute('data-ok')==='1';
+        if(ok) right++;
+        opts.forEach(function(oo){
+          if(oo.getAttribute('data-ok')==='1') oo.classList.add('correct');
+        });
+        if(!ok) o.classList.add('wrong');
+        if(expl) expl.style.display='block';
+        setRO('quizScore','已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+hl(String(right))+' 题'+
+          (done===total ? (right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffab91">建议再复习对应知识点.</span>') : ''));
+      });
+    });
+  });
+  setRO('quizScore','已完成 0 / '+total+' 题');
+})();
+
+})();
+
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'泰勒展开「用多项式逼近任意光滑函数」这一思想, 为什么被称为近代科学计算的基石?',
+     hints:['多项式是计算机最擅长计算的对象 —— 只有加、减、乘三种运算, 无需调用任何特殊函数.',
+            '一旦把 $\\mathrm{e}^z$、$\\sin z$ 这类超越函数写成幂级数, 计算机就能用有限次四则运算得到任意精度的值.',
+            '误差可控是关键: 余项 $|R_N(z)|$ 给出了「取多少项」的定量依据, 让近似从经验判断变成可管理的工程.',
+            '可迁移的态度: 把复杂问题化归为「已知简单构件」的组合, 是工程与科学通用的求解策略.']},
+    {q:'为什么解析函数在一点附近的信息, 能够决定它在整个收敛圆内的取值?',
+     hints:['解析函数满足柯西-黎曼方程, 具有极强的刚性: 一点处的各阶导数一旦确定, 局部行为就被完全锁定.',
+            '泰勒系数 $c_n=\\frac{f^{(n)}(z_0)}{n!}$ 只用到 $z_0$ 处的信息, 却在 $|z-z_0| &lt; R$ 内处处成立 —— 局部决定整体.',
+            '收敛半径 $R$ 由到最近奇点的距离给出: 圆内「一体同源」, 圆外则被奇点彻底切断.',
+            '可迁移的态度: 抓住关键点的信息往往能推知全局, 但也要清醒地认识到这种「外推」的边界在哪里.']},
+    {q:'间接展开法与直接展开法的取舍, 体现了怎样的方法论?',
+     hints:['直接法从定义出发逐项求导算系数, 逻辑最直接但计算量大; 间接法借已知母式做代换/求导/求积, 效率高但要求熟悉「工具箱」.',
+            '两条路线的结果必然一致 —— 这正是「展开唯一性」的体现: 方法可以灵活, 答案必须唯一.',
+            '工程实践中更偏好间接法: 把新问题化归为已解决的问题, 是提高效率的通用思路.',
+            '可迁移的态度: 面对任务先问「有没有现成工具可以借用」, 而不是一味从零硬算.']},
+    {q:'魏尔斯特拉斯为何要强调「一致收敛」与余项的可控性?',
+     hints:['逐项求导、逐项积分等运算可以交换次序, 前提正是一致收敛 —— 没有它, 形式上的操作会得出错误结论.',
+            '他构造的「处处连续却处处不可微」的函数说明: 仅凭直觉的「光滑」并不可靠, 必须用严格定义来约束.',
+            '余项可控意味着逼近精度可管理: $N\\to\\infty$ 时 $R_N\\to 0$, 泰勒级数才真正「等于」原函数.',
+            '可迁移的态度: 任何「交换次序」的操作都有前提条件, 先说清条件再动手, 是严谨思维的基本功.']},
+    {q:'结合刘徽的割圆术, 谈谈「有限逼近无限」这一思想的东方源头.',
+     hints:['刘徽「割之弥细, 所失弥少; 割之又割, 以至于不可割, 则与圆周合体而无所失矣」, 与「部分和趋于极限」完全同构.',
+            '以多边形逼近圆、以多项式逼近曲线, 本质上都是「用可计算的简单对象逼近复杂对象」.',
+            '刘徽的方法自带误差估计(能算出「所失」多少), 而泰勒展开的一般收敛理论晚了近两千年才由柯西、魏尔斯特拉斯补全.',
+            '可迁移的态度: 中国古代数学在算法化、可计算上有独特优势; 今天更应把「逼近」做到极致, 用精度支撑大国重器.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    ul.innerHTML=item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('');
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>

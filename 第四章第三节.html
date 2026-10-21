@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四章第三节 洛朗级数</title>
+<link rel="icon" href="data:,">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script>
+(function(){
+  var urls = [
+    'mathjax/tex-svg-full.js',
+    'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js',
+    'https://registry.npmmirror.com/mathjax/3.2.2/files/es5/tex-svg-full.js'
+  ];
+  function load(i){
+    if (i >= urls.length) { console.warn('MathJax 加载失败: 所有来源均不可用'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i]; s.async = true;
+    s.onerror = function(){ load(i+1); };
+    document.head.appendChild(s);
+  }
+  load(0);
+})();
+</script>
+<style>
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 20px; max-width: 1400px; margin: 0 auto; padding: 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    color: #2c3e50; line-height: 1.8;
+}
+.header {
+    position: relative;
+    background: linear-gradient(135deg, #1a365d 0%, #2b4c8c 60%, #3182ce 100%);
+    color: #fff; padding: 52px 48px 44px; text-align: center;
+    border-radius: 14px; margin-bottom: 30px; overflow: hidden;
+}
+.header::after { content:''; position:absolute; right:-60px; bottom:-80px; width:320px; height:320px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); }
+.header::before { content:''; position:absolute; left:8%; top:-90px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%); }
+.header h1 { font-size:2.3em; letter-spacing:4px; margin-bottom:12px; text-shadow:0 2px 8px rgba(0,0,0,0.25); color:#fff; }
+.header p { font-size:1.05em; opacity:0.92; margin:0; }
+.sec-title, h2 { color:#1a237e; font-size:1.3em; border-bottom:3px solid #3949ab; padding-bottom:8px; margin:28px 0 15px; font-weight:bold; }
+.sec-sub { color:#283593; font-size:1.12em; font-weight:700; margin:22px 0 10px; padding-left:12px; border-left:5px solid #5c6bc0; }
+.problem-box, .box-example { background:linear-gradient(135deg,#e3f2fd 0%,#bbdefb 100%); padding:20px 24px; border-radius:12px; border-left:5px solid #1976d2; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.08); }
+.box-example .ex-label { font-weight:bold; color:#e65100; margin-bottom:8px; }
+.formula-box, .box-formula { background:#fff; padding:16px 18px; border-radius:10px; margin:12px 0; text-align:left; font-size:1.1em; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e0e0e0; overflow-x:auto; }
+.box-key { background:linear-gradient(135deg,#e3f2fd,#bbdefb); border-radius:12px; padding:18px 22px; margin:15px 0; border-left:5px solid #1976d2; }
+.box-key .title { font-size:1.1em; color:#0d47a1; font-weight:bold; margin-bottom:10px; }
+.box-result { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius:12px; padding:18px 22px; margin:15px 0; border-left:5px solid #388e3c; }
+.box-result .res-label { font-weight:bold; color:#1b5e20; margin-bottom:8px; }
+.box-warning { background:linear-gradient(135deg,#ffebee,#ffcdd2); border-radius:10px; padding:14px 20px; margin:12px 0; border-left:5px solid #e53935; }
+.box-warning .warn-label { font-weight:bold; color:#b71c1c; margin-bottom:6px; }
+.box-think { background:linear-gradient(135deg,#fff8e1,#ffecb3); border-radius:12px; padding:16px 22px; margin:15px 0; border-left:5px solid #ff8f00; }
+.box-think .think-label { font-weight:bold; color:#e65100; margin-bottom:6px; }
+.info-box { background:#e8eaf6; border-radius:8px; padding:10px 16px; margin:10px 0; font-size:.9em; color:#1a237e; border-left:4px solid #3949ab; line-height:1.7; }
+.info-box strong { color:#0d47a1; }
+table { width:100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
+th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
+td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
+tr:hover td { background:#e3f2fd; }
+.value-table td:first-child { font-weight:700; color:#7f1d1d; background:#fff7ed; }
+.chart-container { background:#fff; padding:22px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin:24px 0; }
+.chart-container h3 { margin:0 0 6px; color:#0d47a1; font-size:1.15em; }
+.chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
+.control-panel { background:linear-gradient(135deg,#f3e5f5 0%,#e1bee7 100%); padding:18px 20px; border-radius:12px; margin:18px 0; border-left:5px solid #7b1fa2; }
+.control-panel label { display:inline-block; min-width:110px; font-weight:600; color:#4a148c; margin-right:8px; font-size:.92em; }
+.control-panel .row { margin-bottom:10px; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.control-btn { padding:7px 15px; border:1px solid #1976d2; background:#fff; color:#1976d2; cursor:pointer; border-radius:6px; font-size:.9em; margin-right:8px; font-family:inherit; }
+.control-btn:hover { background:#1976d2; color:#fff; }
+.control-btn.active { background:#1976d2; color:#fff; }
+input[type="range"] { width:200px; vertical-align:middle; }
+.val-badge { display:inline-block; background:#7b1fa2; color:#fff; padding:2px 10px; border-radius:4px; font-weight:bold; min-width:52px; text-align:center; font-size:.88em; }
+.kg-wrap { margin: 8px 0 4px; }
+.kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
+  font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
+  border-radius: 9px; padding: 8px 14px; }
+.kg-branches { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.kg-col { flex: 1 1 0; min-width: 160px; display: flex; flex-direction: column; }
+.kg-cat { text-align: center; font-weight: 700; font-size: 1em; color: var(--kc);
+  background: #fff; border: 2px solid var(--kc); border-radius: 8px; padding: 6px 8px;
+  margin-bottom: 10px; animation: kgIn .35s ease both; }
+.kg-leaves { display: flex; flex-direction: column; gap: 8px; }
+.kg-leaf { font-size: .94em; color: #455a64; background: #fff; border: 1.6px solid #cfd8dc;
+  border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
+  animation: kgIn .35s ease both; }
+.kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+.kg-col.long .kg-leaf { white-space: pre-wrap; }
+.kg-leaf { overflow-x: auto; }
+.kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
+.kg-stage-1 .kg-leaves { display: none; }
+@keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+.readout { background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace; border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2; overflow-x:auto; white-space:normal; }
+.readout b { color:#80cbc4; font-weight:normal; }
+.readout .hl { color:#ffcc80; }
+.readout .hl2 { color:#a5d6a7; }
+canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
+.tab-container { margin:20px 0; }
+.tab-radio { display:none; }
+.tab-buttons { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; }
+.tab-btn { padding:12px 24px; border:none; background:#e3f2fd; color:#1976d2; border-radius:8px; cursor:pointer; font-size:.95em; font-weight:600; font-family:inherit; }
+.tab-btn:hover { background:#bbdefb; }
+#tab1:checked ~ .tab-buttons #label1, #tab2:checked ~ .tab-buttons #label2,
+#tab3:checked ~ .tab-buttons #label3, #tab4:checked ~ .tab-buttons #label4,
+#tab5:checked ~ .tab-buttons #label5, #tab6:checked ~ .tab-buttons #label6 { background:#1976d2; color:#fff; }
+#tab6:checked ~ .tab-buttons #label6 { background:#b91c1c; }
+#tab1:checked ~ #content1, #tab2:checked ~ #content2, #tab3:checked ~ #content3,
+#tab4:checked ~ #content4, #tab5:checked ~ #content5, #tab6:checked ~ #content6 { display:block; }
+.tab-content { display:none; padding:22px; background:rgba(255,255,255,.55); border:1px solid #e0e0e0; border-radius:10px; }
+.answer-toggle { display:none; }
+.answer-btn { display:inline-block; padding:8px 18px; margin-top:10px; background:#fff3e0; color:#e65100; border:1.5px solid #ffb74d; border-radius:8px; cursor:pointer; font-size:.9em; font-family:inherit; }
+.answer-btn:hover { background:#ffe0b2; }
+.answer-toggle:checked + .answer-btn { background:#ffb74d; color:#fff; }
+.answer-toggle:checked ~ .answer-body { display:block; }
+.answer-body { display:none; }
+.quiz-q { background:#fff; border-radius:12px; padding:18px 22px; margin:14px 0; box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:5px solid #5e35b1; }
+.quiz-q .q-title { font-weight:700; color:#4527a0; margin-bottom:10px; }
+.quiz-opt { display:block; padding:9px 16px; margin:6px 0; background:#f5f5f5; border-radius:8px; cursor:pointer; border:2px solid transparent; font-size:.92em; }
+.quiz-opt:hover { background:#ede7f6; }
+.quiz-opt.correct { background:#c8e6c9; border-color:#43a047; }
+.quiz-opt.wrong { background:#ffcdd2; border-color:#e53935; }
+.quiz-explain { display:none; margin-top:10px; padding:10px 16px; border-radius:8px; background:#e8f5e9; border-left:4px solid #43a047; font-size:.88em; }
+.footer { text-align:center; color:#78909c; font-size:.85em; margin:30px 0 10px; }
+.tag-pill { display:inline-block; padding:1px 10px; border-radius:20px; font-size:.78em; background:#ede7f6; color:#5e35b1; font-weight:700; margin-left:8px; vertical-align:middle; }
+.hero-card { background:linear-gradient(135deg,#7f1d1d 0%,#b91c1c 55%,#dc2626 100%); color:#fff; border-radius:14px; padding:26px 30px; margin:18px 0; box-shadow:0 6px 24px rgba(153,27,27,.28); position:relative; overflow:hidden; }
+.hero-card::after { content:''; position:absolute; right:-40px; top:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 70%); }
+.hero-card h3 { margin:0 0 10px; font-size:1.35em; letter-spacing:2px; color:#fff; }
+.hero-card .hero-sub { opacity:.92; font-size:.95em; margin-bottom:14px; }
+.hero-quote { background:rgba(255,255,255,.14); border-left:4px solid #fde68a; padding:12px 18px; border-radius:6px; font-size:1em; line-height:1.9; }
+.hero-quote b { color:#fde68a; }
+.tl-wrap { position:relative; margin:22px 0 26px; padding-left:6px; }
+.tl-wrap::before { content:''; position:absolute; left:15px; top:6px; bottom:6px; width:3px; background:linear-gradient(180deg,#dc2626,#f59e0b,#b45309); border-radius:2px; }
+.tl-item { position:relative; padding:0 0 20px 50px; }
+.tl-item:last-child { padding-bottom:2px; }
+.tl-item::before { content:''; position:absolute; left:7px; top:6px; width:19px; height:19px; border-radius:50%; background:#fff; border:4px solid #dc2626; box-shadow:0 0 0 3px rgba(220,38,38,.14); }
+.tl-item .tl-year { font-weight:800; color:#b91c1c; font-size:1.02em; }
+.tl-item .tl-title { font-weight:700; color:#7f1d1d; margin-left:8px; }
+.tl-item .tl-body { color:#37474f; font-size:.94em; margin-top:4px; }
+.person-card { display:flex; gap:20px; background:linear-gradient(135deg,#fffdf7,#fff7ed); border:1px solid #fed7aa; border-left:5px solid #f59e0b; border-radius:12px; padding:20px 24px; margin:16px 0; box-shadow:0 3px 14px rgba(180,83,9,.10); }
+.person-card .p-av { flex:0 0 66px; height:66px; border-radius:50%; background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.5em; font-weight:800; letter-spacing:1px; }
+.person-card .p-main { flex:1; }
+.person-card .p-name { font-size:1.12em; font-weight:800; color:#7f1d1d; margin-bottom:2px; }
+.person-card .p-meta { font-size:.84em; color:#9a3412; margin-bottom:8px; }
+.person-card p { margin:6px 0; font-size:.95em; }
+.bio-block { background:#fff; border-radius:12px; padding:18px 24px; margin:14px 0; border-left:5px solid #b45309; box-shadow:0 3px 14px rgba(120,53,15,.08); }
+.bio-block h5 { margin:0 0 10px; color:#7f1d1d; font-size:1.02em; display:flex; align-items:center; gap:8px; }
+.bio-block h5 .bio-ico { display:inline-flex; width:24px; height:24px; border-radius:6px; background:linear-gradient(135deg,#b91c1c,#f59e0b); color:#fff; align-items:center; justify-content:center; font-size:.8em; font-weight:800; flex:0 0 24px; }
+.bio-block p { margin:8px 0; font-size:.94em; }
+.anecdote { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px dashed #f59e0b; border-radius:10px; padding:14px 20px; margin:14px 0; font-size:.93em; color:#78350f; }
+.anecdote .an-tag { display:inline-block; font-weight:800; color:#92400e; margin-right:6px; }
+.philo-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(272px,1fr)); gap:16px; margin:18px 0; }
+.philo-card { background:#fff; border-radius:12px; padding:18px 20px; box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #b91c1c; transition:transform .18s ease, box-shadow .18s ease; }
+.philo-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(153,27,27,.16); }
+.philo-card .pc-tag { display:inline-block; font-size:.76em; font-weight:700; color:#b91c1c; background:#fee2e2; padding:2px 10px; border-radius:20px; margin-bottom:10px; }
+.philo-card h4 { margin:0 0 8px; color:#1a237e; font-size:1.02em; }
+.philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
+.philo-card .pc-math { background:#f8fafc; border-left:3px solid #64748b; border-radius:6px; padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155; }
+.mnemonic { background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b; border-radius:12px; padding:18px 24px; margin:18px 0; text-align:center; }
+.mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
+.mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
+@media (max-width:760px){ .person-card{flex-direction:column;gap:12px;} .hero-card{padding:20px;} }
+@media (max-width:900px){ body{font-size:17px;padding:10px;} .header{padding:30px 16px;} .header h1{font-size:1.5em;letter-spacing:2px;} }
+.def-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:14px; margin:16px 0; }
+.def-card { background:#fff; border-radius:12px; padding:16px 20px; box-shadow:0 3px 14px rgba(0,0,0,.07); border-top:4px solid #1976d2; font-size:.93em; }
+.def-card .dc-t { font-weight:800; color:#0d47a1; margin-bottom:8px; font-size:1.0em; }
+.def-card p { margin:6px 0; }
+.proof-steps { margin:12px 0; padding-left:0; list-style:none; }
+.proof-steps li { padding:10px 16px 10px 18px; margin:8px 0; border-radius:8px; background:rgba(255,255,255,.78); border-left:3px solid #5c6bc0; font-size:.92em; }
+.proof-steps li b.step-tag { color:#283593; margin-right:6px; }
+.vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0; }
+.vs-card { border-radius:12px; padding:16px 20px; font-size:.92em; box-shadow:0 3px 12px rgba(0,0,0,.07); }
+.vs-card.single { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-left:5px solid #2e7d32; }
+.vs-card.multi  { background:linear-gradient(135deg,#fce4ec,#f8bbd0); border-left:5px solid #c2185b; }
+.vs-card .vs-t { font-weight:800; margin-bottom:8px; font-size:1.0em; }
+.vs-card.single .vs-t { color:#1b5e20; }
+.vs-card.multi .vs-t { color:#880e4f; }
+/* ---------- 思政补充组件 (与第一章一致) ---------- */
+.clash-card {
+    background:linear-gradient(135deg,#fef2f2,#fee2e2);
+    border:1px solid #fca5a5; border-radius:12px; padding:18px 24px; margin:16px 0;
+}
+.clash-card .cc-title { font-weight:800; color:#991b1b; margin-bottom:10px; font-size:1.02em; }
+.clash-card .cc-side { background:rgba(255,255,255,.72); border-radius:8px; padding:10px 16px; margin:8px 0; font-size:.92em; }
+.clash-card .cc-side b { color:#7f1d1d; }
+.inner-voice {
+    background:linear-gradient(135deg,#1e293b,#334155); color:#e2e8f0;
+    border-radius:12px; padding:20px 26px; margin:16px 0;
+    border-left:5px solid #f59e0b; font-size:.95em; line-height:2.05;
+}
+.inner-voice .iv-label { color:#fbbf24; font-weight:800; margin-bottom:10px; font-size:1em; letter-spacing:1px; }
+.inner-voice em { color:#fde68a; font-style:normal; font-weight:600; }
+.inner-voice .iv-sig { display:block; text-align:right; color:#94a3b8; font-size:.86em; margin-top:12px; }
+.legacy-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin:16px 0; }
+.legacy-item { background:#fff; border-radius:10px; padding:14px 18px; border-top:4px solid #b45309; box-shadow:0 2px 10px rgba(0,0,0,.06); font-size:.9em; }
+.legacy-item .lg-t { font-weight:800; color:#7f1d1d; margin-bottom:6px; font-size:.96em; }
+.sec-sub { font-weight:800; color:#7f1d1d; font-size:1.06em; margin:24px 0 10px; padding-left:12px; border-left:5px solid #dc2626; letter-spacing:1px; }
+.quote-wall { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:16px 0; }
+.quote-item {
+    background:#fff; border-radius:10px; padding:16px 18px;
+    border-left:4px solid #b91c1c; box-shadow:0 2px 10px rgba(0,0,0,.06);
+    font-size:.93em; color:#37474f; line-height:1.9;
+}
+.quote-item .q-src { display:block; margin-top:8px; text-align:right; color:#9a3412; font-size:.84em; font-weight:600; }
+@media (max-width:720px){ .vs-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>第四章 第3节 洛朗级数</h1>
+    <p>双边级数与收敛圆环 &middot; 洛朗展开定理 &middot; 圆环域展开与围道积分</p>
+</div>
+
+<div class="info-box">
+<strong>学习目标:</strong>
+1. 理解洛朗级数(双边级数)的定义, 掌握其收敛圆环的结构;
+2. 掌握洛朗展开定理的条件、结论与系数公式, 理解展开的唯一性;
+3. 掌握洛朗展开的直接法与间接法, 会将函数在指定圆环域内展开;
+4. 理解"同一个函数在不同圆环域内的洛朗展开不同";
+5. 会利用洛朗展开式计算沿封闭曲线的积分 ($\oint f\,\mathrm{d}z = 2\pi\mathrm{i}\, c_{-1}$);
+6. 借助交互直观感受收敛圆环与"解析部分 / 主要部分"的分工.
+</div>
+
+<div class="tab-container">
+
+<input type="radio" name="tab-group-43" id="tab1" class="tab-radio" checked>
+<input type="radio" name="tab-group-43" id="tab2" class="tab-radio">
+<input type="radio" name="tab-group-43" id="tab3" class="tab-radio">
+<input type="radio" name="tab-group-43" id="tab4" class="tab-radio">
+<input type="radio" name="tab-group-43" id="tab5" class="tab-radio">
+<input type="radio" name="tab-group-43" id="tab6" class="tab-radio">
+
+<div class="tab-buttons">
+    <label class="tab-btn" for="tab1" id="label1">一、双边级数与收敛圆环</label>
+    <label class="tab-btn" for="tab2" id="label2">二、洛朗展开定理</label>
+    <label class="tab-btn" for="tab3" id="label3">三、例题精讲 · 圆环域展开</label>
+    <label class="tab-btn" for="tab4" id="label4">四、洛朗展开与围道积分</label>
+    <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
+    <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
+</div>
+
+<!-- ============ Tab 1 ============ -->
+<div id="content1" class="tab-content">
+
+<div class="sec-title">1.1 洛朗级数 (双边级数)</div>
+
+<div class="box-formula">
+形如
+$$\sum_{n=-\infty}^{+\infty} c_n (z - z_0)^n
+= \cdots + c_{-n}(z-z_0)^{-n} + \cdots + c_{-1}(z-z_0)^{-1} + c_0 + c_1(z-z_0) + \cdots + c_n (z-z_0)^n + \cdots$$
+的级数称为<b>洛朗级数</b>, 其中 $c_n$ 及 $c_{-n}$ 是复常数.<br>
+当所有负幂项系数 $c_{-n} = 0$ 时, 洛朗级数就是幂级数.<br>
+<b>注:</b> 洛朗级数是幂级数的推广.
+</div>
+
+<div class="vs-grid">
+<div class="vs-card single">
+<div class="vs-t">正幂项部分 (解析部分)</div>
+<p>$\sum\limits_{n=0}^{\infty} c_n (z - z_0)^n$</p>
+<p>是通常的幂级数: 设其收敛半径为 $R$, 即 $\frac{1}{R} = \lim\limits_{n \to \infty} \sqrt[n]{|c_n|}$, 则它在 $|z - z_0| < R$ 内绝对收敛.</p>
+</div>
+<div class="vs-card multi">
+<div class="vs-t">负幂项部分 (主要部分)</div>
+<p>$\sum\limits_{n=1}^{\infty} c_{-n} (z - z_0)^{-n}$</p>
+<p>令 $\zeta = (z - z_0)^{-1}$ 化为幂级数 $\sum\limits_{n=1}^{\infty} c_{-n} \zeta^n$: 设其收敛半径为 $R_1$, 则负幂部分在 $|\zeta| < R_1$ 即 $|z - z_0| > R_1$ 内绝对收敛.</p>
+</div>
+</div>
+
+<div class="box-result">
+<div class="res-label">收敛圆环</div>
+<p>当且仅当正幂部分与负幂部分<b>都收敛</b>时, 洛朗级数收敛, 其<b>绝对收敛域</b>为圆环</p>
+<div class="formula-box">$R_1 < |z - z_0| < R$ &nbsp;&nbsp; (要求 $R_1 < R$)</div>
+<p>若 $R_1 \ge R$, 则级数处处发散. 称该圆环为<b>收敛圆环</b>.</p>
+</div>
+
+<div class="box-key">
+<div class="title">定理 3.1 (洛朗级数的性质)</div>
+<p>洛朗级数 $\sum\limits_{n=-\infty}^{+\infty} c_n (z - z_0)^n$ 在其收敛圆环 $R_1 < |z - z_0| < R$ 内, 其和函数<b>解析</b>, 而且可以<b>逐项求导</b>和<b>逐项积分</b>.</p>
+<p><b>注:</b> 正幂项部分称为解析部分; 负幂项部分称为主要部分.</p>
+</div>
+
+<div class="sec-sub">拓展 · 主要部分与孤立奇点的分类</div>
+
+<div class="box-think">
+<span class="think-label">核心思想:</span> 洛朗展开的<b>主要部分</b> (负幂项) 不只是"一部分", 它精确刻画了函数在 $z_0$ 处的<b>奇性</b>. 根据主要部分含有多少项, 孤立奇点被分成三类 —— 这是洛朗级数最重要的应用之一.
+</div>
+
+<div class="def-grid">
+<div class="def-card"><div class="dc-t">可去奇点</div><p>主要部分<b>不含</b>任何负幂项 (即 $c_{-1} = c_{-2} = \cdots = 0$), 洛朗展开退化为泰勒展开.</p><p>例: $\frac{\sin z}{z} = 1 - \frac{z^2}{3!} + \cdots$ 在 $z_0 = 0$ 处.</p></div>
+<div class="def-card"><div class="dc-t">$m$ 阶极点</div><p>主要部分只含<b>有限多项</b>, 最低次幂为 $(z-z_0)^{-m}$ ($c_{-m} \ne 0$, 更高负次幂为零).</p><p>例: $\frac{1}{z(z-1)^2}$ 在 $z_0 = 1$ 处是 2 阶极点.</p></div>
+<div class="def-card"><div class="dc-t">本性奇点</div><p>主要部分含<b>无穷多项</b>负幂项, 无法用有限项表示.</p><p>例: $\mathrm{e}^{1/z} = 1 + \frac1z + \frac{1}{2!z^2} + \cdots$ 在 $z_0 = 0$ 处.</p></div>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 孤立奇点分类判定器 <span class="tag-pill">点击函数, 看洛朗主部</span></h3>
+<div class="chart-desc">每个函数在 $z_0$ 处都有一个洛朗展开. 点击按钮切换函数, 观察它的<b>负幂项 (主要部分)</b> 有几个、最高次是多少 —— 据此自动判定奇点类型. 图中上方为负幂项的"项数条", 下方给出判定结论与对照.</div>
+<div class="control-panel">
+  <div class="row">
+    <button class="control-btn active" id="btnSin1">$\frac{\sin z}{z}$</button>
+    <button class="control-btn" id="btnSin2">$\frac{1}{z}$</button>
+    <button class="control-btn" id="btnSin3">$\frac{1}{z^2}$</button>
+    <button class="control-btn" id="btnSin4">$\mathrm{e}^{1/z}$</button>
+    <button class="control-btn" id="btnSin5">$\frac{1}{z(z-1)^2}$</button>
+  </div>
+</div>
+<canvas id="cvSing" data-h="420"></canvas>
+<div class="readout" id="singReadout"></div>
+</div>
+
+<div class="box-warning">
+<div class="warn-label">三类奇点的判定要点</div>
+<ol>
+<li><b>可去奇点:</b> $\lim\limits_{z \to z_0} f(z)$ 存在且有限 —— 可以"补定义"让函数在该点解析. 判别法: $\lim\limits_{z\to z_0}(z-z_0)f(z) = 0$.</li>
+<li><b>$m$ 阶极点:</b> $\lim\limits_{z \to z_0} f(z) = \infty$. 判别法: $\lim\limits_{z\to z_0}(z-z_0)^m f(z)$ 存在且非零, 而更低次幂的极限为 $\infty$.</li>
+<li><b>本性奇点:</b> 既不是可去也不是极点. 其特征极其"狂野" —— 由 <b>皮卡定理</b>, 在本性奇点的任意小邻域内, 函数可以取到<b>除至多一个值以外的一切复数值</b>.</li>
+</ol>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 收敛圆环 <span class="tag-pill">拖动滑块调节 $R_1$ 与 $R$</span></h3>
+<div class="chart-desc">洛朗级数的收敛范围是一个圆环 $R_1 &lt; |z - z_0| &lt; R$: 内边界由负幂部分决定, 外边界由正幂部分决定. 拖动滑块改变两个半径; 当 $R_1 \ge R$ 时圆环消失 —— 级数处处发散.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>$R_1$ = <span class="val-badge" id="badgeR1">1.0</span></label>
+    <input type="range" id="rngR1" min="0" max="300" value="100">
+    <label style="margin-left:18px;">$R$ = <span class="val-badge" id="badgeR2">3.0</span></label>
+    <input type="range" id="rngR2" min="50" max="400" value="300">
+  </div>
+</div>
+<canvas id="cvAnnulus" data-h="440"></canvas>
+<div class="readout" id="annulusReadout"></div>
+</div>
+
+</div><!-- /content1 -->
+
+<!-- ============ Tab 2 ============ -->
+<div id="content2" class="tab-content">
+
+<div class="sec-title">2.1 洛朗展开定理</div>
+
+<div class="box-key">
+<div class="title">定理 3.2 (洛朗展开定理)</div>
+<p>设 $f(z)$ 在圆环域 $R_1 < |z - z_0| < R_2$ 内解析, 则 $f(z)$ 一定能在此圆环域内展开为</p>
+<div class="formula-box">
+$f(z) = \sum\limits_{n=-\infty}^{+\infty} c_n (z - z_0)^n$, &nbsp;其中
+$c_n = \frac{1}{2\pi \mathrm{i}} \oint_{C} \frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\, \mathrm{d}\zeta$ &nbsp; ($n = 0, \pm 1, \pm 2, \cdots$)
+</div>
+<p>这里 $C$ 为此圆环域内围绕 $z_0$ 的任一条正向简单闭曲线.</p>
+</div>
+
+<div class="sec-sub">证明思路</div>
+<ul class="proof-steps">
+<li><b class="step-tag">第一步</b> 在圆环域内作正向圆周 $K_1: |\zeta - z_0| = r$ 与 $K_2: |\zeta - z_0| = R$ ($R_1 < r < R < R_2$). 设 $z$ 是圆环域 $r < |z - z_0| < R$ 内任一点, 由复合闭路 (多连通域) 柯西积分公式:
+$$f(z) = \frac{1}{2\pi \mathrm{i}} \left[ \oint_{K_2} \frac{f(\zeta)}{\zeta - z}\, \mathrm{d}\zeta - \oint_{K_1} \frac{f(\zeta)}{\zeta - z}\, \mathrm{d}\zeta \right]$$</li>
+<li><b class="step-tag">第二步</b> 第一个积分: $z$ 在 $K_2$ 内部, 且 $\left| \frac{z - z_0}{\zeta - z_0} \right| < 1$, 展开为<b>正幂级数</b> (与泰勒定理证法类似), 系数为 $c_n = \frac{1}{2\pi\mathrm{i}} \oint_{K_2} \frac{f(\zeta)}{(\zeta - z_0)^{n+1}} \mathrm{d}\zeta$.</li>
+<li><b class="step-tag">第三步</b> 第二个积分: $z$ 在 $K_1$ 外部, 由 $\frac{1}{\zeta - z} = -\frac{1}{z - z_0} \cdot \frac{1}{1 - \frac{\zeta - z_0}{z - z_0}}$ 且 $\left| \frac{\zeta - z_0}{z - z_0} \right| < 1$, 展开为<b>负幂级数</b>, 系数为 $c_{-n} = \frac{1}{2\pi\mathrm{i}} \oint_{K_1} f(\zeta)(\zeta - z_0)^{n-1} \mathrm{d}\zeta$.</li>
+<li><b class="step-tag">第四步</b> 由闭路变形定理: 对圆环内围绕 $z_0$ 的任一条正向简单闭曲线 $C$, 上述两式中系数可统一表示为
+$$c_n = \frac{1}{2\pi \mathrm{i}} \oint_C \frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\, \mathrm{d}\zeta \quad (n = 0, \pm 1, \pm 2, \cdots) \qquad \blacksquare$$</li>
+</ul>
+
+<div class="box-key">
+<div class="title">洛朗展开的唯一性</div>
+<p>在圆环域 $R_1 < |z - z_0| < R_2$ 内解析的函数 $f(z)$ 的洛朗展开是唯一的.</p>
+<p><b>证明:</b> 假设 $f(z)$ 在此圆环域内另有展开式 $f(z) = \sum\limits_{n=-\infty}^{+\infty} b_n (z - z_0)^n$, 以 $(z - z_0)^{-m-1}$ 乘上式两端, 并沿圆环内正向圆周 $C$ 积分, 利用 $\oint_C (\zeta - z_0)^{n-m-1} \mathrm{d}\zeta = 2\pi\mathrm{i}\, \delta_{nm}$ 得</p>
+<div class="formula-box">
+$b_m = \frac{1}{2\pi \mathrm{i}} \oint_C \frac{f(\zeta)}{(\zeta - z_0)^{m+1}}\, \mathrm{d}\zeta = c_m \quad (m = 0, \pm 1, \pm 2, \cdots) \qquad \blacksquare$
+</div>
+</div>
+
+<div class="box-warning">
+<span class="warn-label">重要对比:</span>
+洛朗系数公式形式上与泰勒系数公式相同, 但<b>不能写成 $\frac{f^{(n)}(z_0)}{n!}$</b> —— 因为 $z_0$ 可能是奇点 (如 $\mathrm{e}^{1/z}$ 在 $z_0 = 0$), 且被积函数在圆环内不是处处解析, 高阶导数公式不再适用.
+</div>
+
+<div class="sec-title">2.2 展开的条件与步骤</div>
+
+<div class="def-grid">
+<div class="def-card"><div class="dc-t">（1）直接展开法</div><p>利用系数公式 $c_n = \frac{1}{2\pi\mathrm{i}} \oint_C \frac{f(\zeta)}{(\zeta - z_0)^{n+1}} \mathrm{d}\zeta$ 计算系数, 然后写出 $f(z) = \sum c_n (z - z_0)^n$. 计算量较大.</p></div>
+<div class="def-card"><div class="dc-t">（2）间接展开法</div><p>根据正、负幂项组成的级数的<b>唯一性</b>, 可用代数运算、代换、求导和积分等方法去展开 —— 实际解题的首选.</p></div>
+</div>
+
+</div><!-- /content2 -->
+
+<!-- ============ Tab 3 ============ -->
+<div id="content3" class="tab-content">
+
+<div class="sec-title">3.1 圆环域上的展开</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.1 &nbsp;将函数 $f(z) = \mathrm{e}^{z^2}$ 在以 $z_0 = 0$ 为中心的圆环域 $0 < |z| < +\infty$ 内展开成洛朗级数.</div>
+<input type="checkbox" id="ansL31" class="answer-toggle">
+<label class="answer-btn" for="ansL31">查看解答</label>
+<div class="answer-body">
+<p><b>【解】(1) 直接法.</b> $c_n = \frac{1}{2\pi\mathrm{i}} \oint_C \frac{\mathrm{e}^{\zeta^2}}{\zeta^{n+1}} \mathrm{d}\zeta$ ($C$ 为绕 $z = 0$ 的任一条正向简单闭曲线).</p>
+<p>由于 $\mathrm{e}^{z^2}$ 在复平面内处处解析, 当 $n \le -1$ 时, 被积函数 $\frac{\mathrm{e}^{\zeta^2}}{\zeta^{n+1}}$ 在 $C$ 上及其内部解析, 由高阶导数公式… 知</p>
+<p>当 $n = 2k \ge 0$ 时, $c_{2k} = \frac{f^{(2k)}(0)}{(2k)!} = \frac{1}{k!}$; 其余 (奇数下标与负下标) $c_n = 0$. 故
+$$\mathrm{e}^{z^2} = 1 + z^2 + \frac{z^4}{2!} + \frac{z^6}{3!} + \cdots \quad (0 < |z| < +\infty)$$
+(2) 间接法: 直接利用 $\mathrm{e}^w = \sum \frac{w^n}{n!}$, 令 $w = z^2$ 代入即得同样结果.</p>
+</div>
+</div>
+
+<div class="sec-title">3.2 典型例题</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.2 (核心例题) &nbsp;将函数 $f(z) = \frac{1}{(z-1)(z-2)}$ 分别在下列圆环域内展开成洛朗级数.</div>
+<p>(1) $0 < |z| < 1$;&nbsp;&nbsp; (2) $1 < |z| < 2$;&nbsp;&nbsp; (3) $2 < |z| < +\infty$;&nbsp;&nbsp; (4) $0 < |z-1| < 1$.</p>
+<input type="checkbox" id="ansL32" class="answer-toggle">
+<label class="answer-btn" for="ansL32">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>先部分分式分解: $\frac{1}{(z-1)(z-2)} = \frac{1}{z-2} - \frac{1}{z-1}$.</p>
+<p><b>(1)</b> 在 $0 < |z| < 1$ 内, 两个奇点都在圆外, 都按 $|z| < 1$ 展开:
+$\frac{1}{z-2} = -\frac{1}{2}\cdot\frac{1}{1-z/2} = -\sum\limits_{n=0}^{\infty} \frac{z^n}{2^{n+1}}$, &nbsp;
+$\frac{1}{z-1} = -\frac{1}{1-z} = -\sum\limits_{n=0}^{\infty} z^n$. 故
+$$f(z) = \sum_{n=0}^{\infty} \left(1 - \frac{1}{2^{n+1}}\right) z^n = 1 + \frac{1}{2}z + \frac{3}{4}z^2 + \frac{7}{8}z^3 + \cdots$$
+(此时无负幂项 —— 它就是泰勒展开.)</p>
+<p><b>(2)</b> 在 $1 < |z| < 2$ 内: $\frac{1}{z-1} = \frac{1}{z}\cdot\frac{1}{1 - 1/z} = \frac{1}{z} + \frac{1}{z^2} + \frac{1}{z^3} + \cdots$ (负幂); $\frac{1}{z-2} = -\sum\limits_{n=0}^{\infty} \frac{z^n}{2^{n+1}}$ (正幂). 故
+$$f(z) = \sum_{n=0}^{\infty} \frac{1}{z^{n+1}} - \sum_{n=0}^{\infty} \frac{z^n}{2^{n+1}}$$</p>
+<p><b>(3)</b> 在 $2 < |z| < +\infty$ 内, 两个奇点都在圆内, 都按负幂展开:
+$\frac{1}{z-2} = \frac{1}{z}\cdot\frac{1}{1 - 2/z} = \sum\limits_{n=0}^{\infty} \frac{2^n}{z^{n+1}}$. 故
+$$f(z) = \sum_{n=0}^{\infty} \frac{2^n - 1}{z^{n+1}} = \frac{1}{z} + \frac{3}{z^2} + \frac{7}{z^3} + \cdots$$</p>
+<p><b>(4)</b> 在 $0 < |z-1| < 1$ 内 (以 $z_0 = 1$ 为中心): 令 $w = z - 1$, 则 $f = \frac{1}{w(w+1)} = \frac{1}{w} - \frac{1}{1+w}$,
+其中 $\frac{1}{1+w} = \sum\limits_{n=0}^{\infty} (-1)^n w^n$. 故
+$$f(z) = \frac{1}{z-1} - \sum_{n=0}^{\infty} (-1)^n (z-1)^n$$</p>
+<p><b>要点:</b> 同一个函数, 圆环域不同, 洛朗展开就不同 —— 先画图定域, 再逐个展开.</p>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 例 3.2 的四个圆环域 <span class="tag-pill">点击按钮切换区域</span></h3>
+<div class="chart-desc">$f(z) = \frac{1}{(z-1)(z-2)}$ 有两个奇点 $z = 1, 2$, 以 $z = 0$ 为心的解析圆环有三个, 以 $z = 1$ 为心还有一个. 点击按钮查看每个区域(高亮)对应的展开式特征: 正幂为主 / 正负混合 / 负幂为主.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择圆环域:</label>
+    <button class="control-btn active" id="btnRing1">① $0 &lt; |z| &lt; 1$</button>
+    <button class="control-btn" id="btnRing2">② $1 &lt; |z| &lt; 2$</button>
+    <button class="control-btn" id="btnRing3">③ $2 &lt; |z| &lt; +\infty$</button>
+    <button class="control-btn" id="btnRing4">④ $0 &lt; |z-1| &lt; 1$</button>
+  </div>
+</div>
+<canvas id="cvRings" data-h="430"></canvas>
+<div class="readout" id="ringsReadout"></div>
+</div>
+
+</div><!-- /content3 -->
+
+<!-- ============ Tab 4 ============ -->
+<div id="content4" class="tab-content">
+
+<div class="sec-title">4.1 利用洛朗展开式计算封闭曲线的积分</div>
+
+<div class="box-key">
+<div class="title">方法原理</div>
+<p>设 $f(z)$ 在圆环域 $R_1 < |z - z_0| < R_2$ 内解析, 则 $f(z)$ 在此圆环域内展开为 $f(z) = \sum\limits_{n=-\infty}^{+\infty} c_n (z - z_0)^n$, 其中</p>
+<div class="formula-box">$c_{-1} = \frac{1}{2\pi \mathrm{i}} \oint_C f(\zeta)\, \mathrm{d}\zeta \quad \Longrightarrow \quad \oint_C f(z)\, \mathrm{d}z = 2\pi \mathrm{i}\, c_{-1}$</div>
+<p>这里 $C$ 为圆环域内围绕 $z_0$ 的任一条正向简单闭曲线.</p>
+<p><b>技巧:</b> 沿曲线 $C$ 直接积分困难时, 只要把 $f(z)$ 在 $C$ 所在的圆环域内展开, 取出 $c_{-1}$ 即可 —— <b>展开即积分</b>.</p>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.3 &nbsp;计算积分 $\oint_{|z|=1} \frac{\mathrm{e}^{1/z}}{z}\, \mathrm{d}z$.</div>
+<input type="checkbox" id="ansL33" class="answer-toggle">
+<label class="answer-btn" for="ansL33">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>被积函数在圆环域 $0 < |z| < +\infty$ 内解析, 且曲线 $|z| = 1$ 在此圆环内.</p>
+<p>利用 $\mathrm{e}^{1/z} = 1 + \frac{1}{z} + \frac{1}{2!\,z^2} + \frac{1}{3!\,z^3} + \cdots$ ($|z| > 0$), 得</p>
+<div class="formula-box">$\frac{\mathrm{e}^{1/z}}{z} = \frac{1}{z} + \frac{1}{z^2} + \frac{1}{2!\,z^3} + \cdots \quad \Rightarrow \quad c_{-1} = 1$</p></div>
+<p>由洛朗展开式的计算公式, 取 $C$ 为正向圆周 $|z| = 1$:
+$$\oint_{|z|=1} \frac{\mathrm{e}^{1/z}}{z}\, \mathrm{d}z = 2\pi \mathrm{i} \cdot c_{-1} = 2\pi \mathrm{i}$$</p>
+</div>
+</div>
+
+<div class="box-example">
+<div class="ex-label">例 3.4 &nbsp;计算积分 $\oint_{|z|=3} \frac{\mathrm{e}^z}{z(z-2)}\, \mathrm{d}z$.</div>
+<input type="checkbox" id="ansL34" class="answer-toggle">
+<label class="answer-btn" for="ansL34">查看解答</label>
+<div class="answer-body">
+<p><b>【解】</b>被积函数 $\frac{\mathrm{e}^z}{z(z-2)}$ 有两个奇点 $z_1 = 0$, $z_2 = 2$, 以 $0$ 为心的解析圆环有两个: $0 < |z| < 2$ 与 $2 < |z| < +\infty$. 曲线 $C$ ($|z| = 3$) 在圆环 $2 < |z| < +\infty$ 内, 故在此圆环内将被积函数展成洛朗级数:</p>
+<div class="formula-box">
+$\frac{\mathrm{e}^z}{z(z-2)} = \frac{\mathrm{e}^z}{z^2} \cdot \frac{1}{1 - 2/z} = \mathrm{e}^z \left( \frac{1}{z^2} + \frac{2}{z^3} + \frac{2^2}{z^4} + \cdots \right) \quad (2 < |z| < +\infty)$
+</div>
+<p>于是 $c_{-1} = \sum\limits_{n=0}^{\infty} \frac{2^n}{(n+1)!} = \frac{1}{2} \sum\limits_{n=0}^{\infty} \frac{2^{n+1}}{(n+1)!} = \frac{1}{2}\left( \mathrm{e}^2 - 1 \right)$, 故</p>
+<div class="formula-box">$\oint_{|z|=3} \frac{\mathrm{e}^z}{z(z-2)}\, \mathrm{d}z = 2\pi \mathrm{i} \cdot \frac{\mathrm{e}^2 - 1}{2} = \pi \mathrm{i}\,(\mathrm{e}^2 - 1)$</div>
+<p><b>要点:</b> 曲线在哪个圆环域内, 就在哪个圆环域内展开 —— 选错圆环, 系数就错了.</p>
+</div>
+</div>
+
+<div class="chart-container">
+<h3>交互 · 例 3.4 的圆环选择 <span class="tag-pill">点击曲线查看所用圆环</span></h3>
+<div class="chart-desc">$\frac{\mathrm{e}^z}{z(z-2)}$ 的奇点: $z=0$ (红✕) 与 $z=2$ (橙✕). 以 0 为心有两个解析圆环. 点击按钮切换曲线 $|z| = 1$ 与 $|z| = 3$: 曲线位置不同, 应选用的圆环域不同, $c_{-1}$ 与积分值完全不同.</div>
+<div class="control-panel">
+  <div class="row">
+    <label>选择曲线:</label>
+    <button class="control-btn" id="btnCurve1">$|z| = 1$</button>
+    <button class="control-btn active" id="btnCurve3">$|z| = 3$</button>
+  </div>
+</div>
+<canvas id="cvLoCurve" data-h="430"></canvas>
+<div class="readout" id="loCurveReadout"></div>
+</div>
+
+<div class="sec-title">4.2 洛朗之后 · 留数定理的诞生</div>
+
+<div class="box-think">
+<span class="think-label">转折点:</span>
+本节 4.1 得到一个极其简洁的结论 —— $\oint_C f(z)\,\mathrm{d}z = 2\pi\mathrm{i}\,c_{-1}$. 这个 $c_{-1}$ 只跟洛朗展开的一项有关, 却"管住"了整条曲线上的积分. 这正是<b>留数定理</b>的雏形: 这一项后来被命名为 $f(z)$ 在 $z_0$ 处的<b>留数</b>, 记作 $\mathrm{Res}[f, z_0] = c_{-1}$.
+</div>
+
+<div class="box-key">
+<div class="title">留数定理 (第五章的核心定理)</div>
+<p>设 $f(z)$ 在区域 $D$ 内除有限个孤立奇点 $z_1, z_2, \cdots, z_n$ 外处处解析, $C$ 是 $D$ 内包围这些奇点的一条正向简单闭曲线, 则</p>
+<div class="formula-box">$\oint_C f(z)\, \mathrm{d}z = 2\pi \mathrm{i} \sum\limits_{k=1}^{n} \mathrm{Res}[f, z_k]$</div>
+<p>也就是说: <b>沿闭曲线的积分, 等于曲线内部各奇点留数之和的 $2\pi\mathrm{i}$ 倍</b>.</p>
+</div>
+
+<div class="box-result">
+<div class="res-label">为什么这条定理如此重要? —— 计算方式的革命</div>
+在第五章之前, 计算 $\oint_C f(z)\,\mathrm{d}z$ 只有两条路: 一是<b>参数化硬算</b> (把 $z = z(t)$ 代进去做实的定积分), 二是本节学的<b>洛朗展开取 $c_{-1}$</b>.<br>
+前者对复杂被积函数几乎不可行; 后者需要能把函数展成洛朗级数, 遇到分母因式多的情况也很吃力.<br>
+留数定理把这两个难点全部绕开: 只要能<b>数出曲线内有几个奇点、各是什么类型</b>, 代入对应的留数公式 (可去奇点留数为 0, $m$ 阶极点有现成公式), 一步就能得到积分值 —— <b>一个积分问题, 变成了一道"找奇点"的填空题</b>.
+</div>
+
+<div class="box-think">
+<span class="think-label">洛朗 → 留数 → 更多: 一条不断延伸的路线</span>
+<ul>
+<li><b>洛朗级数是"源"</b> —— 它把函数在奇点附近的行为完全展开, 使 $c_{-1}$ 有了明确的定义.</li>
+<li><b>留数是"用"</b> —— 只取 $c_{-1}$ 一项, 就把围道积分算清楚了.</li>
+<li><b>再往前是"实积分的计算"</b> —— 把实轴上的定积分 (如 $\int_{-\infty}^{+\infty} \frac{\mathrm{d}x}{1+x^2}$) 视为复平面上大半圆围道的极限, 用留数一键求出. 这是留数定理最受工程学科欢迎的应用.</li>
+<li><b>更远是"辐角原理与儒歇定理"</b> —— 由留数定理变形而来, 用于数零点个数、判定控制系统的稳定性.</li>
+</ul>
+</div>
+
+<div class="box-think">
+<span class="think-label">思想史 · 从"被搁置的论文"到"标准工具"</span>
+洛朗 1843 年把论文投给巴黎科学院时, 因为柯西未作推荐, 手稿被搁置了<b>近二十年</b> (详见下一栏思政园地). 而由它引出的留数理论, 反倒因为柯西本人自 1826 年起就在发展, 得以迅速传播.<br>
+历史在这里留下一个意味深长的对照: <b>洛朗给出了工具, 柯西给出了方法论, 而真正把两者合成"标准武器"的, 是 19 世纪后半叶的一整代人</b>.<br>
+今天, 从电路分析中的传递函数求逆, 到量子力学里的散射振幅计算, 再到控制理论中的稳定性判据, 走的都是同一条路: <b>把函数在奇点附近的洛朗展开取出一项, 然后让 $2\pi\mathrm{i}$ 把它变成答案</b>. 那是一份 1843 年被搁置的手稿, 在 180 年后依然在工科实验室里日夜运转.
+</div>
+
+</div><!-- /content4 -->
+
+<!-- ============ Tab 5: 本节小结（知识图谱 · 自测） ============ -->
+<div id="content5" class="tab-content">
+
+<div class="sec-title">1. 知识图谱</div>
+
+<div class="chart-container">
+<h3>第三节知识结构树 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">本节主线: <b>双边级数与收敛圆环</b> → <b>洛朗展开定理</b> → <b>展开方法与典型例题</b> → <b>展开即积分 ($2\pi\mathrm{i}\cdot c_{-1}$)</b>. 点击"逐步展开"看知识如何逐层生长, 点击"重新生长"从头演示.</div>
+<div id="cvSummary" class="kg-wrap"></div>
+<div class="control-panel">
+<div class="row">
+<button class="control-btn" id="btnSumAnim">▶ 逐步展开</button>
+<button class="control-btn" id="btnSumReset">↻ 重新生长</button>
+</div>
+<div class="readout" id="sumReadout"></div>
+</div>
+</div>
+
+<div class="mnemonic">
+<div class="mn-label">记忆口诀 · 速记本节</div>
+<div class="mn-text">
+洛朗级数双边开, 负幂主要正幂解;<br>
+内径外径定圆环, 圆环里面解析来;<br>
+系数积分绕心转, 展开唯一莫疑猜;<br>
+要问积分怎么算, 找出负一乘 $2\pi\mathrm{i}$ 来.
+</div>
+</div>
+
+<div class="sec-title">2. 本节小结 · 一张表看懂</div>
+
+<table>
+<tr><th>主题</th><th>核心公式/结论</th><th>几何图像</th></tr>
+<tr><td>洛朗级数</td><td>$\sum\limits_{n=-\infty}^{+\infty} c_n (z-z_0)^n$</td><td>双边幂级数 (正、负幂并存)</td></tr>
+<tr><td>收敛圆环</td><td>$r &lt; |z-z_0| &lt; R$ (要求 $r &lt; R$)</td><td>圆环域: 内径由负幂定, 外径由正幂定</td></tr>
+<tr><td>系数公式</td><td>$c_n=\frac{1}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)}{(\zeta-z_0)^{n+1}}\,\mathrm{d}\zeta$</td><td>$C$ 为环内绕 $z_0$ 的任一正向闭曲线</td></tr>
+<tr><td>展开唯一性</td><td>环内解析函数的洛朗展开唯一</td><td>同一函数在同一圆环内只有一副面孔</td></tr>
+<tr><td>孤立奇点分类</td><td>可去奇点: 无负幂项; $m$ 阶极点: 负幂项有限 (最低 $(z-z_0)^{-m}$); 本性奇点: 负幂项无穷</td><td>主要部分 (负幂项) 的多少刻画奇性</td></tr>
+<tr><td>与泰勒级数的关系</td><td>负幂项全为零时洛朗级数退化为泰勒级数</td><td>圆盘是内外径 $r=0$ 的特殊圆环</td></tr>
+<tr><td>用洛朗展开求围道积分</td><td>$\oint_C f(z)\,\mathrm{d}z=2\pi\mathrm{i}\,c_{-1}$</td><td>只取一项: 积分值由 $c_{-1}$ 决定</td></tr>
+<tr><td>留数</td><td>$c_{-1}=\operatorname{Res}[f,z_0]$</td><td>留数定理: $\oint_C f\,\mathrm{d}z=2\pi\mathrm{i}\sum \operatorname{Res}$</td></tr>
+</table>
+
+<!-- ===== 自测题 ===== -->
+<div class="sec-title">3. 自测 · 小试身手</div>
+
+<div class="quiz-q">
+<div class="q-title">1. 洛朗级数 $\sum\limits_{n=-\infty}^{+\infty} c_n z^n$ 的收敛区域形状是?</div>
+<span class="quiz-opt" data-ok="0">圆盘</span>
+<span class="quiz-opt" data-ok="1">圆环 $R_1 &lt; |z| &lt; R$</span>
+<span class="quiz-opt" data-ok="0">半平面</span>
+<span class="quiz-opt" data-ok="0">整个复平面</span>
+<div class="quiz-explain">负幂部分决定内径 $R_1$, 正幂部分决定外径 $R$, 收敛域为圆环.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">2. $f(z) = \frac{1}{(z-1)(z-2)}$ 在 $2 &lt; |z| &lt; +\infty$ 内的展开式中, 首项 (即 $\frac{1}{z}$ 的系数) 是?</div>
+<span class="quiz-opt" data-ok="0">$1/2$</span>
+<span class="quiz-opt" data-ok="1">1</span>
+<span class="quiz-opt" data-ok="0">3</span>
+<span class="quiz-opt" data-ok="0">0</span>
+<div class="quiz-explain">在 $2 &lt; |z| &lt; +\infty$ 内 $f = \frac{1}{z} + \frac{3}{z^2} + \frac{7}{z^3} + \cdots = \sum\limits_{n=1}^{\infty} \frac{2^n - 1}{z^n}$, 故 $\frac{1}{z}$ 的系数为 1 (例 3.2(3)).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">3. 计算 $\oint_{|z|=1} \frac{\mathrm{e}^{1/z}}{z}\, \mathrm{d}z$ = ?</div>
+<span class="quiz-opt" data-ok="0">0</span>
+<span class="quiz-opt" data-ok="1">$2\pi\mathrm{i}$</span>
+<span class="quiz-opt" data-ok="0">$\pi\mathrm{i}$</span>
+<span class="quiz-opt" data-ok="0">$4\pi\mathrm{i}$</span>
+<div class="quiz-explain">$\mathrm{e}^{1/z}/z$ 的洛朗展开中 $c_{-1} = 1$, 积分 $= 2\pi\mathrm{i} c_{-1} = 2\pi\mathrm{i}$ (例 3.3).</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">4. 洛朗展开的系数 $c_n$ 能写成 $\frac{f^{(n)}(z_0)}{n!}$ 吗?</div>
+<span class="quiz-opt" data-ok="0">能, 恒成立</span>
+<span class="quiz-opt" data-ok="1">一般不能, 只有负幂全为零(即泰勒情形)时才行</span>
+<span class="quiz-opt" data-ok="0">只在奇点处成立</span>
+<span class="quiz-opt" data-ok="0">与 $n$ 的符号有关</span>
+<div class="quiz-explain">洛朗系数须用积分公式; 当 $z_0$ 为奇点时 $f^{(n)}(z_0)$ 根本不存在.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">5. 若 $z_0$ 是 $f(z)$ 的可去奇点, 则其洛朗展开中?</div>
+<span class="quiz-opt" data-ok="1">不含负幂项</span>
+<span class="quiz-opt" data-ok="0">只含有限个负幂项</span>
+<span class="quiz-opt" data-ok="0">含无穷多个负幂项</span>
+<span class="quiz-opt" data-ok="0">含无穷多个正幂项</span>
+<div class="quiz-explain">可去奇点的特征: 洛朗展开中<b>负幂项全为零</b>, 即退化为泰勒展开, 补充定义 $f(z_0)=\lim f(z)$ 后可解析.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">6. $z_0$ 是 $f(z)$ 的 $m$ 阶极点的充要条件是, 洛朗展开中?</div>
+<span class="quiz-opt" data-ok="0">无负幂项</span>
+<span class="quiz-opt" data-ok="1">负幂项只有有限个, 最低次为 $(z-z_0)^{-m}$</span>
+<span class="quiz-opt" data-ok="0">负幂项有无穷多个</span>
+<span class="quiz-opt" data-ok="0">正幂项只有有限个</span>
+<div class="quiz-explain">$m$ 阶极点: 主要部分为 $\frac{c_{-m}}{(z-z_0)^m}+\cdots+\frac{c_{-1}}{z-z_0}$ 且 $c_{-m}\ne 0$, 即最低负幂次为 $-m$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">7. $z_0$ 是 $f(z)$ 的本性奇点的充要条件是, 洛朗展开中?</div>
+<span class="quiz-opt" data-ok="0">无负幂项</span>
+<span class="quiz-opt" data-ok="0">负幂项有限</span>
+<span class="quiz-opt" data-ok="1">负幂项有无穷多个</span>
+<span class="quiz-opt" data-ok="0">正幂项有限</span>
+<div class="quiz-explain">本性奇点: 洛朗展开含<b>无穷多个负幂项</b>. 由皮卡大定理, 在本性奇点的任何去心邻域内, $f$ 取遍(至多一个例外)所有复值.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">8. $f(z) = z^{2}\mathrm{e}^{1/z}$ 在 $0&lt;|z|&lt;+\infty$ 内洛朗展开的 $c_{-1}$ 等于?</div>
+<span class="quiz-opt" data-ok="0">$1$</span>
+<span class="quiz-opt" data-ok="1">$1/3!$</span>
+<span class="quiz-opt" data-ok="0">$1/2!$</span>
+<span class="quiz-opt" data-ok="0">$0$</span>
+<div class="quiz-explain">$z^2\mathrm{e}^{1/z} = z^2\sum\limits_{n=0}^{\infty}\frac{1}{n!\,z^{n}} = \sum\frac{z^{2-n}}{n!}$; $c_{-1}$ 对应 $2-n=-1$, 即 $n=3$, 故 $c_{-1}=\frac{1}{3!}=\frac{1}{6}$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">9. 计算 $\oint_{|z|=1}\frac{\mathrm{e}^{1/z^{2}}}{z}\,\mathrm{d}z = ?$</div>
+<span class="quiz-opt" data-ok="1">$0$ (因 $c_{-1}=0$)</span>
+<span class="quiz-opt" data-ok="0">$2\pi\mathrm{i}$</span>
+<span class="quiz-opt" data-ok="0">$\pi\mathrm{i}$</span>
+<span class="quiz-opt" data-ok="0">$2\pi$</span>
+<div class="quiz-explain">$\frac{1}{z}\mathrm{e}^{1/z^2} = \frac{1}{z}\sum\frac{1}{n!\,z^{2n}} = \sum\frac{1}{n!\,z^{2n+1}}$, 负幂次全为奇数 $-(2n+1)$, 故 $c_{-1}=0$, 积分 $=2\pi\mathrm{i}\cdot 0=0$.</div>
+</div>
+
+<div class="quiz-q">
+<div class="q-title">10. 若 $f(z)$ 在 $0&lt;|z-z_0|&lt;R$ 内的洛朗展开中 $c_{-1}$ 称为 $f$ 在 $z_0$ 处的?</div>
+<span class="quiz-opt" data-ok="0">主要部分</span>
+<span class="quiz-opt" data-ok="0">解析部分</span>
+<span class="quiz-opt" data-ok="1">留数</span>
+<span class="quiz-opt" data-ok="0">阶数</span>
+<div class="quiz-explain">$c_{-1} = \frac{1}{2\pi\mathrm{i}}\oint f(z)\mathrm{d}z$ 即 $f$ 在 $z_0$ 处的<b>留数</b> $\operatorname{Res}[f,z_0]$. 这正是"用展开式算积分"的核心 (例 3.3).</div>
+</div>
+
+<div class="readout" id="quizScore"></div>
+
+
+</div><!-- /content5 -->
+
+<!-- ============ Tab 6: 思政园地 ============ -->
+<div id="content6" class="tab-content">
+
+<div class="sec-title">思政园地 · 数学与家国</div>
+
+<div class="sec-title">6.1 数学家故事 · 洛朗: 在工地上写下圆环的人</div>
+
+<div class="hero-card">
+<h3>工程师的逆袭 · 洛朗的圆环</h3>
+<div class="hero-sub">在幂级数失效的地方, 洛朗级数为奇点周围的世界立下了规则</div>
+<div class="hero-quote">
+<b>"数学不在乎你的出身, 只在乎你的严谨."</b><br>
+洛朗 (Pierre Alphonse Laurent, 1813—1854) 是一位海军工程师, 长期在阿尔及利亚从事港口工程建设, 数学完全靠业余自学. 他关于洛朗级数的论文生前未能发表 —— 提交时评审人柯西因故搁置, 等到正式刊登时, 作者已经去世. 然而时间最终站在真理一边: 今天, 每一个研究奇点的人都在使用"洛朗展开".
+</div>
+</div>
+
+<div class="tl-wrap">
+<div class="tl-item">
+<span class="tl-year">1813 年 7 月</span><span class="tl-title">生于巴黎</span>
+<div class="tl-body">皮埃尔·阿方斯·洛朗 (Pierre Alphonse Laurent) 出生于巴黎一个普通家庭. 时代的法国正处在科学与工程并进的年代 —— 综合理工学院 (École Polytechnique) 人才辈出, 柯西、刘维尔的名字已在数学界回响.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1830—1832 年</span><span class="tl-title">考入巴黎综合理工学院</span>
+<div class="tl-body">17 岁的洛朗考入这所法国最负盛名的工程师摇篮. 在这里他系统学习了分析力学与数学分析 —— 柯西刚刚建立的复积分理论正是当时的前沿. 毕业后他没有留在学术圈, 而是选择成为一名<b>军事工程师</b>, 从此终身与港口、堤坝、要塞打交道.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1832—1840 年</span><span class="tl-title">远赴阿尔及利亚 · 深夜的数学</span>
+<div class="tl-body">法国占领阿尔及利亚后, 大兴土木: 阿尔及尔港的扩建、防御工事与供水工程都需要工程师. 洛朗被派往北非, 一待就是多年. 白天勘测、绘图、指挥施工; 晚上在油灯下演算数学 —— 没有导师, 没有同事讨论, 没有图书馆, 全凭在综合理工学院打下的功底自学.<br>正是在这片工地上, 他注意到一个"缝隙": 柯西积分定理只在圆<b>内</b>有效, 一旦函数在圆内有奇点, 泰勒展开就失效了. 可是围着奇点的<b>圆环</b>呢? 那里函数明明解析!</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1843 年 6 月</span><span class="tl-title">论文呈送巴黎科学院</span>
+<div class="tl-body">洛朗完成了题为《柯西定理的扩充》的备忘录 (mémoire): 证明在圆环域内解析的函数可以展开为<b>双边幂级数</b>, 并给出系数的积分公式 —— 这就是今天的洛朗定理. 他把论文寄回巴黎科学院, 希望得到权威的评审与发表. 此时他仍是一个无学术头衔的现役工程师.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1843—1854 年</span><span class="tl-title">被搁置的十年</span>
+<div class="tl-body">评审人正是复分析泰斗<b>柯西</b>. 柯西意识到洛朗的结果与自己 1831 年在意大利得到的未发表结论相重合, 既没有给出否定的评审报告, 也没有推荐发表 —— 论文就此被压了下来. 洛朗多次催问无果, 只能继续他的工程事业, 后来转任布伦港 (Boulogne-sur-Mer) 的工程职务. 1854 年 9 月, 洛朗病逝, 年仅 <b>41 岁</b>, 终生未能亲眼看到自己的定理付印.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">1863 年</span><span class="tl-title">身后九年 · 论文终于发表</span>
+<div class="tl-body">洛朗去世九年后, 这份备忘录经人整理, 刊登于《综合理工学院学报》(Journal de l'École Polytechnique) 第 23 卷. 数学界最终承认: 在圆环域上展开解析函数的优先权属于洛朗. 柯西当年的一次迟疑, 让这一成果迟到了整整二十年.</div>
+</div>
+<div class="tl-item">
+<span class="tl-year">19 世纪末至今</span><span class="tl-title">圆环成为标准语言</span>
+<div class="tl-body">洛朗级数很快成为复分析的地基: 魏尔斯特拉斯学派用它定义奇点(可去奇点、极点、本性奇点), 留数理论由它而生. 到 20 世纪, 它进入信号处理 (Z 变换)、空气动力学 (奇点法)、电磁仿真等领域 —— 中国"天河"超算上的场仿真、国产大飞机的气动计算, 数学内核里都有那个圆环.</div>
+</div>
+</div>
+
+<div class="person-card">
+<div class="p-av">洛</div>
+<div class="p-main">
+<div class="p-name">洛朗 (P. A. Laurent, 1813 — 1854)</div>
+<div class="p-meta">法国军事工程师 · 业余数学家 · 洛朗级数创立者 · 终年 41 岁</div>
+<p>洛朗生前<b>没有教授职位、没有学术头衔、没有一篇发表</b> —— 他唯一的一次投稿被搁置二十年, 以身后刊出的方式与世人见面. 然而今天, "洛朗级数"与"洛朗定理"写进了全世界每一本复变函数教材, 与泰勒、柯西这些如雷贯耳的名字并列.</p>
+<p>他最了不起的地方, 是<b>研究视角的转换</b>: 前人把奇点当作幂级数展开的"禁区", 绕开它走; 洛朗却在奇点周围画一个圆环, 把坏点隔离在外, 在环内重建展开理论 —— 甚至让负幂项反过来精确刻画奇点的性质. 这种"在缺陷处建立秩序"的思路, 正是洛朗级数留给后世最宝贵的方法论遗产.</p>
+<p>他的故事说明: <b>热爱与坚持可以跨越身份的边界</b> —— 正如洛朗级数跨越了泰勒级数的边界. 白天是军港工地上的工程师, 深夜是探索无穷的数学家, 两个身份在他身上并不冲突, 反而互相成就: 工程的严谨让他尊重每一个系数, 数学的想象让他不满足于"圆内"的世界.</p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>史料细节: 那份被搁置的备忘录</h5>
+<p>洛朗 1843 年呈送的论文标题为 <i>Extension du théorème de M. Cauchy relatif à la convergence du développement d'une fonction suivant les puissances ascendantes de la variable</i> (《柯西函数依变量升幂展开收敛性定理的扩充》). 从标题即可看出他的定位: 不是另起炉灶, 而是把柯西—泰勒的展开定理<b>推广</b>到圆环域.</p>
+<p>评审过程一波三折: 柯西 1831 年在意大利都灵期间确实已独立得到类似的展开 (他本人在 1841 年的一篇自印文章里提及), 因此面对洛朗的工作, 柯西处境尴尬 —— 既不便否认其价值, 又不愿承认自己二十年前"做而不发". 论文最终未获推荐发表, 直至洛朗身后才由他人整理刊出. 这段公案至今仍是科学史上"评议延迟"的经典案例.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>两份职业, 一种精神</h5>
+<p>有趣的是, 洛朗的工程生涯本身也在印证他的数学思想: 修港口要<b>先划定施工域</b> —— 哪里能建、哪里是深水航道不能碰, 边界必须一清二楚. 这与洛朗定理"先定圆环域, 再展开"的顺序如出一辙; 负幂项刻画奇点, 就像工程图纸上专门标注的暗礁位置 —— <b>不回避危险点, 而是精确标定它</b>.</p>
+<p>回到课堂: 我们解例 3.2 时"先画域、再展开"的习惯, 正是这位工程师数学家留下的职业规范. 数学分析与工程实践, 在洛朗身上完成了一次无声的握手.</p>
+</div>
+
+<div class="anecdote"><span class="an-tag">轶事</span>洛朗并非孤例. 魏尔斯特拉斯同样出身平凡 —— 中学教师出身, 在乡间中学教书时坚持研究函数论, 后来成为"现代分析之父"; 中国的华罗庚早年也只有初中学历, 在杂货柜台后自学成材. 洛朗、魏尔斯特拉斯、华罗庚的故事共同印证: <b>学术面前, 出身不是边界, 坚持才是通行证.</b></div>
+
+<div class="inner-voice">
+<div class="iv-label">◈ 洛朗的心境</div>
+论文被压了十年, 洛朗没有停止演算, 也没有停止修港口. 他大概是这样想的:<br>
+"<em>定理的价值不取决于它何时被承认 —— 我只负责把它算对, 剩下的交给时间.</em>"<br>
+1873 年, 德国数学家魏尔斯特拉斯在柏林的一次讲演中, 明确把圆环内展开的荣誉归于洛朗. 此时距洛朗去世已近二十年.
+<span class="iv-sig">—— "我只负责把定理算对, 剩下的交给时间." 这份定力, 是所有认真做事的人共同的底色.</span>
+</div>
+
+<div class="sec-title">6.2 数学家故事 · 柯西: 那位"看走了眼"的评审人</div>
+
+<div class="person-card">
+<div class="p-av">柯</div>
+<div class="p-main">
+<div class="p-name">奥古斯丁-路易·柯西 (Augustin-Louis Cauchy, 1789—1857)</div>
+<div class="p-meta">法国数学家、物理学家 · 巴黎科学院院士 · 复变函数论的奠基人 · 分析严格化运动的旗手</div>
+<p>在本节的故事里, 柯西扮演了一个<b>复杂</b>的角色: 他既是洛朗定理所属学科的<b>奠基人</b>(没有柯西积分定理, 就没有洛朗定理), 又是让洛朗论文迟到二十年的<b>评审人</b>.</p>
+<p>要公正地看待这段历史, 就不能只看"搁置"这一面 —— 还得看见: 洛朗级数之所以能被称为"柯西定理的扩充", 恰恰因为柯西已经把地基打得足够坚实.<b>有时候, 一个人既是障碍, 也是阶梯.</b></p>
+</div>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">1</span>奠基: 洛朗定理脚下的那块地基</h5>
+<p>柯西在 1825—1831 年间建立了复变函数论的两块基石: <b>柯西积分定理</b>(解析函数沿闭曲线的积分为零)与<b>柯西积分公式</b>($f(z_0) = \frac{1}{2\pi\mathrm{i}}\oint \frac{f(z)}{z-z_0}\mathrm{d}z$).</p>
+<p>本节用到的<b>洛朗系数公式</b> $c_n = \frac{1}{2\pi\mathrm{i}}\oint \frac{f(z)}{(z-z_0)^{n+1}}\mathrm{d}z$, 形式上几乎就是柯西积分公式的直系后裔. 洛朗本人也毫不讳言 —— 他论文的标题就写着"柯西……定理的扩充".</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">2</span>未发之稿: 为什么柯西会"压稿"</h5>
+<p>柯西 1831 年在意大利都灵流亡期间, 其实已经独立得到了圆环域上的展开结论, 但没有正式发表(只在 1841 年的一篇自印小册子中提到). 因此当 1843 年洛朗的论文送到他手上时, 他的处境相当微妙:</p>
+<p>若推荐发表, 等于公开承认"洛朗先把它写清楚了"; 若否掉, 又与事实不符. 结果他选择了最消极的一种 —— <b>既不推荐, 也不否定, 让论文静静躺在那里</b>.</p>
+<p>这是人之常情, 却是学术制度的大忌. 这段公案后来成为"利益冲突应由第三方评审"这一现代学术规范的重要历史注脚.</p>
+</div>
+
+<div class="bio-block">
+<h5><span class="bio-ico">3</span>另一桩: 他也压过阿贝尔的稿子</h5>
+<p>这不是孤例. 1826 年, 挪威青年<b>阿贝尔</b>(见第四章第一节思政栏)把幂级数收敛半径的奠基性论文呈送巴黎科学院, 负责审阅的同样是柯西. 柯西读后评价"非常好", 然后就<b>把它放进了抽屉</b> —— 阿贝尔至死没能看到自己的论文发表.</p>
+<p>连续两次"看出价值却不推一把", 这对柯西来说是一份沉重的历史评价. 但他也并非心胸狭隘: 1826 年阿贝尔公开指出他"通项趋零即收敛"的错误时, 他坦然接受并修正了结论.</p>
+</div>
+
+<div class="clash-card">
+<div class="cc-title">⚔ 历史公论: 柯西的两副面孔</div>
+<div class="cc-side"><b>作为奠基人:</b> 他把极限、收敛、积分建立在严格定义之上, 复变函数论的每一次推进都踩着他的地基. 今天复变函数课程里出现最多的姓氏, 就是"柯西".</div>
+<div class="cc-side"><b>作为评审人:</b> 他两次(阿贝尔 1826、洛朗 1843)一眼认出划时代成果的价值, 却都因事务积压与处境尴尬而搁置, 让两位年轻人在生前没能得到应有的承认.</div>
+<div class="cc-side"><b>历史给我们的启示:</b> <b>识别价值固然是能力, 让价值及时实现才是责任.</b> 这也提醒今天的我们: 与其抱怨"没被看见", 不如先让自己成为那个"看见并愿意推一把"的人.</div>
+</div>
+
+<div class="sec-title">6.3 数学中的哲学: 圆环里的智慧</div>
+
+<div class="philo-grid">
+<div class="philo-card">
+<span class="pc-tag">哲学视角</span>
+<h4>圆环里的辩证法</h4>
+<p>泰勒级数只能容纳"圆内的完美", 洛朗级数却容纳"圆环上的缺陷": 负幂项(主要部分)恰恰描述了奇点附近的行为. 正视缺陷, 才能完整刻画世界.</p>
+<div class="pc-math">负幂部分 = 主要部分: 在奇点附近, "病态"的部分反而携带了最关键的信息.</div>
+</div>
+<div class="philo-card">
+<span class="pc-tag">方法论</span>
+<h4>一函数多展开</h4>
+<p>同一个 $\frac{1}{(z-1)(z-2)}$, 在四个圆环域内有四副面孔. 立场(区域)变了, 结论就变 —— 分析问题先明确前提与范围.</p>
+<div class="pc-math">先画域、再展开: 做事先看清"边界条件", 是工程师洛朗留给我们的职业习惯.</div>
+</div>
+<div class="philo-card">
+<span class="pc-tag">量变质变</span>
+<h4>一个系数, 决定一切</h4>
+<p>$\oint f\,\mathrm{d}z = 2\pi\mathrm{i}c_{-1}$: 艰难的围道积分, 竟只需读出展开式的一个系数. 而这个 $-1$ 次项, 正是整个级数里最"反常"的那一项.</p>
+<div class="pc-math">最关键的信息常常藏在最不起眼的位置 —— 留数定理的全部力量, 都压在一个 $c_{-1}$ 上.</div>
+</div>
+<div class="philo-card">
+<span class="pc-tag">整体观</span>
+<h4>由局部刻画奇点</h4>
+<p>可去奇点(无负幂项)、$m$ 阶极点(负幂项有限)、本性奇点(负幂项无穷) —— 奇点这样"最不解析"的对象, 反而被展开式的<b>局部结构</b>完全刻画了.</p>
+<div class="pc-math">奇点的类型 $\iff$ 洛朗展开中负幂项的多少 &nbsp;·&nbsp; 认识一个人, 常看他"出问题时"的表现.</div>
+</div>
+<div class="philo-card">
+<span class="pc-tag">科学精神</span>
+<h4>评议延迟的教训</h4>
+<p>洛朗的论文迟到二十年, 阿贝尔的论文至死未发. 科学的进步不只依赖天才的灵光, 也依赖一套<b>让好成果及时被看见</b>的制度与人心.</p>
+<div class="pc-math">严谨的成果最终会被时间识别 —— 但让"识别"来得快一些, 是每一个学术共同体的责任.</div>
+</div>
+<div class="philo-card">
+<span class="pc-tag">家国情怀</span>
+<h4>展开即积累</h4>
+<p>平时把"级数"(基本功)展开到位, 关键时刻自然水到渠成. 洛朗白天修港口、深夜算级数, 靠的就是日复一日的积累.</p>
+<div class="pc-math">平时的每一项积累, 都是未来某次"积分"的 $c_{-1}$ —— 量变到质变, 从来不靠侥幸.</div>
+</div>
+</div>
+
+<div class="sec-title">6.4 古今对话: 从"格物致知"到"奇点上的中国算法"</div>
+
+<div class="box-key">
+<div class="title">中国智慧中的"穷理"传统</div>
+中国古代学术讲究"<b>格物致知</b>"—— 即通过穷究事物的道理来获得真知. 洛朗的贡献恰恰是这种精神的体现: 别人把奇点当作绕道而行的"禁区", 他却把奇点当作研究对象, 穷究其内在结构, 最终用负幂项精确刻画了奇点.<br>
+从《九章算术》"析理以辞, 解体用图"的注释传统, 到刘徽"割之又割"的极限实践, 中国古代数学一直有<b>追问"为什么"</b>的血脉. 洛朗级数虽诞生于法国, 但它所体现的"穷究疑难、在缺陷处建立秩序"的精神, 与中国学术传统是相通的.
+</div>
+
+<div class="box-key">
+<div class="title">现代回响: 洛朗展开的当代身影</div>
+<ul>
+<li><b>信号处理与 5G 通信</b>: 数字滤波器设计中广泛使用的 Z 变换, 本质上就是"离散版的洛朗级数". 收敛环的内外半径直接决定系统稳定与否 —— 洛朗当年画的那个圆环, 今天每天都在为数十亿次通信把关.</li>
+<li><b>航空与流体力学</b>: 计算翼型周围的流场时, 常用的"奇点法"把复杂流场表示为若干奇点(源、涡、偶极)的叠加 —— 这正是洛朗展开"用负幂项刻画奇点"思想的工程版本. C919 的气动设计里, 有洛朗的影子.</li>
+<li><b>电磁仿真与超算</b>: 在天河、神威等国产超级计算机上运行的电磁场仿真程序, 其核心算法多涉及奇性分解与留数计算 —— 数学内核里都有那个圆环.</li>
+<li><b>华罗庚与多复变函数论</b>: 华罗庚在典型域与"华氏算子"上的开创性工作, 建立在多元幂级数(洛朗展开的现代推广)理论之上, 为中国数学赢得了世界声誉.</li>
+</ul>
+<div class="box-result">
+<div class="res-label">思政启示: 在"缺陷处"建立秩序</div>
+洛朗最可贵的精神, 不是他有多聪明, 而是他<b>敢于把研究的目光投向别人绕开的地方</b>. 泰勒级数遇到奇点就"失效", 洛朗却在奇点周围画了一个圆环, 把坏点隔离在外, 在环内重建了完整的展开理论.<br>
+在工程与科研的实践中, 我们同样会遇到无数"奇点": 卡脖子的技术难点、系统中最脆弱的环节、模型里最反常的数据. 把它们当作研究对象而不是绕开的障碍, 才是突破的来源 —— <b>哪里最困难, 哪里就是理论的生长点.</b>
+</div>
+</div>
+
+<div class="sec-title">6.5 课堂思辨 · 大家一起想 <span class="tag-pill">交互</span></div>
+<div class="chart-desc">点击选项, 看看不同的思考角度. 这些问题没有唯一"标准答案", 重要的是思考的过程.</div>
+<div id="sizhengTalk"></div>
+
+<div class="sec-title">6.6 格言墙</div>
+<div class="quote-wall">
+<div class="quote-item">"数学不在乎你的出身, 只在乎你的严谨."<span class="q-src">—— 洛朗精神的写照</span></div>
+<div class="quote-item">"我只负责把定理算对, 剩下的交给时间."<span class="q-src">—— 洛朗式定力</span></div>
+<div class="quote-item">"在数学中, 我们必须把话说清楚, 而不是说得漂亮."<span class="q-src">—— 柯西 (A.-L. Cauchy) 精神的写照</span></div>
+<div class="quote-item">"哪里最困难, 哪里就是理论的生长点."<span class="q-src">—— 从洛朗级数得到的启示</span></div>
+<div class="quote-item">"聪明在于勤奋, 天才在于积累."<span class="q-src">—— 华罗庚</span></div>
+<div class="quote-item">"格物致知."<span class="q-src">—— 《礼记 · 大学》</span></div>
+</div>
+
+<div class="box-think">
+<div class="think-label">本节思政小结</div>
+<b>一个故事:</b> 洛朗是阿尔及利亚工地上的一名海军工程师, 白天修港口、深夜算级数. 1843 年他把"圆环域上的展开定理"寄给巴黎科学院, 评审人柯西因处境尴尬而搁置; 论文在他去世九年后(1863)才终于发表, 而他 41 岁便已病逝 —— 今天全世界每一本复变函数教材里, 都写着"洛朗级数".<br>
+<b>一个道理:</b> 泰勒级数遇到奇点就失效, 洛朗却在奇点周围画一个圆环, 把坏点隔离在外, 用负幂项反过来精确刻画它 —— <b>不回避缺陷, 而是把缺陷变成观察对象</b>, 这是本节最宝贵的方法论. 同时, 洛朗与阿贝尔的遭遇提醒我们: 科学的进步既依赖天才的灵光, 也依赖"让好成果及时被看见"的制度与人心; 识别价值固然是能力, <b>让价值及时实现才是责任</b>.<br>
+<b>一份责任:</b> 从洛朗"先划定施工域、再动手施工"的工程规范, 到刘徽"割之又割"的穷理传统, 再到今天 Z 变换、奇点法、电磁仿真里那个无处不在的圆环 —— 数学的严谨从来没停在纸面上, 它是 5G、大飞机与超算背后的沉默基石. 在"缺陷处"建立秩序, 在"卡脖子"处寻找突破, 是我们这一代科技工作者对国家最实在的担当.
+</div>
+
+</div><!-- /content6 -->
+
+</div><!-- /tab-container -->
+
+<div class="footer">
+复变函数与积分变换 &middot; 第四章第三节 洛朗级数 &middot; 交互式网页讲义<br>
+内容整理自课程课件, 交互模块为本页原创拓展
+</div>
+
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var TAU = Math.PI*2;
+function fmt(v,d){ d=(d==null?2:d); if(!isFinite(v))return '∞';
+  var s=v.toFixed(d); if(parseFloat(s)===0)s=(0).toFixed(d); return s; }
+
+// ---------- canvas infra ----------
+var mods=[];
+function fitCanvas(cv){
+  var h=parseInt(cv.dataset.h||'380',10);
+  var w=cv.clientWidth||cv.parentElement.clientWidth||600;
+  if(w<60) return null;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+function module(id,setup){
+  var cv=document.getElementById(id);
+  if(!cv) return;
+  var api=setup(cv);
+  if(!api) return;
+  mods.push({cv:cv,draw:api.draw});
+  raf(function(){ api.draw(); });
+}
+function raf(fn){ requestAnimationFrame(function(){ try{fn();}catch(e){console.error(e);} }); }
+function redrawAll(){ mods.forEach(function(m){ if(m.cv.offsetParent!==null) raf(m.draw); }); }
+window.addEventListener('resize',redrawAll);
+Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'),function(r){
+  r.addEventListener('change',function(){ setTimeout(redrawAll,50); });
+});
+
+// ---------- helpers ----------
+function mapperEq(w,h,xmin,xmax,ymin,ymax){
+  var cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+  var s=Math.min(w/(xmax-xmin),h/(ymax-ymin));
+  return { s:s,
+    px:function(x){ return w/2+(x-cx)*s; },
+    py:function(y){ return h/2-(y-cy)*s; },
+    ix:function(px){ return (px-w/2)/s+cx; },
+    iy:function(py){ return cy+(h/2-py)/s; } };
+}
+function axes(ctx,w,h,m,labelX,labelY){
+  var x0=m.px(0),y0=m.py(0);
+  ctx.save();
+  ctx.strokeStyle='#546e7a'; ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(0,y0);ctx.lineTo(w,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0,0);ctx.lineTo(x0,h);ctx.stroke();
+  ctx.fillStyle='#546e7a'; ctx.font='italic 14px Georgia';
+  if(y0-8>0) ctx.fillText(labelX||'Re', w-30, y0-8);
+  if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
+  ctx.restore();
+}
+function circle(ctx,cx,cy,r,color,lw,dash){
+  ctx.save();
+  if(dash) ctx.setLineDash([7,4]);
+  ctx.strokeStyle=color; ctx.lineWidth=lw||2;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,TAU); ctx.stroke();
+  ctx.restore();
+}
+function cross(ctx,x,y,size,color,lw){
+  ctx.strokeStyle=color; ctx.lineWidth=lw||3;
+  ctx.beginPath(); ctx.moveTo(x-size,y-size); ctx.lineTo(x+size,y+size); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x-size,y+size); ctx.lineTo(x+size,y-size); ctx.stroke();
+}
+function dot(ctx,x,y,r,color,ringColor){
+  ctx.beginPath();ctx.arc(x,y,r,0,TAU);
+  ctx.fillStyle=color;ctx.fill();
+  if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
+}
+function tlabel(ctx,x,y,text,color,font){
+  ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
+  ctx.fillText(text,x,y);
+}
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
+  while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
+    for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
+    if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
+    last=m.index+m[0].length; }
+  return res+html.slice(last); }
+function hl(s){ return '<span class="hl">'+s+'</span>'; }
+function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
+function animLoop(fn){
+  var on=true;
+  function step(){ if(!on)return; if(fn()===false){on=false;return;} requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+  return function(){ on=false; };
+}
+function bindSlider(id,fn){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('input',function(){ fn(parseFloat(el.value)); });
+  return el;
+}
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+
+(function(){
+// ================= 模块 1: 收敛圆环 =================
+module('cvAnnulus',function(cv){
+  var R1=1.0, R2=3.0;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-4.4,4.4,-3.0,3.0);
+    var cx=m.px(0),cy=m.py(0);
+    axes(ctx,w,h,m);
+    if(R1<R2){
+      // annulus fill: outer disc minus inner disc
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx,cy,R2*m.s,0,TAU);
+      ctx.arc(cx,cy,Math.max(R1*m.s,0.001),0,TAU,true);
+      ctx.fillStyle='rgba(46,125,50,0.20)';
+      ctx.fill('evenodd');
+      ctx.restore();
+      circle(ctx,cx,cy,R2*m.s,'#2e7d32',2.4);
+      if(R1>0.01) circle(ctx,cx,cy,R1*m.s,'#c2185b',2.4,true);
+      tlabel(ctx,cx+R2*m.s*0.6,cy-R2*m.s*0.72,'|z| = R (正幂定)',' #2e7d32','bold 13px Segoe UI');
+      if(R1>0.01) tlabel(ctx,cx+R1*m.s*0.55,cy+R1*m.s*0.80,'|z| = R₁ (负幂定)','#c2185b','bold 13px Segoe UI');
+      tlabel(ctx,cx-14,cy+6,'z₀','#37474f');
+      dot(ctx,cx,cy,5,'#37474f','#fff');
+      setRO('annulusReadout',
+        '<b>收敛圆环:</b> '+hl2('R₁ < |z − z₀| < R')+' &nbsp; 其中 R₁ = '+hl(fmt(R1,2))+', R = '+hl(fmt(R2,2))+'<br>'+
+        '<b>正幂部分(解析部分)</b> 在 |z − z₀| < '+fmt(R2,2)+' 收敛 &nbsp;|&nbsp; <b>负幂部分(主要部分)</b> 在 |z − z₀| > '+fmt(R1,2)+' 收敛<br>'+
+        '<b>和函数</b> 在圆环内 '+hl2('解析')+', 且可逐项求导、逐项积分 (定理 3.1)<br>'+
+        '<span style="color:#80deea">拖动滑块让 R₁ ≥ R: 圆环消失, 洛朗级数处处发散.</span>');
+    } else {
+      circle(ctx,cx,cy,R2*m.s,'#c62828',2.4);
+      if(R1>0.01) circle(ctx,cx,cy,R1*m.s,'#c62828',2.4,true);
+      dot(ctx,cx,cy,5,'#37474f','#fff');
+      setRO('annulusReadout',
+        '<b>R₁ = '+fmt(R1,2)+' ≥ R = '+fmt(R2,2)+'</b><br>'+
+        '<b>结论:</b> '+hl('负幂部分的收敛域与正幂部分的收敛域无交集, 洛朗级数处处发散.')+'<br>'+
+        '<span style="color:#80deea">请调回 R₁ &lt; R 重新观察圆环.</span>');
+    }
+  }
+  bindSlider('rngR1',function(v){ R1=v/100; badge('badgeR1',fmt(R1,1)); draw(); });
+  bindSlider('rngR2',function(v){ R2=v/100; badge('badgeR2',fmt(R2,1)); draw(); });
+  return {draw:draw};
+});
+
+// ================= 模块 2: 例3.2 四圆环 =================
+module('cvRings',function(cv){
+  var which=1;
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-1.2,3.4,-2.4,2.4);
+    var cx=m.px(0),cy=m.py(0);
+    axes(ctx,w,h,m);
+    var c1=m.px(1),c2=m.px(2);
+    // highlight regions
+    ctx.save();
+    if(which===1){
+      ctx.beginPath(); ctx.arc(cx,cy,m.s,0,TAU); ctx.arc(cx,cy,0.001,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.18)'; ctx.fill('evenodd');
+      circle(ctx,cx,cy,m.s,'#1976d2',2.4,true);
+    } else if(which===2){
+      ctx.beginPath(); ctx.arc(cx,cy,2*m.s,0,TAU); ctx.arc(cx,cy,m.s,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.18)'; ctx.fill('evenodd');
+      circle(ctx,cx,cy,2*m.s,'#1976d2',2.4);
+      circle(ctx,cx,cy,m.s,'#1976d2',2.4,true);
+    } else if(which===3){
+      ctx.beginPath(); ctx.arc(cx,cy,2*m.s,0,TAU,true); ctx.rect(0,0,w,h);
+      ctx.fillStyle='rgba(25,118,210,0.18)'; ctx.fill('evenodd');
+      circle(ctx,cx,cy,2*m.s,'#1976d2',2.4,true);
+    } else {
+      circle(ctx,c1,cy,m.s,'#1976d2',2.4,true);
+      ctx.beginPath(); ctx.arc(c1,cy,m.s,0,TAU); ctx.arc(c1,cy,0.001,0,TAU,true);
+      ctx.fillStyle='rgba(25,118,210,0.18)'; ctx.fill('evenodd');
+      dot(ctx,c1,cy,5,'#1976d2','#fff');
+      tlabel(ctx,c1-8,cy+20,'z₀=1','#1976d2');
+    }
+    ctx.restore();
+    // singularities
+    cross(ctx,c1,cy,8,'#d32f2f',3);
+    tlabel(ctx,c1+11,cy-10,'1','#d32f2f');
+    cross(ctx,c2,cy,8,'#e65100',3);
+    tlabel(ctx,c2+11,cy-10,'2','#e65100');
+    // labels
+    var titles={1:'① 0<|z|<1: 正幂为主 (实为泰勒展开)',2:'② 1<|z|<2: 正负幂混合',3:'③ 2<|z|<+∞: 负幂为主',4:'④ 0<|z−1|<1: 以 z=1 为心的展开'};
+    tlabel(ctx,14,24,titles[which],'#0d47a1','bold 14px Segoe UI');
+    setRO('ringsReadout',
+      '<b>当前区域</b> '+hl(titles[which])+'<br>'+
+      '<b>展开式要点:</b> '+
+      (which===1? hl2('f = Σ(1 − 1/2ⁿ⁺¹)zⁿ = 1 + z/2 + 3z²/4 + ⋯ (全正幂)')
+       : which===2? hl('f = Σ1/zⁿ⁺¹ − Σzⁿ/2ⁿ⁺¹ (负幂 + 正幂)')
+       : which===3? hl2('f = 1/z + 3/z² + 7/z³ + ⋯ (全负幂)')
+       : hl('f = 1/(z−1) − Σ(−1)ⁿ(z−1)ⁿ (以 z₀=1 为心)'))+'<br>'+
+      '<span style="color:#80deea">同一个函数, 圆环域不同, 洛朗展开完全不同 —— 先定域, 再展开.</span>');
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v;
+    ['btnRing1','btnRing2','btnRing3','btnRing4'].forEach(function(x){ var el=document.getElementById(x); if(el) el.classList.remove('active'); });
+    b.classList.add('active'); draw(); }); }
+  bind('btnRing1',1); bind('btnRing2',2); bind('btnRing3',3); bind('btnRing4',4);
+  return {draw:draw};
+});
+
+// ================= 模块 3: 例3.4 圆环选择 =================
+module('cvLoCurve',function(cv){
+  var which=3;   // 1: |z|=1, 3: |z|=3
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var m=mapperEq(w,h,-4.2,4.2,-3.0,3.0);
+    var cx=m.px(0),cy=m.py(0);
+    axes(ctx,w,h,m);
+    // rings boundaries |z|=2
+    circle(ctx,cx,cy,2*m.s,'#90a4ae',1.6,true);
+    tlabel(ctx,cx+2*m.s*0.7,cy+2*m.s*0.72,'|z| = 2 (分界)','#607d8b','bold 12px Segoe UI');
+    // singularities
+    cross(ctx,cx,cy,8,'#d32f2f',3); tlabel(ctx,cx-24,cy-12,'z=0','#d32f2f');
+    cross(ctx,m.px(2),cy,8,'#e65100',3); tlabel(ctx,m.px(2)+11,cy-12,'z=2','#e65100');
+    // selected curve
+    var r=(which===1?1:3)*m.s;
+    circle(ctx,cx,cy,r,'#1976d2',3);
+    tlabel(ctx,cx+r*0.6,cy-r*0.80,'C: |z| = '+(which===1?'1':'3'),'#1976d2','bold 14px Segoe UI');
+    // annulus in use
+    ctx.save();
+    if(which===1){
+      ctx.beginPath(); ctx.arc(cx,cy,2*m.s,0,TAU); ctx.arc(cx,cy,0.001,0,TAU,true);
+      ctx.fillStyle='rgba(46,125,50,0.10)'; ctx.fill('evenodd');
+    } else {
+      ctx.beginPath(); ctx.rect(0,0,w,h); ctx.arc(cx,cy,2*m.s,0,TAU,true);
+      ctx.fillStyle='rgba(46,125,50,0.10)'; ctx.fill('evenodd');
+    }
+    ctx.restore();
+    tlabel(ctx,14,24,'所用圆环域: '+(which===1?'0 < |z| < 2':'2 < |z| < +∞'),'#0d47a1','bold 14px Segoe UI');
+    setRO('loCurveReadout',
+      '<b>曲线</b> C: '+hl('|z| = '+(which===1?'1':'3'))+' &nbsp; 位于圆环域 '+hl2(which===1?'0 < |z| < 2':'2 < |z| < +∞')+' 内<br>'+
+      (which===1?
+        '<b>展开方式:</b> 两个奇点都在圆外 → 全正幂 (泰勒型), 负幂为零 ⇒ '+hl2('c₋₁ 需按泰勒/高阶导数求')+'<br>'+
+        '<b>本例考察重点:</b> '+hl('例 3.4 选取的是 |z| = 3, 见右侧情形') :
+        '<b>展开方式:</b> 奇点 0 与 2 都在圆内 → 全负幂: e^z(1/z² + 2/z³ + 4/z⁴ + ⋯)<br>'+
+        '<b>c₋₁</b> = Σ 2ⁿ/(n+1)! = '+hl2('(e² − 1)/2')+' &nbsp;&nbsp; <b>∮ = 2πi·c₋₁</b> = '+hl('πi(e² − 1)'))+'<br>'+
+      '<span style="color:#80deea">曲线在哪个圆环, 就在哪个圆环内展开 —— 区域选择决定系数.</span>');
+  }
+  function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
+    which=v;
+    ['btnCurve1','btnCurve3'].forEach(function(x){ var el=document.getElementById(x); if(el) el.classList.remove('active'); });
+    b.classList.add('active'); draw(); }); }
+  bind('btnCurve1',1); bind('btnCurve3',3);
+  return {draw:draw};
+});
+
+// ================= 模块 5: 孤立奇点分类判定器 =================
+module('cvSing',function(cv){
+  var cur=1;
+  // 每个函数: 名称 / 洛朗主部各项(负幂, 从 (z−z0)^−1 起) / 类型 / 结论
+  var FN={
+    1:{ name:'f(z) = sin z / z', z0:'z₀ = 0', color:'#2e7d32',
+        neg:['0','0','0','0'],       // 全部为 0 → 无负幂项
+        type:'可去奇点', depth:0,
+        series:'sin z / z = 1 − z²/3! + z⁴/5! − ⋯',
+        why:'负幂项全部为零, 洛朗展开退化为泰勒展开. 补充定义 f(0)=1 后函数在 z₀ 处解析.' },
+    2:{ name:'f(z) = 1 / z', z0:'z₀ = 0', color:'#1976d2',
+        neg:['1','0','0','0'],
+        type:'1 阶极点', depth:1,
+        series:'1/z = z⁻¹',
+        why:'主要部分只有 (z−z₀)⁻¹ 一项, c₋₁ = 1 ≠ 0. 极限 lim f(z) = ∞.' },
+    3:{ name:'f(z) = 1 / z²', z0:'z₀ = 0', color:'#1976d2',
+        neg:['0','1','0','0'],
+        type:'2 阶极点', depth:2,
+        series:'1/z² = z⁻²',
+        why:'最高负幂次为 (z−z₀)⁻², c₋₂ = 1 ≠ 0. 属于 m 阶极点 (m = 2).' },
+    4:{ name:'f(z) = e^(1/z)', z0:'z₀ = 0', color:'#c62828',
+        neg:['1','1/2!','1/3!','1/4!'],
+        type:'本性奇点', depth:'∞',
+        series:'e^{1/z} = 1 + z⁻¹ + z⁻²/2! + z⁻³/3! + ⋯',
+        why:'负幂项<b>无穷多</b>, 无法用有限项表示. 由皮卡定理, 在 z₀ 的任意小邻域内函数可取到除至多一个值以外的一切复数值.' },
+    5:{ name:'f(z) = 1 / [z(z−1)²]', z0:'z₀ = 1', color:'#1976d2',
+        neg:['1','1','0','0'],
+        type:'2 阶极点', depth:2,
+        series:'1/[z(z−1)²] = (z−1)⁻² − (z−1)⁻¹ + 1 − (z−1) + ⋯',
+        why:'以 z₀ = 1 为中心展开: 最高负幂次为 (z−1)⁻², c₋₂ = 1 ≠ 0. 故 2 阶极点.' }
+  };
+
+  function draw(){
+    var f=fitCanvas(cv); if(!f) return;
+    var ctx=f.ctx,w=f.w,h=f.h;
+    ctx.clearRect(0,0,w,h);
+    var F=FN[cur];
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
+    ctx.fillText('孤立奇点分类 · '+F.name+'  ('+F.z0+')', 28, 28);
+
+    // ---- 上方: 负幂项"项数条" ----
+    var barY=62, barH=54, padL=28;
+    var bw=(w-padL*2)/F.neg.length;
+
+    // 判定类型的横幅
+    ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#546e7a';
+    ctx.fillText('主要部分 (负幂项 c₋₁, c₋₂, c₋₃, …) 的取值:', padL, barY-10);
+
+    F.neg.forEach(function(v,i){
+      var bx=padL+i*bw, by=barY, bh=barH;
+      var isZero = /^0(\.0+)?$/.test(v);
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(bx+6,by,bw-12,bh,8); else ctx.rect(bx+6,by,bw-12,bh);
+      ctx.fillStyle = isZero ? '#f5f5f5' : '#fff3e0';
+      ctx.fill();
+      ctx.strokeStyle = isZero ? '#cfd8dc' : F.color;
+      ctx.lineWidth = isZero ? 1.4 : 2.2;
+      ctx.stroke();
+
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      // 幂次标签
+      ctx.font='11px Segoe UI'; ctx.fillStyle='#90a4ae';
+      ctx.fillText('c₋'+(i+1), bx+bw/2, by+15);
+      // 值
+      ctx.font='bold '+(isZero?13:14)+'px Segoe UI';
+      ctx.fillStyle = isZero ? '#b0bec5' : F.color;
+      ctx.fillText(String(v), bx+bw/2, by+bh-17);
+    });
+
+    // ---- 中部: 洛朗级数 ----
+    var sy=barY+barH+34;
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#6a1b9a';
+    ctx.fillText('洛朗展开:', padL, sy);
+    ctx.font='14px Consolas, "Segoe UI", monospace'; ctx.fillStyle='#37474f';
+    ctx.fillText(F.series, padL+82, sy);
+
+    // ---- 结论框 ----
+    var cy=sy+26, ch=h-cy-58;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(padL,cy,w-padL*2,ch,10); else ctx.rect(padL,cy,w-padL*2,ch);
+    ctx.fillStyle='#e8f5e9'; ctx.fill();
+    ctx.strokeStyle=F.color; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=F.color;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(padL,cy,6,ch,3); else ctx.rect(padL,cy,6,ch);
+    ctx.fill();
+
+    ctx.font='bold 17px Segoe UI'; ctx.fillStyle=F.color;
+    ctx.fillText('判定: '+F.type, padL+22, cy+30);
+
+    // 说明文字 (简单分行, 垂直居中于剩余区域)
+    ctx.font='12.5px Segoe UI'; ctx.fillStyle='#33691e';
+    var words=F.why.replace(/<[^>]+>/g,'');
+    var maxW=w-padL*2-44, line='', lines=[];
+    for(var i2=0;i2<words.length;i2++){
+      var ch2=words[i2];
+      if(ctx.measureText(line+ch2).width>maxW){ lines.push(line); line=ch2; }
+      else line+=ch2;
+    }
+    if(line) lines.push(line);
+    // 让文字块在 (cy+44 ~ cy+ch-10) 内垂直居中
+    var areaTop=cy+46, areaBot=cy+ch-12;
+    var blockH=lines.length*19;
+    var ly=areaTop + Math.max(0,(areaBot-areaTop-blockH)/2) + 14;
+    lines.forEach(function(ln){ ctx.fillText(ln,padL+22,ly); ly+=19; });
+
+    // ---- 底部三类对照 ----
+    ctx.textAlign='left'; ctx.font='11.5px Segoe UI'; ctx.fillStyle='#78909c';
+    var types=['可去奇点: 无负幂项','m 阶极点: 负幂项有限','本性奇点: 负幂项无穷'];
+    var cols=['#2e7d32','#1976d2','#c62828'];
+    types.forEach(function(t,i){
+      var xx=padL+i*(w-padL*2)/3;
+      ctx.fillStyle=cols[i];
+      ctx.fillRect(xx, h-30, 10, 10);
+      ctx.fillStyle='#546e7a';
+      ctx.fillText(t, xx+15, h-21);
+    });
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+
+  function updateRO(){
+    var F=FN[cur];
+    var cnt = F.depth===0 ? '0 项 (无负幂项)' : (F.depth==='∞' ? '无穷多项' : F.depth+' 项');
+    setRO('singReadout',
+      '<b>'+F.name+'</b> 在 '+F.z0+' 处 &nbsp;|&nbsp; 主要部分: <span class="hl">'+cnt+'</span> &nbsp;|&nbsp; '+
+      '判定结果: <span class="hl2">'+F.type+'</span><br>'+
+      '<span style="color:#80deea">'+F.why.replace(/<[^>]+>/g,'')+'</span>');
+  }
+
+  ['btnSin1','btnSin2','btnSin3','btnSin4','btnSin5'].forEach(function(id,i){
+    var b=document.getElementById(id);
+    if(b) b.addEventListener('click',function(){
+      cur=i+1;
+      ['btnSin1','btnSin2','btnSin3','btnSin4','btnSin5'].forEach(function(id2,j){
+        var bb=document.getElementById(id2);
+        if(bb){ if(j+1===cur) bb.classList.add('active'); else bb.classList.remove('active'); }
+      });
+      draw(); updateRO();
+    });
+  });
+  raf(function(){ updateRO(); });
+  return {draw:function(){ draw(); updateRO(); }};
+});
+
+// ================= 模块 4: 知识结构树 =================
+module('cvSummary',function(cv){
+  var stage=2, built=false;
+  var cats=[
+    {t:'双边级数与圆环', c:'#1976d2', leaves:['$\\sum c_n(z-z_0)^n$ 双边','正幂 = 解析部分','负幂 = 主要部分','内径 $R_1$ (负幂定)','外径 $R$ (正幂定)','$R_1\\ge R$ 处处发散','定理3.1 环内解析']},
+    {t:'洛朗展开定理', c:'#e65100', leaves:['环内解析 ⇒ 可展','$c_n$ = 圆周积分公式','$C$ 为绕 $z_0$ 任一闭线','闭路变形定系数','展开唯一性','$c_n\\neq\\frac{f^{(n)}(z_0)}{n!}$ (一般)']},
+    {t:'展开方法', c:'#c62828', leaves:['直接法: 系数积分','间接法: 唯一性','代换 / 部分分式','例3.1 $\\mathrm{e}^{z^2}$','例3.2 一函数四展开','先定域再展开']},
+    {t:'展开即积分', c:'#2e7d32', leaves:['$c_{-1}=\\frac{1}{2\\pi\\mathrm{i}}\\oint f$','$\\oint f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$','例3.3 $\\frac{\\mathrm{e}^{1/z}}{z}$','例3.4 $\\pi\\mathrm{i}(\\mathrm{e}^2-1)$','曲线定圆环','负一系数定乾坤']}
+  ];
+  function build(){
+    if(built) return;
+    cv.innerHTML='';
+    var hd=document.createElement('div');
+    hd.className='kg-head';
+    hd.textContent='第四章第三节 · 洛朗级数';
+    cv.appendChild(hd);
+    var wrap=document.createElement('div');
+    wrap.className='kg-branches';
+    for(var i=0;i<cats.length;i++){
+      var cd=cats[i];
+      var col=document.createElement('div');
+      var maxLen=0;
+      for(var q=0;q<cd.leaves.length;q++){ if(cd.leaves[q].length>maxLen) maxLen=cd.leaves[q].length; }
+      col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
+      col.style.setProperty('--kc',cd.c);
+      var tt=document.createElement('div');
+      tt.className='kg-cat'; tt.textContent=cd.t;
+      col.appendChild(tt);
+      var box=document.createElement('div');
+      box.className='kg-leaves';
+      for(var j=0;j<cd.leaves.length;j++){
+        var lf=document.createElement('div');
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
+        box.appendChild(lf);
+      }
+      col.appendChild(box);
+      wrap.appendChild(col);
+    }
+    cv.appendChild(wrap);
+    built=true;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){} }
+  }
+  function draw(){
+    build();
+    cv.className='kg-wrap kg-stage-'+stage;
+  }
+  function sumRO(st){
+    var txt;
+    if(st<1) txt='舞台一 · 顶层结构: 双边级数与收敛圆环 → 洛朗展开定理 → 展开方法 → 展开即积分, 四层知识正在生长...';
+    else if(st<2) txt='舞台二 · 逐层展开: 各分支的定义、定理与例题依次显形, 收敛圆环由正、负幂部分的收敛半径共同确定.';
+    else txt='<b>本节要点</b> &nbsp;洛朗级数: $\\sum\\limits_{n=-\\infty}^{+\\infty} c_n (z-z_0)^n$, 在圆环 $r &lt; |z-z_0| &lt; R$ 内收敛<br>'+
+      '系数公式: $c_n=\\frac{1}{2\\pi\\mathrm{i}}\\oint_C\\frac{f(\\zeta)}{(\\zeta-z_0)^{n+1}}\\,\\mathrm{d}\\zeta$, 展开唯一<br>'+
+      '孤立奇点: 可去奇点 (无负幂项) / $m$ 阶极点 (负幂项有限) / 本性奇点 (负幂项无穷)<br>'+
+      '展开即积分: $\\oint_C f(z)\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$, 其中 $c_{-1}=\\operatorname{Res}[f,z_0]$';
+    setRO('sumReadout', txt);
+  }
+  var ab=document.getElementById('btnSumAnim');
+  if(ab) ab.addEventListener('click',function(){
+    stage=0; draw(); sumRO(0);
+    var n=0;
+    animLoop(function(){ n++;
+      if(n%24===0 && stage<2){ stage++; draw(); sumRO(stage); }
+      return stage<2; });
+  });
+  var rb=document.getElementById('btnSumReset');
+  if(rb) rb.addEventListener('click',function(){ stage=2; draw(); sumRO(2); });
+  raf(function(){ sumRO(stage); });
+  return {draw:draw};
+});
+
+// ================= 小测验交互 =================
+(function(){
+  var allQ=[].slice.call(document.querySelectorAll('.quiz-q'));
+  var done=0, right=0, total=0;
+  allQ.forEach(function(q){
+    if(!q.querySelector('.quiz-opt')) return;
+    total++;
+    var opts=[].slice.call(q.querySelectorAll('.quiz-opt'));
+    var expl=q.querySelector('.quiz-explain');
+    var answered=false;
+    opts.forEach(function(o){
+      o.addEventListener('click',function(){
+        if(answered) return;
+        answered=true; done++;
+        var ok = o.getAttribute('data-ok')==='1';
+        if(ok) right++;
+        opts.forEach(function(oo){
+          if(oo.getAttribute('data-ok')==='1') oo.classList.add('correct');
+        });
+        if(!ok) o.classList.add('wrong');
+        if(expl) expl.style.display='block';
+        setRO('quizScore','已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+hl(String(right))+' 题'+
+          (done===total ? (right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffab91">建议再复习对应知识点.</span>') : ''));
+      });
+    });
+  });
+  setRO('quizScore','已完成 0 / '+total+' 题');
+})();
+
+})();
+
+})();
+
+// ================= 思政思辨题 =================
+(function(){
+  var TALK=[
+    {q:'洛朗常年在阿尔及利亚的港口工地工作, 数学全靠业余自学, 属于「白天修港口, 深夜算级数」. 这种坚持对我们今天的学习有什么启示?',
+     hints:['研究的热忱不必依赖身份与岗位 —— 洛朗没有教授职位、没有学术头衔, 却做出了写进每一本教材的工作.',
+            '工程实践的严谨反过来滋养了数学: 修港口要先划定施工域, 这与「先定圆环域、再展开」的思路如出一辙.',
+            '真正的成果往往出自长期专注而非短期突击, 日复一日的积累才是「积分」时那个关键的 $c_{-1}$.',
+            '可迁移的态度: 无论在什么岗位上, 都保留一块属于自己的「深夜时间」, 用来做真正想做的事.']},
+    {q:'洛朗做的核心动作是「在圆环里把函数展开」, 这与「把复杂问题分层处理」是否有相通之处?',
+     hints:['先在奇点周围画一个圆环, 把「坏点」隔离在环外, 于是环内函数重新变得解析 —— 这叫先划清边界再动手.',
+            '双边级数把函数拆成「解析部分(正幂)」与「主要部分(负幂)」两块, 分工明确, 各司其职.',
+            '分层不是回避困难, 而是让困难变得可描述: 负幂项反过来精确刻画了奇点的性质.',
+            '可迁移的态度: 面对复杂系统, 先分区、再分层、后求解, 往往比一上来就硬碰硬更有效.']},
+    {q:'为什么「孤立奇点的类型」可以仅由洛朗展开中负幂项的多少来判定? 这件事实在告诉我们什么?',
+     hints:['可去奇点无负幂项(退化为泰勒展开)、$m$ 阶极点负幂项有限、本性奇点负幂项无穷 —— 三类奇性被展开式结构完全编码.',
+            '函数的「局部结构」携带了「整体性质」: 只看 $z_0$ 一个点附近的展开, 就能判定它在这一点有多「坏」.',
+            '这说明「用什么尺度去观察」决定了你能看到什么: 洛朗选择了「圆环 + 负幂」这套语言, 奇点因此被彻底说清.',
+            '可迁移的态度: 认识一个对象, 往往不必看全部细节, 抓住它在关键处的结构就够了.']},
+    {q:'洛朗的论文被搁置近二十年, 直到他去世后才由他人整理发表. 被长期忽视的成果要如何才能重见天日?',
+     hints:['时间是最诚实的评委: 只要结果是对的, 迟到二十年也依然会被写进教材.',
+            '成果要被重新发现, 往往还需要「接力的人」—— 无论洛朗本人, 还是后来替他整理的同行, 都在为其价值作证.',
+            '这也提醒评价者: 一次迟疑可能让好工作蒙尘多年, 评议的责任心与效率同样重要.',
+            '可迁移的态度: 与其焦虑「被看见」, 不如先把事情做扎实 —— 是金子, 总要有人替它擦亮.']},
+    {q:'柯西既是洛朗定理所属学科的奠基人, 又是让洛朗论文迟到二十年的评审人. 结合这段评审公案, 谈谈学术宽容与评价机制的重要性.',
+     hints:['一个人可以既是障碍也是阶梯: 没有柯西打下的地基, 就没有洛朗定理的立身之处.',
+            '利益冲突是这段公案的关键 —— 柯西 1831 年已有类似结论, 让他评审洛朗的论文, 处境本就尴尬.',
+            '现代学术规范要求「有利益冲突者应回避评审」, 正是从这段教训中总结出来的制度性纠错.',
+            '可迁移的态度: 学术共同体既要尊重奠基者, 也要建立让后来者的成果及时被看见的机制.']}
+  ];
+  var box=document.getElementById('sizhengTalk');
+  if(!box) return;
+  TALK.forEach(function(item,i){
+    var div=document.createElement('div');
+    div.className='quiz-q';
+    div.style.borderLeftColor='#b91c1c';
+    var t=document.createElement('div');
+    t.className='q-title'; t.style.color='#7f1d1d';
+    t.innerHTML='思辨 '+(i+1)+'：'+item.q;
+    div.appendChild(t);
+    var btn=document.createElement('label');
+    btn.className='answer-btn'; btn.textContent='💡 展开参考思路';
+    var inp=document.createElement('input');
+    inp.type='checkbox'; inp.className='answer-toggle';
+    inp.id='szAns'+(i+1);
+    btn.htmlFor=inp.id;
+    var body=document.createElement('div');
+    body.className='answer-body';
+    var inner=document.createElement('div');
+    inner.className='box-result';
+    inner.style.marginTop='10px';
+    var lab=document.createElement('div');
+    lab.className='res-label';
+    lab.textContent='参考思路 (非唯一答案)';
+    inner.appendChild(lab);
+    var ul=document.createElement('ul');
+    ul.innerHTML=item.hints.map(function(h){ return '<li>'+h+'</li>'; }).join('');
+    inner.appendChild(ul);
+    body.appendChild(inner);
+    div.appendChild(inp); div.appendChild(btn); div.appendChild(body);
+    box.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>

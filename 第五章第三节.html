@@ -68,6 +68,14 @@ body {
     width: 220px; height: 220px; border-radius: 50%;
     background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
 }
+/* 吉林大学校徽: 透明底, 与头部渐变自然融合 */
+.header-logo {
+    position: absolute; top: 16px; left: 22px;
+    height: 58px; width: auto;
+    z-index: 3; pointer-events: none;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+    opacity: .95;
+}
 .header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
 .header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
@@ -401,14 +409,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 }
 @media (max-width: 900px) {
     body { font-size:17px; padding:10px; }
-    .header { padding:30px 16px; }
-    .header h1 { font-size:1.5em; letter-spacing:2px; }
+    .header { padding:52px 16px 30px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
+    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+
     <h1>第五章 第三节 留数在定积分计算中的应用</h1>
     <p>三类实积分 &middot; 闭路取法 &middot; 大圆弧估计 &middot; 约当引理</p>
 </div>

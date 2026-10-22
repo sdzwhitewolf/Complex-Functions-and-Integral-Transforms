@@ -68,6 +68,14 @@ body {
     width: 220px; height: 220px; border-radius: 50%;
     background: radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
 }
+/* 吉林大学校徽: 透明底, 与头部渐变自然融合 */
+.header-logo {
+    position: absolute; top: 16px; left: 22px;
+    height: 58px; width: auto;
+    z-index: 3; pointer-events: none;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+    opacity: .95;
+}
 .header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
 .header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
@@ -126,6 +134,10 @@ body {
 .info-box strong { color: #0d47a1; }
 table { width: 100%; border-collapse:collapse; font-size:.9em; margin:12px 0; background:#fff; }
 th { background:linear-gradient(135deg,#1976d2,#2196f3); color:#fff; padding:10px 14px; text-align:center; }
+table mjx-container { font-size: 1.15em !important; }   /* 表格内公式放大 */
+/* 小字号容器内的公式同步放大，使公式不小于正文 */
+.chart-desc mjx-container, .fc mjx-container, .kg-leaf mjx-container,
+.legend-line mjx-container, .tl-body mjx-container { font-size: 1.14em !important; }
 td { padding:9px 14px; border-bottom:1px solid #e0e0e0; text-align:center; }
 tr:hover td { background:#e3f2fd; }
 .chart-container {
@@ -187,8 +199,9 @@ input[type="range"] { width: 200px; vertical-align: middle; }
   border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
   animation: kgIn .35s ease both; }
 .kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
-.kg-col.mid .kg-leaf mjx-container { font-size: .9em; }
-.kg-col.long .kg-leaf mjx-container { font-size: .82em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
 .kg-col.long .kg-leaf { white-space: pre-wrap; }
 .kg-leaf { overflow-x: auto; }
 .kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
@@ -201,10 +214,13 @@ input[type="range"] { width: 200px; vertical-align: middle; }
   color: #37474f; line-height: 1.55; }
 .fig-caps > .fc:only-child { flex: 0 1 auto; }
 
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
-    overflow-x:auto; white-space:nowrap;
+    overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
 .readout .hl { color:#ffcc80; }
@@ -389,7 +405,8 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 .philo-card p { margin:6px 0; font-size:.92em; color:#37474f; }
 .philo-card .pc-math {
     background:#f8fafc; border-left:3px solid #64748b; border-radius:6px;
-    padding:8px 12px; margin-top:10px; font-size:.88em; color:#334155;
+    padding:8px 12px; margin-top:10px; font-size:.86em; color:#334155;
+    overflow-x:auto;
 }
 .mnemonic {
     background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #f59e0b;
@@ -411,14 +428,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 }
 @media (max-width: 900px) {
     body { font-size:17px; padding:10px; }
-    .header { padding:30px 16px; }
-    .header h1 { font-size:1.5em; letter-spacing:2px; }
+    .header { padding:52px 16px 30px; }
+    .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
+    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+
     <h1>第八章 第4节 常微分方程的拉氏变换解法</h1>
     <p>基本思想与步骤 &middot; 一阶与二阶初值问题 &middot; 积分方程与微分方程组 &middot; 传递函数与工程应用</p>
 </div>
@@ -478,7 +497,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="row">
 <label>当前步骤:</label>
 <input type="range" id="flowStage" min="0" max="3" step="1" value="0">
-<span class="val-badge" id="flowStageV">1/4</span>
+<span class="val-badge" id="flowStageV">$\frac{1}{4}$</span>
 <button class="control-btn" id="btnFlowPlay">▶ 播放流程</button>
 </div>
 <div class="readout" id="flowReadout"></div>
@@ -685,7 +704,7 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <div class="box-formula">$$H(s)=\dfrac{Y(s)}{X(s)}=\dfrac{1}{s+1},\qquad h(t)=\mathscr{L}^{-1}\left[\dfrac{1}{s+1}\right]=\mathrm{e}^{-t}\quad(t\ge0).$$</div>
 单位阶跃输入 $X(s)=\frac{1}{s}$, 于是
 <div class="box-formula">$$Y(s)=\dfrac{1}{s(s+1)}=\dfrac{1}{s}-\dfrac{1}{s+1}\ \Longrightarrow\ y(t)=1-\mathrm{e}^{-t}\quad(t\ge0).$$</div>
-用卷积校验: $y(t)=\displaystyle\int_0^t \mathrm{e}^{-\tau}\cdot1\,\mathrm{d}\tau=1-\mathrm{e}^{-t}$, 完全一致.
+用卷积校验: $y(t)=\int_0^t \mathrm{e}^{-\tau}\cdot1\,\mathrm{d}\tau=1-\mathrm{e}^{-t}$, 完全一致.
 </div>
 </div>
 </div>
@@ -765,11 +784,11 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <td>一阶微分方程<br>初值问题 (一般)</td>
 <td>$ax'(t)+bx(t)=f(t)$,<br>$x(0)=c$</td>
 <td>$(as+b)X(s)=F(s)+ac$</td>
-<td>初值项 + 卷积项:<br>$x(t)=c\,\mathrm{e}^{-\frac{b}{a}t}+\frac{1}{a}\displaystyle\int_0^t f(\tau)\mathrm{e}^{-\frac{b}{a}(t-\tau)}\mathrm{d}\tau$</td>
+<td>初值项 + 卷积项:<br>$x(t)=c\,\mathrm{e}^{-\frac{b}{a}t}+\frac{1}{a}\int_0^t f(\tau)\mathrm{e}^{-\frac{b}{a}(t-\tau)}\mathrm{d}\tau$</td>
 </tr>
 <tr>
 <td>积分方程<br>(含卷积核)</td>
-<td>$f(t)=at+\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$</td>
+<td>$f(t)=at+\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$</td>
 <td>$F(s)=\frac{a}{s^2}+\frac{1}{s^2+1}F(s)$</td>
 <td>解代数方程得 $F(s)=a\left(\frac{1}{s^2}+\frac{1}{s^4}\right)$,<br>逆变换 $f(t)=a\left(t+\frac{1}{6}t^3\right)$</td>
 </tr>
@@ -834,12 +853,12 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 </div>
 
 <div class="quiz-q">
-<div class="q-title">6. 求解积分方程 $f(t)=at+\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 化为代数方程, 关键是?</div>
+<div class="q-title">6. 求解积分方程 $f(t)=at+\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 化为代数方程, 关键是?</div>
 <label class="quiz-opt">A. 对积分项直接分部积分</label>
 <label class="quiz-opt" data-ok="1">B. 认出积分是卷积 $f(t)*\sin t$, 用卷积定理 $\mathscr{L}[f*\sin t]=F(s)\cdot\frac{1}{s^2+1}$</label>
 <label class="quiz-opt">C. 把 $\sin(t-\tau)$ 展成泰勒级数</label>
 <label class="quiz-opt">D. 两边同时对 $t$ 求导</label>
-<div class="quiz-explain"><b>解析:</b> 积分项形如 $\displaystyle\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 正是卷积 $(f*\sin t)(t)$, 用卷积定理即可把含未知函数的积分化为 $F(s)$ 的代数项.</div>
+<div class="quiz-explain"><b>解析:</b> 积分项形如 $\int_0^t f(\tau)\sin(t-\tau)\mathrm{d}\tau$ 正是卷积 $(f*\sin t)(t)$, 用卷积定理即可把含未知函数的积分化为 $F(s)$ 的代数项.</div>
 </div>
 
 <div class="quiz-q">
@@ -872,10 +891,10 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <div class="quiz-q">
 <div class="q-title">10. 用卷积表示系统的零状态响应, 正确的是?</div>
 <label class="quiz-opt">A. $y(t)=h(t)+x(t)$</label>
-<label class="quiz-opt" data-ok="1">B. $y(t)=h(t)*x(t)=\displaystyle\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$</label>
+<label class="quiz-opt" data-ok="1">B. $y(t)=h(t)*x(t)=\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$</label>
 <label class="quiz-opt">C. $y(t)=h(t)x(t)$ (普通乘积)</label>
-<label class="quiz-opt">D. $y(t)=\displaystyle\int_0^t h(\tau)\mathrm{d}\tau$</label>
-<div class="quiz-explain"><b>解析:</b> 由 $Y(s)=H(s)X(s)$ 取逆变换, 用卷积定理得 $y(t)=h(t)*x(t)=\displaystyle\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$. 这就是杜阿梅尔原理: 输出是无数冲激响应的叠加.</div>
+<label class="quiz-opt">D. $y(t)=\int_0^t h(\tau)\mathrm{d}\tau$</label>
+<div class="quiz-explain"><b>解析:</b> 由 $Y(s)=H(s)X(s)$ 取逆变换, 用卷积定理得 $y(t)=h(t)*x(t)=\int_0^t h(\tau)x(t-\tau)\mathrm{d}\tau$. 这就是杜阿梅尔原理: 输出是无数冲激响应的叠加.</div>
 </div>
 
 <div class="readout" id="quizScore"></div>
@@ -890,7 +909,7 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <div class="hero-sub">他没有留下皇帝与星辰的传奇, 却留下了一条被无数教材引用的"原理": 把复杂的作用拆成无数简单的瞬间作用, 再一件一件地叠加起来. 这条原理, 正是拉氏变换解法的物理内核.</div>
 <div class="hero-quote">
 在求解"介质温度随时间变化的固体内部热传导"时, 杜阿梅尔遇到了一类棘手的非齐次问题: 外界的驱动随时间连续变化, 直接求解十分困难. 他的办法是: <b>把连续变化的驱动看成一系列瞬时"脉冲"的叠加, 先算清单个脉冲引起的响应, 再把它们叠加起来.</b><br>
-这一朴素而强大的思想, 今天被称为<b>杜阿梅尔原理</b> —— 而在数学上, 它就写成一条卷积: <em>$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$, 也正是 $s$ 域里 $Y(s)=H(s)F(s)$ 的时域面目.</em>
+这一朴素而强大的思想, 今天被称为<b>杜阿梅尔原理</b> —— 而在数学上, 它就写成一条卷积: <em>$y(t)=\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$, 也正是 $s$ 域里 $Y(s)=H(s)F(s)$ 的时域面目.</em>
 </div>
 </div>
 
@@ -953,7 +972,7 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <br>
 写成数学就是那条卷积, 写成 $s$ 域就是那次乘法:
 <br>
-"<em>$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau\ \Longleftrightarrow\ Y(s)=H(s)F(s).$</em>"
+"<em>$y(t)=\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau\ \Longleftrightarrow\ Y(s)=H(s)F(s).$</em>"
 <span class="iv-sig">—— 这种"把整体拆成局部、把局部叠成整体"的思想, 正是本节从例 4.2 的卷积解、到传递函数 $H(s)$ 与冲激响应 $h(t)$ 一路贯穿的数学底色.</span>
 </div>
 
@@ -966,7 +985,7 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <h4>把"整体"拆成"局部"的和</h4>
 <p>杜阿梅尔原理的全部秘密只有两个字: 拆与叠. 一个任意复杂的连续输入, 被拆成无数瞬间的"脉冲"; 每个脉冲的响应已知, 叠加起来就是总响应.</p>
 <p>面对复杂问题时, 先问"能不能拆成我熟悉的简单件的组合", 往往比硬碰硬更有效.</p>
-<div class="pc-math">$y(t)=\displaystyle\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$: 卷积 = 叠加</div>
+<div class="pc-math">$y(t)=\int_0^t h(t-\tau)f(\tau)\mathrm{d}\tau$: 卷积 = 叠加</div>
 </div>
 
 <div class="philo-card">
@@ -990,7 +1009,7 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 <h4>从"此刻的变化"到"一路的轨迹"</h4>
 <p>微分方程描述的是局部: 它说"在每一瞬间, 变化率是多少". 而它的解却是整体: 是一条从初值出发、贯穿整个时间轴的曲线.</p>
 <p>把局部规则"积"成整体图景, 是微积分最深刻的一课 —— 拉氏变换正是完成这一"由点到线"的桥梁之一.</p>
-<div class="pc-math">$\text{微分 (局部变化率)}\ \longleftrightarrow\ \text{积分 (整体轨迹)}$</div>
+<div class="pc-math">微分 (局部变化率)<br>$\longleftrightarrow$ 积分 (整体轨迹)</div>
 </div>
 
 <div class="philo-card">
@@ -1074,6 +1093,48 @@ $H(s)$ 称为系统的<b>传递函数</b>. 它把"输入 → 输出"的关系, �
 </div>
 
 
+<script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
 <script>
 (function(){
 'use strict';
@@ -1206,7 +1267,15 @@ function makeDraggable(cv,onMove,onUp){
   cv.addEventListener('pointerup',end);
   cv.addEventListener('pointercancel',end);
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=mjFixHL(html); el.innerHTML=html;
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
@@ -1230,7 +1299,8 @@ function bindSlider(id,fn){
   return el;
 }
 function setSlider(id,v){ var el=document.getElementById(id); if(el){ el.value=v; } }
-function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+function badge(id,v){ var el=document.getElementById(id); if(el){ el.innerHTML=v;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 
 var LT='\u003c', GT='\u003e';
 
@@ -1288,14 +1358,14 @@ module('cvFlow',function(cv){
       '说明: '+st.note+'<br>'+
       hl2('核心: 微分性质 $\\mathscr{L}[y\'\']=s^2Y(s)-sy(0)-y\'(0)$ 在取变换时自动吸收初值条件, 全程只做代数')+'.');
   }
-  bindSlider('flowStage',function(v){ stage=Math.max(0,Math.min(NS-1,Math.round(v))); badge('flowStageV',(stage+1)+'/4'); draw(); });
-  badge('flowStageV','1/4');
+  bindSlider('flowStage',function(v){ stage=Math.max(0,Math.min(NS-1,Math.round(v))); badge('flowStageV','$\\frac{'+(stage+1)+'}{4}$'); draw(); });
+  badge('flowStageV','$\\frac{1}{4}$');
   var pb=document.getElementById('btnFlowPlay');
   if(pb) pb.addEventListener('click',function(){
-    stage=0; badge('flowStageV','1/4'); setSlider('flowStage',0); draw();
+    stage=0; badge('flowStageV','$\\frac{1}{4}$'); setSlider('flowStage',0); draw();
     var n=0;
     animLoop(function(){ n++;
-      if(n%34===0 && stage<NS-1){ stage++; badge('flowStageV',(stage+1)+'/4'); setSlider('flowStage',stage); draw(); }
+      if(n%34===0 && stage<NS-1){ stage++; badge('flowStageV','$\\frac{'+(stage+1)+'}{4}$'); setSlider('flowStage',stage); draw(); }
       return stage<NS-1; });
   });
   return {draw:draw};
@@ -1499,7 +1569,7 @@ module('cvSummary',function(cv){
     {t:'一阶 / 二阶初值问题', c:'#e65100', leaves:[
       '例4.1: $y\'\'+2y\'-3y=\\mathrm{e}^{-t}$',
       '$Y(s)=\\frac{s+2}{(s+1)(s-1)(s+3)}$',
-      '$y(t)=-\\frac{1}{4}\\mathrm{e}^{-t}+\\frac{3}{8}\\mathrm{e}^{t}-\\frac{1}{8}\\mathrm{e}^{-3t}$',
+      '$y(t)=-\\frac{1}{4}\\mathrm{e}^{-t}+\\frac{3}{8}\\mathrm{e}^{t}$','$-\\frac{1}{8}\\mathrm{e}^{-3t}$',
       '例4.2: $ax\'+bx=f(t),\\ x(0)=c$',
       '$X(s)=\\frac{F(s)+ac}{as+b}$',
       '$x=c\\mathrm{e}^{-\\frac{b}{a}t}$\n$+\\ \\frac{1}{a}\\int_0^t\\mathrm{e}^{-\\frac{b}{a}(t-\\tau)}f(\\tau)\\,\\mathrm{d}\\tau$']},
@@ -1509,7 +1579,7 @@ module('cvSummary',function(cv){
       '$F(s)=a\\left(\\frac{1}{s^2}+\\frac{1}{s^4}\\right)$',
       '$f(t)=a\\left(t+\\frac{t^3}{6}\\right)$',
       '例4.4: 方程组 → 代数方程组',
-      '$x=-t+t\\mathrm{e}^{t},\\,y=1-\\mathrm{e}^{t}+t\\mathrm{e}^{t}$']},
+      '$x=-t+t\\mathrm{e}^{t}$','$y=1-\\mathrm{e}^{t}+t\\mathrm{e}^{t}$']},
     {t:'工程应用与拓展', c:'#2e7d32', leaves:[
       '传递函数 $H(s)=\\frac{Y(s)}{X(s)}$',
       '冲激响应 $h(t)=\\mathscr{L}^{-1}[H(s)]$',
@@ -1541,7 +1611,7 @@ module('cvSummary',function(cv){
       box.className='kg-leaves';
       for(var j=0;j<cd.leaves.length;j++){
         var lf=document.createElement('div');
-        lf.className='kg-leaf'; lf.textContent=cd.leaves[j];
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
         box.appendChild(lf);
       }
       col.appendChild(box);

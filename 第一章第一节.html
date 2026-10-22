@@ -70,6 +70,14 @@ body {
 }
 .header h1 { font-size: 2.3em; letter-spacing: 4px; margin-bottom: 12px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.25); color: #fff; }
+/* 吉林大学校徽: 透明底, 与头部渐变自然融合 */
+.header-logo {
+    position: absolute; top: 16px; left: 22px;
+    height: 58px; width: auto;
+    z-index: 3; pointer-events: none;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+    opacity: .95;
+}
 .header p { font-size: 1.05em; opacity: 0.92; margin: 0; }
 .sec-title, h2 {
     color: #1a237e; font-size: 1.3em;
@@ -173,18 +181,22 @@ input[type="range"] { width: 200px; vertical-align: middle; }
   border-left: 6px solid var(--kc); border-radius: 7px; padding: 6px 10px; line-height: 1.6;
   animation: kgIn .35s ease both; }
 .kg-leaf mjx-container { margin: 0 !important; font-size: .95em; }
-.kg-col.mid .kg-leaf mjx-container { font-size: .9em; }
-.kg-col.long .kg-leaf mjx-container { font-size: .82em; }
+.kg-col.mid .kg-leaf mjx-container, .kg-col.long .kg-leaf mjx-container { font-size: .95em; }
+.kg-col { flex: 1 1 46%; }
+
 .kg-col.long .kg-leaf { white-space: pre-wrap; }
 .kg-leaf { overflow-x: auto; }
 .kg-stage-0 .kg-cat, .kg-stage-0 .kg-leaves { display: none; }
 .kg-stage-1 .kg-leaves { display: none; }
 @keyframes kgIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
 
+/* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
+mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
-    overflow-x:auto; white-space:nowrap;
+    overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
 .readout .hl { color:#ffcc80; }
@@ -391,14 +403,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 }
 @media (max-width: 900px) {
     body { font-size:17px; padding:10px; }
-    .header { padding:30px 16px; }
+    .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; }
+    .header-logo { height:38px; top:10px; left:12px; }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
+    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
     <h1>第一章 第1节 复数及其几何表示</h1>
     <p>数学定义 &middot; 几何直观 &middot; 交互探索</p>
 </div>
@@ -1207,12 +1221,12 @@ $$\infty \pm \infty,\qquad 0 \cdot \infty,\qquad \frac{\infty}{\infty},\qquad \f
 </div>
 
 <div class="quiz-q">
-<div class="q-title">10. 设 $w = \cos\frac{2\pi}{n} + \mathrm{i}\sin\frac{2\pi}{n}$ 是 $n$ 次单位根, 则 $\displaystyle\sum_{k=0}^{n-1} w^{k} = ?$</div>
+<div class="q-title">10. 设 $w = \cos\frac{2\pi}{n} + \mathrm{i}\sin\frac{2\pi}{n}$ 是 $n$ 次单位根, 则 $\sum_{k=0}^{n-1} w^{k} = ?$</div>
 <label class="quiz-opt" data-ok="1">A. $0$</label>
 <label class="quiz-opt">B. $1$</label>
 <label class="quiz-opt">C. $n$</label>
 <label class="quiz-opt">D. $w$</label>
-<div class="quiz-explain"><b>解析:</b> $w\neq 1$ 且 $w^n = 1$, 由等比求和 $\displaystyle\sum_{k=0}^{n-1} w^k = \frac{w^n-1}{w-1} = 0$. 几何上看: $n$ 个单位根均匀分布在单位圆上, 其向量和为零.</div>
+<div class="quiz-explain"><b>解析:</b> $w\neq 1$ 且 $w^n = 1$, 由等比求和 $\sum_{k=0}^{n-1} w^k = \frac{w^n-1}{w-1} = 0$. 几何上看: $n$ 个单位根均匀分布在单位圆上, 其向量和为零.</div>
 </div>
 
 <div class="readout" id="quizScore"></div>
@@ -1528,6 +1542,48 @@ $$x = \sqrt[3]{2+\sqrt{-121}} + \sqrt[3]{2-\sqrt{-121}}$$
 </div>
 
 <script>
+/* 行内公式防压扁: 含 \frac 的 $...$ 升级为 display 样式(窄栏容器跳过) */
+(function(){
+  var SKIP='script,style,.hero-card,.philo-card,.pc-math,.fc,.legend-line,.tl-body,.readout';
+  function run(){
+    var hosts=[];
+    (function walk(node){
+      if(node.nodeType===3){
+        var t=node.nodeValue;
+        if(t.indexOf('$')<0) return;
+        var p=node.parentNode;
+        if(!p||!p.closest||p.closest(SKIP)) return;
+        var nv=t.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+          if(inner===undefined) return m;
+          if(inner.indexOf('\\displaystyle')>=0) return m;
+          if(/\\frac/.test(inner)) return '$\\displaystyle '+inner+'$';
+          return m;
+        });
+        if(nv!==t){ node.nodeValue=nv; if(hosts.indexOf(p)<0) hosts.push(p); }
+      }else if(node.nodeType===1){
+        var tg=node.tagName;
+        if(tg==='SCRIPT'||tg==='STYLE') return;
+        for(var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i]);
+      }
+    })(document.body);
+    return hosts;
+  }
+  run();
+  function late(){
+    var again=run();
+    if(again.length&&window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise(again).catch(function(){}); }catch(e){}
+    }
+  }
+  if(document.readyState==='complete'){ setTimeout(late,300); }
+  else{
+    window.addEventListener('load',function(){
+      setTimeout(late,300); setTimeout(late,1500);
+    });
+  }
+})();
+</script>
+<script>
 (function(){
 'use strict';
 var TAU = Math.PI*2;
@@ -1659,7 +1715,15 @@ function makeDraggable(cv,onMove,onUp){
   cv.addEventListener('pointerup',end);
   cv.addEventListener('pointercancel',end);
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=mjFixHL(html); el.innerHTML=html;
+function dsFix(h){
+  return h.replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,inner){
+    if(inner===undefined) return m;
+    if(inner.indexOf('\\displaystyle')>=0) return m;
+    if(/\\(d?frac|int|oint|sum|prod|iint|iiint)/.test(inner)) return '$\\displaystyle '+inner+'$';
+    return m;
+  });
+}
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -2458,7 +2522,7 @@ module('cvSummary',function(cv){
       box.className='kg-leaves';
       for(var j=0;j<cd.leaves.length;j++){
         var lf=document.createElement('div');
-        lf.className='kg-leaf'; lf.textContent=cd.leaves[j];
+        lf.className='kg-leaf'; lf.textContent=dsFix(cd.leaves[j]);
         box.appendChild(lf);
       }
       col.appendChild(box);

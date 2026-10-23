@@ -56,6 +56,14 @@ body {
     width:220px; height:220px; border-radius:50%;
     background:radial-gradient(circle, rgba(103,232,249,0.25) 0%, rgba(255,255,255,0) 70%);
 }
+/* 吉林大学校徽: 透明底, 与头部渐变自然融合 */
+.header-logo {
+    position: absolute; top: 16px; left: 22px;
+    height: 58px; width: auto;
+    z-index: 3; pointer-events: none;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+    opacity: .95;
+}
 .header h1 { font-size:2.3em; letter-spacing:4px; margin-bottom:12px; text-shadow:0 2px 8px rgba(0,0,0,0.25); color:#fff; }
 .header p { font-size:1.05em; opacity:0.92; margin:0; }
 .sec-title, h2 {
@@ -214,7 +222,7 @@ canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch
 .mnemonic .mn-label { font-weight:800; color:#92400e; margin-bottom:10px; letter-spacing:1px; }
 .mnemonic .mn-text { font-size:1.08em; color:#7c2d12; line-height:2.1; font-weight:600; }
 @media (max-width:760px){ .person-card{flex-direction:column;gap:12px;} .hero-card{padding:20px;} }
-@media (max-width:900px){ body{font-size:17px;padding:10px;} .header{padding:30px 16px;} .header h1{font-size:1.5em;letter-spacing:2px;} }
+@media (max-width:900px){ body{font-size:17px;padding:10px;} .header{padding:52px 16px 30px;} .header h1{font-size:1.5em;letter-spacing:2px;} .header-logo{height:38px;top:10px;left:12px;} }
 /* ---------- 思政补充组件 (与第一章一致) ---------- */
 .clash-card {
     background:linear-gradient(135deg,#fef2f2,#fee2e2);
@@ -257,6 +265,8 @@ canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch
 <body>
 
 <div class="header">
+    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+
     <h1>第四章 第2节 泰勒级数</h1>
     <p>泰勒展开定理 &middot; 直接法与间接法 &middot; 常用展开式</p>
 </div>

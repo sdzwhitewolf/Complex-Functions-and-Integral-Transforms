@@ -204,6 +204,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -416,7 +419,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第三章 第2节 柯西积分定理</h1>
     <p>柯西—古萨特定理 &middot; 路径无关 &middot; 原函数</p>
@@ -498,6 +501,10 @@ $$=\iint_G(-v_x-u_y)\mathrm{d}\sigma+\mathrm{i}\iint_G(u_x-v_y)\mathrm{d}\sigma=
 <div class="chart-container">
 <h3>交互: 解析函数沿闭路的积分为零 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">拖动顶点改变闭曲线的形状, 观察积分 $\oint_C f(z)\mathrm{d}z$ 的值如何<b>始终保持为零</b> (只要 $f$ 解析且闭曲线不越过奇点). 切换函数可以看到: 一旦函数不解析 (如 $\bar z$), 积分立刻不再为零.</div>
+<div class="fig-caps">
+<div class="fc" id="cyCapL"></div>
+<div class="fc" id="cyCapR"></div>
+</div>
 <canvas id="cvCauchy" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -560,6 +567,9 @@ $$\int_{C_1}f(z)\mathrm{d}z=\int_{C_2}f(z)\mathrm{d}z. \qquad \blacksquare$$
 <div class="chart-container">
 <h3>交互: 换一条路, 结果不变 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">同一对起点与终点之间有多条路径. 点击不同路径, 观察积分值是否改变. 对解析函数, 无论走哪条路, 结果完全相同; 拖动起点或终点, 积分值随之平滑变化.</div>
+<div class="fig-caps">
+<div class="fc" id="piCap"></div>
+</div>
 <canvas id="cvPathIndep" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -634,7 +644,7 @@ $$=0+2\pi\mathrm{i}+2\pi\mathrm{i}+0=4\pi\mathrm{i}.$$
 <h3>交互: 闭路变形 —— 曲线可以随意揉捏 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">$f(z)=\frac{1}{z}$ 在去掉原点后解析. 拖动滑块让外圈闭曲线连续变形 (更圆 → 更方 → 更扁), 观察积分 $\oint f\,\mathrm{d}z$ 的值始终为 $2\pi\mathrm{i}$, 与形状完全无关. 试着让曲线"穿过"原点, 积分值就会改变.</div>
 <div class="fig-caps">
-<div class="fc">$f(z)=\frac{1}{z}$, 闭曲线在去掉原点后连续变形</div>
+<div class="fc">$f(z)=\dfrac{1}{z}$, 闭曲线在去掉原点后连续变形</div>
 </div>
 <canvas id="cvDeform" data-h="420"></canvas>
 <div class="control-panel">
@@ -991,6 +1001,7 @@ $$\int_0^{\pi\mathrm{i}}z\cos z^2\mathrm{d}z=\frac{1}{2}\int_0^{\pi\mathrm{i}}\c
 <div class="chart-container">
 <h3>交互: 古萨的"三角形剖分" <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">取一条闭合的三角形路径, 把它不断对半分, 每次保留"积分绝对值最大"的那一半. 拖动滑块增加剖分次数, 观察三角形如何迅速缩小 —— <b>由于 $f$ 在每点可导, 小三角形上的积分被控制为 $O(h^2)$, 而三角形有 $4^n$ 个, 总和仍趋于零</b>, 这就是古萨引理的核心.</div>
+<div class="fig-caps"><div class="fc" id="cvGoursatCap1"></div></div>
 <canvas id="cvGoursat" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1337,12 +1348,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1400,6 +1413,10 @@ function dsFix(h){
 }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
     for(var i=0;i<seg.length;i++){ if(seg.substr(i,2)==="$$"){ b=1-b; i++; } else if(seg[i]==="$"&&!b){ d=1-d; } }
@@ -1426,8 +1443,8 @@ function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=
 module('cvCauchy',function(cv){
   var cur='z2', shape=0.4;
   var FN={
-    z2:{lab:'f(z)=z²', note:'处处解析, 无奇点', kind:'ana'},
-    ez:{lab:'f(z)=e^z', note:'处处解析, 无奇点', kind:'ana'},
+    z2:{lab:'f(z)=z^2', note:'处处解析, 无奇点', kind:'ana'},
+    ez:{lab:'f(z)=\\mathrm{e}^z', note:'处处解析, 无奇点', kind:'ana'},
     inv:{lab:'f(z)=1/z', note:'在 z=0 有奇点', kind:'punct'},
     conj:{lab:'f(z)=z̄', note:'处处不解析', kind:'none'}
   };
@@ -1461,7 +1478,7 @@ module('cvCauchy',function(cv){
     dot(ctx,m1.px(0),m1.py(0),7,'#c62828','#fff');
     tlabel(ctx,m1.px(0)+10,m1.py(0)+18,'0 (奇点)','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'闭曲线 C: r = '+fmt(R)+'(1 + '+fmt(shape)+'cos3θ)','#37474f','bold 13px Segoe UI');
+    setCap('cyCapL','闭曲线 $C:\\ r='+fmt(R)+'\\,(1+'+fmt(shape)+'\\cos 3\\theta)$');
     // 右: 数值积分结果
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1483,11 +1500,11 @@ module('cvCauchy',function(cv){
       dot(ctx,ox,oy,9,'#2e7d32','#fff');
     }
     ctx.restore();
-    tsub(ctx,sx,26,'积分值 ∮','C',' f(z)dz 在复平面上的位置','#37474f','bold 13px Segoe UI');
+    setCap('cyCapR','积分值 $\\oint_C f(z)\\,\\mathrm{d}z$ 在复平面上的位置');
     var o=FN[cur];
     var containsOrigin=true;
     setRO('cyReadout',
-      hl2(o.lab)+' &nbsp;|&nbsp; '+o.note+'<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;|&nbsp; '+o.note+'<br>'+
       '数值积分 $\\oint_C f(z)\\mathrm{d}z\\approx '+fmt(sum.re,4)+' '+(sum.im<0?'-':'+')+' '+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$<br>'+
       (o.kind==='ana'
         ? '<b>'+hl('结果为零')+'</b> —— 函数在单连通域内解析, 由柯西积分定理, 沿任意闭曲线的积分都为 0.'
@@ -1549,13 +1566,13 @@ module('cvPathIndep',function(cv){
     tlabel(ctx,m.px(z1.re)+10,m.py(z1.im)-10,'z₁','#2e7d32','bold 13px Georgia');
     ctx.restore();
     ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
-    ctx.fillText('f(z)=z² 处处解析, 原函数 F(z)=z³/3',16,26);
+    setCap('piCap','$f(z)=z^{2}$ 处处解析, 原函数 $F(z)=\\dfrac{z^{3}}{3}$');
     var exact=csub(fnF(z1), fnF(z0));
     var vals=PATHS.map(lineInt);
     var txt='原函数法: $\\int_{z_0}^{z_1}f\\mathrm{d}z=\\frac{z_1^3-z_0^3}{3}='+fmt(exact.re,4)+' '+(exact.im<0?'-':'+')+' '+fmt(Math.abs(exact.im),4)+'\\mathrm{i}$<br>';
     PATHS.forEach(function(p,i){
       var dv=cabs(csub(vals[i],exact));
-      txt+='路径'+['①','②','③'][i]+' ('+p.lab+'): $'+fmt(vals[i].re,4)+' '+(vals[i].im<0?'-':'+')+' '+fmt(Math.abs(vals[i].im),4)+'\\mathrm{i}$ &nbsp;'+(dv<0.02?'<b style="color:#2e7d32">✓</b>':'<span style="color:#c62828">偏差'+fmt(dv,3)+'</span>')+'<br>';
+      txt+='路径'+['①','②','③'][i]+' ('+p.lab+'): $'+fmt(vals[i].re,4)+' '+(vals[i].im<0?'-':'+')+' '+fmt(Math.abs(vals[i].im),4)+'\\mathrm{i}$ &nbsp;'+(dv<0.02?'<b style="color:#a5d6a7">✓</b>':'<span style="color:#ff8a80">偏差'+fmt(dv,3)+'</span>')+'<br>';
     });
     txt+='<b>'+hl('三条路径结果完全相同 —— 积分与路径无关')+'</b>';
     setRO('piReadout',txt);
@@ -1752,7 +1769,7 @@ module('cvGoursat',function(cv){
     cur.forEach(function(p){ dot(ctx,m.px(p.re),m.py(p.im),4.5,'#c62828','#fff'); });
     ctx.restore();
     ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
-    ctx.fillText('第 '+n+' 次剖分: 保留积分绝对值最大的那一半',16,26);
+    setCap('cvGoursatCap1', '第 $'+n+'$ 次剖分: 保留积分绝对值最大的那一半');;
     var s0=Math.abs((T[1].re-T[0].re)*(T[2].im-T[0].im)-(T[2].re-T[0].re)*(T[1].im-T[0].im))/2;
     var sn=s0/Math.pow(4,n);
     var peri=0;
@@ -1763,7 +1780,7 @@ module('cvGoursat',function(cv){
       '当前三角形的周长 $\\approx '+fmt(peri,4)+'$<br>'+
       '关键估计: 在可导点附近, $\\left|\\oint_{\\triangle}f\\mathrm{d}z\\right|\\le \\varepsilon\\cdot(\\text{周长})$, 而小三角形的个数是 $4^n$ —— '+
       '两相抵消, 总积分仍趋于 $0$. '+
-      hl2('这就绕开了格林公式, 也绕开了"f′ 连续"的要求')+'.');
+      hl2('这就绕开了格林公式, 也绕开了"$f\'$ 连续"的要求')+'.');
   }
   bindSlider('gsN',function(v){ n=Math.round(v); badge('gsNV',String(n)); draw(); });
   badge('gsNV',String(n));
@@ -1807,7 +1824,7 @@ module('cvGoursat',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

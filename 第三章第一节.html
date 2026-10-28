@@ -198,12 +198,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -417,7 +426,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第三章 第1节 复变函数积分的概念</h1>
     <p>有向曲线 &middot; 积分定义 &middot; 计算与估值</p>
@@ -517,6 +526,7 @@ $$\int_{C^-}f(z)\mathrm{d}z=-\int_C f(z)\mathrm{d}z;$$
 <div class="chart-container">
 <h3>交互: 分割、取点、求和 —— 复积分的三步 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">把曲线 $C$ 分成 $n$ 个小弧段, 在每个小弧段上任取一点 $\xi_k$, 计算 $\sum f(\xi_k)\Delta z_k$. 拖动滑块增大 $n$, 观察和式如何逼近积分值 $\int_C f(z)\mathrm{d}z$.</div>
+<div class="fig-caps"><div class="fc" id="cvRiemannSumCap1"></div></div>
 <canvas id="cvRiemannSum" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -616,6 +626,7 @@ $$\int_C z\,\mathrm{d}z=\int_C (x+\mathrm{i}y)(\mathrm{d}x+\mathrm{i}\mathrm{d}y
 <div class="chart-container">
 <h3>交互: 参数化计算的几何过程 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">观察曲线 $C$ 被参数 $t$ 逐点描出的过程, 以及被积函数 $f(z)=z$ 与 $z'(t)$ 的乘积如何沿曲线累积. 点击"播放"看积分如何从起点"走"到终点.</div>
+<div class="xcap" id="capParam"></div>
 <canvas id="cvParam" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -670,8 +681,9 @@ $$\oint_C\frac{1}{(z-z_0)^{n+1}}\mathrm{d}z=\frac{\mathrm{i}}{r^{n}}\int_0^{2\pi
 <h3>交互: 积分的值只取决于 $n$ 是否为零 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">拖动滑块改变 $n$ (从 $-4$ 到 $4$), 观察 $\oint\frac{\mathrm{d}z}{(z-z_0)^{n+1}}$ 的值. 注意: <b>只有 $n=0$ 时积分才等于 $2\pi\mathrm{i}$, 其余情形全为零</b>; 同时拖动半径 $r$, 验证结果与半径无关.</div>
 <div class="fig-caps">
-<div class="fc">$\oint=\frac{\mathrm{i}}{r^n}\int_0^{2\pi}\mathrm{e}^{-\mathrm{i}n\theta}\,\mathrm{d}\theta$</div>
-</div>
+<div class="fc">$\oint=\dfrac{\mathrm{i}}{r^n}\int_0^{2\pi}\mathrm{e}^{-\mathrm{i}n\theta}\,\mathrm{d}\theta$</div>
+
+<div class="fc" id="cvCircleIntCap1"></div></div>
 <canvas id="cvCircleInt" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -794,6 +806,7 @@ $$\left|\int_C\frac{1}{z-\mathrm{i}}\mathrm{d}z\right|\le\frac{5}{3}\int_C\mathr
 <div class="chart-container">
 <h3>交互: 估值不等式 $ML$ 的几何含义 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">左图显示曲线 $C$ 上的点 $z=(3+4\mathrm{i})t$ 与被积函数模 $|f(z)|=|1/(z-\mathrm{i})|$ 随 $t$ 的变化, 并标出最大值 $M=\frac53$; 右图显示 "积分值的模 $\le M\times L$" 这一控制关系. 拖动滑块改变 $t$, 观察 $|f|$ 的分布.</div>
+<div class="xcap" id="capEstim"></div>
 <canvas id="cvEstimate" data-h="400"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1403,12 +1416,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1457,6 +1472,14 @@ function dsFix(h){
     return m;
   });
 }
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1522,7 +1545,7 @@ module('cvRiemannSum',function(cv){
     tlabel(ctx,m1.px(A.re)-24,m1.py(A.im)+18,'A=0','#2e7d32','bold 12px Segoe UI');
     tlabel(ctx,m1.px(B.re)+8,m1.py(B.im)-8,'B=2+1.6i','#2e7d32','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'曲线被分成 '+n+' 段, 红点为各段上的取点 ξₖ','#37474f','bold 13px Segoe UI');
+    setCap('cvRiemannSumCap1', '曲线被分成 $'+n+'$ 段, 红点为各段上的取点 $\\xi_k$');;
     // ---- 右: 和式 vs 真值 ----
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1597,7 +1620,7 @@ module('cvCurveDir',function(cv){
       dot(ctx,m.px(pb.re),m.py(pb.im),8,'#2e7d32','#fff');
       tlabel(ctx,m.px(pa.re)-10,m.py(pa.im)+24,'A (起点)','#2e7d32','bold 13px Segoe UI');
       tlabel(ctx,m.px(pb.re)+10,m.py(pb.im)-14,'B (终点)','#2e7d32','bold 13px Segoe UI');
-      tlabel(ctx,m.px(0),m.py(1.5),'正向: A → B ; 反向: B → A (记作 C⁻)','#c62828','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(1.5),'正向: A → B ; 反向: B → A (记作 C⁻)','#c62828','bold 13px Segoe UI');
     } else if(mode===2){
       // 圆周 正/负向
       var R=1.3;
@@ -1610,8 +1633,8 @@ module('cvCurveDir',function(cv){
       }
       dot(ctx,m.px(0),m.py(0),5,'#37474f');
       tlabel(ctx,m.px(0)+8,m.py(0)+18,'O','#37474f','bold 12px Georgia');
-      tlabel(ctx,m.px(0),m.py(1.62),'正向 = 逆时针 (内部在左手边)','#2e7d32','bold 13px Segoe UI');
-      tlabel(ctx,m.px(0),m.py(-1.75),'负向 = 顺时针, 记作 C⁻','#c62828','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(1.62),'正向 = 逆时针 (内部在左手边)','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(-1.75),'负向 = 顺时针, 记作 C⁻','#c62828','bold 13px Segoe UI');
     } else {
       // 任意简单闭曲线 (心形/花瓣)
       function cl(t){ var r=1.0+0.35*Math.cos(3*t); return C(r*Math.cos(t)*1.25, r*Math.sin(t)*1.25); }
@@ -1625,8 +1648,8 @@ module('cvCurveDir',function(cv){
         var q0=cl(b0), q1=cl(b1);
         arrow(ctx,m.px(q0.re),m.py(q0.im),m.px(q1.re),m.py(q1.im),'#2e7d32',2.4,10);
       }
-      tlabel(ctx,m.px(0),m.py(1.85),'任意简单闭曲线: 仍是"内部在左手边"','#2e7d32','bold 13px Segoe UI');
-      tlabel(ctx,m.px(0),m.py(-1.95),'逆时针为正向','#546e7a','12px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(1.85),'任意简单闭曲线: 仍是"内部在左手边"','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(-1.95),'逆时针为正向','#546e7a','12px Segoe UI');
     }
     ctx.restore();
     var txt={
@@ -1665,7 +1688,7 @@ module('cvParam',function(cv){
     tlabel(ctx,m1.px(0)-16,m1.py(0)+20,'O','#37474f','bold 12px Georgia');
     tlabel(ctx,m1.px(B.re)+6,m1.py(B.im)-10,'3+4i','#1565c0','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'C: z(t)=(3+4i)t,  0 ≤ t ≤ 1','#37474f','bold 13px Segoe UI');
+    xcap('capParam', '$C:\\ z(t)=(3+4\\mathrm{i})t,\\ 0\\le t\\le 1$');
     // 右: 累积值
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1731,9 +1754,9 @@ module('cvCircleInt',function(cv){
     }
     dot(ctx,m1.px(0),m1.py(0),8,'#c62828','#fff');
     tlabel(ctx,m1.px(0)+11,m1.py(0)+18,'z₀ (奇点)','#c62828','bold 12px Segoe UI');
-    tlabel(ctx,m1.px(0),m1.py(2.25),'|z − z₀| = '+fmt(r),'#1565c0','bold 13px Segoe UI');
+    tlabel(ctx,m1.px(0)+22,m1.py(2.28),'|z − z₀| = '+fmt(r),'#1565c0','bold 13px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'积分路径: 圆心 z₀, 半径 r = '+fmt(r)+' 的正向圆周','#37474f','bold 13px Segoe UI');
+    setCap('cvCircleIntCap1', '积分路径: 圆心 $z_0$, 半径 $r='+fmt(r)+'$ 的正向圆周');;
     // 右: 积分内部结构 e^{-inθ}
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1825,7 +1848,7 @@ module('cvEstimate',function(cv){
     var dd3=Math.hypot(3*tv,4*tv-1);
     dot(ctx,m2.px(tv),m2.py(1/dd3),6.5,'#c62828','#fff');
     ctx.restore();
-    tlabel(ctx,sx,26,'|f(z(t))| = 1/√(9t²+(4t−1)²) 随 t 的变化','#37474f','bold 13px Segoe UI');
+    xcap('capEstim', '被积函数的模 $|f(z(t))|=\\dfrac{1}{\\sqrt{9t^{2}+(4t-1)^{2}}}$ 随参数 $t$ 的变化');
     var ddv=Math.hypot(3*tv,4*tv-1), mv=1/ddv;
     setRO('esReadout',
       '曲线 $C$ 的长 $L=|3+4\\mathrm{i}|=5$<br>'+
@@ -2001,7 +2024,7 @@ module('cvGreen',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

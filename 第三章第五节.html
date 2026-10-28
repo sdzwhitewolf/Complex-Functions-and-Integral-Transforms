@@ -145,6 +145,26 @@ tr:hover td { background:#e3f2fd; }
     box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
 }
 .chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+/* 交互: 两种方法的路径对比 (HTML 版, 公式用 MathJax) */
+.mt-panel { background:#fff; }
+.mt-cols { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.mt-head { text-align:center; color:#fff; font-weight:700; font-size:.95em; padding:8px 6px;
+  border-radius:8px; margin-bottom:10px; }
+.mt-head.a { background:#1976d2; }
+.mt-head.b { background:#e65100; }
+.mt-steps { display:flex; flex-direction:column; gap:8px; }
+.mt-step { border:1.8px solid #1976d2; border-left-width:6px; border-radius:8px;
+  padding:7px 10px 8px; background:#fff; opacity:.22; transition:opacity .25s ease; }
+.mt-col.b .mt-step { border-color:#e65100; }
+.mt-step.on { opacity:1; }
+.mt-step .st { font-weight:700; font-size:.92em; color:#1976d2; margin-bottom:2px; }
+.mt-col.b .mt-step .st { color:#e65100; }
+.mt-step .sf { font-size:.95em; color:#455a64; }
+.mt-result { margin-top:12px; background:#2e7d32; color:#fff; text-align:center;
+  font-weight:700; padding:8px 10px; border-radius:8px; opacity:0; transition:opacity .25s ease; }
+.mt-result.on { opacity:1; }
+.mt-panel mjx-container { margin:0 !important; }
+@media (max-width: 760px){ .mt-cols { grid-template-columns:1fr; } }
 .chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
 .control-panel {
     background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
@@ -193,12 +213,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -412,7 +440,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第三章 第5节 解析函数与调和函数</h1>
     <p>拉普拉斯方程 &middot; 共轭调和函数 &middot; 偏积分法</p>
@@ -766,7 +794,19 @@ $$f(z)=\int(\mathrm{e}^z+z\mathrm{e}^z+1+\mathrm{i})\mathrm{d}z=z\mathrm{e}^z+(1
 <div class="chart-container">
 <h3>交互: 两种方法的路径对比 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">点击"播放"可以看到两条路径的对比: 偏积分法走"积分 → 求导 → 定系数 → 再积分"; 原函数法走"求偏导 → 组合成 $f'(z)$ → 一次积分". 拖动滑块控制动画进度.</div>
-<canvas id="cvMethod" data-h="420"></canvas>
+<div class="mt-panel" id="cvMethod">
+<div class="mt-cols">
+<div class="mt-col a">
+<div class="mt-head a">偏积分法 (由 C—R 方程出发)</div>
+<div class="mt-steps" id="mtStepsA"></div>
+</div>
+<div class="mt-col b">
+<div class="mt-head b">原函数法 (由导数公式出发)</div>
+<div class="mt-steps" id="mtStepsB"></div>
+</div>
+</div>
+<div class="mt-result" id="mtResult">两条路径的结果完全一致: $f(z)=\mathrm{i}z^3+\mathrm{i}C$</div>
+</div>
 <div class="control-panel">
 <div class="row">
 <label>动画进度:</label>
@@ -1034,6 +1074,7 @@ $$f(z)=\int(\mathrm{e}^z+z\mathrm{e}^z+1+\mathrm{i})\mathrm{d}z=z\mathrm{e}^z+(1
 <div class="chart-container">
 <h3>交互: 调和函数的平均值性质 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">调和函数有一个重要性质 (与解析函数的平均值公式相通): <b>它在圆心的值等于它在圆周上的平均值</b>. 拖动滑块改变圆周半径, 观察圆心值与圆周平均值始终相等. 这正是拉普拉斯方程"平滑性"的体现 —— 调和函数不能在内部取到极值.</div>
+<div class="fig-caps"><div class="fc" id="cvHarmMeanCap1"></div></div>
 <canvas id="cvHarmMean" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1387,12 +1428,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1448,6 +1491,10 @@ function dsFix(h){
     return m;
   });
 }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1476,19 +1523,19 @@ function badge(id,v){ var el=document.getElementById(id); if(el) el.textContent=
 module('cvLaplaceCheck',function(cv){
   var cur='l1';
   var FN={
-    l1:{lab:'u = y³ − 3x²y', kind:'ok',
+    l1:{lab:'u=y^3-3x^2y', kind:'ok',
       u:function(x,y){ return y*y*y-3*x*x*y; },
       uxx:function(x,y){ return -6*y; }, uyy:function(x,y){ return 6*y; },
       d:'它是 $\\mathrm{i}z^3$ 的实部, 满足 $\\Delta u=0$ ⇒ <b>调和函数 ✓</b>'},
-    l2:{lab:'u = x² − y²', kind:'ok',
+    l2:{lab:'u=x^2-y^2', kind:'ok',
       u:function(x,y){ return x*x-y*y; },
       uxx:function(x,y){ return 2; }, uyy:function(x,y){ return -2; },
       d:'它是 $z^2$ 的实部, $\\Delta u=2-2=0$ ⇒ <b>调和函数 ✓</b>'},
-    l3:{lab:'u = x² + y²', kind:'bad',
+    l3:{lab:'u=x^2+y^2', kind:'bad',
       u:function(x,y){ return x*x+y*y; },
       uxx:function(x,y){ return 2; }, uyy:function(x,y){ return 2; },
       d:'$\\Delta u=2+2=4\\neq0$ ⇒ <b>不是调和函数 ✗</b> (它是 $|z|^2$, 对应不解析的函数)'},
-    l4:{lab:'u = eˣ sin y', kind:'ok',
+    l4:{lab:'u=\\mathrm{e}^x\\sin y', kind:'ok',
       u:function(x,y){ return Math.exp(x)*Math.sin(y); },
       uxx:function(x,y){ return Math.exp(x)*Math.sin(y); },
       uyy:function(x,y){ return -Math.exp(x)*Math.sin(y); },
@@ -1543,7 +1590,7 @@ module('cvLaplaceCheck',function(cv){
     ctx.fillText('(在点 ('+fmt(x0)+', '+fmt(y0)+') 处取值)',16,176);
     ctx.restore();
     setRO('lcReadout',
-      hl2(o.lab)+'<br>'+
+      hl2('$'+o.lab+'$')+'<br>'+
       '$u_{xx}='+fmt(o.uxx(0.8,0.6),4)+'$ , $u_{yy}='+fmt(o.uyy(0.8,0.6),4)+'$ ⇒ $\\Delta u='+hl(fmt(o.uxx(0.8,0.6)+o.uyy(0.8,0.6),4))+'$<br>'+
       o.d+'<br>'+
       '注意: 左边的点阵表示 $\\Delta u$ 在每一点的取值. 恒为绿色 (零) 才说明是调和函数.');
@@ -1558,21 +1605,21 @@ module('cvLaplaceCheck',function(cv){
 module('cvConjugate',function(cv){
   var cur='j1', Cc=0;
   var FN={
-    j1:{lab:'u = y³ − 3x²y',
+    j1:{lab:'u=y^3-3x^2y',
       u:function(x,y){ return y*y*y-3*x*x*y; },
       v:function(x,y){ return x*x*x-3*x*y*y; },
-      vTex:'v = x³ − 3xy² + C',
-      fTex:'f(z) = i z³ + iC'},
-    j2:{lab:'u = x² − y²',
+      vTex:'$v=x^3-3xy^2+C$',
+      fTex:'f(z)=\\mathrm{i}z^3+\\mathrm{i}C'},
+    j2:{lab:'u=x^2-y^2',
       u:function(x,y){ return x*x-y*y; },
       v:function(x,y){ return 2*x*y; },
-      vTex:'v = 2xy + C',
-      fTex:'f(z) = z² + iC'},
-    j3:{lab:'u = eˣ cos y',
+      vTex:'$v=2xy+C$',
+      fTex:'f(z)=z^2+\\mathrm{i}C'},
+    j3:{lab:'u=\\mathrm{e}^x\\cos y',
       u:function(x,y){ return Math.exp(x)*Math.cos(y); },
       v:function(x,y){ return Math.exp(x)*Math.sin(y); },
-      vTex:'v = eˣ sin y + C',
-      fTex:'f(z) = e^z + iC'}
+      vTex:'$v=\\mathrm{e}^x\\sin y+C$',
+      fTex:'f(z)=\\mathrm{e}^z+\\mathrm{i}C'}
   };
   function draw(){
     var f=fitCanvas(cv); if(!f) return;
@@ -1598,10 +1645,10 @@ module('cvConjugate',function(cv){
     ctx.restore();
     tlabel(ctx,sx,26,'u 与 v 的等值线叠放 (处处正交)','#37474f','bold 13px Segoe UI');
     setRO('cjReadout',
-      hl2(o.lab)+' &nbsp;⇒&nbsp; 共轭调和函数 '+o.vTex+' (当前 $C='+fmt(Cc)+'$)<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;⇒&nbsp; 共轭调和函数 '+o.vTex+' (当前 $C='+fmt(Cc)+'$)<br>'+
       '对应的解析函数: $'+o.fTex+'$<br>'+
       '验证 C—R 方程: $v_y=u_x$ ✓ , $v_x=-u_y$ ✓<br>'+
-      '<b>'+hl('u 与 v 的等值线处处正交')+'</b> —— 这是因为 $\\nabla u\\cdot\\nabla v=0$ (由 C—R 方程可证).<br>'+
+      '<b>'+hl('$u$ 与 $v$ 的等值线处处正交')+'</b> —— 这是因为 $\\nabla u\\cdot\\nabla v=0$ (由 C—R 方程可证).<br>'+
       '物理意义: 若 $u$ 是电位, 则等值线是等位线, $v$ 的等值线就是电力线 —— 等位线与电力线恒垂直.');
   }
   function drawContour(ctx,m,wpx,hpx,fn,xmin,xmax,col,thr){
@@ -1641,66 +1688,39 @@ module('cvConjugate',function(cv){
 module('cvMethod',function(cv){
   var p=1;
   var STEP_A=[
-    {t:'① 由 ∂v/∂y = ∂u/∂x 对 y 积分', s:'v = −3xy² + g(x)'},
-    {t:'② 对 x 求偏导', s:'∂v/∂x = −3y² + g′(x)'},
-    {t:'③ 代入 ∂v/∂x = −∂u/∂y 定 g′', s:'g′(x) = 3x²'},
-    {t:'④ 积分得 g(x) 与 v', s:'v = x³ − 3xy² + C'},
-    {t:'⑤ 写出 f = u + iv 并整理', s:'f(z) = i z³ + iC'}
+    {t:'① 由 $v_y=u_x$ 对 $y$ 积分', s:'$v=-3xy^2+g(x)$'},
+    {t:'② 对 $x$ 求偏导', s:"$v_x=-3y^2+g'(x)$"},
+    {t:'③ 代入 $v_x=-u_y$ 定出 $g\'$', s:"$g'(x)=3x^2$"},
+    {t:'④ 积分得 $g(x)$ 与 $v$', s:'$v=x^3-3xy^2+C$'},
+    {t:'⑤ 写出 $f=u+\\mathrm{i}v$ 并整理', s:'$f(z)=\\mathrm{i}z^3+\\mathrm{i}C$'}
   ];
   var STEP_B=[
-    {t:'① 求偏导 (u_x, u_y)', s:'u_x = −6xy ,  u_y = 3y² − 3x²'},
-    {t:'② 组合成 f′(z) = u_x − i u_y', s:'f′(z) = 3i(x² + 2xyi − y²)'},
-    {t:'③ 整理为 z 的函数', s:'f′(z) = 3i z²'},
-    {t:'④ 求原函数', s:'f(z) = i z³ + C₁  (C₁ 为纯虚数)'}
+    {t:'① 求偏导 $u_x,\\ u_y$', s:'$u_x=-6xy,\\quad u_y=3y^2-3x^2$'},
+    {t:"② 组合成 $f'(z)=u_x-\\mathrm{i}u_y$", s:"$f'(z)=3\\mathrm{i}\\,(x^2+2xy\\mathrm{i}-y^2)$"},
+    {t:'③ 整理为 $z$ 的函数', s:"$f'(z)=3\\mathrm{i}z^2$"},
+    {t:'④ 求原函数', s:'$f(z)=\\mathrm{i}z^3+C_1$ ($C_1$ 为纯虚数)'}
   ];
+  function card(st){
+    return '<div class="mt-step"><div class="st">'+st.t+'</div><div class="sf">'+st.s+'</div></div>';
+  }
+  var boxA=document.getElementById('mtStepsA');
+  var boxB=document.getElementById('mtStepsB');
+  var resEl=document.getElementById('mtResult');
+  if(boxA){ var hA=''; STEP_A.forEach(function(st){ hA+=card(st); }); boxA.innerHTML=hA; }
+  if(boxB){ var hB=''; STEP_B.forEach(function(st){ hB+=card(st); }); boxB.innerHTML=hB; }
+  function typeset(){
+    if(window.MathJax&&window.MathJax.typesetPromise){
+      try{ window.MathJax.typesetPromise([cv]).catch(function(){}); }catch(e){}
+      return true;
+    }
+    return false;
+  }
+  if(!typeset()){ setTimeout(typeset,400); }
   function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
-    var halfW=(w-36)/2, H=h-72;
-    function col(x0,steps,col0,label){
-      // 标题
-      ctx.fillStyle=col0;
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(x0,14,halfW,34,8); else ctx.rect(x0,14,halfW,34);
-      ctx.fill();
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#fff';
-      ctx.fillText(label,x0+halfW/2,31);
-      // 步骤
-      var shown=Math.ceil(steps.length*p);
-      steps.forEach(function(st,i){
-        if(i>=shown) return;
-        var y=60+i*68;
-        ctx.beginPath();
-        if(ctx.roundRect) ctx.roundRect(x0,y,halfW,58,8); else ctx.rect(x0,y,halfW,58);
-        ctx.fillStyle='#fff'; ctx.fill();
-        ctx.strokeStyle=col0; ctx.lineWidth=1.8; ctx.stroke();
-        ctx.fillStyle=col0;
-        ctx.beginPath();
-        if(ctx.roundRect) ctx.roundRect(x0,y,6,58,3); else ctx.rect(x0,y,6,58);
-        ctx.fill();
-        ctx.textAlign='left'; ctx.textBaseline='middle';
-        ctx.font='bold 12.5px Segoe UI'; ctx.fillStyle=col0;
-        ctx.fillText(st.t,x0+16,y+20);
-        ctx.font='12.5px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
-        ctx.fillText(st.s,x0+16,y+42);
-      });
-      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    }
-    col(12,STEP_A,'#1976d2','偏积分法 (由 C—R 方程出发)');
-    col(halfW+24,STEP_B,'#e65100','原函数法 (由导数公式出发)');
-    // 底部结论
-    if(p>0.95){
-      ctx.fillStyle='#2e7d32';
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(12,h-42,w-24,32,8); else ctx.rect(12,h-42,w-24,32);
-      ctx.fill();
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#fff';
-      ctx.fillText('两条路径的结果完全一致:  f(z) = i z³ + iC',w/2,h-26);
-      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    }
+    var shA=Math.ceil(STEP_A.length*p), shB=Math.ceil(STEP_B.length*p);
+    if(boxA){ [].forEach.call(boxA.children,function(el,i){ el.className='mt-step'+(i<shA?' on':''); }); }
+    if(boxB){ [].forEach.call(boxB.children,function(el,i){ el.className='mt-step'+(i<shB?' on':''); }); }
+    if(resEl){ resEl.className='mt-result'+(p>0.95?' on':''); }
     setRO('mtReadout',
       hl2('两种方法对比')+' (以 $u=y^3-3x^2y$ 为例)<br>'+
       '<b>偏积分法:</b> 从 C—R 方程出发, 积分 → 求偏导定待定函数 → 再积分, 共 <b>5 步</b>;<br>'+
@@ -1794,11 +1814,11 @@ module('cvHarmMean',function(cv){
   var cur='m1', R=1;
   var z0=C(0.5,0.3);
   var FN={
-    m1:{lab:'u = x² − y²',
+    m1:{lab:'u=x^2-y^2',
       u:function(x,y){ return x*x-y*y; }},
-    m2:{lab:'u = eˣ cos y',
+    m2:{lab:'u=\\mathrm{e}^x\\cos y',
       u:function(x,y){ return Math.exp(x)*Math.cos(y); }},
-    m3:{lab:'u = ln√(x²+y²)',
+    m3:{lab:'u=\\ln\\sqrt{x^2+y^2}',
       u:function(x,y){ return 0.5*Math.log(x*x+y*y+1e-12); }}
   };
   function draw(){
@@ -1824,7 +1844,7 @@ module('cvHarmMean',function(cv){
     dot(ctx,m1.px(z0.re),m1.py(z0.im),8,'#c62828','#fff');
     tlabel(ctx,m1.px(z0.re)+10,m1.py(z0.im)+18,'z₀','#c62828','bold 12px Georgia');
     ctx.restore();
-    tlabel(ctx,12,26,'圆心 z₀ 与圆周上 '+N+' 个采样点','#37474f','bold 13px Segoe UI');
+    setCap('cvHarmMeanCap1', '圆心 $z_0$ 与圆周上 $'+N+'$ 个采样点');;
     // 右: u 沿圆周的分布
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1858,7 +1878,7 @@ module('cvHarmMean',function(cv){
     tlabel(ctx,sx,26,'u 沿圆周的取值与平均值','#37474f','bold 13px Segoe UI');
     var dv=Math.abs(avg-cur0);
     setRO('hmReadout',
-      hl2(o.lab)+' &nbsp;|&nbsp; 圆心 $z_0='+fmt(z0.re)+'+'+fmt(z0.im)+'\\mathrm{i}$ , 半径 $R='+fmt(R)+'$<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;|&nbsp; 圆心 $z_0='+fmt(z0.re)+'+'+fmt(z0.im)+'\\mathrm{i}$ , 半径 $R='+fmt(R)+'$<br>'+
       '圆心处的值 $u(z_0)='+hl(fmt(cur0,5))+'$<br>'+
       '圆周 '+N+' 点的算术平均值 $\\approx '+hl2(fmt(avg,5))+'$<br>'+
       '偏差 $='+fmt(dv,6)+'$ &nbsp;'+(dv<0.01?'<b>✓ 两者相等 —— 调和函数的平均值性质成立</b>':'')+'<br>'+
@@ -1892,7 +1912,7 @@ module('cvHarmMean',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

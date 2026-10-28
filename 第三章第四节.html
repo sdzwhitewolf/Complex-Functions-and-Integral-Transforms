@@ -145,6 +145,13 @@ tr:hover td { background:#e3f2fd; }
     box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 24px 0;
 }
 .chart-container h3 { margin: 0 0 6px; color:#0d47a1; font-size:1.15em; }
+/* 画布内数值标注改用 HTML 公式层(真 LaTeX), 避免 canvas 里写斜杠/ASCII 上标 */
+.plot-wrap { position: relative; }
+.plot-note { position: absolute; pointer-events: none; color: #e65100; font-weight: 600;
+  font-size: 12.5px; white-space: nowrap; transform: translateY(-50%); }
+.plot-note mjx-container { margin: 0 !important; }
+.plot-note.pn-c { transform: translate(-50%, -50%); color:#2e7d32; }
+.pn-fig { display:block; }
 .chart-container .chart-desc { color:#546e7a; font-size:.88em; margin-bottom:12px; }
 .control-panel {
     background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
@@ -192,7 +199,7 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 
 .fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
 .fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
-  color: #37474f; line-height: 1.55; }
+  color: #37474f; line-height: 2.1; }
 .fig-caps > .fc:only-child { flex: 0 1 auto; }
 
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
@@ -204,6 +211,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+/* 读数区里的整行公式: 给足上下留白, 避免与上下行文字贴在一起 */
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -416,7 +426,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第三章 第4节 解析函数的高阶导数</h1>
     <p>无穷可微 &middot; 柯西不等式 &middot; 刘维尔定理</p>
@@ -502,7 +512,7 @@ $$\frac{\mathrm{d}}{\mathrm{d}z_0}\left(\frac{1}{z-z_0}\right)=\frac{1}{(z-z_0)^
 <div class="fig-caps">
 <div class="fc" id="cvHighDerivCap"></div>
 </div>
-<canvas id="cvHighDeriv" data-h="420"></canvas>
+<div class="plot-wrap"><canvas id="cvHighDeriv" data-h="420"></canvas><span class="plot-note" id="hdNote"></span></div>
 <div class="control-panel">
 <div class="row">
 <label>阶数 $n$:</label>
@@ -572,7 +582,8 @@ $n=1$ 的情形证明后, 用<b>数学归纳法</b>可证明对任意的正整�
 <h3>交互: 估值估计 —— 多余项如何消失 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">证明的关键是估计 $\left|\frac{\Delta z}{2\pi\mathrm{i}}\oint_C\frac{f(\zeta)\mathrm{d}\zeta}{(\zeta-z-\Delta z)(\zeta-z)^2}\right|\le\frac{|\Delta z|ML}{\pi d^3}$. 拖动滑块改变 $|\Delta z|/d$ 的比值, 观察这个上界如何随 $|\Delta z|\to 0$ 而趋于零.</div>
 <div class="fig-caps">
-<div class="fc">上界 $\propto |\Delta z|\cdot\frac{ML}{\pi d^3}$ 随 $|\Delta z|$ 的变化</div>
+<div class="fc" id="estCapL"></div>
+<div class="fc">上界 $\propto |\Delta z|\cdot\dfrac{ML}{\pi d^3}$ 随 $|\Delta z|$ 的变化</div>
 </div>
 <canvas id="cvEst2" data-h="380"></canvas>
 <div class="control-panel">
@@ -634,6 +645,7 @@ $$\oint_C\frac{\mathrm{e}^z}{(z^2+1)^2}\mathrm{d}z=\frac{(1-\mathrm{i})\mathrm{e
 <div class="chart-container">
 <h3>交互: 高阶导数公式计算器 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">选择一个被积函数, 程序会自动识别形如 $\frac{f(z)}{(z-z_0)^{n+1}}$ 的结构, 给出 $z_0$、$n$ 与计算结果. 拖动滑块改变圆周半径, 观察当奇点被"排除在外"时积分值如何突变为零.</div>
+<div class="fig-caps"><div class="fc" id="cvHighCalcCap1"></div></div>
 <canvas id="cvHighCalc" data-h="440"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -743,7 +755,11 @@ $$|f'(z_0)|\le\frac{1!\cdot M}{R}=\frac{M}{R}.$$
 <div class="chart-container">
 <h3>交互: 刘维尔定理 —— 有界解析函数为何必为常数 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">拖动滑块增大圆圈半径 $R$, 观察柯西不等式给出的导数上界 $\frac{M}{R}$ 如何随之减小. 当 $R\to\infty$ 时, 上界趋于零, 于是 $f'(z_0)=0$ 对任意 $z_0$ 成立 —— 函数只能是一条水平直线 (常数).</div>
-<canvas id="cvLiouville" data-h="420"></canvas>
+<div class="fig-caps">
+<div class="fc" id="lvCapL"></div>
+<div class="fc" id="lvCapR"></div>
+</div>
+<div class="plot-wrap pn-fig"><canvas id="cvLiouville" data-h="420"></canvas></div>
 <div class="control-panel">
 <div class="row">
 <label>半径 $R$:</label>
@@ -1364,12 +1380,15 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  // 依像素密度自动稀疏刻度标签(避免 ±12 以上范围时数字叠成一团)
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1478,7 +1497,7 @@ module('cvHighDeriv',function(cv){
     tlabel(ctx,m1.px(0)+10,m1.py(0)+18,'z₀=0','#c62828','bold 12px Segoe UI');
     tlabel(ctx,m1.px(0),m1.py(R+0.28),'C: |z|=1.4','#1565c0','bold 12px Segoe UI');
     ctx.restore();
-    setCap('cvHighDerivCap','$f(z)/(z-z_0)^{n+1}$, $n='+n+'$');
+    setCap('cvHighDerivCap','被积函数 $\\dfrac{f(z)}{(z-z_0)^{n+1}}$ , 阶数 $n='+n+'$ , 分母幂次 $n+1='+(n+1)+'$');
     // 右: 模随角度的变化 (用 log 显示)
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1497,8 +1516,22 @@ module('cvHighDeriv',function(cv){
       if(first){ ctx.moveTo(px,py); first=false; } else ctx.lineTo(px,py);
     }
     ctx.stroke();
-    tlabel(ctx,m2.px(0.35),m2.py(3.6),'|f(z)|/R^(n+1) = '+fmt(1/Math.pow(R,n+1),5),'#e65100','12px Segoe UI');
     ctx.restore();
+    var note=document.getElementById('hdNote');
+    if(note){
+      note.style.left=(((sx+m2.px(0.35))/w)*100).toFixed(2)+'%';
+      note.style.top=(((42+m2.py(3.6))/h)*100).toFixed(2)+'%';
+      var nt='$\\dfrac{|f(z)|}{R^{'+(n+1)+'}}='+fmt(1/Math.pow(R,n+1),5)+'$';
+      if(note.getAttribute('data-v')!==nt){
+        note.innerHTML=nt;
+        if(window.MathJax&&window.MathJax.typesetPromise){
+          note.setAttribute('data-v',nt);
+          try{ window.MathJax.typesetPromise([note]).catch(function(){}); }catch(e){}
+        }else{
+          setTimeout(function(){ try{ draw(); }catch(e){} },400);   // MathJax 还没就绪, 稍后重试
+        }
+      }
+    }
     tlabel(ctx,sx,26,'被积函数模沿圆周的分布 (对数坐标)','#37474f','bold 13px Segoe UI');
     var fz0=deriv(n,z0);
     var k2=TAU/fact(n);
@@ -1555,7 +1588,7 @@ module('cvEst2',function(cv){
     tlabel(ctx,m1.px(z2.re)+8,m1.py(z2.im)-10,'z+Δz','#e65100','bold 11px Segoe UI');
     tlabel(ctx,m1.px(0)+8,m1.py(0)+18,'O','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'z 到圆周 C 的最短距离 d = 1.0','#37474f','bold 13px Segoe UI');
+    setCap('estCapL','$z$ 到圆周 $C$ 的最短距离 $d=1.0$');
     // 右: 上界曲线
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1577,11 +1610,11 @@ module('cvEst2',function(cv){
     var M=2, L=TAU*1.0, d=1.0;
     var bound=ratio*d*M*L/(Math.PI*d*d*d)*(1/(1-ratio*0.9));
     setRO('e2Readout',
-      '取 $M=2$ (|f| 在 C 上的上界), $L=2\\pi$ (C 的周长), $d=1$ (z 到 C 的距离)<br>'+
+      '取 $M=2$（$|f|$ 在 $C$ 上的上界）, $L=2\\pi$（$C$ 的周长）, $d=1$（$z$ 到 $C$ 的距离）<br>'+
       '当前比值 $|\\Delta z|/d='+hl(fmt(ratio))+'$<br>'+
-      '证明中的关键估计: $\\left|\\frac{\\Delta z}{2\\pi\\mathrm{i}}\\oint_C\\frac{f(\\zeta)\\mathrm{d}\\zeta}{(\\zeta-z-\\Delta z)(\\zeta-z)^2}\\right|\\le\\frac{|\\Delta z|ML}{\\pi d^3}\\propto |\\Delta z|$<br>'+
+      '证明中的关键估计:<br>$$\\left|\\;\\frac{\\Delta z}{2\\pi\\mathrm{i}}\\;\\oint_C\\;\\frac{f(\\zeta)\\,\\mathrm{d}\\zeta}{(\\zeta-z-\\Delta z)\\,(\\zeta-z)^{2}}\\;\\right|\\;\\le\\;\\frac{|\\Delta z|\\,M L}{\\pi d^{3}}\\;\\propto\\;|\\Delta z|$$'+
       (ratio<0.1
-        ? '<b>'+hl('当 |Δz| → 0 时, 这个上界趋于零 —— 于是多余项消失, 公式得证')+'</b>'
+        ? '<b>'+hl('当 $|\\Delta z|\\to 0$ 时, 这个上界趋于零 —— 于是多余项消失, 公式得证')+'</b>'
         : '拖动滑块让 $|\\Delta z|/d\\to 0$, 上界随之趋于零. 这就是 $n=1$ 情形的证明要点.'));
   }
   bindSlider('e2R',function(v){ ratio=v; badge('e2RV',fmt(v)); draw(); });
@@ -1605,21 +1638,21 @@ module('cvEst2',function(cv){
 module('cvHighCalc',function(cv){
   var cur='h1', R=4;
   var FN={
-    h1:{lab:'f(z) = e^z/(z−1)³', z0:C(1,0), n:2, g:'e^z',
+    h1:{lab:'f(z)=\\dfrac{\\mathrm{e}^z}{(z-1)^3}', z0:C(1,0), n:2, g:'\\mathrm{e}^z',
         gval:function(nn,z){ return cexp(Math.exp(z.re), z.im); },
-        note:'n=2, 分母 (z−1)³, 对应二阶导数'},
-    h2:{lab:'f(z) = sin z / z⁴', z0:C(0,0), n:3, g:'sin z',
+        note:'$n=2$, 分母 $(z-1)^3$, 对应二阶导数'},
+    h2:{lab:'f(z)=\\dfrac{\\sin z}{z^4}', z0:C(0,0), n:3, g:'\\sin z',
         gval:function(nn,z){ var m=nn%4;
           var s=cdiv(csub(cexp(Math.exp(-z.im),z.re),cexp(Math.exp(z.im),-z.re)),C(0,2));
           var cc=cdiv(cadd(cexp(Math.exp(-z.im),z.re),cexp(Math.exp(z.im),-z.re)),C(2,0));
           if(m===0) return s; if(m===1) return cc; if(m===2) return C(-s.re,-s.im); return C(-cc.re,-cc.im); },
-        note:'n=3, 分母 z⁴, 对应三阶导数'},
-    h3:{lab:'f(z) = 1/(z−2)²', z0:C(2,0), n:1, g:'1',
+        note:'$n=3$, 分母 $z^4$, 对应三阶导数'},
+    h3:{lab:'f(z)=\\dfrac{1}{(z-2)^2}', z0:C(2,0), n:1, g:'1',
         gval:function(nn,z){ return nn===0?C(1,0):C(0,0); },
-        note:'n=1, 分母 (z−2)², g(z)≡1'},
-    h4:{lab:'f(z) = iz/(z+1)²', z0:C(-1,0), n:1, g:'iz',
+        note:'$n=1$, 分母 $(z-2)^2$, $g(z)\\equiv 1$'},
+    h4:{lab:'f(z)=\\dfrac{\\mathrm{i}z}{(z+1)^2}', z0:C(-1,0), n:1, g:'\\mathrm{i}z',
         gval:function(nn,z){ if(nn===0) return C(-z.im,z.re); return C(0,1); },
-        note:'n=1, 分母 (z+1)², g(z)=iz'}
+        note:'$n=1$, 分母 $(z+1)^2$, $g(z)=\\mathrm{i}z$'}
   };
   function fval(z){
     var o=FN[cur];
@@ -1656,7 +1689,7 @@ module('cvHighCalc',function(cv){
       tlabel(ctx,m1.px(o.z0.re)+11,m1.py(o.z0.im)+19,'z₀ (在圆外)','#78909c','bold 12px Segoe UI');
     }
     ctx.restore();
-    tlabel(ctx,12,26,'闭曲线 |z| = '+fmt(R)+'   '+(inside?'(奇点在圆内)':'(奇点在圆外)'),'#37474f','bold 13px Segoe UI');
+    setCap('cvHighCalcCap1', '闭曲线 $|z|='+fmt(R)+'$　'+(inside?'(奇点在圆内)':'(奇点在圆外)'));;
     // 数值积分
     var N=4000, sum=C(0,0);
     if(inside){
@@ -1687,8 +1720,8 @@ module('cvHighCalc',function(cv){
     }
     ctx.restore();
     setRO('hcReadout',
-      hl2(o.lab)+' &nbsp;|&nbsp; '+o.note+'<br>'+
-      '当前圆周 $|z|='+fmt(R)+'$ &nbsp;|&nbsp; 奇点 $z_0='+fmt(o.z0.re)+'$ '+(inside?'<b style="color:#c62828">在圆内</b>':'<b style="color:#2e7d32">在圆外</b>')+'<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;|&nbsp; '+o.note+'<br>'+
+      '当前圆周 $|z|='+fmt(R)+'$ &nbsp;|&nbsp; 奇点 $z_0='+fmt(o.z0.re)+'$ '+(inside?'<b style="color:#ff8a80">在圆内</b>':'<b style="color:#a5d6a7">在圆外</b>')+'<br>'+
       (inside
         ? '由高阶导数公式 (取 $n='+o.n+'$, $g(z)='+o.g+'$):<br>$\\oint_C\\frac{g(z)}{(z-z_0)^{n+1}}\\mathrm{d}z=\\frac{2\\pi\\mathrm{i}}{n!}g^{('+o.n+')}(z_0)$<br>数值积分 $\\approx '+fmt(sum.re,4)+(sum.im<0?' − ':' + ')+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$'
         : '奇点在圆外 ⇒ 被积函数在圆内解析 ⇒ 由柯西积分定理, '+hl('积分为 0')+'<br>(拖动滑块增大半径, 让奇点回到圆内, 积分值会突变!)'));
@@ -1703,11 +1736,16 @@ module('cvHighCalc',function(cv){
 
 // ================= 模块 4: 刘维尔定理 =================
 module('cvLiouville',function(cv){
-  var R=1;
+  var R=1, caps=false;
   function draw(){
     var f=fitCanvas(cv); if(!f) return;
     var ctx=f.ctx,w=f.w,h=f.h;
     ctx.clearRect(0,0,w,h);
+    if(!caps){
+      setCap('lvCapL','左图: 圆 $|z-z_0|=R$ 上的点满足 $|f|\\le M$ (绿点)');
+      setCap('lvCapR','右图: 柯西不等式给出 $|f\'(z_0)|\\le\\dfrac{M}{R}$');
+      caps=true;
+    }
     var halfW=(w-30)/2, H=h-72;
     var M=1;
     // 左: 圆与 |f| 上界
@@ -1726,9 +1764,7 @@ module('cvLiouville',function(cv){
     }
     dot(ctx,m1.px(0),m1.py(0),7,'#c62828','#fff');
     tlabel(ctx,m1.px(0)+12,m1.py(0)+18,'z₀','#c62828','bold 12px Georgia');
-    tlabel(ctx,m1.px(0),m1.py(R*0.72),'|f| ≤ M = 1','#2e7d32','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'圆 |z−z₀| = R 上 |f| ≤ M (绿点)','#37474f','bold 13px Segoe UI');
     // 右: 上界 M/R
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1746,7 +1782,6 @@ module('cvLiouville',function(cv){
     var cur=M/R;
     if(cur<=1.15) dot(ctx,m2.px(R),m2.py(cur),7,'#c62828','#fff');
     ctx.restore();
-    tlabel(ctx,sx,26,'柯西不等式: |f′(z₀)| ≤ M/R','#37474f','bold 13px Segoe UI');
     setRO('lvReadout',
       '设 $|f(z)|\\le M=1$ 在全平面成立 (有界解析函数)<br>'+
       '柯西不等式 ($n=1$): $|f\'(z_0)|\\le\\frac{M}{R}=\\frac{1}{'+fmt(R)+'}='+hl(fmt(1/R,4))+'$<br>'+
@@ -1864,7 +1899,7 @@ module('cvLiouville2',function(cv){
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
     ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
-    ctx.fillText('柯西不等式给出的上界 M/R',16,20);
+    ctx.fillText('柯西不等式给出的上界',16,20);
     var ub=M/R;
     var barH=Math.min(H-120, 260);
     ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.4;
@@ -1873,7 +1908,7 @@ module('cvLiouville2',function(cv){
     ctx.fillStyle=ub<0.15?'#2e7d32':'#e65100';
     ctx.fillRect(40,60+barH-fill,60,fill);
     ctx.font='bold 15px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
-    ctx.fillText('M/R = '+fmt(ub,5),120,60+barH/2);
+    ctx.fillText('上界 = '+fmt(ub,5),120,60+barH/2);
     ctx.font='13px Segoe UI'; ctx.fillStyle='#78909c';
     ctx.fillText('当 R → ∞ 时, 该上界 → 0',120,60+barH/2+26);
     if(ub<0.05){
@@ -1885,7 +1920,7 @@ module('cvLiouville2',function(cv){
       '设 $f$ 在全平面解析且 $|f|\\le M='+fmt(M)+'$ (有界)<br>'+
       '柯西不等式 ($n=1$): $|f\'(z_0)|\\le\\frac{M}{R}=\\frac{'+fmt(M)+'}{'+fmt(R,1)+'}='+hl(fmt(ub,5))+'$<br>'+
       (ub<0.05
-        ? '<b>'+hl('上界已趋近于零 ⇒ f′(z₀) = 0')+'</b><br>由于 $z_0$ 是任意的, 故 $f\'\\equiv 0$, 于是 $f$ 为常数 —— 这就是刘维尔定理.'
+        ? '<b>'+hl('上界已趋近于零 $\\Rightarrow f\'(z_0)=0$')+'</b><br>由于 $z_0$ 是任意的, 故 $f\'\\equiv 0$, 于是 $f$ 为常数 —— 这就是刘维尔定理.'
         : '继续增大 $R$, 上界随之减小. 它的极限是 $0$ —— 这正是刘维尔定理证明的全部内容.')+'<br>'+
       '对比: $\\mathrm{e}^z$ 在虚轴上有界 ($|\\mathrm{e}^{\\mathrm{i}y}|=1$), 但沿实轴 $|\\mathrm{e}^x|\\to\\infty$, 所以它<b>不是</b>全平面有界函数, 刘维尔定理对它无效.');
   }
@@ -1931,7 +1966,7 @@ module('cvLiouville2',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

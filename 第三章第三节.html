@@ -193,12 +193,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -411,7 +419,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第三章 第3节 柯西积分公式</h1>
     <p>边界决定内部 &middot; 平均值公式 &middot; 计算技巧</p>
@@ -573,6 +581,7 @@ $$f(z_0)=\frac{1}{2\pi\mathrm{i}}\oint_K\frac{f(z)}{z-z_0}\mathrm{d}z=\frac{1}{2
 <div class="chart-container">
 <h3>交互: 圆心处的值 = 圆周上的平均值 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">在圆周上均匀取 $N$ 个采样点, 计算 $f$ 在这些点上的平均值, 并与圆心处的真实值 $f(z_0)$ 比较. 观察: <b>无论 $N$ 取多大、半径 $R$ 取多少, 两者始终完全相等</b>. 这就是平均值公式的数值验证.</div>
+<div class="fig-caps"><div class="fc" id="cvAverageCap1"></div></div>
 <canvas id="cvAverage" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -625,6 +634,7 @@ $$\oint_{|z|=2}\frac{z}{(9-z^2)(z+\mathrm{i})}\mathrm{d}z=\oint_{|z|=2}\frac{\df
 <div class="chart-container">
 <h3>交互: 柯西积分公式计算器 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">选择一个被积函数, 拖动滑块改变圆周半径. 程序会先判断闭曲线内部有几个奇点, 再给出积分值. 观察: <b>半径变化时积分值保持不变, 除非半径缩小到使某个奇点跑到圆外</b>.</div>
+<div class="fig-caps"><div class="fc" id="cvComputeCap1"></div></div>
 <canvas id="cvCompute" data-h="440"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -952,6 +962,7 @@ $f$ 在 $z_0$ 的值, 等于二派 i 分之圈积分.<br>
 <div class="chart-container">
 <h3>交互: 泊松核 —— 权重如何随半径变化 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">泊松积分公式中的权重函数 $\frac{R^2-r^2}{R^2-2Rr\cos(\theta-\varphi)+r^2}$ 决定了"边界上各点对中心值的贡献". 拖动滑块改变 $r$, 观察权重曲线的形状变化: <b>$r\to 0$ 时曲线变平 (退化为平均值); $r\to R$ 时曲线变得极尖锐 (中心点只"看得到"最近的边界)</b>.</div>
+<div class="fig-caps"><div class="fc" id="cvPoissonCap1"></div></div>
 <canvas id="cvPoisson" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1306,12 +1317,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1360,6 +1373,10 @@ function dsFix(h){
     return m;
   });
 }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1389,8 +1406,8 @@ module('cvCauchyFormula',function(cv){
   var cur='p1', z0r=0.5, z0a=40;
   var R=1.5;
   var FN={
-    p1:{lab:'f(z)=z²+1', f:function(z){ return cadd(cmul(z,z),C(1,0)); }},
-    p2:{lab:'f(z)=e^z', f:function(z){ return cexp(Math.exp(z.re), z.im); }},
+    p1:{lab:'f(z)=z^2+1', f:function(z){ return cadd(cmul(z,z),C(1,0)); }},
+    p2:{lab:'f(z)=\\mathrm{e}^z', f:function(z){ return cexp(Math.exp(z.re), z.im); }},
     p3:{lab:'f(z)=sin z', f:function(z){ var e1=cexp(Math.exp(-z.im), z.re), e2=cexp(Math.exp(z.im), -z.re);
         return cdiv(csub(e1,e2), C(0,2)); }}
   };
@@ -1418,7 +1435,7 @@ module('cvCauchyFormula',function(cv){
     ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
     dot(ctx,m1.px(z0.re),m1.py(z0.im),8,'#c62828','#fff');
     tlabel(ctx,m1.px(z0.re)+11,m1.py(z0.im)+19,'z₀','#c62828','bold 13px Georgia');
-    tlabel(ctx,m1.px(0),m1.py(R+0.32),'C: |z| = '+fmt(R),'#1565c0','bold 13px Segoe UI');
+    tlabel(ctx,m1.px(0)+18,m1.py(R+0.32),'C: |z| = '+fmt(R),'#1565c0','bold 13px Segoe UI');
     ctx.restore();
     tlabel(ctx,12,26,'边界 C 上按 |f| 着色 (越深越大)','#37474f','bold 13px Segoe UI');
     // 数值积分
@@ -1451,7 +1468,7 @@ module('cvCauchyFormula',function(cv){
     tlabel(ctx,sx,26,'公式计算值与真实值对比','#37474f','bold 13px Segoe UI');
     var dv=cabs(csub(calc,real));
     setRO('cqReadout',
-      hl2(o.lab)+' &nbsp;|&nbsp; 闭曲线 $C:|z|='+fmt(R)+'$, 内部一点 $z_0='+fmt(z0r)+'\\mathrm{e}^{\\mathrm{i}'+z0a+'^\\circ}$<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;|&nbsp; 闭曲线 $C:|z|='+fmt(R)+'$, 内部一点 $z_0='+fmt(z0r)+'\\mathrm{e}^{\\mathrm{i}'+z0a+'^\\circ}$<br>'+
       '公式右侧 $\\frac{1}{2\\pi\\mathrm{i}}\\oint_C\\frac{f(z)}{z-z_0}\\mathrm{d}z\\approx '+fmt(calc.re,4)+' '+(calc.im<0?'-':'+')+' '+fmt(Math.abs(calc.im),4)+'\\mathrm{i}$<br>'+
       '真实值 $f(z_0)\\approx '+fmt(real.re,4)+' '+(real.im<0?'-':'+')+' '+fmt(Math.abs(real.im),4)+'\\mathrm{i}$<br>'+
       '偏差 $='+hl(fmt(dv,5))+'$ &nbsp;'+(dv<0.02?'<b>✓ 两者相等 —— 柯西积分公式得到验证</b>':'（数值误差, 增大采样可减小）'));
@@ -1492,7 +1509,7 @@ module('cvAverage',function(cv){
     avg=C(avg.re/N, avg.im/N);
     dot(ctx,m1.px(0),m1.py(0),9,'#c62828','#fff');
     ctx.restore();
-    tlabel(ctx,12,26,'圆周上均匀取 '+N+' 个点, 计算 f 的平均值','#37474f','bold 13px Segoe UI');
+    setCap('cvAverageCap1', '圆周上均匀取 $'+N+'$ 个点, 计算 $f$ 的平均值');;
     // 右: 平均值的复平面位置
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1532,13 +1549,13 @@ module('cvCompute',function(cv){
     c1:{lab:'f(z) = 1/(z−2)', poles:[{z:C(2,0), val:C(0,1), tex:'1'}],
         f:function(z){ return cdiv(C(1,0), csub(z,C(2,0))); },
         note:'在 z=2 有一阶极点'},
-    c2:{lab:'f(z) = e^z/(z−1)', poles:[{z:C(1,0), val:C(Math.E,0), tex:'e'}],
+    c2:{lab:'f(z)=\\dfrac{\\mathrm{e}^z}{z-1}', poles:[{z:C(1,0), val:C(Math.E,0), tex:'e'}],
         f:function(z){ return cdiv(cexp(Math.exp(z.re), z.im), csub(z,C(1,0))); },
         note:'在 z=1 有奇点, 留数 f(1)=e'},
-    c3:{lab:'f(z) = 1/(z²−1)', poles:[{z:C(1,0), val:C(0.5,0), tex:'1/2'},{z:C(-1,0), val:C(-0.5,0), tex:'−1/2'}],
+    c3:{lab:'f(z)=\\dfrac{1}{z^2-1}', poles:[{z:C(1,0), val:C(0.5,0), tex:'1/2'},{z:C(-1,0), val:C(-0.5,0), tex:'−1/2'}],
         f:function(z){ return cdiv(C(1,0), csub(cmul(z,z),C(1,0))); },
         note:'在两个点 z=±1 各有一阶极点'},
-    c4:{lab:'f(z) = sin z / z', poles:[{z:C(0,0), val:C(0,0), tex:'0'}],
+    c4:{lab:'f(z)=\\dfrac{\\sin z}{z}', poles:[{z:C(0,0), val:C(0,0), tex:'0'}],
         f:function(z){ if(Math.hypot(z.re,z.im)<1e-6) return C(1,0);
           var e1=cexp(Math.exp(-z.im), z.re), e2=cexp(Math.exp(z.im), -z.re);
           return cdiv(cdiv(csub(e1,e2),C(0,2)), z); },
@@ -1569,7 +1586,7 @@ module('cvCompute',function(cv){
       tlabel(ctx,m1.px(p.z.re)+10,m1.py(p.z.im)+18,'z='+fmt(p.z.re),isIn?'#c62828':'#90a4ae','bold 12px Segoe UI');
     });
     ctx.restore();
-    tlabel(ctx,12,26,'闭曲线 |z| = '+fmt(R)+' , 红点 = 圈内的奇点','#37474f','bold 13px Segoe UI');
+    setCap('cvComputeCap1', '闭曲线 $|z|='+fmt(R)+'$, 红点 = 圈内的奇点');;
     // 数值积分
     var N=4000, sum=C(0,0);
     for(var i=0;i<N;i++){
@@ -1609,7 +1626,7 @@ module('cvCompute',function(cv){
       thTxt='圆内有 '+inside.length+' 个奇点, 由柯西积分公式 $\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\times('+parts+')$';
     }
     setRO('cpReadout',
-      hl2(o.lab)+' &nbsp;|&nbsp; '+o.note+'<br>'+
+      hl2('$'+o.lab+'$')+' &nbsp;|&nbsp; '+o.note+'<br>'+
       '当前圆周 $|z|='+fmt(R)+'$, 圆内奇点个数: <b>'+inside.length+'</b><br>'+
       thTxt+'<br>'+
       '数值积分 $\\approx '+fmt(sum.re,4)+' '+(sum.im<0?'-':'+')+' '+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$'+
@@ -1705,9 +1722,9 @@ module('cvPoisson',function(cv){
     ctx.setLineDash([]);
     tlabel(ctx,m1.px(0)+6,m1.py(0)+18,'O','#37474f','bold 12px Georgia');
     tlabel(ctx,m1.px(px)+9,m1.py(0)-10,'考察点','#c62828','bold 11px Segoe UI');
-    tlabel(ctx,m1.px(0),m1.py(R+0.28),'|z|=R 边界','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0)+18,m1.py(R+0.28),'|z|=R 边界','#1565c0','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'圆盘内的考察点 (距圆心 '+fmt(r*R)+')','#37474f','bold 13px Segoe UI');
+    setCap('cvPoissonCap1', '圆盘内的考察点 (距圆心 $'+fmt(r*R)+'$)');;
     // 右: 泊松核曲线
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1787,7 +1804,7 @@ module('cvPoisson',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

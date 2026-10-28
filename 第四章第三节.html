@@ -118,8 +118,33 @@ input[type="range"] { width:200px; vertical-align:middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+/* 孤立奇点分类(HTML 版) */
+.sn-bars { display: flex; gap: 12px; max-width: 780px; margin: 4px auto 0; }
+.sn-bar { flex: 1; border: 2px solid #cfd8dc; background: #f5f5f5; border-radius: 9px;
+  text-align: center; padding: 8px 4px 10px; color: #b0bec5; }
+.sn-bar.hot { background: #fff3e0; border-color: #1976d2; color: #1976d2; }
+.sn-k { font-size: .8em; color: #90a4ae; margin-bottom: 2px; }
+.sn-bar.hot .sn-k { color: #546e7a; }
+.sn-v { font-weight: 700; }
+.sn-series { text-align: left; max-width: 860px; margin: 18px auto 0; color: #37474f; }
+.sn-series > b { color: #6a1b9a; margin-right: 4px; }
+.sn-verdict { max-width: 880px; margin: 16px auto 0; border: 2px solid var(--c); border-left: 8px solid var(--c);
+  background: #e8f5e9; border-radius: 10px; padding: 12px 18px; color: #33691e; }
+.sn-verdict > b { font-size: 1.12em; color: var(--c); }
+.sn-why { margin-top: 6px; font-size: .95em; }
+.sn-legend { max-width: 880px; margin: 12px auto 0; display: flex; gap: 26px; flex-wrap: wrap;
+  color: #546e7a; font-size: .88em; }
+.sn-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout { background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace; border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2; overflow-x:auto; white-space:normal; }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -236,7 +261,7 @@ canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第四章 第3节 洛朗级数</h1>
     <p>双边级数与收敛圆环 &middot; 洛朗展开定理 &middot; 圆环域展开与围道积分</p>
@@ -334,7 +359,8 @@ $$\sum_{n=-\infty}^{+\infty} c_n (z - z_0)^n
     <button class="control-btn" id="btnSin5">$\frac{1}{z(z-1)^2}$</button>
   </div>
 </div>
-<canvas id="cvSing" data-h="420"></canvas>
+<div class="fig-caps"><div class="fc" id="cvSingCap1"></div></div>
+<div id="cvSing" class="ind-tree"></div>
 <div class="readout" id="singReadout"></div>
 </div>
 
@@ -525,6 +551,7 @@ $\frac{\mathrm{e}^z}{z(z-2)} = \frac{\mathrm{e}^z}{z^2} \cdot \frac{1}{1 - 2/z} 
     <button class="control-btn active" id="btnCurve3">$|z| = 3$</button>
   </div>
 </div>
+<div class="fig-caps"><div class="fc" id="cvLoCurveCap1"></div></div>
 <canvas id="cvLoCurve" data-h="430"></canvas>
 <div class="readout" id="loCurveReadout"></div>
 </div>
@@ -608,7 +635,7 @@ $\frac{\mathrm{e}^z}{z(z-2)} = \frac{\mathrm{e}^z}{z^2} \cdot \frac{1}{1 - 2/z} 
 <tr><td>孤立奇点分类</td><td>可去奇点: 无负幂项; $m$ 阶极点: 负幂项有限 (最低 $(z-z_0)^{-m}$); 本性奇点: 负幂项无穷</td><td>主要部分 (负幂项) 的多少刻画奇性</td></tr>
 <tr><td>与泰勒级数的关系</td><td>负幂项全为零时洛朗级数退化为泰勒级数</td><td>圆盘是内外径 $r=0$ 的特殊圆环</td></tr>
 <tr><td>用洛朗展开求围道积分</td><td>$\oint_C f(z)\,\mathrm{d}z=2\pi\mathrm{i}\,c_{-1}$</td><td>只取一项: 积分值由 $c_{-1}$ 决定</td></tr>
-<tr><td>留数</td><td>$c_{-1}=\operatorname{Res}[f,z_0]$</td><td>留数定理: $\oint_C f\,\mathrm{d}z=2\pi\mathrm{i}\sum \operatorname{Res}$</td></tr>
+<tr><td>留数</td><td>$c_{-1}=\operatorname{Res}[f,z_0]=\dfrac{1}{2\pi\mathrm{i}}\oint_C f(z)\,\mathrm{d}z$</td><td>留数定理: $\oint_C f(z)\,\mathrm{d}z=2\pi\mathrm{i}\sum\limits_k \operatorname{Res}[f,z_k]$ ($z_k$ 为 $C$ 内全部奇点)</td></tr>
 </table>
 
 <!-- ===== 自测题 ===== -->
@@ -1048,6 +1075,10 @@ function dsFix(h){
     return m;
   });
 }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1099,16 +1130,16 @@ module('cvAnnulus',function(cv){
       tlabel(ctx,cx-14,cy+6,'z₀','#37474f');
       dot(ctx,cx,cy,5,'#37474f','#fff');
       setRO('annulusReadout',
-        '<b>收敛圆环:</b> '+hl2('R₁ < |z − z₀| < R')+' &nbsp; 其中 R₁ = '+hl(fmt(R1,2))+', R = '+hl(fmt(R2,2))+'<br>'+
-        '<b>正幂部分(解析部分)</b> 在 |z − z₀| < '+fmt(R2,2)+' 收敛 &nbsp;|&nbsp; <b>负幂部分(主要部分)</b> 在 |z − z₀| > '+fmt(R1,2)+' 收敛<br>'+
-        '<b>和函数</b> 在圆环内 '+hl2('解析')+', 且可逐项求导、逐项积分 (定理 3.1)<br>'+
-        '<span style="color:#80deea">拖动滑块让 R₁ ≥ R: 圆环消失, 洛朗级数处处发散.</span>');
+        '<b>收敛圆环:</b> '+hl2('$R_1&lt;|z-z_0|&lt;R$')+' &nbsp; 其中 $R_1='+hl(fmt(R1,2))+'$, $R='+hl(fmt(R2,2))+'$<br>'+
+        '<b>正幂部分（解析部分）</b> 在 $|z-z_0|&lt;'+fmt(R2,2)+'$ 收敛 &nbsp;|&nbsp; <b>负幂部分（主要部分）</b> 在 $|z-z_0|&gt;'+fmt(R1,2)+'$ 收敛<br>'+
+        '<b>和函数</b> 在圆环内 '+hl2('解析')+', 且可逐项求导、逐项积分（定理 3.1）<br>'+
+        '<span style="color:#80deea">拖动滑块让 $R_1\\ge R$：圆环消失, 洛朗级数处处发散.</span>');
     } else {
       circle(ctx,cx,cy,R2*m.s,'#c62828',2.4);
       if(R1>0.01) circle(ctx,cx,cy,R1*m.s,'#c62828',2.4,true);
       dot(ctx,cx,cy,5,'#37474f','#fff');
       setRO('annulusReadout',
-        '<b>R₁ = '+fmt(R1,2)+' ≥ R = '+fmt(R2,2)+'</b><br>'+
+        '<b>$R_1='+fmt(R1,2)+'\\ge R='+fmt(R2,2)+'$</b><br>'+
         '<b>结论:</b> '+hl('负幂部分的收敛域与正幂部分的收敛域无交集, 洛朗级数处处发散.')+'<br>'+
         '<span style="color:#80deea">请调回 R₁ &lt; R 重新观察圆环.</span>');
     }
@@ -1159,14 +1190,15 @@ module('cvRings',function(cv){
     tlabel(ctx,c2+11,cy-10,'2','#e65100');
     // labels
     var titles={1:'① 0<|z|<1: 正幂为主 (实为泰勒展开)',2:'② 1<|z|<2: 正负幂混合',3:'③ 2<|z|<+∞: 负幂为主',4:'④ 0<|z−1|<1: 以 z=1 为心的展开'};
+    var titlesTex={1:'① $0<|z|<1$：正幂为主（实为泰勒展开）',2:'② $1<|z|<2$：正负幂混合',3:'③ $2<|z|<+\\infty$：负幂为主',4:'④ $0<|z-1|<1$：以 $z=1$ 为心的展开'};
     tlabel(ctx,14,24,titles[which],'#0d47a1','bold 14px Segoe UI');
     setRO('ringsReadout',
-      '<b>当前区域</b> '+hl(titles[which])+'<br>'+
+      '<b>当前区域</b> '+hl(titlesTex[which])+'<br>'+
       '<b>展开式要点:</b> '+
-      (which===1? hl2('f = Σ(1 − 1/2ⁿ⁺¹)zⁿ = 1 + z/2 + 3z²/4 + ⋯ (全正幂)')
-       : which===2? hl('f = Σ1/zⁿ⁺¹ − Σzⁿ/2ⁿ⁺¹ (负幂 + 正幂)')
-       : which===3? hl2('f = 1/z + 3/z² + 7/z³ + ⋯ (全负幂)')
-       : hl('f = 1/(z−1) − Σ(−1)ⁿ(z−1)ⁿ (以 z₀=1 为心)'))+'<br>'+
+      (which===1? hl2('$f=\\sum\\left(1-\\dfrac{1}{2^{n+1}}\\right)z^n=1+\\dfrac{z}{2}+\\dfrac{3z^2}{4}+\\cdots$（全正幂）')
+       : which===2? hl('$f=\\sum\\dfrac{1}{z^{n+1}}-\\sum\\dfrac{z^n}{2^{n+1}}$（负幂 + 正幂）')
+       : which===3? hl2('$f=\\dfrac{1}{z}+\\dfrac{3}{z^2}+\\dfrac{7}{z^3}+\\cdots$（全负幂）')
+       : hl('$f=\\dfrac{1}{z-1}-\\sum(-1)^n(z-1)^n$（以 $z_0=1$ 为心）'))+'<br>'+
       '<span style="color:#80deea">同一个函数, 圆环域不同, 洛朗展开完全不同 —— 先定域, 再展开.</span>');
   }
   function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
@@ -1207,14 +1239,14 @@ module('cvLoCurve',function(cv){
       ctx.fillStyle='rgba(46,125,50,0.10)'; ctx.fill('evenodd');
     }
     ctx.restore();
-    tlabel(ctx,14,24,'所用圆环域: '+(which===1?'0 < |z| < 2':'2 < |z| < +∞'),'#0d47a1','bold 14px Segoe UI');
+    setCap('cvLoCurveCap1', '所用圆环域: '+(which===1?'$0<|z|<2$':'$2<|z|<+\\infty$'));;
     setRO('loCurveReadout',
-      '<b>曲线</b> C: '+hl('|z| = '+(which===1?'1':'3'))+' &nbsp; 位于圆环域 '+hl2(which===1?'0 < |z| < 2':'2 < |z| < +∞')+' 内<br>'+
+      '<b>曲线</b> C: '+hl('$|z|='+(which===1?'1':'3')+'$')+' &nbsp; 位于圆环域 '+hl2(which===1?'$0&lt;|z|&lt;2$':'$2&lt;|z|&lt;+\\infty$')+' 内<br>'+
       (which===1?
-        '<b>展开方式:</b> 两个奇点都在圆外 → 全正幂 (泰勒型), 负幂为零 ⇒ '+hl2('c₋₁ 需按泰勒/高阶导数求')+'<br>'+
-        '<b>本例考察重点:</b> '+hl('例 3.4 选取的是 |z| = 3, 见右侧情形') :
-        '<b>展开方式:</b> 奇点 0 与 2 都在圆内 → 全负幂: e^z(1/z² + 2/z³ + 4/z⁴ + ⋯)<br>'+
-        '<b>c₋₁</b> = Σ 2ⁿ/(n+1)! = '+hl2('(e² − 1)/2')+' &nbsp;&nbsp; <b>∮ = 2πi·c₋₁</b> = '+hl('πi(e² − 1)'))+'<br>'+
+        '<b>展开方式:</b> 两个奇点都在圆外 → 全正幂（泰勒型），负幂为零 ⇒ '+hl2('$c_{-1}$ 需按泰勒/高阶导数求')+'<br>'+
+        '<b>本例考察重点:</b> '+hl('例 3.4 选取的是 $|z|=3$，见右侧情形') :
+        '<b>展开方式:</b> 奇点 $0$ 与 $2$ 都在圆内 → 全负幂：$\\mathrm{e}^{z}\\left(\\dfrac{1}{z^{2}}+\\dfrac{2}{z^{3}}+\\dfrac{2^{2}}{z^{4}}+\\cdots\\right)$<br>'+
+        '<b>$c_{-1}$</b> $=\\sum\\limits_{n=0}^{\\infty}\\dfrac{2^{n}}{(n+1)!}='+hl2('\\dfrac{\\mathrm{e}^{2}-1}{2}')+'$ &nbsp;&nbsp; <b>$\\oint=2\\pi\\mathrm{i}\\,c_{-1}$</b> $='+hl('\\pi\\mathrm{i}(\\mathrm{e}^{2}-1)')+'$<br>')+
       '<span style="color:#80deea">曲线在哪个圆环, 就在哪个圆环内展开 —— 区域选择决定系数.</span>');
   }
   function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
@@ -1230,132 +1262,63 @@ module('cvSing',function(cv){
   var cur=1;
   // 每个函数: 名称 / 洛朗主部各项(负幂, 从 (z−z0)^−1 起) / 类型 / 结论
   var FN={
-    1:{ name:'f(z) = sin z / z', z0:'z₀ = 0', color:'#2e7d32',
+    1:{ nameTex:'$f(z)=\\dfrac{\\sin z}{z}$', z0Tex:'$z_0=0$', color:'#2e7d32',
         neg:['0','0','0','0'],       // 全部为 0 → 无负幂项
         type:'可去奇点', depth:0,
-        series:'sin z / z = 1 − z²/3! + z⁴/5! − ⋯',
-        why:'负幂项全部为零, 洛朗展开退化为泰勒展开. 补充定义 f(0)=1 后函数在 z₀ 处解析.' },
-    2:{ name:'f(z) = 1 / z', z0:'z₀ = 0', color:'#1976d2',
+        seriesTex:'$\\dfrac{\\sin z}{z}=1-\\dfrac{z^{2}}{3!}+\\dfrac{z^{4}}{5!}-\\cdots$',
+        why:'负幂项全部为零, 洛朗展开退化为泰勒展开. 补充定义 $f(0)=1$ 后函数在 $z_0$ 处解析.' },
+    2:{ nameTex:'$f(z)=\\dfrac{1}{z}$', z0Tex:'$z_0=0$', color:'#1976d2',
         neg:['1','0','0','0'],
         type:'1 阶极点', depth:1,
-        series:'1/z = z⁻¹',
-        why:'主要部分只有 (z−z₀)⁻¹ 一项, c₋₁ = 1 ≠ 0. 极限 lim f(z) = ∞.' },
-    3:{ name:'f(z) = 1 / z²', z0:'z₀ = 0', color:'#1976d2',
+        seriesTex:'$\\dfrac{1}{z}=z^{-1}$',
+        why:'主要部分只有 $(z-z_0)^{-1}$ 一项, $c_{-1}=1\\neq0$. 极限 $\\lim f(z)=\\infty$.' },
+    3:{ nameTex:'$f(z)=\\dfrac{1}{z^{2}}$', z0Tex:'$z_0=0$', color:'#1976d2',
         neg:['0','1','0','0'],
         type:'2 阶极点', depth:2,
-        series:'1/z² = z⁻²',
-        why:'最高负幂次为 (z−z₀)⁻², c₋₂ = 1 ≠ 0. 属于 m 阶极点 (m = 2).' },
-    4:{ name:'f(z) = e^(1/z)', z0:'z₀ = 0', color:'#c62828',
+        seriesTex:'$\\dfrac{1}{z^{2}}=z^{-2}$',
+        why:'最高负幂次为 $(z-z_0)^{-2}$, $c_{-2}=1\\neq0$. 属于 $m$ 阶极点 ($m=2$).' },
+    4:{ nameTex:'$f(z)=\\mathrm{e}^{1/z}$', z0Tex:'$z_0=0$', color:'#c62828',
         neg:['1','1/2!','1/3!','1/4!'],
         type:'本性奇点', depth:'∞',
-        series:'e^{1/z} = 1 + z⁻¹ + z⁻²/2! + z⁻³/3! + ⋯',
-        why:'负幂项<b>无穷多</b>, 无法用有限项表示. 由皮卡定理, 在 z₀ 的任意小邻域内函数可取到除至多一个值以外的一切复数值.' },
-    5:{ name:'f(z) = 1 / [z(z−1)²]', z0:'z₀ = 1', color:'#1976d2',
+        seriesTex:'$\\mathrm{e}^{1/z}=1+z^{-1}+\\dfrac{z^{-2}}{2!}+\\dfrac{z^{-3}}{3!}+\\cdots$',
+        why:'负幂项<b>无穷多</b>, 无法用有限项表示. 由皮卡定理, 在 $z_0$ 的任意小邻域内函数可取到除至多一个值以外的一切复数值.' },
+    5:{ nameTex:'$f(z)=\\dfrac{1}{z(z-1)^{2}}$', z0Tex:'$z_0=1$', color:'#1976d2',
         neg:['1','1','0','0'],
         type:'2 阶极点', depth:2,
-        series:'1/[z(z−1)²] = (z−1)⁻² − (z−1)⁻¹ + 1 − (z−1) + ⋯',
-        why:'以 z₀ = 1 为中心展开: 最高负幂次为 (z−1)⁻², c₋₂ = 1 ≠ 0. 故 2 阶极点.' }
+        seriesTex:'$\\dfrac{1}{z(z-1)^{2}}=(z-1)^{-2}-(z-1)^{-1}+1-(z-1)+\\cdots$',
+        why:'以 $z_0=1$ 为中心展开: 最高负幂次为 $(z-1)^{-2}$, $c_{-2}=1\\neq0$. 故 2 阶极点.' }
   };
+  function vtex(v){ var p=String(v).split('/'); return p.length===2 ? '$\\dfrac{'+p[0]+'}{'+p[1]+'}$' : '$'+v+'$'; }
 
-  function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
+    function draw(){
     var F=FN[cur];
-
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
-    ctx.fillText('孤立奇点分类 · '+F.name+'  ('+F.z0+')', 28, 28);
-
-    // ---- 上方: 负幂项"项数条" ----
-    var barY=62, barH=54, padL=28;
-    var bw=(w-padL*2)/F.neg.length;
-
-    // 判定类型的横幅
-    ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#546e7a';
-    ctx.fillText('主要部分 (负幂项 c₋₁, c₋₂, c₋₃, …) 的取值:', padL, barY-10);
-
+    var el=document.getElementById('cvSing');
+    if(!el) return;
+    var zt=/^0(\.0+)?$/.test(String(F.neg[0]));
+    var html='<div class="it-sub">主要部分（负幂项 $c_{-1},c_{-2},c_{-3},\\ldots$）的取值：</div><div class="sn-bars">';
     F.neg.forEach(function(v,i){
-      var bx=padL+i*bw, by=barY, bh=barH;
-      var isZero = /^0(\.0+)?$/.test(v);
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(bx+6,by,bw-12,bh,8); else ctx.rect(bx+6,by,bw-12,bh);
-      ctx.fillStyle = isZero ? '#f5f5f5' : '#fff3e0';
-      ctx.fill();
-      ctx.strokeStyle = isZero ? '#cfd8dc' : F.color;
-      ctx.lineWidth = isZero ? 1.4 : 2.2;
-      ctx.stroke();
-
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      // 幂次标签
-      ctx.font='11px Segoe UI'; ctx.fillStyle='#90a4ae';
-      ctx.fillText('c₋'+(i+1), bx+bw/2, by+15);
-      // 值
-      ctx.font='bold '+(isZero?13:14)+'px Segoe UI';
-      ctx.fillStyle = isZero ? '#b0bec5' : F.color;
-      ctx.fillText(String(v), bx+bw/2, by+bh-17);
+      html+='<div class="sn-bar'+(String(v).match(/^0(\.0+)?$/)?'':' hot')+'">'+
+            '<div class="sn-k">$c_{-'+(i+1)+'}$</div><div class="sn-v">'+vtex(v)+'</div></div>';
     });
-
-    // ---- 中部: 洛朗级数 ----
-    var sy=barY+barH+34;
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#6a1b9a';
-    ctx.fillText('洛朗展开:', padL, sy);
-    ctx.font='14px Consolas, "Segoe UI", monospace'; ctx.fillStyle='#37474f';
-    ctx.fillText(F.series, padL+82, sy);
-
-    // ---- 结论框 ----
-    var cy=sy+26, ch=h-cy-58;
-    ctx.beginPath();
-    if(ctx.roundRect) ctx.roundRect(padL,cy,w-padL*2,ch,10); else ctx.rect(padL,cy,w-padL*2,ch);
-    ctx.fillStyle='#e8f5e9'; ctx.fill();
-    ctx.strokeStyle=F.color; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle=F.color;
-    ctx.beginPath();
-    if(ctx.roundRect) ctx.roundRect(padL,cy,6,ch,3); else ctx.rect(padL,cy,6,ch);
-    ctx.fill();
-
-    ctx.font='bold 17px Segoe UI'; ctx.fillStyle=F.color;
-    ctx.fillText('判定: '+F.type, padL+22, cy+30);
-
-    // 说明文字 (简单分行, 垂直居中于剩余区域)
-    ctx.font='12.5px Segoe UI'; ctx.fillStyle='#33691e';
-    var words=F.why.replace(/<[^>]+>/g,'');
-    var maxW=w-padL*2-44, line='', lines=[];
-    for(var i2=0;i2<words.length;i2++){
-      var ch2=words[i2];
-      if(ctx.measureText(line+ch2).width>maxW){ lines.push(line); line=ch2; }
-      else line+=ch2;
-    }
-    if(line) lines.push(line);
-    // 让文字块在 (cy+44 ~ cy+ch-10) 内垂直居中
-    var areaTop=cy+46, areaBot=cy+ch-12;
-    var blockH=lines.length*19;
-    var ly=areaTop + Math.max(0,(areaBot-areaTop-blockH)/2) + 14;
-    lines.forEach(function(ln){ ctx.fillText(ln,padL+22,ly); ly+=19; });
-
-    // ---- 底部三类对照 ----
-    ctx.textAlign='left'; ctx.font='11.5px Segoe UI'; ctx.fillStyle='#78909c';
-    var types=['可去奇点: 无负幂项','m 阶极点: 负幂项有限','本性奇点: 负幂项无穷'];
-    var cols=['#2e7d32','#1976d2','#c62828'];
-    types.forEach(function(t,i){
-      var xx=padL+i*(w-padL*2)/3;
-      ctx.fillStyle=cols[i];
-      ctx.fillRect(xx, h-30, 10, 10);
-      ctx.fillStyle='#546e7a';
-      ctx.fillText(t, xx+15, h-21);
-    });
-
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    html+='</div>'+
+      '<div class="sn-series"><b>洛朗展开：</b>'+F.seriesTex+'</div>'+
+      '<div class="sn-verdict" style="--c:'+F.color+'"><b>判定：'+F.type+'</b><div class="sn-why">'+F.why+'</div></div>'+
+      '<div class="sn-legend">'+
+      '<span><i style="background:#2e7d32"></i>可去奇点：无负幂项</span>'+
+      '<span><i style="background:#1976d2"></i>m 阶极点：负幂项有限</span>'+
+      '<span><i style="background:#c62828"></i>本性奇点：负幂项无穷</span></div>';
+    el.innerHTML=html;
+    setCap('cvSingCap1', '孤立奇点分类 · '+F.nameTex+'　('+F.z0Tex+')');
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} }
   }
 
   function updateRO(){
     var F=FN[cur];
     var cnt = F.depth===0 ? '0 项 (无负幂项)' : (F.depth==='∞' ? '无穷多项' : F.depth+' 项');
     setRO('singReadout',
-      '<b>'+F.name+'</b> 在 '+F.z0+' 处 &nbsp;|&nbsp; 主要部分: <span class="hl">'+cnt+'</span> &nbsp;|&nbsp; '+
+      '<b>'+F.nameTex+'</b> 在 '+F.z0Tex+' 处 &nbsp;|&nbsp; 主要部分: <span class="hl">'+cnt+'</span> &nbsp;|&nbsp; '+
       '判定结果: <span class="hl2">'+F.type+'</span><br>'+
-      '<span style="color:#80deea">'+F.why.replace(/<[^>]+>/g,'')+'</span>');
+      '<span style="color:#80deea">'+F.why+'</span>');
   }
 
   ['btnSin1','btnSin2','btnSin3','btnSin4','btnSin5'].forEach(function(id,i){
@@ -1380,7 +1343,7 @@ module('cvSummary',function(cv){
     {t:'双边级数与圆环', c:'#1976d2', leaves:['$\\sum c_n(z-z_0)^n$ 双边','正幂 = 解析部分','负幂 = 主要部分','内径 $R_1$ (负幂定)','外径 $R$ (正幂定)','$R_1\\ge R$ 处处发散','定理3.1 环内解析']},
     {t:'洛朗展开定理', c:'#e65100', leaves:['环内解析 ⇒ 可展','$c_n$ = 圆周积分公式','$C$ 为绕 $z_0$ 任一闭线','闭路变形定系数','展开唯一性','$c_n\\neq\\frac{f^{(n)}(z_0)}{n!}$ (一般)']},
     {t:'展开方法', c:'#c62828', leaves:['直接法: 系数积分','间接法: 唯一性','代换 / 部分分式','例3.1 $\\mathrm{e}^{z^2}$','例3.2 一函数四展开','先定域再展开']},
-    {t:'展开即积分', c:'#2e7d32', leaves:['$c_{-1}=\\frac{1}{2\\pi\\mathrm{i}}\\oint f$','$\\oint f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$','例3.3 $\\frac{\\mathrm{e}^{1/z}}{z}$','例3.4 $\\pi\\mathrm{i}(\\mathrm{e}^2-1)$','曲线定圆环','负一系数定乾坤']}
+    {t:'展开即积分', c:'#2e7d32', leaves:['$c_{-1}=\\dfrac{1}{2\\pi\\mathrm{i}}\\oint_C f(z)\\,\\mathrm{d}z$','$\\oint_C f(z)\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$','例3.3 $\\oint\\frac{\\mathrm{e}^{1/z}}{z}\\,\\mathrm{d}z=2\\pi\\mathrm{i}$','例3.4 $\\oint\\frac{\\mathrm{e}^{z}}{z(z-2)}\\,\\mathrm{d}z=\\pi\\mathrm{i}(\\mathrm{e}^2-1)$','曲线定圆环','负一系数定乾坤']}
   ];
   function build(){
     if(built) return;

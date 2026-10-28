@@ -115,6 +115,31 @@ tr:hover td { background:#e3f2fd; }
 input[type="range"] { width:200px; vertical-align:middle; }
 .val-badge { display:inline-block; background:#7b1fa2; color:#fff; padding:2px 10px; border-radius:4px; font-weight:bold; min-width:52px; text-align:center; font-size:.88em; }
 .kg-wrap { margin: 8px 0 4px; }
+/* 间接法派生树(HTML 版) */
+.ind-tree { padding: 4px 2px 12px; }
+.it-sub { font-size: .9em; color: #607d8b; margin: 2px 0 14px; }
+.it-box { max-width: 620px; margin: 0 auto; border: 2px solid #37474f; background: #eceff1;
+  border-radius: 10px; padding: 10px 16px; text-align: center; font-weight: 600; color: #263238; }
+.it-box b { font-weight: 700; color: inherit; margin-right: 6px; }
+.it-to { background: #fff; }
+.it-arrow { text-align: center; font-size: 20px; line-height: 1.5; color: #1976d2; }
+.it-steps { max-width: 760px; margin: 16px auto 0; padding-left: 0; list-style: none;
+  color: #455a64; font-size: .95em; }
+.it-steps li { margin: 7px 0; }
+.it-steps mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+/* 决策路线(HTML 版) */
+.ct-list { list-style: none; margin: 0 auto; padding: 0; max-width: 980px; }
+.ct-step { position: relative; border: 1.8px solid #90a4ae; border-left: 6px solid #90a4ae;
+  border-radius: 9px; background: #fafafa; padding: 9px 14px; margin: 0 0 9px; color: #455a64;
+  font-size: .96em; }
+.ct-step.lv0 { background: #eceff1; border-color: #37474f; border-left-color: #37474f;
+  font-weight: 700; color: #263238; }
+.ct-step.lv1 { margin-left: 18px; }
+.ct-step.lv2 { margin-left: 36px; }
+.ct-step.lv3 { margin-left: 36px; border-color: var(--c); border-left-color: var(--c); color: var(--c); }
+.ct-step + .ct-step::before { content: "↓"; position: absolute; top: -14px; left: 22px;
+  color: #b0bec5; font-size: 12px; line-height: 1; }
+.ct-tip { max-width: 980px; margin: 14px auto 0; font-size: .92em; color: #00695c; font-style: italic; }
 .kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
   font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
   border-radius: 9px; padding: 8px 14px; }
@@ -139,12 +164,20 @@ input[type="range"] { width:200px; vertical-align:middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -265,7 +298,7 @@ canvas { width:100%; display:block; border-radius:8px; background:#fafcff; touch
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第四章 第2节 泰勒级数</h1>
     <p>泰勒展开定理 &middot; 直接法与间接法 &middot; 常用展开式</p>
@@ -364,6 +397,7 @@ $f(z_0) = a_0, \quad f'(z_0) = a_1, \quad f''(z_0) = 2! \, a_2, \ \cdots, \quad 
     <button class="control-btn" id="btnTz2">$f(z) = \frac{1}{z^2+1}$</button>
   </div>
 </div>
+<div class="fig-caps"><div class="fc" id="cvRadiusCap1"></div></div>
 <canvas id="cvRadius" data-h="400"></canvas>
 <div class="readout" id="radiusReadout"></div>
 </div>
@@ -432,6 +466,7 @@ $$\cos z = \sum_{n=0}^{\infty} \frac{(-1)^n z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} 
     <input type="range" id="rngTayN" min="0" max="15" value="3">
   </div>
 </div>
+<div class="fig-caps"><div class="fc" id="cvTaylorCap1"></div></div>
 <canvas id="cvTaylor" data-h="400"></canvas>
 <div class="readout" id="taylorReadout"></div>
 </div>
@@ -470,7 +505,8 @@ $$\ln(1+z) = \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} z^n = z - \frac{z^2}{2} + 
     <button class="control-btn" id="btnInd3">③ 逐项求积</button>
   </div>
 </div>
-<canvas id="cvIndirect" data-h="380"></canvas>
+<div class="fig-caps"><div class="fc" id="cvIndirectCap1"></div></div>
+<div id="cvIndirect" class="ind-tree"></div>
 <div class="readout" id="indReadout"></div>
 </div>
 
@@ -537,7 +573,8 @@ $$\frac{z}{(1+z)^2} = \sum_{n=0}^{\infty} (-1)^n (n+1) z^{n+1} = z - 2z^2 + 3z^3
     <button class="control-btn" id="btnTree4">④ 复合 / 幂函数</button>
   </div>
 </div>
-<canvas id="cvTree" data-h="430"></canvas>
+<div class="fig-caps"><div class="fc" id="cvTreeCap1"></div></div>
+<div id="cvTree" class="ind-tree"></div>
 <div class="readout" id="treeReadout"></div>
 </div>
 
@@ -1104,6 +1141,10 @@ function dsFix(h){
     return m;
   });
 }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1158,12 +1199,13 @@ module('cvRadius',function(cv){
     dot(ctx,m.px(z0.re),m.py(z0.im),8,'#1565c0','#fff');
     tlabel(ctx,m.px(z0.re)+11,m.py(z0.im)-10,'z₀','#0d47a1');
     var fname = which===1?'f(z) = 1/z':'f(z) = 1/(z²+1)';
-    tlabel(ctx,14,24,fname+' — 绿盘: |z−z₀| < d 内可展开为泰勒级数','#0d47a1','bold 14px Segoe UI');
+    var fnameTex = which===1?'f(z)=\\dfrac{1}{z}':'f(z)=\\dfrac{1}{z^2+1}';
+    setCap('cvRadiusCap1', '$'+fnameTex+'$ — 绿盘: $|z-z_0|&lt;d$ 内可展开为泰勒级数');
     setRO('radiusReadout',
-      '<b>函数</b> '+hl(fname)+' &nbsp;&nbsp; <b>z₀</b> = '+hl(cstr(z0))+'<br>'+
-      '<b>最近奇点距离</b> d = '+hl(fmt(dmin,3))+' &nbsp;&nbsp; <b>泰勒级数收敛半径</b> R = d = '+hl(fmt(dmin,3))+'<br>'+
-      '<b>展开范围:</b> '+hl2('|z − z₀| < '+fmt(dmin,3))+' —— 圆内一切安好, 圆周穿过奇点, 圆外失效<br>'+
-      '<span style="color:#80deea">拖动 z₀ 靠近红色 ✕, 绿盘被"挤压"变小 —— 奇点是泰勒展开的天花板.</span>');
+      '<b>函数</b> $'+fnameTex+'$ &nbsp;&nbsp; <b>$z_0$</b> $='+hl(cstr(z0))+'$<br>'+
+      '<b>最近奇点距离</b> $d='+hl(fmt(dmin,3))+'$ &nbsp;&nbsp; <b>泰勒级数收敛半径</b> $R=d='+hl(fmt(dmin,3))+'$<br>'+
+      '<b>展开范围:</b> '+hl2('$|z-z_0|&lt;'+fmt(dmin,3)+'$')+' —— 圆内一切安好, 圆周穿过奇点, 圆外失效<br>'+
+      '<span style="color:#80deea">拖动 $z_0$ 靠近红色 ✕, 绿盘被"挤压"变小 —— 奇点是泰勒展开的天花板.</span>');
   }
   makeDraggable(cv,function(px,py){
     var f=fitCanvas(cv); if(!f) return;
@@ -1220,17 +1262,17 @@ module('cvTaylor',function(cv){
     plot(taylor,'#7b1fa2',2.4,true);
     var namesTxt={1:'e^z',2:'sin z',3:'cos z'};
     var namesTex={
-      1:'$\\mathrm{e}^z = 1 + z + \\frac{z^2}{2!} + \\frac{z^3}{3!} + \\cdots$',
-      2:'$\\sin z = z - \\frac{z^3}{3!} + \\frac{z^5}{5!} - \\cdots$',
-      3:'$\\cos z = 1 - \\frac{z^2}{2!} + \\frac{z^4}{4!} - \\cdots$'};
-    tlabel(ctx,14,24,'蓝: '+namesTxt[which]+' (真函数)　紫: 泰勒多项式 (N='+N+')','#0d47a1','bold 14px Segoe UI');
-    tlabel(ctx,w-170,h-14,'紫线随 N 增大逐段贴合蓝线','#7b1fa2','12px Segoe UI');
+      1:'$\\mathrm{e}^z = 1 + z + \\dfrac{z^2}{2!} + \\dfrac{z^3}{3!} + \\cdots$',
+      2:'$\\sin z = z - \\dfrac{z^3}{3!} + \\dfrac{z^5}{5!} - \\cdots$',
+      3:'$\\cos z = 1 - \\dfrac{z^2}{2!} + \\dfrac{z^4}{4!} - \\cdots$'};
+    setCap('cvTaylorCap1', '蓝: '+namesTex[which]+' (真函数)　紫: 泰勒多项式 $(N='+N+')$');
+    tlabel(ctx,16,h-14,'紫线随 N 增大逐段贴合蓝线','#7b1fa2','12px Segoe UI');
     // readout values at x=1
     var x1=1, a=taylor(x1), b=ftrue(x1);
     setRO('taylorReadout',
       '<b>函数</b> '+hl(namesTex[which])+'<br>'+
-      '<b>在 x = 1 处:</b> 真值 = '+hl(fmt(b,6))+' &nbsp;&nbsp; 泰勒多项式(N='+N+') = '+hl(fmt(a,6))+' &nbsp;&nbsp; 误差 = '+hl(fmt(Math.abs(a-b),6))+'<br>'+
-      '<span style="color:#80deea">拖动 N 滑块, 观察紫色多项式如何逐项"占领"蓝色曲线 —— 这就是泰勒级数的逼近本质.</span>');
+      '<b>在 $x=1$ 处：</b> 真值 $='+hl(fmt(b,6))+'$ &nbsp;&nbsp; 泰勒多项式 $(N='+N+')='+hl(fmt(a,6))+'$ &nbsp;&nbsp; 误差 $='+hl(fmt(Math.abs(a-b),6))+'$<br>'+
+      '<span style="color:#80deea">拖动 $N$ 滑块, 观察紫色多项式如何逐项"占领"蓝色曲线 —— 这就是泰勒级数的逼近本质.</span>');
   }
   function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
     which=v;
@@ -1248,101 +1290,54 @@ module('cvTree',function(cv){
   var ROUTES={
     1:{ name:'有理分式', color:'#1976d2',
         steps:[
-          ['待展开: 有理分式 P(z)/Q(z)', 0],
-          ['① 部分分式分解 → 拆成 ∑ A/(z−a) 之和', 1],
-          ['② 每个分式配成 A/(1 − z/b) 的标准形', 1],
-          ['③ 套母式  1/(1−w) = ∑ wⁿ', 2],
-          ['④ 收敛范围: |z/b| < 1, 取各分式公共圆域', 3]
+          ['待展开：有理分式 $\\dfrac{P(z)}{Q(z)}$', 0],
+          ['① 部分分式分解 → 拆成 $\\sum\\dfrac{A}{z-a}$ 之和', 1],
+          ['② 每个分式配成 $\\dfrac{A}{1-z/b}$ 的标准形', 1],
+          ['③ 套母式 $\\dfrac{1}{1-w}=\\sum\\limits_{n=0}^{\\infty}w^{n}$', 2],
+          ['④ 收敛范围：$|z/b|&lt;1$，取各分式公共圆域', 3]
         ],
-        tip:'关键: 分母因式分解 + 部分分式. 若要求以 z₀ 为中心展开, 先把 z−z₀ 作为整体提出来.' },
+        tip:'关键: 分母因式分解 + 部分分式. 若要求以 $z_0$ 为中心展开, 先把 $z-z_0$ 作为整体提出来.' },
     2:{ name:'指数 / 三角', color:'#e65100',
         steps:[
-          ['待展开: e^z, sin z, cos z 及其线性组合', 0],
-          ['① 直接套母式(系数已知, 无需分解)', 1],
-          ['② 若含 z 的线性变换, 用代换 z → az+b', 1],
-          ['③ 套母式  eʷ = ∑ wⁿ/n!,  sin w, cos w', 2],
-          ['④ 收敛范围: R = +∞ (整函数)', 3]
+          ['待展开：$\\mathrm{e}^z$、$\\sin z$、$\\cos z$ 及其线性组合', 0],
+          ['① 直接套母式（系数已知，无需分解）', 1],
+          ['② 若含 $z$ 的线性变换，用代换 $z\\to az+b$', 1],
+          ['③ 套母式 $\\mathrm{e}^{w}=\\sum\\limits_{n=0}^{\\infty}\\dfrac{w^{n}}{n!}$，以及 $\\sin w$、$\\cos w$', 2],
+          ['④ 收敛范围：$R=+\\infty$（整函数）', 3]
         ],
-        tip:'eᶻ、sin z、cos z 都是整函数, 收敛半径恒为 +∞. 这就是欧拉公式 e^{iz} = cos z + i sin z 的来源.' },
-    3:{ name:'含 ln', color:'#c62828',
+        tip:'$\\mathrm{e}^z$、$\\sin z$、$\\cos z$ 都是整函数, 收敛半径恒为 $+\\infty$. 这就是欧拉公式 $\\mathrm{e}^{\\mathrm{i}z}=\\cos z+\\mathrm{i}\\sin z$ 的来源.' },
+    3:{ name:'含 $\\ln$', color:'#c62828',
         steps:[
-          ['待展开: 含 ln(1+z) 或 ln(1−z) 的函数', 0],
-          ['① 先写成 ln 与已知式的组合', 1],
-          ['② 用逐项积分: ln(1+z) = ∫₀ᶻ 1/(1+w) dw', 1],
-          ['③ 套母式  ln(1+z) = ∑ (−1)ⁿ⁻¹zⁿ/n', 2],
-          ['④ 收敛范围: |z| < 1 (z = 1 处条件收敛)', 3]
+          ['待展开：含 $\\ln(1+z)$ 或 $\\ln(1-z)$ 的函数', 0],
+          ['① 先写成 $\\ln$ 与已知式的组合', 1],
+          ['② 用逐项积分：$\\ln(1+z)=\\int_0^{z}\\dfrac{\\mathrm{d}w}{1+w}$', 1],
+          ['③ 套母式 $\\ln(1+z)=\\sum\\limits_{n=1}^{\\infty}\\dfrac{(-1)^{n-1}}{n}z^{n}$', 2],
+          ['④ 收敛范围：$|z|&lt;1$（$z=1$ 处条件收敛）', 3]
         ],
-        tip:'ln 不能直接代换 —— 它本质是"积出来的". 先用 1/(1+w) 展开再逐项积分, 是最稳的路线.' },
+        tip:'$\\ln$ 不能直接代换 —— 它本质是"积出来的". 先用 $1/(1+w)$ 展开再逐项积分, 是最稳的路线.' },
     4:{ name:'复合 / 幂函数', color:'#2e7d32',
         steps:[
-          ['待展开: f(g(z)) 或 z^k·f(z) 形式', 0],
-          ['① 代入运算: 把已知式的 z 换成 g(z)', 1],
+          ['待展开：$f(g(z))$ 或 $z^{k}f(z)$ 形式', 0],
+          ['① 代入运算：把已知式的 $z$ 换成 $g(z)$', 1],
           ['② 或逐项求导 / 积分得到新级数', 1],
-          ['③ 套母式(复合后仍是幂级数)', 2],
-          ['④ 收敛范围: 由 |g(z)| < R 反解出 z 的范围', 3]
+          ['③ 套母式（复合后仍是幂级数）', 2],
+          ['④ 收敛范围：由 $|g(z)|&lt;R$ 反解出 $z$ 的范围', 3]
         ],
-        tip:'复合是"把已知展开式中的 z 换成合适的解析函数". 收敛范围必须回到原变量 —— 这一步最容易漏.' }
+        tip:'复合是"把已知展开式中的 $z$ 换成合适的解析函数". 收敛范围必须回到原变量 —— 这一步最容易漏.' }
   };
 
   function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
     var R=ROUTES[cur];
-    ctx.textAlign='left'; ctx.textBaseline='middle';
-
-    var padL=30, padT=54, rowH=Math.min(66,(h-padT-40)/R.steps.length);
-    var bw=w-padL*2;
-
-    // 标题
-    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238'; ctx.textBaseline='alphabetic';
-    ctx.fillText('决策路线 · '+R.name, padL, 28);
-    ctx.font='12px Segoe UI'; ctx.fillStyle='#607d8b';
-    ctx.fillText('按顺序自上而下执行; 每一步都要重新确认收敛范围', padL, 46);
-
-    // 节点
-    var cols=['#37474f','#37474f',R.color,R.color,R.color];
-    var fills=['#eceff1','#f5f5f5','#ffffff','#ffffff','#ffffff'];
-    R.steps.forEach(function(st,i){
-      var y=padT+i*rowH;
-      var bh=rowH-10;
-      // 连接线
-      if(i>0){
-        ctx.strokeStyle='#b0bec5'; ctx.lineWidth=2;
-        ctx.beginPath(); ctx.moveTo(padL+26,y-rowH+bh); ctx.lineTo(padL+26,y); ctx.stroke();
-        // 箭头
-        ctx.beginPath(); ctx.moveTo(padL+26,y); ctx.lineTo(padL+21,y-7); ctx.lineTo(padL+31,y-7); ctx.closePath();
-        ctx.fillStyle='#b0bec5'; ctx.fill();
-      }
-      // 盒子
-      ctx.beginPath();
-      var lv = st[1];
-      var bx = padL + (lv===0?0: lv*14);
-      var bbw = bw - (lv===0?0: lv*14);
-      if(ctx.roundRect) ctx.roundRect(bx,y,bbw,bh,9); else ctx.rect(bx,y,bbw,bh);
-      ctx.fillStyle=fills[lv]; ctx.fill();
-      ctx.strokeStyle=cols[lv]; ctx.lineWidth=(lv===0?2.4:1.8); ctx.stroke();
-      // 左侧色条
-      ctx.fillStyle=cols[lv];
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(bx,y,6,bh,3); else ctx.rect(bx,y,6,bh);
-      ctx.fill();
-      // 文字
-      var txt=st[0];
-      var px=13;
-      ctx.font=(lv===0?'bold ':'')+px+'px Segoe UI';
-      while(ctx.measureText(txt).width>bbw-30 && px>9){ px--; ctx.font=(lv===0?'bold ':'')+px+'px Segoe UI'; }
-      ctx.fillStyle=(lv===0?'#263238':(lv===3?R.color:'#455a64'));
-      ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText(txt, bx+20, y+bh/2);
+    var el=document.getElementById('cvTree'); if(!el) return;
+    var html='<div class="it-sub">按顺序自上而下执行；每一步都要重新确认收敛范围</div><ul class="ct-list">';
+    R.steps.forEach(function(st){
+      var lv=st[1];
+      html+='<li class="ct-step lv'+lv+'" style="--c:'+R.color+'">'+st[0]+'</li>';
     });
-
-    // 底部提示
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    ctx.font='italic 12px Segoe UI'; ctx.fillStyle='#00695c';
-    ctx.fillText('※ '+R.tip, padL, h-14);
-
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    html+='</ul><div class="ct-tip">※ '+R.tip+'</div>';
+    el.innerHTML=html;
+    setCap('cvTreeCap1', '决策路线 · '+R.name);
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} }
   }
 
   function updateRO(){
@@ -1370,85 +1365,46 @@ module('cvTree',function(cv){
 module('cvIndirect',function(cv){
   var cur=1;   // 1: 代换 z→−z   2: 逐项求导   3: 逐项求积
   var DERIVED={
-    1:{ title:'代换 (z → −z)', color:'#1976d2',
-        from:'1/(1−z) = Σ zⁿ  (|z| < 1)',
-        to:'1/(1+z) = Σ (−1)ⁿ zⁿ  (|z| < 1)',
-        lines:['① 在母式中把 z 换成 −z',
-               '② 1/(1−(−z)) = 1/(1+z)',
-               '③ ⇒ 1/(1+z) = 1 − z + z² − z³ + ⋯',
-               '④ 收敛范围: |−z| < 1 即 |z| < 1'],
-        ro:'<b>手段: 代换 z → −z</b><br>母式 $\\frac{1}{1-z}=\\sum\\limits_{n=0}^{\\infty}z^n$ &nbsp;→&nbsp; $\\frac{1}{1+z}=\\sum\\limits_{n=0}^{\\infty}(-1)^n z^n$ ($|z| &lt; 1$)<br>'+
+    1:{ title:'代换 $(z\\to -z)$', color:'#1976d2',
+        from:'$\\dfrac{1}{1-z}=\\sum\\limits_{n=0}^{\\infty}z^n$　($|z|&lt;1$)',
+        to:'$\\dfrac{1}{1+z}=\\sum\\limits_{n=0}^{\\infty}(-1)^n z^n$　($|z|&lt;1$)',
+        lines:['① 在母式中把 $z$ 换成 $-z$',
+               '② $\\dfrac{1}{1-(-z)}=\\dfrac{1}{1+z}$',
+               '③ $\\Rightarrow\\;\\dfrac{1}{1+z}=1-z+z^{2}-z^{3}+\\cdots$',
+               '④ 收敛范围：$|-z|&lt;1$ 即 $|z|&lt;1$'],
+        ro:'<b>手段: 代换 $z\\to -z$</b><br>母式 $\\frac{1}{1-z}=\\sum\\limits_{n=0}^{\\infty}z^n$ &nbsp;→&nbsp; $\\frac{1}{1+z}=\\sum\\limits_{n=0}^{\\infty}(-1)^n z^n$ ($|z| &lt; 1$)<br>'+
            '<span style="color:#80deea">代换不改变「离最近奇点距离」的判据 —— 收敛半径仍由 $z=-1$ 决定.</span>' },
     2:{ title:'逐项求导', color:'#e65100',
-        from:'1/(1−z) = Σ zⁿ  (|z| < 1)',
-        to:'1/(1−z)² = Σ n zⁿ⁻¹  (|z| < 1)',
+        from:'$\\dfrac{1}{1-z}=\\sum\\limits_{n=0}^{\\infty}z^n$　($|z|&lt;1$)',
+        to:'$\\dfrac{1}{(1-z)^{2}}=\\sum\\limits_{n=1}^{\\infty}n\\,z^{n-1}$　($|z|&lt;1$)',
         lines:['① 母式两端逐项求导',
-               '② d/dz [1/(1−z)] = 1/(1−z)²',
-               '③ ⇒ 1/(1−z)² = 1 + 2z + 3z² + ⋯',
-               '④ 求导不改变收敛半径: 仍为 |z| < 1'],
+               '② $\\dfrac{\\mathrm{d}}{\\mathrm{d}z}\\left[\\dfrac{1}{1-z}\\right]=\\dfrac{1}{(1-z)^{2}}$',
+               '③ $\\Rightarrow\\;\\dfrac{1}{(1-z)^{2}}=1+2z+3z^{2}+\\cdots$',
+               '④ 求导不改变收敛半径：仍为 $|z|&lt;1$'],
         ro:'<b>手段: 逐项求导</b><br>母式 $\\frac{1}{1-z}$ &nbsp;→&nbsp; $\\frac{1}{(1-z)^2}=\\sum\\limits_{n=1}^{\\infty} n\\,z^{n-1}$ ($|z| &lt; 1$)<br>'+
            '<span style="color:#80deea">逐项求导相当于对系数乘以 $n$, 而 $\\sqrt[n]{n}\\to 1$ —— 收敛半径 $R$ 不变.</span>' },
     3:{ title:'逐项求积', color:'#2e7d32',
-        from:'1/(1+z) = Σ (−1)ⁿ zⁿ  (|z| < 1)',
-        to:'ln(1+z) = Σ (−1)ⁿ⁻¹ zⁿ/n  (|z| < 1)',
-        lines:['① 先由代换得 1/(1+z) 的展开式',
-               '② 两端沿 0→z 的路线逐项积分',
-               '③ ⇒ ln(1+z) = z − z²/2 + z³/3 − ⋯',
-               '④ 收敛半径不变: 仍为 |z| < 1'],
+        from:'$\\dfrac{1}{1+z}=\\sum\\limits_{n=0}^{\\infty}(-1)^n z^n$　($|z|&lt;1$)',
+        to:'$\\ln(1+z)=\\sum\\limits_{n=1}^{\\infty}\\dfrac{(-1)^{n-1}}{n}z^{n}$　($|z|&lt;1$)',
+        lines:['① 先由代换得 $\\dfrac{1}{1+z}$ 的展开式',
+               '② 两端沿 $0\\to z$ 的路线逐项积分',
+               '③ $\\Rightarrow\\;\\ln(1+z)=z-\\dfrac{z^{2}}{2}+\\dfrac{z^{3}}{3}-\\cdots$',
+               '④ 收敛半径不变：仍为 $|z|&lt;1$'],
         ro:'<b>手段: 逐项求积</b><br>母式 $\\frac{1}{1+z}$ &nbsp;→&nbsp; $\\ln(1+z)=\\sum\\limits_{n=1}^{\\infty}\\frac{(-1)^{n-1}}{n}z^n$ ($|z| &lt; 1$)<br>'+
            '<span style="color:#80deea">积分下限给出常数项; 收敛半径不变, 但端点要单独讨论.</span>' }
   };
   function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
     var D=DERIVED[cur];
-    function fitText(txt,maxW,basePx,bold){
-      var px=basePx;
-      ctx.font=(bold?'bold ':'')+px+'px Segoe UI';
-      while(ctx.measureText(txt).width>maxW && px>9){ px--; ctx.font=(bold?'bold ':'')+px+'px Segoe UI'; }
-      return px;
-    }
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
-    ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
-    ctx.fillText('派生树 · '+D.title, 24, 28);
-    ctx.font='12px Segoe UI'; ctx.fillStyle='#607d8b';
-    ctx.fillText('一条母式, 三种派生手段; 每一步都要重新确认收敛范围', 24, 48);
-    var bw=Math.min(w-120,440), bx=(w-bw)/2;
-    function rbox(by,bh,col,fill){
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,10); else ctx.rect(bx,by,bw,bh);
-      ctx.fillStyle=fill; ctx.fill();
-      ctx.strokeStyle=col; ctx.lineWidth=2.2; ctx.stroke();
-      ctx.fillStyle=col;
-      ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(bx,by,6,bh,3); else ctx.rect(bx,by,6,bh);
-      ctx.fill();
-    }
-    var rootY=72, rootH=44;
-    rbox(rootY,rootH,'#37474f','#eceff1');
-    var rt='母式: '+D.from, px1=fitText(rt,bw-28,13.5,true);
-    ctx.font='bold '+px1+'px Segoe UI'; ctx.fillStyle='#263238'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(rt, w/2, rootY+rootH/2);
-    var arrowTop=rootY+rootH, arrowBot=arrowTop+34;
-    ctx.strokeStyle=D.color; ctx.lineWidth=2.6;
-    ctx.beginPath(); ctx.moveTo(w/2,arrowTop); ctx.lineTo(w/2,arrowBot); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(w/2,arrowBot); ctx.lineTo(w/2-8,arrowBot-11); ctx.lineTo(w/2+8,arrowBot-11); ctx.closePath();
-    ctx.fillStyle=D.color; ctx.fill();
-    var derY=arrowBot+8, derH=46;
-    rbox(derY,derH,D.color,'#fff');
-    var dt='派生: '+D.to, px2=fitText(dt,bw-28,13.5,true);
-    ctx.font='bold '+px2+'px Segoe UI'; ctx.fillStyle=D.color; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(dt, w/2, derY+derH/2);
-    var sy=derY+derH+26;
-    ctx.textAlign='left'; ctx.textBaseline='middle';
-    D.lines.forEach(function(t,i){
-      var px=12; ctx.font=px+'px Segoe UI';
-      while(ctx.measureText(t).width>w-70 && px>9){ px--; ctx.font=px+'px Segoe UI'; }
-      ctx.fillStyle='#455a64';
-      ctx.fillText(t, 30, sy+i*22);
-    });
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    var el=document.getElementById('cvIndirect');
+    if(!el) return;
+    var html='<div class="it-sub">一条母式，三种派生手段；每一步都要重新确认收敛范围</div>'+
+      '<div class="it-box it-from"><b>母式</b> '+D.from+'</div>'+
+      '<div class="it-arrow" style="color:'+D.color+'">&#8595;</div>'+
+      '<div class="it-box it-to" style="border-color:'+D.color+';color:'+D.color+'"><b>派生</b> '+D.to+'</div>'+
+      '<ul class="it-steps">'+D.lines.map(function(t){ return '<li>'+t+'</li>'; }).join('')+'</ul>';
+    el.innerHTML=html;
+    setCap('cvIndirectCap1', '派生树 · '+D.title);
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} }
   }
   function updateRO(){ setRO('indReadout', DERIVED[cur].ro); }
   ['btnInd1','btnInd2','btnInd3'].forEach(function(id,i){

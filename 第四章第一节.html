@@ -192,12 +192,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -422,13 +430,17 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 .vs-card.single .vs-t { color:#1b5e20; }
 .vs-card.multi .vs-t { color:#880e4f; }
 @media (max-width: 720px) { .vs-grid { grid-template-columns:1fr; } }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第四章 第1节 复级数</h1>
     <p>复数项级数 &middot; 幂级数与阿贝尔定理 &middot; 收敛圆与收敛半径</p>
@@ -666,6 +678,7 @@ $$\sum_{n=0}^{\infty} c_n z^n = c_0 + c_1 z + c_2 z^2 + \cdots$$
     <input type="range" id="rngRadN" min="1" max="40" value="6">
   </div>
 </div>
+<div class="fig-caps"><div class="fc" id="cvRadiusLabCap1"></div></div>
 <canvas id="cvRadiusLab" data-h="460"></canvas>
 <div class="readout" id="radLabReadout"></div>
 </div>
@@ -734,6 +747,9 @@ $$S_n = 1 + z + z^2 + \cdots + z^{n-1} = \begin{cases} \dfrac{1 - z^n}{1 - z}, &
     <button class="control-btn" id="btnConv2">$\sum\limits_{n=1}^{\infty}\frac{(-1)^n z^n}{n}$</button>
     <button class="control-btn" id="btnConv3">$\sum\limits_{n=0}^{\infty} z^n$</button>
   </div>
+</div>
+<div class="fig-caps">
+<div class="fc" id="cvCircleCap1"></div>
 </div>
 <canvas id="cvCircle" data-h="420"></canvas>
 <div class="readout" id="circleReadout"></div>
@@ -1367,7 +1383,30 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,px,py,html,color,font){
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+(cv.id||'c')+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.left=px+'px'; sp.style.top=py+'px'; sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    var _k=ctx.canvas.width/(ctx.canvas.getBoundingClientRect().width||1)||1;
+    __cvLabel(ctx.canvas,'L'+Math.round(x)+'_'+Math.round(y),(_m.a*x+_m.c*y+_m.e)/_k,(_m.b*x+_m.d*y+_m.f)/_k,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1391,6 +1430,10 @@ function dsFix(h){
     return m;
   });
 }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
@@ -1448,10 +1491,10 @@ module('cvDisc',function(cv){
     // sample interior point z and conclusion
     tlabel(ctx,14,h-14,'蓝色点 z₁ 已知收敛 ⇒ 绿色圆内每一点都绝对收敛 (阿贝尔定理)','rgba(38,50,56,.85)','13px Segoe UI');
     setRO('discReadout',
-      '<b>已知收敛点</b> z₁ = '+hl(cstr(z1,2))+' &nbsp;&nbsp; |z₁| = '+hl(fmt(R0,2))+'<br>'+
-      '<b>阿贝尔定理结论:</b> '+hl2('在圆域 |z| < |z₁| 内绝对收敛')+' &nbsp;|&nbsp; '+
-      '<b>在 |z| &gt; |z₁| 内发散</b> (反证法)'+ '<br>'+
-      '<span style="color:#80deea">圆周 |z| = |z₁| 上的点不受定理约束, 敛散性需具体分析 —— 收敛半径 R ≥ |z₁|.</span>');
+      '<b>已知收敛点</b> $z_1='+hl(cstr(z1,2))+'$ &nbsp;&nbsp; $|z_1|='+hl(fmt(R0,2))+'$<br>'+
+      '<b>阿贝尔定理结论:</b> '+hl2('在圆域 $|z|&lt;|z_1|$ 内绝对收敛')+' &nbsp;|&nbsp; '+
+      '<b>在 $|z|&gt;|z_1|$ 内发散</b> (反证法)'+ '<br>'+
+      '<span style="color:#80deea">圆周 $|z|=|z_1|$ 上的点不受定理约束, 敛散性需具体分析 —— 收敛半径 $R\\ge|z_1|$.</span>');
   }
   return {draw:draw};
 });
@@ -1490,18 +1533,19 @@ module('cvCircle',function(cv){
     }
     axes(ctx,w,h,m);
     // labels
-    tlabel(ctx,cx+R*0.72,cy-R*0.72,'|z| < 1 收敛','#1b5e20','bold 13px Segoe UI');
+    tlabel(ctx,cx+R*0.22,cy-R*0.62,'|z| < 1 收敛','#1b5e20','bold 13px Segoe UI');
     var titles={1:'∑ zⁿ/n³ — 圆周上处处绝对收敛',2:'∑ (−1)ⁿ zⁿ/n — 圆周上部分收敛',3:'∑ zⁿ — 圆周上处处发散'};
-    tlabel(ctx,14,24,titles[which],'#0d47a1','bold 14px Segoe UI');
+    var titlesTex={1:'$\\sum\\dfrac{z^n}{n^3}$ —— 圆周上处处绝对收敛',2:'$\\sum\\dfrac{(-1)^n z^n}{n}$ —— 圆周上部分收敛',3:'$\\sum z^n$ —— 圆周上处处发散'};
+    setCap('cvCircleCap1', titlesTex[which]);
     // legend
     tlabel(ctx,w-260,h-56,'● 绝对收敛 (深绿)','#1b5e20','12px Segoe UI');
     tlabel(ctx,w-260,h-36,'● 条件收敛 (橙)','#e65100','12px Segoe UI');
     tlabel(ctx,w-260,h-16,'● 发散 (红)','#c62828','12px Segoe UI');
     setRO('circleReadout',
-      '<b>当前级数</b> '+hl(titles[which])+'<br>'+
-      '<b>收敛半径</b> R = 1; &nbsp; <b>圆内</b> '+hl2('绝对收敛')+
+      '<b>当前级数</b> '+hl(titlesTex[which])+'<br>'+
+      '<b>收敛半径</b> $R=1$; &nbsp; <b>圆内</b> '+hl2('绝对收敛')+
       ' &nbsp;|&nbsp; <b>圆外</b> 发散 &nbsp;|&nbsp; <b>圆周</b> '+
-      (which===1?hl2('处处绝对收敛'): which===2?hl('z=1 收敛, z=−1 发散, 其余点条件收敛'):hl('处处发散'))+'<br>'+
+      (which===1?hl2('处处绝对收敛'): which===2?hl('$z=1$ 收敛, $z=-1$ 发散, 其余点条件收敛'):hl('处处发散'))+'<br>'+
       '<span style="color:#80deea">结论: 收敛圆周是"灰色地带", 必须逐点(或整体)具体分析.</span>');
   }
   function bind(id,v){ var b=document.getElementById(id); if(b) b.addEventListener('click',function(){
@@ -1533,7 +1577,7 @@ module('cvPartial',function(cv){
       dot(ctx,m.px(z.re),m.py(z.im),8,'#c62828','#fff');
       tlabel(ctx,m.px(z.re)+12,m.py(z.im)-10,'z='+cstr(z,2)+' 在圆外: 发散!','#c62828');
       setRO('partialReadout',
-        '<b>z</b> = '+hl(cstr(z,2))+' , &nbsp; |z| = '+hl(fmt(cabs(z),3))+' ≥ 1<br>'+
+        '<b>$z$</b> $='+hl(cstr(z,2))+'$ , &nbsp; $|z|='+hl(fmt(cabs(z),3))+'\\ge 1$<br>'+
         '<b>结论:</b> '+hl('点在收敛圆之外或圆周上, 部分和不收敛, 逼近失效.')+'<br>'+
         '<span style="color:#80deea">请把红点拖回绿色圆内继续观察.</span>');
       return;
@@ -1566,10 +1610,10 @@ module('cvPartial',function(cv){
     dot(ctx,m.px(z.re),m.py(z.im),8,'#c62828','#fff');
     tlabel(ctx,m.px(z.re)+12,m.py(z.im)+16,'z='+cstr(z,2),'#b71c1c');
     setRO('partialReadout',
-      '<b>z</b> = '+hl(cstr(z,2))+' &nbsp;&nbsp; <b>项数 N</b> = '+hl(String(N))+'<br>'+
-      '<b>部分和 S_N(z)</b> = '+hl(cstr(s,4))+'<br>'+
-      '<b>和函数 S(z)</b> = 1/(1−z) = '+hl(cstr(S,4))+'<br>'+
-      '<b>误差</b> |S − S_N| = '+hl(fmt(cabs(csub(S,s)),5))+' &nbsp; (理论上 ≈ |z|^{N+1}/|1−z| = '+fmt(Math.pow(cabs(z),N+1)/cabs(csub(C(1,0),z)),5)+')<br>'+
+      '<b>$z$</b> $='+hl(cstr(z,2))+'$ &nbsp;&nbsp; <b>项数</b> $N='+hl(String(N))+'$<br>'+
+      '<b>部分和</b> $S_N(z)='+hl(cstr(s,4))+'$<br>'+
+      '<b>和函数</b> $S(z)=\\dfrac{1}{1-z}='+hl(cstr(S,4))+'$<br>'+
+      '<b>误差</b> $|S-S_N|='+hl(fmt(cabs(csub(S,s)),5))+'$ &nbsp; (理论上 $\\approx\\dfrac{|z|^{N+1}}{|1-z|}='+fmt(Math.pow(cabs(z),N+1)/cabs(csub(C(1,0),z)),5)+'$)<br>'+
       '<span style="color:#80deea">紫色折线是部分和在复平面上走出的一条螺线路径 —— 它正螺旋收向橙色点 S(z).</span>');
   }
   makeDraggable(cv,function(px,py){
@@ -1585,18 +1629,18 @@ module('cvPartial',function(cv){
 module('cvRadiusLab',function(cv){
   // 每个级数: 系数 cn(n) 与理论 lambda / R
   var CASES={
-    rad1:{ name:'∑ zⁿ/n!', color:'#2e7d32', lambda:0, Rlab:'+∞',
+    rad1:{ name:'∑ zⁿ/n!', tex:'\\sum\\dfrac{z^n}{n!}', color:'#2e7d32', lambda:0, Rlab:'+∞',
            cn:function(n){ var f=1; for(var k=2;k<=n;k++) f*=k; return 1/f; },
-           note:'eᶻ 的展开: 比值 |cₙ₊₁/cₙ| = 1/(n+1) → 0, 故 R = +∞' },
-    rad2:{ name:'∑ n! zⁿ', color:'#c62828', lambda:'∞', Rlab:'0',
+           note:'$\\mathrm{e}^z$ 的展开: 比值 $\\left|\\dfrac{c_{n+1}}{c_n}\\right|=\\dfrac{1}{n+1}\\to 0$, 故 $R=+\\infty$' },
+    rad2:{ name:'∑ n! zⁿ', tex:'\\sum n!\\,z^n', color:'#c62828', lambda:'∞', Rlab:'0',
            cn:function(n){ var f=1; for(var k=2;k<=n;k++) f*=k; return f; },
-           note:'比值 |cₙ₊₁/cₙ| = n+1 → +∞, λ = +∞, 故 R = 0 (仅在原点收敛)' },
-    rad3:{ name:'∑ zⁿ/n³', color:'#1976d2', lambda:1, Rlab:'1',
+           note:'比值 $\\left|\\dfrac{c_{n+1}}{c_n}\\right|=n+1\\to+\\infty$, $\\lambda=+\\infty$, 故 $R=0$ (仅在原点收敛)' },
+    rad3:{ name:'∑ zⁿ/n³', tex:'\\sum\\dfrac{z^n}{n^3}', color:'#1976d2', lambda:1, Rlab:'1',
            cn:function(n){ return n===0 ? 1 : 1/Math.pow(n,3); },
-           note:'比值 → 1, 故 R = 1; 且圆周上 ∑1/n³ 收敛, 收敛范围是 |z| ≤ 1' },
-    rad4:{ name:'∑ 2ⁿ zⁿ', color:'#e65100', lambda:2, Rlab:'1/2',
+           note:'比值 $\\to1$, 故 $R=1$; 且圆周上 $\\sum 1/n^3$ 收敛, 收敛范围是 $|z|\\le1$' },
+    rad4:{ name:'∑ 2ⁿ zⁿ', tex:'\\sum 2^n z^n', color:'#e65100', lambda:2, Rlab:'1/2',
            cn:function(n){ return Math.pow(2,n); },
-           note:'比值 |cₙ₊₁/cₙ| = 2 恒为常数, λ = 2, 故 R = 1/2' }
+           note:'比值 $\\left|\\dfrac{c_{n+1}}{c_n}\\right|=2$ 恒为常数, $\\lambda=2$, 故 $R=1/2$' }
   };
 
   var cur='rad1', N=6;
@@ -1621,9 +1665,9 @@ module('cvRadiusLab',function(cv){
     // ---- 顶部标题 ----
     ctx.textAlign='left'; ctx.textBaseline='alphabetic';
     ctx.font='bold 15px Segoe UI'; ctx.fillStyle='#263238';
-    ctx.fillText('级数 '+cas.name+'  ·  逐项观察 λ 的收敛', padL-36, 26);
+    setCap('cvRadiusLabCap1', '级数 $'+cas.tex+'$  ·  逐项观察 $\\lambda$ 的收敛');
     ctx.font='13px Segoe UI'; ctx.fillStyle='#546e7a';
-    ctx.fillText('蓝: 比值法 |cₙ₊₁/cₙ|    绿: 根值法 ⁿ√|cₙ|    虚线: 真实 λ', padL-36, 45);
+    tlabel(ctx,padL-36,45,'蓝: 比值法 $\\left|\\dfrac{c_{n+1}}{c_n}\\right|$　绿: 根值法 $\\sqrt[n]{|c_n|}$　虚线: 真实 $\\lambda$','#546e7a','13px Segoe UI');
 
     // ---- 数值计算 ----
     var M=Math.min(N,40);
@@ -1732,9 +1776,9 @@ module('cvRadiusLab',function(cv){
     var ratioSt = isFinite(L.ratio)? L.ratio.toFixed(4) : '∞';
     var rootSt  = isFinite(L.root )? L.root.toFixed(4)  : '∞';
     setRO('radLabReadout',
-      '当前级数 <b>'+cas.name+'</b>, 取前 <span class="hl">'+N+'</span> 项 &nbsp;|&nbsp; '+
-      '第 N 项 比值 = '+hl(ratioSt)+', 根值 = '+hl2(rootSt)+' &nbsp;|&nbsp; '+
-      '理论 λ = <b>'+(cas.lambda==='∞'?'+∞':cas.lambda)+'</b>, 收敛半径 R = <b>'+Rst+'</b><br>'+
+      '当前级数 $'+cas.tex+'$，取前 '+hl(String(N))+' 项 &nbsp;|&nbsp; '+
+      '第 $N$ 项：比值 $='+hl(ratioSt)+'$，根值 $='+hl2(rootSt)+'$ &nbsp;|&nbsp; '+
+      '理论 $\\lambda='+(cas.lambda==='∞'?'+\\infty':cas.lambda)+'$，收敛半径 $R='+Rst+'$<br>'+
       '<span style="color:#80deea">'+cas.note+'</span>');
   }
 

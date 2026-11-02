@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -102,6 +103,8 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e0e0e0;
     overflow-x: auto;
 }
+/* 长公式不断行: 放不下时横向滚动, 保证积分上下限与一行结构 */
+.formula-box mjx-container[display="true"], .box-formula mjx-container[display="true"] { white-space: nowrap !important; }
 .box-key {
     background: linear-gradient(135deg, #e3f2fd, #bbdefb);
     border-radius: 12px; padding: 18px 22px; margin: 15px 0;
@@ -198,12 +201,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -412,12 +424,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第七章 第2节 傅里叶积分与傅里叶变换</h1>
     <p>从离散谱到连续谱 &middot; 傅氏积分定理 &middot; 傅里叶变换与逆变换 &middot; 连续频谱的物理意义 &middot; 典型例题</p>
@@ -426,7 +442,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="info-box">
 <strong>学习目标:</strong>
 1. 理解从傅里叶级数到傅里叶积分的过渡思想: 周期 $T\to\infty$ 时, 频谱的角频率 $\omega=n\omega_0$ 之间的间隔 $\omega_0=\frac{2\pi}{T}\to 0$, 一根一根分开的<b>离散谱</b>逐渐"连成一片", 变成<b>连续谱</b>;
-2. 记住<b>傅氏积分定理 (定理2.1)</b> 的条件与结论: $f(t)$ 在 $(-\infty,+\infty)$ 上绝对可积且分段光滑时, 在连续点处有 $f(t)=\frac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$, 而在间断点处取 $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$;
+2. 记住<b>傅氏积分定理 (定理2.1)</b> 的条件与结论: $f(t)$ 在 $(-\infty,+\infty)$ 上绝对可积且分段光滑时, 在连续点处有 $f(t)=\frac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$, 而在间断点处取 $\frac{1}{2}\left[f(t+0)+f(t-0)\right]$;
 3. 掌握<b>傅里叶变换 (定义2.1)</b>: $F(\omega)=\mathscr{F}[f(t)]=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\mathrm{d}t$ 与逆变换 $f(t)=\mathscr{F}^{-1}[F(\omega)]=\frac{1}{2\pi}\int_{-\infty}^{+\infty}F(\omega)\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$, 并记住<b>象函数</b>与<b>象原函数</b>两个术语;
 4. 理解 $F(\omega)$ 的<b>物理意义</b>: 它是 $f(t)$ 的连续频谱, $|F(\omega)|$ 是连续振幅谱 (偶函数), $\arg F(\omega)$ 是相位谱 (奇函数), 并会与傅里叶级数的离散谱作对比;
 5. 会用<b>单边指数衰减函数</b> $f(t)=\mathrm{e}^{-\beta t}u(t)$ 与<b>矩形脉冲 (门函数)</b> 两个典型例子求傅氏变换与逆变换, 并由此得到含参变量的广义积分与 $\int_{0}^{+\infty}\frac{\sin\omega}{\omega}\mathrm{d}\omega=\frac{\pi}{2}$.
@@ -471,7 +487,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 则重复脉冲的系数满足 $T c_n=F(\omega_n)$, 即 $c_n=\frac{1}{T}F(\omega_n)$. 记谱线间隔 $\Delta\omega=\omega_0=\frac{2\pi}{T}$, 于是 $\frac{1}{T}=\frac{\Delta\omega}{2\pi}$, 傅里叶级数可以改写成
 <div class="box-formula">$$f_T(t)=\sum\limits_{n=-\infty}^{+\infty}\dfrac{1}{T}F(\omega_n)\mathrm{e}^{\mathrm{i}\omega_n t}=\dfrac{1}{2\pi}\sum\limits_{n=-\infty}^{+\infty}F(\omega_n)\mathrm{e}^{\mathrm{i}\omega_n t}\,\Delta\omega.$$</div>
 当 $T\to\infty$ 时: 谱线间隔 $\Delta\omega=\frac{2\pi}{T}\to 0$, 求和区间 $-\frac{T}{2}\le t\le\frac{T}{2}$ 扩张为 $(-\infty,+\infty)$, 右端的<b>黎曼和</b>自然过渡为积分, 于是得到
-<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
 一句话: <b>谱线间隔 $\omega_0\to 0$, 离散谱"连成一片", 成为连续谱</b>; 求和 $\sum$ 变成积分 $\int$, 离散频率 $n\omega_0$ 变成连续频率 $\omega$.
 </div>
 
@@ -500,14 +516,14 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <span style="color:#c62828"><b>(2)</b></span> $f(t)$ 在 $(-\infty,+\infty)$ 上<b>绝对可积</b>, 即 $\int_{-\infty}^{+\infty}|f(t)|\,\mathrm{d}t$ 收敛.
 <br><br>
 则在 $f(t)$ 的<b>连续点</b>处有
-<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
 右端这个式子称为 $f(t)$ 的<b>傅氏积分公式</b> (也称傅氏积分).
 </div>
 
 <div class="box-result">
 <div class="res-label">间断点处收敛到什么?</div>
 在 $f(t)$ 的<b>间断点</b> $t$ 处, 傅氏积分公式右端的积分收敛于左右极限的算术平均:
-<div class="box-formula">$$\dfrac{1}{2}\left[f(t+0)+f(t-0)\right]=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
+<div class="box-formula">$$\dfrac{1}{2}\left[f(t+0)+f(t-0)\right]=\dfrac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega.$$</div>
 这与傅里叶级数"连续点取函数值、间断点取平均值"的结论完全一致, 只是把离散的求和换成了连续的积分.
 </div>
 
@@ -526,7 +542,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="box-key">
 <div class="title">先把傅氏积分公式"拆成两层"</div>
 在傅氏积分公式
-<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$$</div>
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\,\mathrm{d}\omega$$</div>
 中, 方括号里是一个只与 $\omega$ 有关、与 $t$ 无关的定积分. 把它的自变量统一写成 $t$, 并单独记作 $F(\omega)$:
 <div class="box-formula">$$F(\omega)=\int_{-\infty}^{+\infty}f(t)\mathrm{e}^{-\mathrm{i}\omega t}\,\mathrm{d}t, \tag{7.2}$$</div>
 再代回方括号, 右端便化为
@@ -711,6 +727,8 @@ $f(t)$ 称为 $F(\omega)$ 的<b>象原函数</b>.
 <div class="chart-container">
 <h3>交互: 门函数与它的频谱 (脉宽可调) <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图是门函数 $f(t)$ ($|t|&lt;\frac{\tau}{2}$ 时为 $1$, 其余为 $0$); 右图是它的振幅谱 $|F(\omega)|=\frac{2}{\omega}\left|\sin\frac{\tau\omega}{2}\right|$. 拖动滑块改变脉宽 $\tau$: 门函数越<b>窄</b>, 频谱主瓣越<b>宽</b>、零点越"远"; 门函数越<b>宽</b>, 频谱越集中于低频. 竖直的虚线标出了第一对零点 $\omega=\pm\frac{2\pi}{\tau}$ —— 它们围成的"主瓣"宽度为 $\frac{4\pi}{\tau}$.</div>
+<div class="xcap" id="capGate"></div>
+<div class="fig-caps"><div class="fc" id="cvGateCap1"></div></div>
 <canvas id="cvGate" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1025,7 +1043,7 @@ $f(t)$ 称为 $F(\omega)$ 的<b>象原函数</b>.
 <div class="box-key">
 <div class="title">中国古代智慧: "一尺之棰"与《九章算术》"均输" —— 连续累积的古代表达</div>
 《庄子·天下篇》记载惠施的一句话: "<b>一尺之棰, 日取其半, 万世不竭</b>." 一根一尺长的木棍, 每天取走一半, 取之不尽、取之不完 —— 古人用最朴素的图像, 讲出了"无穷可分"与"无穷累积"的思想. 而本节所讲的傅里叶积分, 正是"无穷多个无穷小量连续累加"的结果: 把连续变化的频率成分一份一份地"取"过来, 再积分起来.
-<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int_{-\infty}^{+\infty}\left[\int_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$$</div>
+<div class="box-formula">$$f(t)=\dfrac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\left[\int\limits_{-\infty}^{+\infty}f(\tau)\mathrm{e}^{-\mathrm{i}\omega\tau}\mathrm{d}\tau\right]\mathrm{e}^{\mathrm{i}\omega t}\mathrm{d}\omega$$</div>
 这一串积分号写的, 正是"一份一份地取、再连续累积"的现代形态.
 <br><br>
 再如《九章算术》"<b>均输</b>"一章: 各地输送赋税, 路程有远近、运费有多寡, 古人要按一定法则去"平均"分配, 使总量在连续变化的条件下达到均衡. 这种"在连续变化的量之间做分配与累积"的思路, 与积分的思想异曲同工 —— <b>无论是分棰还是均输, 中国古人早已在"连续"这条路上走了很远.</b>
@@ -1210,12 +1228,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1236,7 +1256,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1264,9 +1326,14 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
-function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=iiFix(html);
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1328,7 +1395,7 @@ module('cvPeriod',function(cv){
       cnt++;
     }
     ctx.restore();
-    tlabel(ctx,L,24,'周期 T 增大 ⇒ 离散谱线 (蓝) 越来越密, 逐点落在连续频谱 (灰虚线) 上','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,L,24,'周期 $T$ 增大 ⇒ 离散谱线 (蓝) 越来越密, 逐点落在连续频谱 (灰虚线) 上','#37474f','bold 12.5px Segoe UI');
     setRO('perReadout',
       '周期 $T='+fmt(T)+'$: 谱线间隔 $\\omega_0=\\frac{2\\pi}{T}='+fmt(2*Math.PI/T)+'$, 在 $|\\omega|\\le '+WMAX+'$ 内共有 '+cnt+' 根谱线.<br>'+
       hl('$T$ 增大 $\\Rightarrow$ 间隔 $\\omega_0\\to 0$, 离散谱线越来越密, 趋于连续频谱')+'.<br>'+
@@ -1378,7 +1445,7 @@ module('cvDef',function(cv){
     ctx.stroke();
     dot(ctx,m2.px(0),m2.py(mmax),4.5,'#c62828','#fff');
     ctx.restore();
-    setCap('cvSpectrumCap2','频域: $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^2+\\omega^2}}$ (橙),  峰值 $\\frac{1}{\\beta}='+fmt(1/B)+'$');
+    setCap('cvSpectrumCap2','频域: $|F(\\omega)|=\\dfrac{1}{\\sqrt{\\beta^2+\\omega^2}}$ (橙),  峰值 $\\dfrac{1}{\\beta}='+fmt(1/B)+'$');
     setRO('defReadout',
       '取 $\\beta='+fmt(B)+'$: $f(t)=\\mathrm{e}^{-\\beta t}u(t)$ 的傅氏变换为 $F(\\omega)=\\frac{1}{\\beta+\\mathrm{i}\\omega}=\\frac{\\beta-\\mathrm{i}\\omega}{\\beta^{2}+\\omega^{2}}$, 故 $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^{2}+\\omega^{2}}}$.<br>'+
       hl('振幅谱峰值 $|F(0)|=\\frac{1}{\\beta}='+fmt(1/B)+'$; 相位谱 $\\arg F(\\omega)=-\\arctan\\frac{\\omega}{\\beta}$.')+'<br>'+
@@ -1413,7 +1480,7 @@ module('cvSpectrum',function(cv){
     dot(ctx,m1.px(-2),m1.py(1/Math.sqrt(B*B+4)),3.6,'#e65100','#fff');
     dot(ctx,m1.px(2),m1.py(1/Math.sqrt(B*B+4)),3.6,'#e65100','#fff');
     ctx.restore();
-    tlabel(ctx,12,26,'连续振幅谱 |F(ω)|: 偶函数, 关于纵轴对称','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,12,26,'连续振幅谱 $|F(\\omega)|$: 偶函数, 关于纵轴对称','#37474f','bold 12.5px Segoe UI');
     // ---- 右: 相位谱 arg F(ω)=-arctan(ω/β) (奇函数) ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,40);
@@ -1435,7 +1502,7 @@ module('cvSpectrum',function(cv){
       if(first){ ctx.moveTo(qx,qy); first=false; } else ctx.lineTo(qx,qy);
     }
     ctx.stroke(); ctx.restore();
-    tlabel(ctx,sx,26,'相位谱 arg F(ω): 奇函数, 关于原点对称','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,sx,26,'相位谱 $\\arg F(\\omega)$: 奇函数, 关于原点对称','#37474f','bold 12.5px Segoe UI');
     setRO('specReadout2',
       '取 $\\beta='+fmt(B)+'$: $|F(\\omega)|=\\frac{1}{\\sqrt{\\beta^{2}+\\omega^{2}}}$ 为<b>偶函数</b>, 在 $\\omega=0$ 取最大值 $\\frac{1}{\\beta}='+fmt(1/B)+'$, 两侧等高对称;<br>'+
       hl('$\\arg F(\\omega)=-\\arctan\\frac{\\omega}{\\beta}$ 为<b>奇函数</b>, 当 $\\omega\\to\\pm\\infty$ 时分别趋于 $\\mp\\frac{\\pi}{2}$.')+'<br>'+
@@ -1475,7 +1542,7 @@ module('cvGate',function(cv){
     dot(ctx,m1.px(-tau/2),m1.py(E),4,'#1565c0','#fff');
     dot(ctx,m1.px(tau/2),m1.py(E),4,'#1565c0','#fff');
     ctx.restore();
-    tlabel(ctx,12,26,'门函数: 宽 τ = '+fmt(tau)+', 高 E = 1','#37474f','bold 12.5px Segoe UI');
+    setCap('cvGateCap1', '门函数: 宽 $\\tau='+fmt(tau)+'$, 高 $E=1$');;
     // ---- 右: 振幅谱 |F(ω)| ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,40);
@@ -1499,7 +1566,7 @@ module('cvGate',function(cv){
     ctx.stroke();
     dot(ctx,m2.px(0),m2.py(pk),4.5,'#c62828','#fff');
     ctx.restore();
-    tlabel(ctx,sx,26,'振幅谱 |F(ω)| = (2/ω)|sin(τω/2)|,  峰值 Eτ = '+fmt(pk),'#37474f','bold 12.5px Segoe UI');
+    xcap('capGate', '振幅谱 $|F(\\omega)|=\\dfrac{2}{\\omega}\\left|\\sin\\dfrac{\\tau\\omega}{2}\\right|$，峰值 $E\\tau='+fmt(pk)+'$');
     setRO('gateReadout',
       '脉宽 $\\tau='+fmt(tau)+'$: 峰值 $|F(0)|=E\\tau='+fmt(pk)+'$; 第一对零点 $\\omega=\\pm\\frac{2\\pi}{\\tau}=\\pm '+fmt(z1)+'$, 主瓣宽度 $\\frac{4\\pi}{\\tau}='+fmt(4*Math.PI/tau)+'$.<br>'+
       hl('零点位置 $\\omega=\\frac{2k\\pi}{\\tau}$ ($k=\\pm1,\\pm2,\\cdots$); 用零点间隔 $\\frac{2\\pi}{\\tau}$ 与峰值 $E\\tau$ 即可快速画出频谱轮廓.')+'<br>'+
@@ -1514,8 +1581,8 @@ module('cvGate',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'傅里叶积分定理', c:'#1976d2', leaves:['周期 $T \\to \\infty$: 离散谱 $\\to$ 连续谱','$\\omega = n\\omega_0$, 谱线间隔 $\\omega_0 = \\frac{2\\pi}{T} \\to 0$','条件: 分段光滑(狄氏条件) + 绝对可积','$f = \\frac{1}{2\\pi}\\int \\left[\\int f(\\tau)\\mathrm{e}^{-\\mathrm{i}\\omega\\tau}\\,\\mathrm{d}\\tau\\right]$','$\\cdot\\ \\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','连续点: 收敛于 $f(t)$','间断点: 收敛于 $\\frac{1}{2}[f(t+0)+f(t-0)]$']},
-    {t:'傅里叶变换的定义', c:'#e65100', leaves:['$F(\\omega) = \\int f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\,\\mathrm{d}t$  (7.2)','$f(t) = \\frac{1}{2\\pi}\\int F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$  (7.3)','记 $F(\\omega) = \\mathscr{F}[f(t)]$, $f(t) = \\mathscr{F}^{-1}[F(\\omega)]$','$F(\\omega)$: 象函数; $f(t)$: 象原函数','正变换无系数, 逆变换乘 $\\frac{1}{2\\pi}$','指数符号相反, 别写反']},
+    {t:'傅里叶积分定理', c:'#1976d2', leaves:['周期 $T \\to \\infty$: 离散谱 $\\to$ 连续谱','$\\omega = n\\omega_0$, 谱线间隔 $\\omega_0 = \\frac{2\\pi}{T} \\to 0$','条件: 分段光滑(狄氏条件) + 绝对可积','$f(t)=\\dfrac{1}{2\\pi}\\int\\limits_{-\\infty}^{+\\infty}\\left[\\int\\limits_{-\\infty}^{+\\infty}f(\\tau)\\mathrm{e}^{-\\mathrm{i}\\omega\\tau}\\,\\mathrm{d}\\tau\\right]\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','连续点: 收敛于 $f(t)$','间断点: 收敛于 $\\frac{1}{2}[f(t+0)+f(t-0)]$']},
+    {t:'傅里叶变换的定义', c:'#e65100', leaves:['$F(\\omega) = \\int\\limits_{\\infty}^{+\\infty} f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\,\\mathrm{d}t$  (7.2)','$f(t) = \\frac{1}{2\\pi}\\int\\limits_{\\infty}^{+\\infty} F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$  (7.3)','记 $F(\\omega) = \\mathscr{F}[f(t)]$, $f(t) = \\mathscr{F}^{-1}[F(\\omega)]$','$F(\\omega)$: 象函数; $f(t)$: 象原函数','正变换无系数, 逆变换乘 $\\frac{1}{2\\pi}$','指数符号相反, 别写反']},
     {t:'连续频谱 · 物理意义', c:'#c62828', leaves:['$f(t)$ 分解为连续频率的谐波 $\\mathrm{e}^{\\mathrm{i}\\omega t}$','$F(\\omega)$: 连续频谱 (复频谱)','$|F(\\omega)|$: 连续振幅谱 (偶函数)','$\\arg F(\\omega)$: 相位谱 (奇函数)','实 $f$: $F(-\\omega) = \\overline{F(\\omega)}$','离散谱(级数) vs 连续谱(变换)']},
     {t:'典型例题', c:'#2e7d32', leaves:['例2.1 $\\mathrm{e}^{-\\beta t}u(t)$: $F = \\frac{1}{\\beta+\\mathrm{i}\\omega}$','逆变换 $\\to$ 含参变量广义积分','例2.2 门函数: $F = \\frac{2E}{\\omega}\\sin\\left(\\frac{\\tau\\omega}{2}\\right)$','$|F| = E\\tau\\left|\\frac{\\sin(\\tau\\omega/2)}{\\tau\\omega/2}\\right|$','零点 $\\omega = \\frac{2k\\pi}{\\tau}$; 峰值 $E\\tau$','$E=\\frac{1}{2}$, $\\tau=2$: $G(\\omega)=\\frac{\\sin\\omega}{\\omega}$, $\\int_0^{+\\infty}\\frac{\\sin\\omega}{\\omega}\\,\\mathrm{d}\\omega = \\frac{\\pi}{2}$']}
   ];
@@ -1566,7 +1633,7 @@ module('cvSummary',function(cv){
   });
   var rb=document.getElementById('btnSumReset');
   if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
-  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 傅里叶级数 (T→∞) → 傅里叶积分定理 → 傅里叶变换 → 连续频谱; 一句话: <b>$F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\mathrm{d}t$, $f(t)=\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\mathrm{d}\\omega$; $|F(\\omega)|$ 是振幅谱 (偶), $\\arg F(\\omega)$ 是相位谱 (奇)</b>.');
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 傅里叶级数 ($T\\to+\\infty$) → 傅里叶积分定理 → 傅里叶变换 → 连续频谱; 一句话: <b>$F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)\\mathrm{e}^{-\\mathrm{i}\\omega t}\\mathrm{d}t$, $f(t)=\\dfrac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}F(\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$; $|F(\\omega)|$ 是振幅谱 (偶), $\\arg F(\\omega)$ 是相位谱 (奇)</b>.');
   return {draw:draw};
 });
 
@@ -1591,7 +1658,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

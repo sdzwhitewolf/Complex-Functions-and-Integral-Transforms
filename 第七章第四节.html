@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -204,6 +205,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -412,12 +416,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第七章第四节 傅氏变换的性质</h1>
     <p>线性与位移、伸缩 &middot; 微分与积分 &middot; 卷积与卷积定理 &middot; 帕塞瓦尔等式 &middot; 用傅氏变换解微分方程</p>
@@ -545,7 +553,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-desc">取基准信号 $f(t)=\mathrm{e}^{-t^2}$ (灰虚线), 它的频谱为 $F(\omega)=\sqrt{\pi}\,\mathrm{e}^{-\omega^2/4}$ (灰虚线). 把时间轴压缩 $a$ 倍得到 $f(at)$ (蓝线), 由伸缩性质, 频谱变为 $\frac{1}{a}F\left(\frac{\omega}{a}\right)$ (蓝线). 拖动滑块改变 $a$, 盯住两件事: $a$ 变大时波形变"尖", 频谱反而变"宽"; 以及两条频谱曲线下的面积始终等于时域曲线下的面积.</div>
 <div class="fig-caps">
 <div class="fc">时域: $f(t)=\mathrm{e}^{-t^2}$ (灰虚线) 与 $f(at)$ (蓝)</div>
-<div class="fc">频域: $F(\omega)$ (灰虚线) 与 $\frac{1}{a}F(\frac{\omega}{a})$ (蓝)</div>
+<div class="fc">频域: $F(\omega)$ (灰虚线) 与 $\dfrac{1}{a}F(\dfrac{\omega}{a})$ (蓝)</div>
 </div>
 <canvas id="cvLinear" data-h="380"></canvas>
 <div class="control-panel">
@@ -1367,12 +1375,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1393,7 +1403,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1421,7 +1473,8 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1558,7 +1611,7 @@ module('cvDeriv',function(cv){
     }
     ctx.stroke();
     ctx.restore();
-    tlabel(ctx,sx,26,'频域: |F(ω)| (蓝) 与 |iωF(ω)| (橙)','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,sx,26,'频域: $|F(\\omega)|$ (蓝) 与 $|\\mathrm{i}\\omega F(\\omega)|$ (橙)','#37474f','bold 12.5px Segoe UI');
     setRO('derivReadout',
       '参数 $a='+fmt(a)+'$; 微分性质给出 $\\mathscr{F}[f^{\\prime}(t)]=\\mathrm{i}\\omega F(\\omega)$.<br>'+
       hl('橙线为 $\\left|\\mathrm{i}\\omega F(\\omega)\\right|=|\\omega|\\cdot|F(\\omega)|$ —— 求导等于在频域上乘以 $|\\omega|$: 在 $\\omega=0$ 处橙线为 $0$, 而在高频端橙线反超蓝线')+'<br>'+
@@ -1592,9 +1645,9 @@ module('cvConv',function(cv){
     ctx.strokeStyle='#c62828'; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(m1.px(t),m1.py(0)); ctx.lineTo(m1.px(t),m1.py(1.28)); ctx.stroke();
     ctx.setLineDash([]);
-    tlabel(ctx,m1.px(t)-4,m1.py(1.32),'τ = t','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(t)-4,m1.py(1.32),'$\\tau=t$','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'重叠面积 = 卷积值: f₁(τ) 蓝框, f₂(t−τ) 橙框, 红色为重叠','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,12,26,'重叠面积 = 卷积值: $f_1(\\tau)$ 蓝框, $f_2(t-\\tau)$ 橙框, 红色为重叠','#37474f','bold 12.5px Segoe UI');
     // ---- 右: 卷积结果曲线 ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,40);
@@ -1650,7 +1703,7 @@ module('cvParseval',function(cv){
     }
     ctx.stroke();
     ctx.restore();
-    tlabel(ctx,12,26,'时域能量密度 |f(t)|² (阴影面积 = 时域能量)','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,12,26,'时域能量密度 $|f(t)|^2$ (阴影面积 = 时域能量)','#37474f','bold 12.5px Segoe UI');
     // ---- 右: |F(ω)|² / 2π ----
     var sx=halfW+24, ym=Fdens(0)*1.18;
     ctx.save(); ctx.translate(sx,40);
@@ -1664,7 +1717,7 @@ module('cvParseval',function(cv){
     }
     ctx.stroke();
     ctx.restore();
-    tlabel(ctx,sx,26,'频域能量密度 |F(ω)|²/2π (阴影面积 = 频域能量)','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,sx,26,'频域能量密度 $\\dfrac{|F(\\omega)|^{2}}{2\\pi}$ (阴影面积 = 频域能量)','#37474f','bold 12.5px Segoe UI');
     setRO('parReadout',
       '参数 $a='+fmt(a)+'$. 时域能量 $\\int_{-\\infty}^{+\\infty}|f(t)|^2\\mathrm{d}t='+fmt(E(),4)+'$; 频域能量 $\\frac{1}{2\\pi}\\int_{-\\infty}^{+\\infty}|F(\\omega)|^2\\mathrm{d}\\omega='+fmt(E(),4)+'$.<br>'+
       hl('两者<b>恒等</b> —— 这正是帕塞瓦尔等式: 傅氏变换只把能量在各频率上重新分配, 不会凭空产生, 也不会弄丢')+'<br>'+
@@ -1681,8 +1734,8 @@ module('cvSummary',function(cv){
   var cats=[
     {t:'线性 · 位移 · 伸缩', c:'#1976d2', leaves:['线性: $\\mathscr{F}[\\alpha f_1+\\beta f_2] = \\alpha F_1+\\beta F_2$','时域延迟: $\\mathscr{F}[f(t-t_0)] = \\mathrm{e}^{-\\mathrm{i}\\omega t_0}F(\\omega)$','时移只改相位, 不改振幅谱','频域位移: $\\mathscr{F}[\\mathrm{e}^{\\mathrm{i}\\omega_0 t}f(t)] = F(\\omega-\\omega_0)$','调制: $\\mathscr{F}[f\\cdot\\cos \\omega_0 t]$','$=\\frac{1}{2}[F(\\omega-\\omega_0)$','$+F(\\omega+\\omega_0)]$','伸缩: $\\mathscr{F}[f(at)] = \\frac{1}{|a|}F\\left(\\frac{\\omega}{a}\\right)$']},
     {t:'微分与积分性质', c:'#e65100', leaves:['微分: $\\mathscr{F}[f\'] = \\mathrm{i}\\omega F(\\omega)$','高阶: $\\mathscr{F}[f^{(n)}] = (\\mathrm{i}\\omega)^n F(\\omega)$','条件: $\\lim\\limits_{|t|\\to\\infty} f^{(k)}(t) = 0$','像函数导数: $\\frac{\\mathrm{d}F}{\\mathrm{d}\\omega} = \\mathscr{F}[-\\mathrm{i} t f(t)]$','积分: $\\mathscr{F}\\left[\\int_{-\\infty}^{t} f\\,\\mathrm{d}\\tau\\right] = \\frac{F(\\omega)}{\\mathrm{i}\\omega}$','一般式: 再加 $\\pi F(0)\\delta(\\omega)$']},
-    {t:'卷积与卷积定理', c:'#c62828', leaves:['定义: $(f_1*f_2)(t)$','$=\\int f_1(\\tau)f_2(t-\\tau)\\,\\mathrm{d}\\tau$','交换律 / 结合律 / 分配律','四步: 翻转—平移—相乘—积分','卷积定理: $\\mathscr{F}[f_1*f_2] = F_1(\\omega)\\cdot F_2(\\omega)$','对偶: $\\mathscr{F}[f_1\\cdot f_2] = \\frac{1}{2\\pi}F_1*F_2$','例: $1*\\mathrm{e}^{-t} = 1-\\mathrm{e}^{-t}$ ($t \\ge 0$)']},
-    {t:'帕塞瓦尔与综合应用', c:'#2e7d32', leaves:['帕塞瓦尔: $\\int f_1 \\overline{f_2}\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int F_1 \\overline{F_2}\\,\\mathrm{d}\\omega$','特例: $\\int |f|^2\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int |F|^2\\,\\mathrm{d}\\omega$','物理意义: 能量守恒','用变换解微分方程: 微分方程 $\\to$ 代数方程','例4.3: $\\int \\frac{\\sin^2 x}{x^2}\\,\\mathrm{d}x = \\pi$','能量谱密度 $|F(\\omega)|^2$']}
+    {t:'卷积与卷积定理', c:'#c62828', leaves:['定义: $(f_1*f_2)(t)$','$=\\int\\limits_{\\infty}^{+\\infty} f_1(\\tau)f_2(t-\\tau)\\,\\mathrm{d}\\tau$','交换律 / 结合律 / 分配律','四步: 翻转—平移—相乘—积分','卷积定理: $\\mathscr{F}[f_1*f_2] = F_1(\\omega)\\cdot F_2(\\omega)$','对偶: $\\mathscr{F}[f_1\\cdot f_2] = \\frac{1}{2\\pi}F_1*F_2$','例: $1*\\mathrm{e}^{-t} = 1-\\mathrm{e}^{-t}$ ($t \\ge 0$)']},
+    {t:'帕塞瓦尔与综合应用', c:'#2e7d32', leaves:['帕塞瓦尔: $\\int\\limits_{\\infty}^{+\\infty} f_1 \\overline{f_2}\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int\\limits_{\\infty}^{+\\infty} F_1 \\overline{F_2}\\,\\mathrm{d}\\omega$','特例: $\\int\\limits_{\\infty}^{+\\infty} |f|^2\\,\\mathrm{d}t = \\frac{1}{2\\pi}\\int\\limits_{\\infty}^{+\\infty} |F|^2\\,\\mathrm{d}\\omega$','物理意义: 能量守恒','用变换解微分方程: 微分方程 $\\to$ 代数方程','例4.3: $\\int\\limits_{\\infty}^{+\\infty} \\frac{\\sin^2 x}{x^2}\\,\\mathrm{d}x = \\pi$','能量谱密度 $|F(\\omega)|^2$']}
   ];
   function build(){
     if(built) return;
@@ -1756,7 +1809,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

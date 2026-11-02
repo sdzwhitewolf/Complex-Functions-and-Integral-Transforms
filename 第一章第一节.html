@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -199,6 +200,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -407,12 +411,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header h1 { font-size:1.5em; letter-spacing:2px; }
     .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
     <h1>第一章 第1节 复数及其几何表示</h1>
     <p>数学定义 &middot; 几何直观 &middot; 交互探索</p>
 </div>
@@ -1669,12 +1677,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1695,7 +1705,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1723,7 +1775,8 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1783,14 +1836,14 @@ module('cvTrace',function(cv){
     // current point
     var cx=m0.px(zx(m)),cy=m0.py(zy(m));
     dot(ctx,cx,cy,8,'#e53935','#fff');
-    tlabel(ctx,cx+11,cy-10,'m='+fmt(m),'#e53935');
+    tlabel(ctx,cx+11,cy-10,'$m='+fmt(m)+'$','#e53935');
     setRO('mReadout',
-      'm = '+hl(fmt(m))+'  →  z(m) = '+hl(cstr(C(zx(m),zy(m))))+
-      ' = '+fmt(zx(m))+' + ('+fmt(zy(m))+')i<br>'+
+      '$m='+hl(fmt(m))+'$ &nbsp;&rarr;&nbsp; $z(m)='+hl(cstr(C(zx(m),zy(m))))+
+      '='+fmt(zx(m))+(zy(m)<0?'-':'+')+'('+fmt(Math.abs(zy(m)))+')\\mathrm{i}$<br>'+
       '类型: '+hl2(typeOf(zx(m),zy(m))));
   }
   function typeOf(x,y){
-    if(Math.abs(y)<0.03 && Math.abs(x)<0.03) return 'z = 0 —— 实数 ✓ (虚部为 0; 不算纯虚数, 因纯虚数要求虚部 ≠ 0)';
+    if(Math.abs(y)<0.03 && Math.abs(x)<0.03) return '$z=0$ —— 实数 ✓ (虚部为 0; 不算纯虚数, 因纯虚数要求虚部 ≠ 0)';
     if(Math.abs(y)<0.03) return '实数 ✓ (虚部 = 0)';
     if(Math.abs(x)<0.03) return '纯虚数 ✓ (实部 = 0 且虚部 ≠ 0)';
     return '一般复数 (实部、虚部均非零)';
@@ -1813,7 +1866,7 @@ module('cvPlane',function(cv){
     if(showUnit){
       ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(123,31,162,.55)';ctx.lineWidth=2;
       ctx.beginPath();ctx.arc(OX,OY,1*m0.s,0,TAU);ctx.stroke();ctx.restore();
-      tlabel(ctx,m0.px(-0.95),m0.py(1.12),'单位圆 |z|=1','#7b1fa2','12px Segoe UI');
+      tlabel(ctx,m0.px(-0.95),m0.py(1.12),'$|z|=1$','#7b1fa2','12px Segoe UI');
     }
     var r=cabs(z),t=carg(z);
     // angle arc
@@ -1842,17 +1895,17 @@ module('cvPlane',function(cv){
     // readout
     var rStr=fmt(r), tStr=fmt(t,3), tD=fmt(deg(t),1);
     var conj=tD;
-    var trig = r<1e-9 ? 'z = 0' :
-      'z = '+rStr+'(cos '+tD+'° + i sin '+tD+'°)';
-    var ex = r<1e-9 ? 'z = 0' :
-      'z = '+rStr+'·e<sup>i·'+tD+'°</sup>';
+    var trig = r<1e-9 ? '$z=0$' :
+      '$z='+rStr+'\\left(\\cos '+tD+'^\\circ+\\mathrm{i}\\,\\sin '+tD+'^\\circ\\right)$';
+    var ex = r<1e-9 ? '$z=0$' :
+      '$z='+rStr+'\\,\\mathrm{e}^{\\mathrm{i}\\cdot '+tD+'^\\circ}$';
     setRO('planeReadout',
-      '<b>z</b> = '+hl(cstr(z))+' &nbsp; (x = '+fmt(z.re)+', y = '+fmt(z.im)+')<br>'+
-      '<b>|z|</b> = √(x²+y²) = '+hl(rStr)+' &nbsp;&nbsp; <b>arg z</b> = '+hl(tD+'°')+' = '+hl(tStr)+' rad<br>'+
+      '<b>$z$</b> $='+hl(cstr(z))+'$ &nbsp; ($x='+fmt(z.re)+'$, $y='+fmt(z.im)+'$)<br>'+
+      '<b>$|z|$</b> $=\\sqrt{x^{2}+y^{2}}='+hl(rStr)+'$ &nbsp;&nbsp; <b>$\\arg z$</b> $='+hl(tD+'^\\circ')+'='+hl(tStr)+'$ rad<br>'+
       '<b>三角表示式:</b> '+hl2(trig)+'<br>'+
       '<b>指数表示式:</b> '+hl2(ex)+
-      (showConj?'<br><b>z̄</b> = '+hl(cstr(C(z.re,-z.im)))+' &nbsp;|z̄| = '+fmt(r)+'&nbsp;(关于实轴对称)':'')+
-      (showIz?'<br><b>iz</b> = '+hl(cstr(C(-z.im,z.re)))+' &nbsp;(模不变 '+fmt(r)+', 辐角 +90°)':''));
+      (showConj?'<br><b>$\\bar z$</b> $='+hl(cstr(C(z.re,-z.im)))+'$ &nbsp;$|\\bar z|='+fmt(r)+'$&nbsp;(关于实轴对称)':'')+
+      (showIz?'<br><b>$\\mathrm{i}z$</b> $='+hl(cstr(C(-z.im,z.re)))+'$ &nbsp;(模不变 $'+fmt(r)+'$, 辐角 $+90^\\circ$)':''));
   }
   makeDraggable(cv,function(px,py){
     var f=fitCanvas(cv); if(!f) return;
@@ -1910,23 +1963,23 @@ module('cvConvert',function(cv){
     ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(m0.px(z.re),OY);ctx.stroke();
     ctx.beginPath();ctx.moveTo(m0.px(z.re),m0.py(z.im));ctx.lineTo(OX,m0.py(z.im));ctx.stroke();
     ctx.restore();
-    tlabel(ctx,m0.px(z.re)-14,OY+22,'x = '+fmt(z.re),'#37474f');
-    tlabel(ctx,OX+8,m0.py(z.im)+4,'y = '+fmt(z.im),'#37474f');
+    tlabel(ctx,m0.px(z.re)-14,OY+22,'$x='+fmt(z.re)+'$','#37474f');
+    tlabel(ctx,OX+8,m0.py(z.im)+4,'$y='+fmt(z.im)+'$','#37474f');
     // angle arc + labels
     mathArc(ctx,OX,OY,0.48,0,t,'#ef6c00',2.2);
-    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2)+18,'θ = '+fmt(deg(t),1)+'°','#ef6c00');
+    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2)+18,'$\\theta='+fmt(deg(t),1)+'^\\circ$','#ef6c00');
     arrow(ctx,OX,OY,m0.px(z.re),m0.py(z.im),'#e53935',3,12);
     dot(ctx,m0.px(z.re),m0.py(z.im),8,'#e53935','#fff');
     var dxv=m0.px(z.re)-OX, dyv=m0.py(z.im)-OY;
-    tlabel(ctx,OX+dxv*0.5-Math.abs(dyv)*0.35-42,OY+dyv*0.5+2,'r = '+fmt(r),'#c62828');
+    tlabel(ctx,OX+dxv*0.5-Math.abs(dyv)*0.35-42,OY+dyv*0.5+2,'$r='+fmt(r)+'$','#c62828');
     tlabel(ctx,m0.px(z.re)+10,m0.py(z.im)-10,'z','#e53935');
     setRO('convReadout',
       '<b>代数式:</b> z = '+hl(cstr(z))+'<br>'+
-      '<b>模:</b> r = |z| = √('+fmt(z.re)+'²+'+fmt(z.im)+'²) = '+hl(fmt(r,3))+
+      '<b>模:</b> $r=|z|=\\sqrt{'+fmt(z.re)+'^{2}+'+fmt(z.im)+'^{2}}='+hl(fmt(r,3))+'$'+
       ' &nbsp;&nbsp; <b>辐角主值:</b> θ = '+hl(fmt(deg(t),2)+'°')+' = '+hl(fmt(t,4))+' rad<br>'+
       '<b>三角式:</b> z = '+hl2(fmt(r,3)+'(cos '+fmt(deg(t),2)+'° + i sin '+fmt(deg(t),2)+'°)')+'<br>'+
       '<b>指数式:</b> z = '+hl2(fmt(r,3)+'e<sup>'+fmt(deg(t),2)+'°i</sup>')+' &nbsp;&nbsp; '+
-      '<b>辐角全体:</b> Arg z = '+fmt(deg(t),2)+'° + k·360° (k∈ℤ)');
+      '<b>辐角全体:</b> $\\operatorname{Arg}z='+fmt(deg(t),2)+'^\\circ+360^\\circ k$　$(k\\in\\mathbb{Z})$');
   }
   makeDraggable(cv,function(px,py){
     var f=fitCanvas(cv); if(!f) return;
@@ -1959,12 +2012,12 @@ module('cvArg',function(cv){
     // 单位圆
     ctx.strokeStyle='#78909c';ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(OX,OY,m0.s,0,TAU);ctx.stroke();
-    tlabel(ctx,m0.px(-1.02),m0.py(1.16),'|z|=1','#78909c','12px Segoe UI');
+    tlabel(ctx,m0.px(-1.02),m0.py(1.16),'$|z|=1$','#78909c','12px Segoe UI');
     var t=rad(t0);
     // 射线与主值角
     arrow(ctx,OX,OY,OX+1.55*m0.s*Math.cos(t),OY-1.55*m0.s*Math.sin(t),'#ef6c00',2.4,10);
     mathArc(ctx,OX,OY,0.40,0,t,'#ef6c00',2.2);
-    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2),'θ₀ 主值','#ef6c00','bold 12.5px Segoe UI');
+    tlabel(ctx,OX+0.62*m0.s*Math.cos(t/2),OY-0.62*m0.s*Math.sin(t/2),'$\\theta_0$ 主值','#ef6c00','bold 12.5px Segoe UI');
     // k 层叠点
     var ux=Math.cos(t), uy=-Math.sin(t);
     var vx=-Math.sin(t), vy=-Math.cos(t);
@@ -1973,15 +2026,15 @@ module('cvArg',function(cv){
       var rr=1-0.22*Math.abs(k);
       var x=OX+rr*m0.s*ux, y=OY+rr*m0.s*uy;
       dot(ctx,x,y,k===0?8:5.5,k===0?'#e53935':'#7b1fa2','#fff');
-      if(k===0){ tlabel(ctx,x+vx*side*18+ux*4,y+vy*side*18+uy*4+4,'k=0 (主值)','#e53935','bold 12px Segoe UI'); }
-      else { tlabel(ctx,x+vx*side*15,y+vy*side*15+4,'k='+(k>0?'+':'')+k,'#7b1fa2','11.5px Segoe UI'); }
+      if(k===0){ tlabel(ctx,x+vx*side*18+ux*4,y+vy*side*18+uy*4+4,'$k=0$ (主值)','#e53935','bold 12px Segoe UI'); }
+      else { tlabel(ctx,x+vx*side*15,y+vy*side*15+4,'$k='+(k>0?'+':'')+k+'$','#7b1fa2','11.5px Segoe UI'); }
     });
-    tlabel(ctx,14,20,'沿同一射线方向: 每加一圈, 辐角增加 2π, 共无穷多值','#455a64','12.5px Segoe UI');
+    tlabel(ctx,14,20,'沿同一射线方向: 每加一圈, 辐角增加 $2\\pi$, 共无穷多值','#455a64','12.5px Segoe UI');
     // 右侧取值面板
     var x0=panelX+10;
     ctx.fillStyle='rgba(123,31,162,.07)';
     ctx.fillRect(x0-10,10,w-x0+2,h-24);
-    tlabel(ctx,x0,40,'Arg z = θ₀ + 2kπ   (k ∈ ℤ)','#4a148c','bold 14px Segoe UI');
+    tlabel(ctx,x0,40,'$\\operatorname{Arg}z=\\theta_0+2k\\pi$　($k\\in\\mathbb{Z}$)','#4a148c','bold 14px Segoe UI');
     var rows=[[0,t0],[1,t0+360],[-1,t0-360],[2,t0+720],[-2,t0-720]];
     var step=Math.max(30,(h-80)/5);
     rows.forEach(function(row,i){
@@ -1993,11 +2046,11 @@ module('cvArg',function(cv){
       ctx.fillText(v+'°  =  '+fmt(rad(v),3)+' rad  ≈  '+fmt(rad(v)/Math.PI,3)+'π',x0+84,yy);
     });
     var lines='<b>主值:</b> arg z = θ₀ = '+hl(t0+'°')+' = '+hl(fmt(rad(t0),3))+' rad<br>';
-    lines+='<b>全体辐角:</b> Arg z = θ₀ + 2kπ, k ∈ ℤ<br>';
+    lines+='<b>全体辐角:</b> $\\operatorname{Arg}z=\\theta_0+2k\\pi$,　$k\\in\\mathbb{Z}$<br>';
     [-2,-1,0,1,2].forEach(function(k){
       var v=t0+k*360;
       var mark=(k===0);
-      lines+=(mark?'<span class="hl2">':'')+'k = '+(k>0?'+':'')+k+':  '+t0+'° + ('+(k>0?'+':'')+k+')·360° = '+v+'° = '+fmt(rad(v),3)+' rad ≈ '+fmt(rad(v)/Math.PI,3)+'π'+(mark?'</span>':'')+'<br>';
+      lines+=(mark?'<span class="hl2">':'')+'$k='+(k>0?'+':'')+k+'$:  $'+t0+'^\\circ+('+(k>0?'+':'')+k+')\\cdot360^\\circ='+v+'^\\circ='+fmt(rad(v),3)+'\\ \\mathrm{rad}\\approx '+fmt(rad(v)/Math.PI,3)+'\\pi$'+(mark?'</span>':'')+'<br>';
     });
     setRO('argReadout',lines);
   }
@@ -2036,8 +2089,8 @@ module('cvAdd',function(cv){
     tlabel(ctx,m0.px(s.re)+10,m0.py(s.im)-10,'z₁+z₂','#e53935');
     var tr1=Math.abs(cabs(z1)+cabs(z2)-cabs(s))<1e-6;
     setRO('addReadout',
-      '<b>z₁</b> = '+hl(cstr(z1))+' (|z₁|='+fmt(cabs(z1))+') &nbsp; <b>z₂</b> = '+hl(cstr(z2))+' (|z₂|='+fmt(cabs(z2))+')<br>'+
-      '<b>z₁+z₂</b> = '+hl2(cstr(s))+' &nbsp;&nbsp; <b>z₁−z₂</b> = '+hl2(cstr(d))+'<br>'+
+      '<b>$z_1$</b> $='+hl(cstr(z1))+'$ &nbsp;($|z_1|='+fmt(cabs(z1))+'$) &nbsp; <b>$z_2$</b> $='+hl(cstr(z2))+'$ &nbsp;($|z_2|='+fmt(cabs(z2))+'$)<br>'+
+      '<b>$z_1+z_2$</b> $='+hl2(cstr(s))+'$ &nbsp;&nbsp; <b>$z_1-z_2$</b> $='+hl2(cstr(d))+'$<br>'+
       '<b>三角不等式:</b> |z₁+z₂| = '+fmt(cabs(s))+' &nbsp;≤&nbsp; |z₁|+|z₂| = '+fmt(cabs(z1)+cabs(z2))+
       (tr1?' &nbsp;<span class="hl2">(取等号: 同方向共线!)</span>':''));
   }
@@ -2078,7 +2131,7 @@ module('cvConj',function(cv){
     tlabel(ctx,m0.px(zc.re)+10,m0.py(zc.im)+20,'z̄','#1565c0');
     var prod=cmul(z,zc);
     setRO('conjReadout',
-      '<b>z</b> = '+hl(cstr(z))+' &nbsp;&nbsp; <b>z̄</b> = '+hl(cstr(zc))+'<br>'+
+      '<b>$z$</b> $='+hl(cstr(z))+'$ &nbsp;&nbsp; <b>$\\bar z$</b> $='+hl(cstr(zc))+'$<br>'+
       '<b>z + z̄</b> = '+hl2(cstr(cadd(z,zc)))+' = 2x = 2Re(z) → 实数 ✓<br>'+
       '<b>z − z̄</b> = '+hl2(cstr(csub(z,zc)))+' = 2yi → '+(Math.abs(z.im)<1e-9?'0 (z为实数)':'纯虚数 ✓')+'<br>'+
       '<b>z·z̄</b> = '+hl2(cstr(prod))+' = x²+y² = |z|² = '+fmt(cabs(z),3)+'² = '+fmt(prod.re,3)+' → 非负实数 ✓<br>'+
@@ -2133,8 +2186,8 @@ module('cvMul',function(cv){
     tlabel(ctx,m0.px(res.re)+10,m0.py(res.im)-10,(mode==='mul'?'z₁·z₂':'z₁/z₂'),'#e53935');
     var op=mode==='mul'?'×':'÷';
     setRO('mulReadout',
-      '<b>z₁</b> = '+fmt(r1)+'e<sup>'+t1+'°i</sup> = '+hl(cstr(z1))+'<br>'+
-      '<b>z₂</b> = '+fmt(r2)+'e<sup>'+t2+'°i</sup> = '+hl(cstr(z2))+'<br>'+
+      '<b>$z_1$</b> $='+fmt(r1)+'\\mathrm{e}^{\\mathrm{i}'+t1+'^\\circ}='+hl(cstr(z1))+'$<br>'+
+      '<b>$z_2$</b> $='+fmt(r2)+'\\mathrm{e}^{\\mathrm{i}'+t2+'^\\circ}='+hl(cstr(z2))+'$<br>'+
       '<b>'+(mode==='mul'?'模相乘: '+fmt(r1)+' × '+fmt(r2)+' = '+hl(fmt(rr)):'模相除: '+fmt(r1)+' ÷ '+fmt(r2)+' = '+hl(fmt(rr)))+'</b><br>'+
       '<b>'+(mode==='mul'?'辐角相加: '+t1+'° + '+t2+'° = '+(t1+t2)+'° → 主值 ':'辐角相减: '+t1+'° − '+t2+'° = '+(t1-t2)+'° → 主值 ')+hl(fmt(deg(mainT),1)+'°')+'</b><br>'+
       '<b>'+(mode==='mul'?'z₁·z₂':'z₁/z₂')+' = '+hl2(fmt(rr)+'e<sup>'+fmt(deg(mainT),1)+'°i</sup>')+' = '+hl2(cstr(res))+'</b>');
@@ -2201,7 +2254,7 @@ module('cvPower',function(cv){
     tlabel(ctx,OX+0.86*m0.s*Math.cos(na/2),OY-0.86*m0.s*Math.sin(na/2)-2,'nθ','#e53935');
     var znC=cexp(Math.pow(r,n),na);
     setRO('pwReadout',
-      '<b>z</b> = '+fmt(r)+'e<sup>'+t+'°i</sup>, 模 r = '+hl(fmt(r))+', 辐角 θ = '+hl(t+'°')+'<br>'+
+      '<b>$z$</b> $='+fmt(r)+'\\mathrm{e}^{\\mathrm{i}'+t+'^\\circ}$, 模 $r='+hl(fmt(r))+'$, 辐角 $\\theta='+hl(t)+'^\\circ$<br>'+
       '<b>De Moivre:</b> z<sup>'+n+'</sup> = r<sup>'+n+'</sup>(cos '+n+'θ + i sin '+n+'θ)<br>'+
       '模: '+fmt(r)+'<sup>'+n+'</sup> = '+hl(fmt(Math.pow(r,n),3))+' &nbsp;&nbsp; '+
       '辐角: '+n+'×'+t+'° = '+(n*t)+'° → 主值 '+hl(fmt(deg(carg(znC)),1)+'°')+'<br>'+
@@ -2246,7 +2299,7 @@ module('cvRoot',function(cv){
     // circle of roots
     ctx.save();ctx.setLineDash([6,5]);ctx.strokeStyle='rgba(21,101,192,.45)';ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(OX,OY,rr*m0.s,0,TAU);ctx.stroke();ctx.restore();
-    tlabel(ctx,m0.px(-rr*1.02),m0.py(-rr*1.22),'半径 r^(1/'+n+') = '+fmt(rr,3),'#1565c0','12.5px Segoe UI');
+    tlabel(ctx,m0.px(-rr*1.02),m0.py(-rr*1.22),'根的模 $|z|='+fmt(rr,3)+'$','#1565c0','12.5px Segoe UI');
     // polygon
     if(n>=3){
       ctx.strokeStyle='rgba(21,101,192,.6)';ctx.lineWidth=1.8;
@@ -2278,7 +2331,7 @@ module('cvRoot',function(cv){
     dot(ctx,m0.px(zc.re),m0.py(zc.im),8,'#e53935','#fff');
     tlabel(ctx,m0.px(zc.re)+10,m0.py(zc.im)-10,'z','#e53935');
     // readout
-    var lines='<b>z</b> = '+fmt(r)+'e<sup>'+t+'°i</sup> = '+hl(cstr(zc))+' &nbsp; (|z| = '+fmt(r,3)+', θ = '+t+'°)<br>';
+    var lines='<b>$z$</b> $='+fmt(r)+'\\mathrm{e}^{\\mathrm{i}'+t+'^\\circ}='+hl(cstr(zc))+'$ &nbsp; ($|z|='+fmt(r,3)+'$, $\\theta='+t+'^\\circ$)<br>';
     lines+='<b>公式:</b> w<sub>k</sub> = r<sup>1/'+n+'</sup>[cos((θ+2kπ)/'+n+') + i sin((θ+2kπ)/'+n+')], k = 0,…,'+(n-1)+'<br>';
     lines+='<b>'+n+' 个方根</b> (内接正 '+n+' 边形顶点, 相邻辐角差 '+fmt(360/n,1)+'°):<br>';
     rs.forEach(function(p,i){
@@ -2593,7 +2646,7 @@ module('cvTartaglia',function(cv){
     tlabel(ctx,P2[0]+11,P2[1]+20,'u − vi','#7b1fa2');
     dot(ctx,OX,OY,4,'#546e7a');
     tlabel(ctx,OX+8,OY+18,'O','#546e7a');
-    if(v<0.05) tlabel(ctx,OX+14,OY-14,'虚部 = 0 → 两个点重合在实轴上','#2e7d32','bold 12.5px Segoe UI');
+    if(v<0.05) tlabel(ctx,OX+14,OY-14,'虚部 $=0$ → 两个点重合在实轴上','#2e7d32','bold 12.5px Segoe UI');
     // 读数
     // 固定 v = 11: 对应方程 x³ = 15x + 4 (即 x³ = px + q, p=15, q=4, 判别式 (q/2)²+(p/3)³ < 0)
     // 卡尔达诺公式中出现 √(-121) = 11i, 于是两个立方根为 u ± vi 的共轭对

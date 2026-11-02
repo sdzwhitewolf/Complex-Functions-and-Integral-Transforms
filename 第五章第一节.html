@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -192,11 +193,17 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* ===== 图注 (HTML + MathJax) ===== */
 .fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
 .fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
-  color: #37474f; line-height: 1.55; }
+  color: #37474f; line-height: 2.1; }
 .fig-caps > .fc:only-child { flex: 0 1 auto; }
 
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
+
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
 
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
@@ -204,6 +211,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -412,12 +422,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第五章 第1节 孤立奇点</h1>
     <p>孤立奇点 &middot; 三类分类 &middot; 零点与极点 &middot; 无穷远点</p>
@@ -779,6 +793,7 @@ $f(z)$ 的奇点是使 $\sin\pi z=0$ 的点, 故奇点为 $z=0,\pm1,\pm2,\cdots$
 <div class="fig-caps">
 <div class="fc" id="cvDualCap"></div>
 </div>
+<div class="xcap" id="capDual"></div>
 <canvas id="cvDual" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -872,8 +887,9 @@ $f(z)$ 的奇点是使 $\sin\pi z=0$ 的点, 故奇点为 $z=0,\pm1,\pm2,\cdots$
 <h3>交互: 无穷远点的 $\xi=\frac{1}{z}$ 变换 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图是 $z$ 平面: 去心邻域 $R&lt;|z|&lt;+\infty$ 是被大圆"挖空"之外的区域, 一直延伸到无穷远点; 右图是 $\xi$ 平面: 经 $\xi=1/z$ 之后, 它变成一个以原点为中心的去心圆盘 $0&lt;|\xi|&lt;1/R$. 拖动滑块改变 $R$, 观察 $z=\infty$ 的形态如何归结为 $\xi=0$ 的形态.</div>
 <div class="fig-caps">
-<div class="fc">$\xi$ 平面: $\infty$ 被 $\xi=\frac{1}{z}$ 拉回原点</div>
-</div>
+<div class="fc">$\xi$ 平面: $\infty$ 被 $\xi=\dfrac{1}{z}$ 拉回原点</div>
+
+<div class="fc" id="cvInfinityCap1"></div></div>
 <canvas id="cvInfinity" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1320,12 +1336,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1346,7 +1364,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1374,9 +1434,14 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
-function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=iiFix(html);
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1420,13 +1485,13 @@ module('cvNeighbor',function(cv){
     ctx.beginPath(); ctx.arc(m.px(0),m.py(0),delta*m.s,0,TAU); ctx.stroke();
     ctx.setLineDash([]);
     arrow(ctx,m.px(0),m.py(0),m.px(delta),m.py(0),'#e65100',2.4,10);
-    tlabel(ctx,m.px(delta*0.5)+4,m.py(0)-9,'δ = '+fmt(delta),'#e65100','bold 12px Segoe UI');
+    tlabel(ctx,m.px(delta*0.5)+4,m.py(0)-9,'$\\delta='+fmt(delta)+'$','#e65100','bold 12px Segoe UI');
     ctx.beginPath(); ctx.arc(m.px(0),m.py(0),7,0,TAU);
     ctx.fillStyle='#fff'; ctx.fill();
     ctx.strokeStyle='#c62828'; ctx.lineWidth=2.4; ctx.stroke();
-    tlabel(ctx,m.px(0)+12,m.py(0)+20,'z₀ (挖去)','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,m.px(0)+12,m.py(0)+20,'$z_0$（挖去）','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,20,26,'去心邻域 |z − z₀| ∈ (0, δ)   (可拖动虚线圆周改变 δ)','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,20,26,'去心邻域 $|z-z_0|\\in(0,\\delta)$　（可拖动虚线圆周改变 $\\delta$）','#37474f','bold 13px Segoe UI');
     setRO('nbReadout',
       '去心邻域: $0&lt;|z-z_0|&lt;\\delta$, 其中 $\\delta='+hl(fmt(delta))+'$.<br>'+
       '在这个区域内 $f(z)$ 处处解析; 中心点 $z_0$ 被挖去, 正是奇点所在.<br>'+
@@ -1498,7 +1563,7 @@ module('cvLaurent',function(cv){
     }
     tlabel(ctx,w-padR-14,y0+20,'n','#546e7a','italic 13px Georgia');
     tlabel(ctx,padL-40,y0-18,'cₙ','#546e7a','italic 13px Georgia');
-    tlabel(ctx,padL-24,padT-26,'橙色柱 = 负幂项 (n '+LT+' 0); 蓝色柱 = 非负幂项 (n ≥ 0)','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,padL-24,padT-26,'橙色柱 = 负幂项 ($n&lt;0$); 蓝色柱 = 非负幂项 ($n\\ge 0$)','#37474f','bold 13px Segoe UI');
     ctx.fillStyle='#e65100'; ctx.font='bold 11px Segoe UI';
     ctx.fillText('负幂区',padL+step*0.4,padT-8);
     ctx.fillStyle='#1976d2';
@@ -1544,7 +1609,7 @@ module('cvDual',function(cv){
     dot(ctx,m1.px(0),m1.py(0),7,'#2e7d32','#fff');
     tlabel(ctx,m1.px(0)+10,m1.py(0)+20,'f(z₀) = 0  ('+order+' 级零点)','#2e7d32','bold 11px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'|f(z)| ≈ C·r^'+order+' → 0   (r = |z − z₀|)','#37474f','bold 12px Segoe UI');
+    xcap('capDual', '$|f(z)|\\approx C\\,r^{'+order+'}\\to 0$，其中 $r=|z-z_0|$');
     // ---- 右: 1/f 的 m 级极点 ----
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1600,7 +1665,7 @@ module('cvInfinity',function(cv){
     tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#37474f','bold 12px Georgia');
     tlabel(ctx,10,H-10,'外部区域 |z| '+GT+' R, 一直延伸到 ∞','#bf360c','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'z 平面: ∞ 的去心邻域 R '+LT+' |z| '+LT+' +∞','#37474f','bold 12px Segoe UI');
+    setCap('cvInfinityCap1', '$z$ 平面: $\\infty$ 的去心邻域 $R<|z|<+\\infty$');;
     // ---- 右: ξ 平面, ξ = 1/z ----
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1633,8 +1698,8 @@ module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
     {t:'概念与分类依据', c:'#1976d2', leaves:['孤立奇点: 去心邻域内处处解析','孤立奇点一定是奇点','奇点不一定孤立','例1.1: $\\frac{1}{\\sin(1/z)}$, $z=0$ 不孤立','分类依据: 洛朗系数负幂项','可去奇点: 不含负幂项']},
-    {t:'极点与本性奇点', c:'#e65100', leaves:['定义1.3: 只有有限个负幂项','$m$ 级极点: 最低项 $(z-z_0)^{-m}$','定理1.2: $f=\\frac{\\varphi(z)}{(z-z_0)^m}$','推论1.2: $\\lim f(z)=\\infty$','定义1.4: 无穷多个负幂项','本性: $\\lim f(z)$ 不存在也不为 $\\infty$']},
-    {t:'零点与极点的关系', c:'#c62828', leaves:['定义1.5: $m$ 级零点','定理1.3: 导数判据 $f^{(n)}(z_0)$','定理1.4: 极点 ⇔ 倒数零点','定理1.5: $\\frac{\\varphi}{\\psi}$ 的 $m-n$ 级零点','例1.5: $\\frac{1}{\\sin z}$ 的一级极点','例1.6 / 例1.7: 逐点判断类型']},
+    {t:'极点与本性奇点', c:'#e65100', leaves:['定义1.3: 只有有限个负幂项','$m$ 级极点: 最低项 $(z-z_0)^{-m}$','定理1.2: $f=\\frac{\\varphi(z)}{(z-z_0)^m}$','推论1.2: $\\lim\\limits_{z\\to z_0}f(z)=\\infty$','定义1.4: 无穷多个负幂项','本性: $\\lim\\limits_{z\\to z_0}f(z)$ 不存在也不为 $\\infty$']},
+    {t:'零点与极点的关系', c:'#c62828', leaves:['定义1.5: $m$ 级零点','定理1.3: 导数判据 $f^{(n)}(z_0)$','定理1.4: 极点 ⇔ 倒数零点','定理1.5: $m>n$ ⇒ $m-n$ 级零点; $m<n$ ⇒ $n-m$ 级极点','例1.5: $\\frac{1}{\\sin z}$ 的一级极点','例1.6 / 例1.7: 逐点判断类型']},
     {t:'无穷远点的形态', c:'#2e7d32', leaves:['定义1.6: $|z|>R$ 内解析','定义1.7: $\\xi=1/z$, 归结到 $\\xi=0$','定理1.6: 按正幂项判定','无正幂项 → 可去奇点','最高正幂 $z^m$ → $m$ 级极点','无穷多正幂项 → 本性奇点']}
   ];
   function build(){
@@ -1709,7 +1774,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

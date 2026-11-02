@@ -12,7 +12,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -1145,7 +1146,8 @@ function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
   if(el.getAttribute('data-h')===html) return;
   el.setAttribute('data-h',html); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;

@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -208,12 +209,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -421,12 +431,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第二章 第1节 解析函数的概念</h1>
     <p>导数定义 &middot; 解析性判定 &middot; 交互探索</p>
@@ -758,6 +772,7 @@ $$\frac{\mathrm{d}w}{\mathrm{d}z}=-\frac{1}{z^2}.$$
 <div class="chart-container">
 <h3>解析性地图: 逐点扫描"哪里解析" <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">选择函数, 图中<b>绿色</b>表示该点解析 (可导且邻域可导), <b>橙点</b>表示孤立可导点, <b>灰色</b>表示处处不可导. 拖动探针查看任意点 $z_0$ 处的判定结论.</div>
+<div class="fig-caps"><div class="fc" id="cvAnalyticCap1"></div></div>
 <canvas id="cvAnalytic" data-h="420"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1034,6 +1049,7 @@ $$\frac{\mathrm{d}w}{\mathrm{d}z}=-\frac{1}{z^2}.$$
 <div class="chart-container">
 <h3>交互: 看见解析函数的"正交网" <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">若 $f(z)=u(x,y)+\mathrm{i}v(x,y)$ 解析, 则 $u$、$v$ 的等值线必然<b>处处正交</b> —— 这正是达朗贝尔当年在流体与位势问题中看到的图景. 拖动滑块改变 $u$ 的取值, 观察蓝色等值线与绿色等值线始终保持直角相交.</div>
+<div class="xcap" id="capHarm"></div>
 <canvas id="cvHarmonic" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1369,12 +1385,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1395,7 +1413,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1423,7 +1483,16 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1466,8 +1535,8 @@ module('cvDeriv',function(cv){
     arrow(ctx,ox,oy,m.px(q.re),m.py(q.im),'#e53935',3,12);
     dot(ctx,m.px(d.re),m.py(d.im),6,'#2e7d32','#fff');
     dot(ctx,m.px(q.re),m.py(q.im),7,'#e53935','#fff');
-    tlabel(ctx,m.px(d.re)+10,m.py(d.im)-10,'f\u2032(z\u2080) = 2z\u2080','#2e7d32');
-    tlabel(ctx,m.px(q.re)+11,m.py(q.im)+20,'\u0394w/\u0394z','#e53935');
+    tlabel(ctx,m.px(d.re)+10,m.py(d.im)-10,'$f\'(z_0)=2z_0$','#2e7d32');
+    tlabel(ctx,m.px(q.re)+11,m.py(q.im)+20,'$\\Delta w/\\Delta z$','#e53935');
     var gap=cabs(csub(q,d));
     setRO('dvReadout',
       "|Δz| = "+hl(fmt(r))+" &nbsp;⇒&nbsp; 差商 $\\frac{\\Delta w}{\\Delta z}=2z_0+\\Delta z="+fmt(q.re)+" "+(q.im<0?"-":"+")+" "+fmt(Math.abs(q.im))+"\\mathrm{i}$<br>"+
@@ -1504,16 +1573,16 @@ module('cvDeriv',function(cv){
 module('cvPath',function(cv){
   var cur='imz', th=0;
   var F={
-    imz:{lab:'f(z)=Im z', z0:C(0.6,0.5),
+    imz:{lab:'f(z)=\\operatorname{Im}z', z0:C(0.6,0.5),
       h:function(t){ var s=Math.sin(t),c=Math.cos(t); return C(s*c,-s*s); },
       note:'h(θ) = sinθ·cosθ − i·sin²θ'},
-    z2:{lab:'f(z)=z²', z0:C(1,0.8),
+    z2:{lab:'f(z)=z^2', z0:C(1,0.8),
       h:function(t){ return C(2,1.6); },
       note:'h(θ) ≡ 2z₀ = 2 + 1.6i (常数)'},
-    abs:{lab:'f(z)=|z|²', z0:C(0.9,0.6),
+    abs:{lab:'f(z)=|z|^2', z0:C(0.9,0.6),
       h:function(t){ var e=C(Math.cos(-2*t),Math.sin(-2*t)); return cadd(C(0.9,-0.6),cmul(C(0.9,0.6),e)); },
-      note:'h(θ) = z̄₀ + z₀·e^(−2iθ)'},
-    x2y:{lab:'f(z)=x+2yi', z0:C(0.8,0.7),
+      note:'h(θ) = z̄₀ + z₀·exp(−2iθ)'},
+    x2y:{lab:'f(z)=x+2y\\mathrm{i}', z0:C(0.8,0.7),
       h:function(t){ var c=Math.cos(t),s=Math.sin(t); return cdiv(C(c,2*s),C(c,s)); },
       note:'h(θ) = (cosθ + 2i·sinθ)/(cosθ + i·sinθ)'}
   };
@@ -1536,7 +1605,7 @@ module('cvPath',function(cv){
     var degenerate=devAll<0.02;
     if(degenerate){
       dot(ctx,m.px(p0.re),m.py(p0.im),10,'#2e7d32','#fff');
-      tlabel(ctx,m.px(p0.re)+14,m.py(p0.im)-12,'全部 θ 汇聚于此 → 可导','#2e7d32','bold 13px Segoe UI');
+      tlabel(ctx,m.px(p0.re)+14,m.py(p0.im)-12,'全部 $\\theta$ 汇聚于此 → 可导','#2e7d32','bold 13px Segoe UI');
     } else {
       ctx.strokeStyle='#90a4ae'; ctx.lineWidth=1.8; ctx.beginPath();
       pts.forEach(function(z,i){ var px=m.px(z.re),py=m.py(z.im);
@@ -1546,16 +1615,16 @@ module('cvPath',function(cv){
     var zc=o.h(th*Math.PI/180);
     arrow(ctx,m.px(0),m.py(0),m.px(zc.re),m.py(zc.im),'#e53935',2.8,11);
     dot(ctx,m.px(zc.re),m.py(zc.im),7,'#e53935','#fff');
-    tlabel(ctx,12,22,'差商极限 h(θ) 随方向 θ 的轨迹','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,12,22,'差商极限 $h(\\theta)$ 随方向 $\\theta$ 的轨迹','#37474f','bold 13px Segoe UI');
     tlabel(ctx,12,42,o.note,'#546e7a','12px Segoe UI');
     var dev=cabs(csub(zc,pts[0]));
     setRO('pathReadout',
-      "函数 "+hl2(o.lab)+" , 方向 $\\theta="+th+"^\\circ$<br>"+
+      "函数 "+hl2('$'+o.lab+'$')+" , 方向 $\\theta="+th+"^\\circ$<br>"+
       "差商极限 $\\lim\\limits_{r\\to 0}\\frac{\\Delta f}{\\Delta z}="+fmt(zc.re)+" "+(zc.im<0?"-":"+")+" "+fmt(Math.abs(zc.im))+"\\mathrm{i}$<br>"+
       "与 $\\theta=0$ 时的值之差 $="+fmt(dev)+"$<br>"+
       (degenerate
         ? "<b>结论: 轨迹退化为单点 —— 极限与趋近方向无关, 故 "+hl('可导')+" ✓</b>"
-        : "<b>结论: 轨迹随 θ 变化 —— 极限依赖方向, 故 "+hl('不可导')+" ✗</b>"));
+        : "<b>结论: 轨迹随 $\\theta$ 变化 —— 极限依赖方向, 故 "+hl('不可导')+" ✗</b>"));
   }
   function setFn(k){ cur=k; draw(); }
   [['fnIm','imz'],['fnZ2','z2'],['fnAbs','abs'],['fnX2Y','x2y']].forEach(function(p){
@@ -1636,13 +1705,13 @@ module('cvCont',function(cv){
 module('cvAnalytic',function(cv){
   var cur='z2';
   var FN={
-    z2:{lab:'f(z)=z²', kind:'all',
+    z2:{lab:'f(z)=z²', labTex:'f(z)=z^2', kind:'all',
       d:'$z^2$ 是多项式, 在复平面内<b>处处可导</b>, 且每一点的邻域内都可导 ⇒ <b>处处解析</b>, 无奇点.'},
-    imz:{lab:'f(z)=Im z', kind:'none',
+    imz:{lab:'f(z)=Im z', labTex:'f(z)=\\operatorname{Im}z', kind:'none',
       d:'差商 $\\Delta y/(\\Delta x+i\\Delta y)$ 随方向取 $0$ 或 $-i$, 极限不存在 ⇒ <b>处处不可导</b>, 更谈不上解析.'},
-    abs:{lab:'f(z)=|z|²', kind:'one',
+    abs:{lab:'f(z)=|z|²', labTex:'f(z)=|z|^2', kind:'one',
       d:'仅在 $z=0$ 处可导 (极限为 $0$); 但 $z=0$ 的任何邻域内都有不可导的点 ⇒ 在 $z=0$ 处<b>不解析</b>, $z=0$ 是它的奇点.'},
-    inv:{lab:'f(z)=1/z', kind:'punct',
+    inv:{lab:'f(z)=1/z', labTex:'f(z)=\\dfrac{1}{z}', kind:'punct',
       d:'除 $z=0$ 外处处可导且邻域可导 ⇒ 除原点外<b>处处解析</b>; $z=0$ 是奇点 (函数在原点无定义).'}
   };
   function draw(){
@@ -1669,18 +1738,18 @@ module('cvAnalytic',function(cv){
     }
     if(o.kind==='one'){
       dot(ctx,m.px(0),m.py(0),8,'#e65100','#fff');
-      tlabel(ctx,m.px(0)+12,m.py(0)-12,'z=0 可导','#e65100');
+      tlabel(ctx,m.px(0)+12,m.py(0)-12,'$z=0$ 可导','#e65100');
     }
     if(o.kind==='punct'){
       var zx=m.px(0),zy=m.py(0),s=7;
       ctx.strokeStyle='#c62828'; ctx.lineWidth=3;
       ctx.beginPath(); ctx.moveTo(zx-s,zy-s); ctx.lineTo(zx+s,zy+s);
       ctx.moveTo(zx+s,zy-s); ctx.lineTo(zx-s,zy+s); ctx.stroke();
-      tlabel(ctx,zx+12,zy+16,'z=0 奇点','#c62828');
+      tlabel(ctx,zx+12,zy+16,'$z=0$ 奇点','#c62828');
     }
-    tlabel(ctx,12,22,o.lab+'  —  解析性地图','#37474f','bold 14px Segoe UI');
+    setCap('cvAnalyticCap1', '$'+o.labTex+'$  —  解析性地图');;
     tlabel(ctx,12,h-14,'绿点: 该点解析   橙点: 孤立可导点   灰点: 不可导   红叉: 奇点','#78909c','12px Segoe UI');
-    setRO('anReadout', hl2(o.lab)+' &nbsp;|&nbsp; '+o.d);
+    setRO('anReadout', hl2('$'+o.labTex+'$')+' &nbsp;|&nbsp; '+o.d);
   }
   [['anZ2','z2'],['anImz','imz'],['anAbs','abs'],['anInv','inv']].forEach(function(p){
     var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
@@ -1811,7 +1880,7 @@ module('cvHarmonic',function(cv){
         });
       }
     }
-    tlabel(ctx,12,22,'f(z)=z²  u=x²−y² (蓝)  v=xy (绿)','#37474f','bold 13px Segoe UI');
+    xcap('capHarm', '$f(z)=z^{2}$：$u=x^{2}-y^{2}$（蓝），$v=xy$（绿）');
     tlabel(ctx,12,h-14,'两条等值线在交点处互相垂直 → ∇u·∇v = 0','#546e7a','12px Segoe UI');
     setRO('hmReadout',
       "取 $u=c$ 时的等值线 $x^2-y^2="+hl(fmt(c))+"$ (深蓝曲线)<br>"+
@@ -1846,7 +1915,7 @@ module('cvHarmonic',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

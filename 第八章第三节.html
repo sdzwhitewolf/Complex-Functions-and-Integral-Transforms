@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -207,12 +208,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -426,7 +435,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第八章 第3节 拉普拉斯逆变换</h1>
     <p>反演积分公式 &middot; 用留数计算逆变换 &middot; 典型例题 &middot; 三种方法对照与练习</p>
@@ -553,6 +562,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 大圆弧 $C_R$ 上的积分随 $R\to\infty$ 趋于零 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">把竖直直线 $\operatorname{Re}s=\beta$ 在左侧用半径 $R$ 的大圆弧闭合成闭曲线. 拖动滑块改变 $R$: 圆弧越大, 奇点被围得越"干净"; 而圆弧上 $\left|F(s)\right|$ 的典型大小按 $\frac{1}{R^{m}}$ 衰减 ($m$ 为分母与分子的次数差), 于是 $\pi R\cdot\left|F\right|$ 随 $R\to\infty$ 趋于 $0$ —— 这正是圆弧上积分"消失"的原因.</div>
+<div class="fig-caps"><div class="fc" id="cvResArcCap1"></div></div>
 <canvas id="cvResArc" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1236,12 +1246,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1297,7 +1309,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1425,7 +1442,7 @@ module('cvResArc',function(cv){
     ctx.fillStyle='#e65100'; ctx.font='bold 12px Segoe UI';
     ctx.fillText('奇点', m.px(1)+12, m.py(0)-12);
     ctx.restore();
-    tlabel(ctx,L,22,'闭曲线 = 竖直直线段 (红) + 左侧大圆弧 (蓝), 半径 R','#37474f','bold 12.5px Segoe UI');
+    setCap('cvResArcCap1', '闭曲线 = 竖直直线段 (红) + 左侧大圆弧 (蓝), 半径 $R$');;
     // 圆弧上积分的上界估计
     var bound=Math.PI*Rr/((Rr-0.6)*(Rr-1.6)*(Rr-1.6));
     setRO('iveRReadout',
@@ -1444,7 +1461,7 @@ module('cvInvEx',function(cv){
   var OPT=[
     {fs:'\\dfrac{1}{(s-1)(s+2)}', plain:'1/((s−1)(s+2))',
      pol:[{re:1,im:0,k:1},{re:-2,im:0,k:1}],
-     terms:[{f:function(t){return Math.exp(t)/3;}, col:'#1565c0', lab:'(1/3)e^t'},
+     terms:[{f:function(t){return Math.exp(t)/3;}, col:'#1565c0', lab:'(1/3)eᵗ'},
             {f:function(t){return -Math.exp(-2*t)/3;}, col:'#e65100', lab:'−(1/3)e^'+SUP[0]+'2t'}],
      sum:function(t){return (Math.exp(t)-Math.exp(-2*t))/3;},
      res:'$\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},1\\right]=\\frac{\\mathrm{e}^{t}}{3}$; $\\operatorname{Res}\\left[F(s)\\mathrm{e}^{st},-2\\right]=-\\frac{\\mathrm{e}^{-2t}}{3}$',
@@ -1629,7 +1646,7 @@ module('cvMethod',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'逆变换的引入 · 反演积分', c:'#1976d2', leaves:['已知 $F(s)$ 求 $f(t)$: 拉氏逆变换','正变换 $=f(t)u(t)\\mathrm{e}^{-\\beta t}$ 的傅氏变换','傅氏逆变换: $\\frac{1}{2\\pi}\\int F(\\beta+\\mathrm{i}\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','令 $s=\\beta+\\mathrm{i}\\omega,\\ \\mathrm{d}\\omega=\\frac{\\mathrm{d}s}{\\mathrm{i}}$','$f(t)=\\frac{1}{2\\pi\\mathrm{i}}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty}F(s)\\mathrm{e}^{st}\\,\\mathrm{d}s$','路径为竖直线 $\\operatorname{Re}s=\\beta$ ($t>0$)']},
+    {t:'逆变换的引入 · 反演积分', c:'#1976d2', leaves:['已知 $F(s)$ 求 $f(t)$: 拉氏逆变换','正变换 $=f(t)u(t)\\mathrm{e}^{-\\beta t}$ 的傅氏变换','傅氏逆变换: $\\frac{1}{2\\pi}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty} F(\\beta+\\mathrm{i}\\omega)\\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega$','令 $s=\\beta+\\mathrm{i}\\omega,\\ \\mathrm{d}\\omega=\\frac{\\mathrm{d}s}{\\mathrm{i}}$','$f(t)=\\frac{1}{2\\pi\\mathrm{i}}\\int_{\\beta-\\mathrm{i}\\infty}^{\\beta+\\mathrm{i}\\infty}F(s)\\mathrm{e}^{st}\\,\\mathrm{d}s$','路径为竖直线 $\\operatorname{Re}s=\\beta$ ($t>0$)']},
     {t:'用留数计算反演积分', c:'#e65100', leaves:['定理3.1: $F(s)$ 有限个孤立奇点','条件: 奇点全在 $\\operatorname{Re}s\u003c\\beta$ 内','条件: $s\\to\\infty$ 时 $F(s)\\to 0$','$f(t)=\\sum\\operatorname{Res}[F(s)\\mathrm{e}^{st},s_k]$','步骤: 找奇点→判类型→求留数','大圆弧 $C_R$ 积分趋于零']},
     {t:'典型例题', c:'#c62828', leaves:['例3.1: $F=\\frac{1}{(s-2)(s-1)^2}$','一级极点 $s=2$: $\\operatorname{Res}=\\mathrm{e}^{2t}$','二级极点 $s=1$: $\\operatorname{Res}=-\\mathrm{e}^t(1+t)$','$f(t)=\\mathrm{e}^{2t}-\\mathrm{e}^t(1+t)$','例3.2: $\\frac{1}{(s-1)(s+2)}$ 两个一级极点','例3.3: $\\frac{1}{(s-1)^2}\\to t\\mathrm{e}^t$']},
     {t:'三种方法对照', c:'#2e7d32', leaves:['部分分式分解 + 查表: 有理函数','留数法(反演积分): 通法','卷积定理: $F=F_1F_2$ 的乘积型','假分式先做多项式除法','先查表, 查不到再上留数','结果乘 $u(t)$, 并注明收敛域']}
@@ -1706,7 +1723,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

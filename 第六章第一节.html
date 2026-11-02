@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -192,12 +193,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -410,7 +419,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第六章 第1节 导数的几何意义与共形映射</h1>
     <p>导数的几何意义 &middot; 伸缩率与旋转角 &middot; 三个不变性 &middot; 共形映射及其判别</p>
@@ -712,6 +721,7 @@ $z^n$、$\mathrm{e}^z$、$\ln z$ 等<b>初等函数</b>在导数非零处都是�
 <div class="chart-container">
 <h3>交互: 伸缩率与旋转角读数器 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">选择函数 $f$, 并拖动滑块改变点 $z_0$. 左图给出 $z_0$ 附近的一个小"十字标架" (两条互相垂直的方向), 右图给出它的像: <b>整体旋转 $\operatorname{Arg} f'(z_0)$, 每条方向都按 $\left|f'(z_0)\right|$ 伸缩</b>. 读数区实时给出 $f'(z_0)$ 的伸缩率与旋转角; 若 $f'(z_0)=0$, 则不共形.</div>
+<div class="fig-caps"><div class="fc" id="cvFieldCap1"></div><div class="fc" id="cvFieldCap2"></div></div>
 <canvas id="cvField" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1170,12 +1180,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1224,7 +1236,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1480,7 +1497,7 @@ module('cvField',function(cv){
     dot(ctx,m1.px(zx),m1.py(zy),5.5,'#c62828','#fff');
     tlabel(ctx,m1.px(zx)+8,m1.py(zy)-8,'z₀','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'z 平面: z₀ 处的正交小标架 (半径 '+fmt(L)+')','#37474f','bold 12.5px Segoe UI');
+    setCap('cvFieldCap1', '$z$ 平面: $z_0$ 处的正交小标架 (半径 $'+fmt(L)+'$)');;
     // ---- 右: w 平面 ----
     var sx=halfW+24, span=1.9;
     ctx.save(); ctx.translate(sx,40);
@@ -1493,7 +1510,7 @@ module('cvField',function(cv){
     dot(ctx,m2.px(w0.re),m2.py(w0.im),5.5,'#c62828','#fff');
     tlabel(ctx,m2.px(w0.re)+8,m2.py(w0.im)-8,'w₀','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,sx,26,'w 平面: 像标架 (旋转 '+fmt(arg*180/Math.PI,0)+'°, 半径 ×'+fmt(rho)+')','#37474f','bold 12.5px Segoe UI');
+    setCap('cvFieldCap2', '$w$ 平面: 像标架 (旋转 $'+fmt(arg*180/Math.PI,0)+'^\\circ$, 半径 $\\times'+fmt(rho)+'$)');;
     var concl;
     if(k===3 && r0<0.06){
       concl=hl('<b>不共形</b>: $z_0=0$ 是 $1/z$ 的奇点, 函数在该点不解析.');
@@ -1595,7 +1612,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

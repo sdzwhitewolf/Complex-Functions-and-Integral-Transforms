@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -193,12 +194,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -407,12 +417,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第七章第三节 单位脉冲函数（δ函数）</h1>
     <p>δ 函数的引入与物理描述 &middot; 弱极限与筛选性质 &middot; δ 函数的傅氏变换 &middot; 广义傅里叶变换与典型例题</p>
@@ -505,6 +519,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 矩形脉冲族逼近 $\delta$ 函数 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">图中画出的是一族矩形脉冲 $\delta_\varepsilon(t)$: 在区间 $[0,\varepsilon]$ 上取高度 $\frac{1}{\varepsilon}$, 其余处为 $0$. 拖动滑块减小<b>脉宽 $\varepsilon$</b>, 观察矩形如何变得<b>越来越窄、越来越高</b>, 而它下方的面积<b>始终等于 $1$</b>. 当 $\varepsilon$ 很小的时候, 就得到工程上表示 $\delta$ 函数的那根<b>长度为 $1$ 的有向线段</b>.</div>
+<div class="xcap" id="capDelta"></div>
 <canvas id="cvDelta" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1236,12 +1251,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1262,7 +1279,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1290,7 +1349,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1327,7 +1391,7 @@ module('cvDelta',function(cv){
     var iw=w-L-R, ih=h-TOP-BOT;
     ctx.save(); ctx.translate(L,TOP);
     var m=mapperEq(iw,ih,-1.2,3.4,-0.55,YMAX);
-    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'t','δ_ε(t)');
+    grid(ctx,iw,ih,m,0.5); axes(ctx,iw,ih,m,'t','幅值');
     // 幽灵脉冲族 (其余宽度的成员)
     [0.4,0.8,1.6,2.4].forEach(function(e0){
       var g=1/e0; if(g>YMAX-0.25) g=YMAX-0.25;
@@ -1347,7 +1411,7 @@ module('cvDelta',function(cv){
     // 高度标注
     ctx.strokeStyle='#c62828'; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(x1+6,y1); ctx.lineTo(iw,y1); ctx.stroke(); ctx.setLineDash([]);
-    tlabel(ctx,x1+10,y1-6,'高 = 1/ε = '+fmt(1/eps),'#c62828','bold 12px Segoe UI');
+    tlabel(ctx,x1+10,y1-6,'高 $=\\dfrac{1}{\\varepsilon}='+fmt(1/eps)+'$','#c62828','bold 12px Segoe UI');
     // 面积标注
     tlabel(ctx,(x0+x1)/2-30,y0-12>y1?y0-12:y1+16,'面积 ≡ 1','#37474f','bold 12px Segoe UI');
     // ε 刻度
@@ -1355,7 +1419,7 @@ module('cvDelta',function(cv){
     ctx.beginPath(); ctx.moveTo(x1,y0); ctx.lineTo(x1,y0+8); ctx.stroke();
     tlabel(ctx,x1-8,y0+22,'ε','#37474f','bold 12.5px Segoe UI');
     ctx.restore();
-    tlabel(ctx,L,26,'矩形脉冲族 δ_ε(t): 宽 ε → 0, 高 1/ε → ∞, 面积恒为 1','#37474f','bold 12.5px Segoe UI');
+    xcap('capDelta', '矩形脉冲族 $\\delta_\\varepsilon(t)$：宽 $\\varepsilon\\to 0$，高 $1/\\varepsilon\\to\\infty$，面积恒为 $1$');
     setRO('delReadout',
       '脉宽 $\\varepsilon='+fmt(eps)+'$: 矩形在 $[0,\\varepsilon]$ 上高 $\\frac{1}{\\varepsilon}='+fmt(1/eps)+'$, 其面积为 $\\frac{1}{\\varepsilon}\\cdot\\varepsilon=1$.<br>'+
       hl('减小 ε: 脉冲越来越窄、越来越高, 但 $\\int_{-\\infty}^{+\\infty}\\delta_\\varepsilon(t)\\,\\mathrm{d}t$ 恒等于 1.')+'<br>'+
@@ -1397,7 +1461,7 @@ module('cvSift',function(cv){
     ctx.beginPath(); ctx.moveTo(m.px(0),m.py(yv)); ctx.lineTo(m.px(t0),m.py(yv)); ctx.stroke();
     ctx.setLineDash([]);
     dot(ctx,m.px(t0),m.py(yv),5.5,'#2e7d32','#fff');
-    tlabel(ctx,m.px(t0)+8,m.py(yv)-6,'φ(t₀) = '+fmt(yv),'#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m.px(t0)+8,m.py(yv)-6,'$\\varphi(t_0)='+fmt(yv)+'$','#2e7d32','bold 12px Segoe UI');
     ctx.restore();
     tlabel(ctx,L,26,'筛选性质: 脉冲移到 t₀ 处, 只"筛出" φ(t₀)','#37474f','bold 12.5px Segoe UI');
     setRO('siftReadout',
@@ -1434,7 +1498,7 @@ module('cvDeltaSpec',function(cv){
     ctx.setLineDash([]);
     tlabel(ctx,m1.px(0)+6,m1.py(4.0)-4,'δ(t)','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,28,'时域: 矩形脉冲 (橙, 宽 τ, 高 1/τ) 与 δ(t) (红虚线)','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,12,28,'时域: 矩形脉冲 (橙, 宽 $\\tau$, 高 $1/\\tau$) 与 $\\delta(t)$ (红虚线)','#37474f','bold 12.5px Segoe UI');
     // ---- 右: 频域 ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,42);
@@ -1443,7 +1507,7 @@ module('cvDeltaSpec',function(cv){
     // δ 的频谱: 恒等于 1
     ctx.strokeStyle='#c62828'; ctx.lineWidth=2.8;
     ctx.beginPath(); ctx.moveTo(0,m2.py(1)); ctx.lineTo(halfW,m2.py(1)); ctx.stroke();
-    tlabel(ctx,halfW-118,m2.py(1)-8,'F[δ(t)] = 1','#c62828','bold 12px Segoe UI');
+    tlabel(ctx,halfW-118,m2.py(1)-8,'$F[\\delta(t)]=1$','#c62828','bold 12px Segoe UI');
     // 矩形脉冲的频谱: sinc
     ctx.strokeStyle='#e65100'; ctx.lineWidth=2.6; ctx.beginPath();
     var first=true;
@@ -1456,7 +1520,7 @@ module('cvDeltaSpec',function(cv){
     tlabel(ctx,sx,28,'频域: δ(t) 的频谱 (红, 恒为 1) 与矩形脉冲的 sinc 频谱 (橙)','#37474f','bold 12.5px Segoe UI');
     setRO('dspReadout',
       '矩形脉冲宽度 $\\tau='+fmt(tau)+'$: 其频谱为 $F(\\omega)=\\frac{\\sin(\\omega\\tau/2)}{\\omega\\tau/2}$, 主瓣零点在 $\\omega=\\pm\\frac{2\\pi}{\\tau}$.<br>'+
-      hl('减小 τ: sinc 曲线的主瓣越来越宽、越来越平, 逐渐贴向那条恒为 1 的红色直线 —— 因为 τ → 0 时矩形脉冲趋于 δ(t).')+'<br>'+
+      hl('减小 $\\tau$：sinc 曲线的主瓣越来越宽、越来越平, 逐渐贴向那条恒为 $1$ 的红色直线 —— 因为 $\\tau\\to0$ 时矩形脉冲趋于 $\\delta(t)$.')+'<br>'+
       hl2('$\\mathscr{F}[\\delta(t)]=1$: 时域上最"集中"的脉冲, 在频域上铺满全部频率且强度恒为 1 —— 这正是"时域越窄、频域越宽"的极端情形.'));
   }
   bindSlider('dspTau',function(v){ tau=v; badge('dspTauV',fmt(v)); draw(); });
@@ -1484,7 +1548,7 @@ module('cvCosSpec',function(cv){
     }
     ctx.stroke();
     ctx.restore();
-    tlabel(ctx,12,28,'时域: cos ω₀t','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,12,28,'时域: $\\cos\\omega_0 t$','#37474f','bold 12.5px Segoe UI');
     // ---- 右: 频谱 (两根 δ 谱线) ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,42);
@@ -1502,11 +1566,11 @@ module('cvCosSpec',function(cv){
     tlabel(ctx,m2.px(-w0)-34,m2.py(0)+18,'−ω₀','#37474f','bold 12px Segoe UI');
     tlabel(ctx,m2.px(w0)+8,m2.py(0)+18,'ω₀','#37474f','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,sx,28,'频域: 两根 δ 谱线, 位置 ∓ω₀, 强度 π','#37474f','bold 12.5px Segoe UI');
+    tlabel(ctx,sx,28,'频域: 两根 $\\delta$ 谱线, 位置 $\\mp\\omega_0$, 强度 $\\pi$','#37474f','bold 12.5px Segoe UI');
     setRO('cosReadout',
       '角频率 $\\omega_0='+fmt(w0,1)+'$: 余弦信号的频谱是两根 $\\delta$ 谱线, 位于 $\\omega=\\pm\\omega_0=\\pm'+fmt(w0,1)+'$, 每根强度为 $\\pi$.<br>'+
       hl('$\\mathscr{F}[\\cos\\omega_0 t]=\\pi\\left[\\delta(\\omega-\\omega_0)+\\delta(\\omega+\\omega_0)\\right]$: 谱线始终成对出现, 关于 $\\omega=0$ 对称.')+'<br>'+
-      hl2('增大 ω₀: 时域波形变密, 两根谱线向两侧分开; 这正是"单频信号只在 ±ω₀ 处有能量"的频谱语言.'));
+      hl2('增大 $\\omega_0$：时域波形变密, 两根谱线向两侧分开; 这正是"单频信号只在 $\\pm\\omega_0$ 处有能量"的频谱语言.'));
   }
   bindSlider('cosW0',function(v){ w0=v; badge('cosW0V',fmt(v,1)); draw(); });
   badge('cosW0V',fmt(w0,1));
@@ -1517,10 +1581,10 @@ module('cvCosSpec',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'引入与物理描述', c:'#1976d2', leaves:['电路瞬时脉冲: $q(t)$ 跳变, $i(t)=q\'(t)$ 不存在','宽 $\\to 0$, 高 $\\to \\infty$, 面积恒为 1','形式定义: $\\delta(t)=0$ ($t \\neq 0$), $\\delta(0)=\\infty$','$\\int \\delta(t)\\,\\mathrm{d}t = 1$ (单位强度)','图形: 长度 1 的有向线段','$\\delta(t-t_0)$: 箭头平移到 $t_0$']},
+    {t:'引入与物理描述', c:'#1976d2', leaves:['电路瞬时脉冲: $q(t)$ 跳变, $i(t)=q\'(t)$ 不存在','宽 $\\to 0$, 高 $\\to \\infty$, 面积恒为 1','形式定义: $\\delta(t)=0$ ($t \\neq 0$), $\\delta(0)=\\infty$','$\\int\\limits_{\\infty}^{+\\infty} \\delta(t)\\,\\mathrm{d}t = 1$ (单位强度)','图形: 长度 1 的有向线段','$\\delta(t-t_0)$: 箭头平移到 $t_0$']},
     {t:'弱极限与基本性质', c:'#e65100', leaves:['弱极限: $\\lim \\delta_\\varepsilon(t) = \\delta(t)$ ($\\varepsilon \\to 0$)','$\\delta_\\varepsilon(t) = \\frac{1}{\\varepsilon}$, $0 \\le t \\le \\varepsilon$','$\\delta(-t) = \\delta(t)$ (偶函数)','$t\\,\\delta(t) = 0$','$\\alpha(t)\\delta(t-t_0)$','$=\\alpha(t_0)\\delta(t-t_0)$','$\\delta(at) = \\frac{\\delta(t)}{|a|}$']},
-    {t:'筛选性质', c:'#c62828', leaves:['$\\int \\delta(t)\\varphi(t)\\,\\mathrm{d}t = \\varphi(0)$','一般式: $\\int \\delta(t-t_0)\\varphi(t)\\,\\mathrm{d}t = \\varphi(t_0)$','证明: 弱极限 + 积分中值定理','$\\frac{\\mathrm{d}u(t)}{\\mathrm{d}t} = \\delta(t)$','$q(t)=q_0 u(t)$ 的广义导数 $q_0\\delta(t)$','一点的信息决定整个积分']},
-    {t:'傅氏变换与应用', c:'#2e7d32', leaves:['$\\mathscr{F}[\\delta(t)] = 1$','$\\mathscr{F}[\\delta(t-t_0)] = \\mathrm{e}^{-\\mathrm{i}\\omega t_0}$','$\\frac{1}{2\\pi}\\int \\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega = \\delta(t)$','$\\mathscr{F}[1] = 2\\pi \\delta(\\omega)$','$\\mathscr{F}[\\cos \\omega_0 t]$','$=\\pi[\\delta(\\omega-\\omega_0)+\\delta(\\omega+\\omega_0)]$','$\\mathscr{F}[u(t)] = \\pi\\delta(\\omega) + \\frac{1}{\\mathrm{i}\\omega}$']}
+    {t:'筛选性质', c:'#c62828', leaves:['$\\int\\limits_{\\infty}^{+\\infty} \\delta(t)\\varphi(t)\\,\\mathrm{d}t = \\varphi(0)$','一般式: $\\int\\limits_{\\infty}^{+\\infty} \\delta(t-t_0)\\varphi(t)\\,\\mathrm{d}t = \\varphi(t_0)$','证明: 弱极限 + 积分中值定理','$\\frac{\\mathrm{d}u(t)}{\\mathrm{d}t} = \\delta(t)$','$q(t)=q_0 u(t)$ 的广义导数 $q_0\\delta(t)$','一点的信息决定整个积分']},
+    {t:'傅氏变换与应用', c:'#2e7d32', leaves:['$\\mathscr{F}[\\delta(t)] = 1$','$\\mathscr{F}[\\delta(t-t_0)] = \\mathrm{e}^{-\\mathrm{i}\\omega t_0}$','$\\frac{1}{2\\pi}\\int\\limits_{\\infty}^{+\\infty} \\mathrm{e}^{\\mathrm{i}\\omega t}\\,\\mathrm{d}\\omega = \\delta(t)$','$\\mathscr{F}[1] = 2\\pi \\delta(\\omega)$','$\\mathscr{F}[\\cos \\omega_0 t]$','$=\\pi[\\delta(\\omega-\\omega_0)+\\delta(\\omega+\\omega_0)]$','$\\mathscr{F}[u(t)] = \\pi\\delta(\\omega) + \\frac{1}{\\mathrm{i}\\omega}$']}
   ];
   function build(){
     if(built) return;
@@ -1594,7 +1658,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

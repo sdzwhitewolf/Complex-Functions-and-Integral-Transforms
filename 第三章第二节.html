@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -1411,7 +1412,8 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
   if(el.getAttribute('data-h')===html) return;
@@ -1627,7 +1629,7 @@ module('cvDeform',function(cv){
     setRO('dfReadout',
       '变形参数 $m='+fmt(m)+'$ &nbsp;|&nbsp; 曲线形状: '+(m<0.05?'标准圆形':(m<0.6?'略变椭圆':'不规则曲线'))+'<br>'+
       '数值积分 $\\oint_C\\frac{\\mathrm{d}z}{z}\\approx '+fmt(sum.re,3)+' '+(sum.im<0?'-':'+')+' '+fmt(Math.abs(sum.im),4)+'\\mathrm{i}$<br>'+
-      '<b>'+hl('无论曲线如何变形, 结果始终是 2πi')+'</b> —— 这就是闭路变形原理.<br>'+
+      '<b>'+hl('无论曲线如何变形, 结果始终是 $2\\pi\\mathrm{i}$')+'</b> —— 这就是闭路变形原理.<br>'+
       '原因: 曲线内部始终包含奇点 $z=0$, 而积分值只取决于"是否圈住奇点". 只要变形中不经过 $z=0$, 积分值就不变.');
   }
   bindSlider('dfM',function(v){ m=v; badge('dfMV',fmt(v)); draw(); });

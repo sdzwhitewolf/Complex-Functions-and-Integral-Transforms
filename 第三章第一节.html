@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -421,6 +422,10 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
@@ -1444,7 +1449,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1480,7 +1527,8 @@ function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
   if(el.getAttribute('data-h')===html) return;
   el.setAttribute('data-h',html); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1559,7 +1607,7 @@ module('cvRiemannSum',function(cv){
     arrow(ctx,o2x,o2y,m2.px(sum.re),m2.py(sum.im),'#e53935',3,12);
     dot(ctx,m2.px(exact.re),m2.py(exact.im),6,'#2e7d32','#fff');
     dot(ctx,m2.px(sum.re),m2.py(sum.im),7,'#e53935','#fff');
-    tlabel(ctx,m2.px(exact.re)+9,m2.py(exact.im)-10,'真值 (B²−A²)/2','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(exact.re)+9,m2.py(exact.im)-10,'真值 $\\dfrac{B^{2}-A^{2}}{2}$','#2e7d32','bold 12px Segoe UI');
     tlabel(ctx,m2.px(sum.re)+10,m2.py(sum.im)+20,'当前和式','#e53935','bold 12px Segoe UI');
     ctx.restore();
     tlabel(ctx,sx,26,'和式随 n 增大逼近积分真值','#37474f','bold 13px Segoe UI');
@@ -1620,7 +1668,7 @@ module('cvCurveDir',function(cv){
       dot(ctx,m.px(pb.re),m.py(pb.im),8,'#2e7d32','#fff');
       tlabel(ctx,m.px(pa.re)-10,m.py(pa.im)+24,'A (起点)','#2e7d32','bold 13px Segoe UI');
       tlabel(ctx,m.px(pb.re)+10,m.py(pb.im)-14,'B (终点)','#2e7d32','bold 13px Segoe UI');
-      tlabel(ctx,m.px(0)+18,m.py(1.5),'正向: A → B ; 反向: B → A (记作 C⁻)','#c62828','bold 13px Segoe UI');
+      tlabel(ctx,m.px(0)+18,m.py(1.5),'正向: $A\\to B$ ; 反向: $B\\to A$ (记作 $C^-$)','#c62828','bold 13px Segoe UI');
     } else if(mode===2){
       // 圆周 正/负向
       var R=1.3;
@@ -1754,7 +1802,7 @@ module('cvCircleInt',function(cv){
     }
     dot(ctx,m1.px(0),m1.py(0),8,'#c62828','#fff');
     tlabel(ctx,m1.px(0)+11,m1.py(0)+18,'z₀ (奇点)','#c62828','bold 12px Segoe UI');
-    tlabel(ctx,m1.px(0)+22,m1.py(2.28),'|z − z₀| = '+fmt(r),'#1565c0','bold 13px Segoe UI');
+    tlabel(ctx,m1.px(0)+22,m1.py(2.28),'$|z-z_0|='+fmt(r)+'$','#1565c0','bold 13px Segoe UI');
     ctx.restore();
     setCap('cvCircleIntCap1', '积分路径: 圆心 $z_0$, 半径 $r='+fmt(r)+'$ 的正向圆周');;
     // 右: 积分内部结构 e^{-inθ}
@@ -1780,7 +1828,7 @@ module('cvCircleInt',function(cv){
       ctx.fillRect(x0,Math.min(y0,m2.py(v)),x1-x0,Math.abs(m2.py(v)-y0));
     }
     ctx.globalAlpha=1;
-    tlabel(ctx,m2.px(0.2),m2.py(1.3),'被积函数的实部 cos(nθ)','#e65100','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(0.2),m2.py(1.3),'被积函数的实部 $\\cos(n\\theta)$','#e65100','bold 12px Segoe UI');
     ctx.restore();
     var val=(n===0)?'2\\pi\\mathrm{i}':'0';
     setRO('ciReadout',
@@ -1844,7 +1892,7 @@ module('cvEstimate',function(cv){
     ctx.strokeStyle='#2e7d32'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(m2.px(-0.15),m2.py(5/3)); ctx.lineTo(m2.px(1.15),m2.py(5/3)); ctx.stroke();
     ctx.setLineDash([]);
-    tlabel(ctx,m2.px(0.3),m2.py(1.85),'M = 5/3 (最大值)','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(0.3),m2.py(1.85),'$M=\\dfrac{5}{3}$ (最大值)','#2e7d32','bold 12px Segoe UI');
     var dd3=Math.hypot(3*tv,4*tv-1);
     dot(ctx,m2.px(tv),m2.py(1/dd3),6.5,'#c62828','#fff');
     ctx.restore();
@@ -1979,7 +2027,7 @@ module('cvGreen',function(cv){
       '取 $P=-\\frac{\\lambda y}{2}$ , $Q=\\frac{\\lambda x}{2}$, 则旋度 $\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}='+fmt(lam)+'$<br>'+
       '边界环量 $\\oint_C P\\mathrm{d}x+Q\\mathrm{d}y='+fmt(lam)+'\\times(\\text{面积})\\approx '+fmt(lam*area,3)+'$<br>'+
       (Math.abs(lam)<1e-9
-        ? '<b>'+hl('λ = 0: 内部旋度处处为零 ⇒ 沿任意闭曲线的环量必为 0')+'</b><br>这正是解析函数满足柯西—黎曼方程时的情形 —— 柯西积分定理 $\\oint_C f(z)\\mathrm{d}z=0$ 的几何原型.'
+        ? '<b>'+hl('$\\lambda=0$：内部旋度处处为零 $\\Rightarrow$ 沿任意闭曲线的环量必为 $0$')+'</b><br>这正是解析函数满足柯西—黎曼方程时的情形 —— 柯西积分定理 $\\oint_C f(z)\\mathrm{d}z=0$ 的几何原型.'
         : 'λ ≠ 0 时环量不为零. 拖动滑块让 λ → 0, 观察内部箭头消失, 环量随之归零.'));
   }
   bindSlider('grL',function(v){ lam=v; badge('grLV',fmt(v)); draw(); });

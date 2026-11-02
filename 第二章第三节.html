@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -197,12 +198,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -415,7 +425,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第二章 第3节 初等函数</h1>
     <p>指数 &middot; 对数 &middot; 幂 &middot; 三角・双曲 &middot; 交互探索</p>
@@ -647,6 +657,7 @@ $$\operatorname{Ln}(z_1\cdot z_2)=\operatorname{Ln} z_1+\operatorname{Ln} z_2, \
 <div class="chart-container">
 <h3>交互: 绕原点一圈, 对数增加 $2\pi\mathrm{i}$ <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">让 $z$ 沿单位圆绕原点运动. 左图显示 $z$ 的位置, 右图显示对应的一条对数分支的虚部 $\operatorname{Im}(\operatorname{Ln} z)=$ 辐角. 当 $z$ 绕回原处时, 辐角<b>增加了 $2\pi$</b>, 因此对数换到了另一个分支 —— 这就是多值性的直观来源.</div>
+<div class="fig-caps"><div class="fc" id="cvLogMultCap1"></div><div class="fc" id="cvLogMultCap2"></div></div>
 <canvas id="cvLogMult" data-h="400"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -890,6 +901,7 @@ $$\operatorname{Arsh} z=\operatorname{Ln}\left(z+\sqrt{z^2+1}\right), \qquad \op
 <div class="chart-container">
 <h3>交互: $\sin z$ 的无界性 <span class="tag-pill">交互</span></h3>
 <div class="chart-desc">让 $z=0+\mathrm{i}y$ 沿虚轴运动, 观察 $|\sin(\mathrm{i}y)|=|\operatorname{sh} y|=\frac{\mathrm{e}^{y}-\mathrm{e}^{-y}}{2}$ 随 $y$ 的增长. 在实数域 $|\sin x|\le1$ 的"围墙", 在复平面上被彻底推倒了.</div>
+<div class="xcap" id="capTrig"></div>
 <canvas id="cvTrig" data-h="400"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1494,12 +1506,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1548,7 +1562,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1556,7 +1575,7 @@ function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,
     if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
     last=m.index+m[0].length; }
   return res+html.slice(last); }
-function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=iiFix(html);
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function hl(s){ return '<span class="hl">'+s+'</span>'; }
 function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
@@ -1661,7 +1680,7 @@ module('cvLogMult',function(cv){
     dot(ctx,m1.px(r*Math.cos(th)),m1.py(r*Math.sin(th)),7,'#c62828','#fff');
     tlabel(ctx,m1.px(r*Math.cos(th))+10,m1.py(r*Math.sin(th))-10,'z','#c62828','bold 13px Georgia');
     ctx.restore();
-    tlabel(ctx,12,26,'① z 绕原点转 '+ang+'°','#1976d2','bold 13px Segoe UI');
+    setCap('cvLogMultCap1', '① $z$ 绕原点转 $'+ang+'^\\circ$');;
     // ---------- 右: w = Ln z ----------
     var sx=halfW+30;
     ctx.save(); ctx.translate(sx,42);
@@ -1686,14 +1705,14 @@ module('cvLogMult',function(cv){
     dot(ctx,px,py,7,'#c62828','#fff');
     tlabel(ctx,px-70,py+5,'Im w = '+fmt(cur,3),'#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,sx,26,'② 对应的对数 w = ln|z| + iθ','#c62828','bold 13px Segoe UI');
+    setCap('cvLogMultCap2', '② 对应的对数 $w=\\ln|z|+\\mathrm{i}\\theta$');;
     var kk=Math.floor(ang/360);
     setRO('lmReadout',
       '当前 $z=\\mathrm{e}^{\\mathrm{i}\\theta}$, $\\theta='+ang+'^\\circ='+fmt(th,3)+'$ rad, $|z|='+fmt(r)+'$<br>'+
       '$\\operatorname{Ln} z=\\ln 1+\\mathrm{i}\\theta=\\mathrm{i}\\cdot'+fmt(th,3)+'$<br>'+
       '已绕原点 <b>'+(ang/360).toFixed(2)+'</b> 圈, 虚部累计增加 $'+fmt(th,3)+'$, 相当于跨过 <b>'+kk+'</b> 条分支线.<br>'+
       (ang>=360
-        ? hl('注意: 回到 z 的同一位置, 对数却增加了 2π —— 它跑到了另一个分支上!')
+        ? hl('注意: 回到 $z$ 的同一位置, 对数却增加了 $2\\pi$ —— 它跑到了另一个分支上!')
         : '继续转动, 观察 $\\operatorname{Ln} z$ 的虚部如何不断累加.'));
   }
   bindSlider('lmAng',function(v){ ang=v; badge('lmAngV',v+'\u00b0'); draw(); });
@@ -1815,7 +1834,7 @@ module('cvTrig',function(cv){
     ctx.beginPath(); ctx.moveTo(m2.px(0),m2.py(cur)); ctx.lineTo(m2.px(yv),m2.py(cur)); ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
-    tlabel(ctx,sx,26,'② |sin(iy)| = |sh y| 指数增长','#e65100','bold 13px Segoe UI');
+    xcap('capTrig', '② $|\\sin(\\mathrm{i}y)|=|\\sinh y|$ 指数增长');
     setRO('tgReadout',
       '$\\sin(\\mathrm{i}y)=\\mathrm{i}\\operatorname{sh} y$, &nbsp; 故 $|\\sin(\\mathrm{i}y)|=|\\operatorname{sh} y|=\\frac{\\mathrm{e}^{y}-\\mathrm{e}^{-y}}{2}$<br>'+
       '当前 $y='+fmt(yv)+'$ 时, $|\\sin(\\mathrm{i}y)|='+hl(fmt(cur,3))+'$'+
@@ -1969,7 +1988,7 @@ module('cvLogSpiral',function(cv){
       '已绕行 $\\theta='+ang+'^\\circ$, 对应 $\\operatorname{Ln} z$ 的虚部 $\\operatorname{Im} w='+fmt(ang*Math.PI/180,3)+'$<br>'+
       '当前所在层: <b>k = '+kk+'</b> &nbsp;|&nbsp; 总圈数 $='+circ.toFixed(2)+'$<br>'+
       '在平面上, 转一圈就回到了起点; 而在对数曲面上, 每转一圈就<b>上升 $2\\pi$</b>, 永远回不到原来的高度.<br>'+
-      hl('把多值的 Ln z 铺在这张螺旋面上, 它就变成了单值函数')+' —— 这正是黎曼曲面的思想, 也是莱布尼茨与伯努利那场争论的最终答案.');
+      hl('把多值的 $\\operatorname{Ln}z$ 铺在这张螺旋面上, 它就变成了单值函数')+' —— 这正是黎曼曲面的思想, 也是莱布尼茨与伯努利那场争论的最终答案.');
   }
   bindSlider('lsAng',function(v){ ang=v; badge('lsAngV',v+'\u00b0'); draw(); });
   badge('lsAngV','0\u00b0');
@@ -2013,7 +2032,7 @@ module('cvLogSpiral',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

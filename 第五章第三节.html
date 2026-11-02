@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -199,12 +200,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -412,12 +422,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第五章 第三节 留数在定积分计算中的应用</h1>
     <p>三类实积分 &middot; 闭路取法 &middot; 大圆弧估计 &middot; 约当引理</p>
@@ -444,7 +458,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="tab-buttons">
     <label class="tab-btn" for="tab1" id="label1">一、单位圆周上的积分</label>
     <label class="tab-btn" for="tab2" id="label2">二、无穷区间上的积分</label>
-    <label class="tab-btn" for="tab3" id="label3">三、含 $\mathrm{e}^{iax}$ 的积分</label>
+    <label class="tab-btn" for="tab3" id="label3">三、含 $\mathrm{e}^{\mathrm{i}ax}$ 的积分</label>
     <label class="tab-btn" for="tab4" id="label4">四、统一视角与综合练习</label>
     <label class="tab-btn" for="tab5" id="label5">五、本节小结（图谱 · 自测）</label>
     <label class="tab-btn" for="tab6" id="label6">六、思政园地 · 数学与家国</label>
@@ -596,6 +610,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 上半平面半圆闭路与 $C_R$ 上的积分估计 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图画出上半平面闭路 $C$: 实轴线段 $[-R,R]$ 加上半圆周 $C_R$, 并标出上半平面内的极点 $a\mathrm{i}$、$b\mathrm{i}$ (以例 3.2 为例). 拖动 $R$ 滑块, 观察半圆如何一步步把所有上半平面极点"圈进来"; 右图画出 $3\pi/R$ 随 $R$ 的衰减, 说明 $C_R$ 上的积分贡献最终归于 $0$.</div>
+<div class="fig-caps"><div class="fc" id="cvHalfCap1"></div></div>
 <canvas id="cvHalf" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -702,6 +717,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="fc" id="cvPathCap"></div>
 <div class="fc" id="ptNoteCap"></div>
 </div>
+<div class="xcap" id="capPath"></div>
 <canvas id="cvPath" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1200,12 +1216,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1233,7 +1251,49 @@ function tsub(ctx,x,y,main,sub,tail,color,font,subFont){
   ctx.fillText(sub,x+w1+0.5,y+3);
   if(tail){ var w2=ctx.measureText(sub).width; ctx.font=font; ctx.fillText(tail,x+w1+w2+1.5,y); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1261,9 +1321,14 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
-function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=iiFix(html);
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1309,13 +1374,13 @@ module('cvTheta',function(cv){
     dot(ctx,m.px(0),m.py(0),5,'#c62828','#fff');
     tlabel(ctx,m.px(0)-30,m.py(0)+22,'0 (二级)','#c62828','bold 11px Segoe UI');
     dot(ctx,m.px(p),m.py(0),5,'#e65100','#fff');
-    tlabel(ctx,m.px(p)-30,m.py(0)-11,'p (一级)','#e65100','bold 11px Segoe UI');
+    tlabel(ctx,m.px(p)-30,m.py(0)-11,'ρ (一级)','#e65100','bold 11px Segoe UI');
     var op=1/p;
     if(op<=1.7){
       dot(ctx,m.px(op),m.py(0),5,'#9e9e9e','#fff');
-      tlabel(ctx,m.px(op)-34,m.py(0)+22,'1/p (圆外)','#757575','bold 11px Segoe UI');
+      tlabel(ctx,m.px(op)-34,m.py(0)+22,'1/ρ (圆外)','#757575','bold 11px Segoe UI');
     } else {
-      tlabel(ctx,halfW-96,m.py(0)-11,'1/p 落在圆外','#757575','bold 11px Segoe UI');
+      tlabel(ctx,halfW-96,m.py(0)-11,'1/ρ 落在圆外','#757575','bold 11px Segoe UI');
     }
     // 当前点 z = e^{iθ}
     var zx=m.px(Math.cos(theta)), zy=m.py(Math.sin(theta));
@@ -1326,7 +1391,7 @@ module('cvTheta',function(cv){
     dot(ctx,zx,zy,6,'#2e7d32','#fff');
     tlabel(ctx,m.px(1)-30,m.py(0)-8,'|z| = 1','#1565c0','bold 11px Segoe UI');
     ctx.restore();
-    tlabel(ctx,18,26,'z 平面: 单位圆周 |z| = 1 (θ: 0 → 2π)','#37474f','bold 12px Segoe UI');
+    tlabel(ctx,18,26,'$z$ 平面: 单位圆周 $|z|=1$ ($\\theta$: $0\\to2\\pi$)','#37474f','bold 12px Segoe UI');
     // ---- 右: 被积函数曲线 ----
     var sx=halfW+40;
     ctx.save(); ctx.translate(sx,44);
@@ -1346,7 +1411,7 @@ module('cvTheta',function(cv){
     ctx.beginPath(); ctx.moveTo(m2.px(theta),m2.py(vmin)); ctx.lineTo(m2.px(theta),m2.py(vmax)); ctx.stroke(); ctx.setLineDash([]);
     dot(ctx,m2.px(theta),m2.py(cur),5,'#e65100','#fff');
     ctx.restore();
-    tlabel(ctx,sx,26,'例 3.1 被积函数随 θ 的变化','#37474f','bold 12px Segoe UI');
+    tlabel(ctx,sx,26,'例 3.1 被积函数随 $\\theta$ 的变化','#37474f','bold 12px Segoe UI');
     setRO('thReadout',
       '当前 $z=\\mathrm{e}^{\\mathrm{i}\\theta}$: $\\theta='+hl(fmt(theta))+'$, $\\cos\\theta='+fmt(Math.cos(theta))+'$, $\\sin\\theta='+fmt(Math.sin(theta))+'$; 被积函数值 $\\frac{\\cos2\\theta}{1-2p\\cos\\theta+p^2}='+hl2(fmt(cur))+'$.<br>'+
       '参数 $p='+hl(fmt(p))+'$: 极点 $0$ (二级) 与 $p='+fmt(p)+'$ (一级) 落在单位圆内, $1/p='+fmt(op)+'$ 落在单位圆外.<br>'+
@@ -1393,7 +1458,7 @@ module('cvHalf',function(cv){
     tlabel(ctx,m.px(R)+6,m.py(0)+16,'R','#c62828','italic 12px Georgia');
     tlabel(ctx,m.px(-R)-14,m.py(0)+16,'−R','#c62828','italic 12px Georgia');
     ctx.restore();
-    tlabel(ctx,18,26,'闭路 C = 实轴段 [−R, R] + 上半圆周 (蓝弧)','#37474f','bold 12px Segoe UI');
+    setCap('cvHalfCap1', '闭路 $C$ = 实轴段 $[-R,\\,R]$ + 上半圆周 (蓝弧)');;
     // ---- 右: 3π/R 衰减曲线 ----
     var sx=halfW+40;
     ctx.save(); ctx.translate(sx,44);
@@ -1416,7 +1481,7 @@ module('cvHalf',function(cv){
       dot(ctx,m2.px(R),m2.py(bdR),5,'#e65100','#fff');
     }
     ctx.restore();
-    tlabel(ctx,sx,26,'上界 3π/R 随 R 的衰减 (R 越大, 圆弧贡献越小)','#37474f','bold 12px Segoe UI');
+    xcap('capPath', '上界 $\\dfrac{3\\pi}{R}$ 随 $R$ 的衰减（$R$ 越大，圆弧贡献越小）');
     var inside=(R>Math.max(a,b));
     setRO('hpReadout',
       '半圆半径 $R='+hl(fmt(R))+'$: 闭路 $C$ 由实轴段 $[-R,R]$ 与上半圆周 $C_R$ 组成.<br>'+
@@ -1465,7 +1530,7 @@ module('cvJordan',function(cv){
     ctx.save(); ctx.translate(sx,44);
     var m2=mapperEq(halfW,H,0,1.8,0,1.05);
     grid(ctx,halfW,H,m2,0.5);
-    axes(ctx,halfW,H,m2,'y','e^{−ay}');
+    axes(ctx,halfW,H,m2,'y','e⁻ᵃʸ');
     var cols=['#90caf9','#42a5f5','#1976d2','#0d47a1'];
     var aa=[0.4,0.8,1.6,2.6];
     for(var k=0;k<aa.length;k++){
@@ -1519,8 +1584,8 @@ module('cvPath',function(cv){
       ctx.strokeStyle='#1565c0'; ctx.lineWidth=2.8;
       ctx.beginPath(); ctx.arc(m.px(0),m.py(0),1.4*m.s,0,TAU); ctx.stroke();
       dot(ctx,m.px(0),m.py(0),5,'#c62828','#fff'); tlabel(ctx,m.px(0)-34,m.py(0)+22,'0 (二级)','#c62828','bold 11px Segoe UI');
-      dot(ctx,m.px(0.8),m.py(0),5,'#e65100','#fff'); tlabel(ctx,m.px(0.8)-30,m.py(0)-11,'p (一级)','#e65100','bold 11px Segoe UI');
-      dot(ctx,m.px(2.3),m.py(0),5,'#9e9e9e','#fff'); tlabel(ctx,m.px(2.3)-32,m.py(0)+22,'1/p (圆外)','#757575','bold 11px Segoe UI');
+      dot(ctx,m.px(0.8),m.py(0),5,'#e65100','#fff'); tlabel(ctx,m.px(0.8)-30,m.py(0)-11,'ρ (一级)','#e65100','bold 11px Segoe UI');
+      dot(ctx,m.px(2.3),m.py(0),5,'#9e9e9e','#fff'); tlabel(ctx,m.px(2.3)-32,m.py(0)+22,'1/ρ (圆外)','#757575','bold 11px Segoe UI');
       tlabel(ctx,m.px(-1.35),m.py(1.62),'|z| = 1','#1565c0','bold 12px Georgia');
     } else {
       var Rr=2.2;
@@ -1568,9 +1633,9 @@ module('cvPath',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'第一类 · 单位圆周', c:'#1976d2', leaves:['令 $z=\\mathrm{e}^{\\mathrm{i}\\theta},\\ \\mathrm{d}\\theta=\\frac{\\mathrm{d}z}{\\mathrm{i}z}$','$\\cos\\theta=\\frac{z^2+1}{2z}$','$\\sin\\theta=\\frac{z^2-1}{2\\mathrm{i}z}$','化为 $|z|=1$ 上的闭路积分','条件: $R$ 在单位圆周上无奇点','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[f,z_k]$ (圆内)']},
+    {t:'第一类 · 单位圆周', c:'#1976d2', leaves:['令 $z=\\mathrm{e}^{\\mathrm{i}\\theta},\\ \\mathrm{d}\\theta=\\frac{\\mathrm{d}z}{\\mathrm{i}z}$','$\\cos\\theta=\\frac{z^2+1}{2z}$','$\\sin\\theta=\\frac{z^2-1}{2\\mathrm{i}z}$','化为 $|z|=1$ 上的闭路积分','条件: $R$ 在单位圆周上无奇点','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[f(z),z_k]$ (圆内)']},
     {t:'第二类 · 无穷区间', c:'#e65100', leaves:['条件: $m-n\\ge 2$, 实轴无奇点','取上半平面半圆闭路 $C_R+[-R,R]$','估计 $|R(z)|\\le\\frac{3}{|z|^2}$','ML 估计: $\\left|\\int_{C_R}\\right|\\le\\frac{3\\pi}{R}\\to 0$','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[R,z_k]$ (上半平面)','例3.2: $\\int\\frac{x^2\\,\\mathrm{d}x}{(x^2+a^2)(x^2+b^2)}=\\frac{\\pi}{a+b}$']},
-    {t:'第三类 · 含 e^{iax}', c:'#c62828', leaves:['条件: $m-n\\ge 1$, 实轴无奇点','约当引理: $\\int_{C_R}R\\mathrm{e}^{\\mathrm{i}az}\\to 0$ ($a>0$)','$|\\mathrm{e}^{\\mathrm{i}az}|=\\mathrm{e}^{-ay}\\le 1$ 指数衰减','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[R\\mathrm{e}^{\\mathrm{i}az},z_k]$','分离实虚部得 $\\cos/\\sin$ 型积分','例3: $\\int_0^{\\infty}\\frac{x\\sin x}{x^2+a^2}\\,\\mathrm{d}x=\\frac{\\pi}{2}\\mathrm{e}^{-a}$']}
+    {t:'第三类 · 含 $\\mathrm{e}^{\\mathrm{i}ax}$', c:'#c62828', leaves:['条件: $m-n\\ge 1$, 实轴无奇点','约当引理: $\\int_{C_R}R(z)\\mathrm{e}^{\\mathrm{i}az}\\,\\mathrm{d}z\\to 0$ ($a>0$)','$|\\mathrm{e}^{\\mathrm{i}az}|=\\mathrm{e}^{-ay}\\le 1$ 指数衰减','$I=2\\pi\\mathrm{i}\\sum\\operatorname{Res}[R\\mathrm{e}^{\\mathrm{i}az},z_k]$','分离实虚部得 $\\cos/\\sin$ 型积分','例3: $\\int_0^{\\infty}\\frac{x\\sin x}{x^2+a^2}\\,\\mathrm{d}x=\\frac{\\pi}{2}\\mathrm{e}^{-a}$']}
   ];
   function build(){
     if(built) return;
@@ -1589,7 +1654,7 @@ module('cvSummary',function(cv){
       col.className='kg-col'+(maxLen>60?' long':(maxLen>40?' mid':''));
       col.style.setProperty('--kc',cd.c);
       var tt=document.createElement('div');
-      tt.className='kg-cat'; tt.textContent=cd.t;
+      tt.className='kg-cat'; tt.innerHTML=cd.t;
       col.appendChild(tt);
       var box=document.createElement('div');
       box.className='kg-leaves';
@@ -1644,7 +1709,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

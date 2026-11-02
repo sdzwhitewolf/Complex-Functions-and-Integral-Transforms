@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -168,6 +169,25 @@ input[type="range"] { width: 200px; vertical-align: middle; }
     min-width:52px; text-align:center; font-size:.88em;
 }
 .kg-wrap { margin: 8px 0 4px; }
+/* 准则决策树(HTML 版) */
+.ind-tree { padding: 4px 2px 12px; }
+.rl-root { max-width: 460px; margin: 0 auto 4px; border: 2px solid #37474f; border-radius: 9px;
+  background: #fff; text-align: center; font-weight: 700; color: #37474f; padding: 10px 14px; }
+.rl-bus { width: 2px; height: 26px; background: #cfd8dc; margin: 0 auto; }
+.rl-row { display: flex; gap: 12px; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+.rl-box { flex: 0 1 auto; min-width: 200px; border: 1.6px solid #cfd8dc; border-radius: 9px;
+  background: #fff; padding: 10px 16px; text-align: center; }
+.rl-box.act { border-color: var(--c); border-width: 3px; background: rgba(25,118,210,.04); }
+.rl-name { font-weight: 700; color: var(--c); }
+.rl-sub { font-size: .88em; color: #546e7a; margin: 2px 0 8px; }
+.rl-form { color: #455a64; font-size: .95em; }
+/* 计算路线流程条(HTML 版) */
+.rt-row { display: flex; gap: 8px; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+.rt-box { flex: 1 1 0; min-width: 170px; max-width: 260px; border: 1.8px solid var(--c); border-radius: 10px;
+  background: #fff; padding: 10px 10px 12px; text-align: center; }
+.rt-tit { font-size: .82em; color: #90a4ae; margin-bottom: 6px; }
+.rt-val { font-weight: 700; color: var(--c); }
+.rt-arrow { align-self: center; color: #b0bec5; font-size: 20px; }
 .kg-head { max-width: 430px; margin: 0 auto 18px; text-align: center; font-weight: 700;
   font-size: 1.02em; color: #37474f; background: #fff; border: 2px solid #37474f;
   border-radius: 9px; padding: 8px 14px; }
@@ -197,12 +217,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -411,12 +440,16 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第五章 第2节 留数</h1>
     <p>留数定义 &middot; 留数定理 &middot; 极点留数 &middot; 无穷远点留数</p>
@@ -663,7 +696,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 三条准则的计算流程 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">面对一个极点, 该用哪条准则? 拖动滑块在三种情形之间切换, 观察计算流程的走向: 一级极点走<b>准则 1</b>, $m$ 级极点走<b>准则 2</b>, $P/Q$ 型走<b>准则 3</b>. 下方同步给出完整的计算步骤.</div>
-<canvas id="cvRule" data-h="380"></canvas>
+<div id="cvRule" class="ind-tree"></div>
 <div class="control-panel">
 <div class="row">
 <label>情形:</label>
@@ -786,7 +819,9 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 无穷远点留数与"留数总和为零" <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">取 $f(z)=\frac{2z+1}{z(z-1)}$, 它在扩充复平面上的奇点只有 $z_1=0,\ z_2=1,\ z=\infty$. 拖动滑块选择"待求"的那个奇点, 观察其余留数之和如何"反推出"它 —— 这就是定理 2.2 的用法.</div>
+<div class="xcap" id="capInfRes"></div>
 <canvas id="cvInfRes" data-h="380"></canvas>
+<div class="xcap r" id="capResSum"></div>
 <div class="control-panel">
 <div class="row">
 <label>待求奇点:</label>
@@ -811,7 +846,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 
 <table>
 <tr><th>方法</th><th>适用条件</th><th>公式 / 做法</th><th>什么时候用它</th></tr>
-<tr><td>洛朗展开法</td><td>$z_0$ 为孤立奇点 (尤其是<b>本性奇点</b>)</td><td>把 $f$ 在 $0&lt;|z-z_0|&lt;R$ 内展开, 直接读出 $c_{-1}$; 若 $z_0$ 为可去奇点, 则 $\mathrm{Res}=0$</td><td>极点准则不适用时 (如本性奇点)</td></tr>
+<tr><td>洛朗展开法</td><td>$z_0$ 为孤立奇点 (尤其是<b>本性奇点</b>)</td><td>把 $f$ 在 $0&lt;|z-z_0|&lt;R$ 内展开, 直接读出 $c_{-1}=\operatorname{Res}[f(z),z_0]$; 若 $z_0$ 为可去奇点, 则 $\operatorname{Res}[f(z),z_0]=0$</td><td>极点准则不适用时 (如本性奇点)</td></tr>
 <tr><td>准则 1</td><td>$z_0$ 为<b>一级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\lim\limits_{z\to z_0}(z-z_0)f(z)$</td><td>分母是一级零点时最快捷</td></tr>
 <tr><td>准则 2</td><td>$z_0$ 为 <b>$m$ 级极点</b></td><td>$\mathrm{Res}[f(z),z_0]=\frac{1}{(m-1)!}\lim\limits_{z\to z_0}\frac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]$</td><td>$m$ 可取得比实际级数更高, 结论仍成立</td></tr>
 <tr><td>准则 3</td><td>$f=\frac{P}{Q}$, 且 $P(z_0)\neq0$, $Q(z_0)=0$, $Q'(z_0)\neq0$</td><td>$\mathrm{Res}[f(z),z_0]=\frac{P(z_0)}{Q'(z_0)}$</td><td>本质是一级极点, 计算最省事</td></tr>
@@ -821,7 +856,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 选择计算路线 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">拖动滑块在三个典型函数之间切换, 观察从"函数"到"奇点类型"再到"选用方法"的整条推理链 —— 选对方法, 往往让计算量相差一个数量级.</div>
-<canvas id="cvRoute" data-h="380"></canvas>
+<div id="cvRoute" class="ind-tree"></div>
 <div class="control-panel">
 <div class="row">
 <label>示例:</label>
@@ -1281,8 +1316,8 @@ function cexp(r,t){ return C(r*Math.cos(t),r*Math.sin(t)); }
 function cstr(z,d){ d=(d==null?2:d); var eps=Math.pow(10,-d)/2;
   if(Math.abs(z.im)<eps) return fmt(z.re,d);
   var im=fmt(Math.abs(z.im),d), sg=(z.im<0)?'−':'';
-  if(Math.abs(z.re)<eps) return sg+im+'i';
-  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'i'; }
+  if(Math.abs(z.re)<eps) return sg+im+'\\mathrm{i}';
+  return fmt(z.re,d)+(z.im<0?' − ':' + ')+im+'\\mathrm{i}'; }
 
 // ---------- canvas infra ----------
 var mods=[];
@@ -1343,12 +1378,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1369,7 +1406,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1397,7 +1476,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1405,7 +1489,7 @@ function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,
     if(b===1||d===1){ res+="\\color{#"+(m[2]==="hl"?"ffcc80":"a5d6a7")+"}{"+m[3].replace(/\$/g,"")+"}"; }else{ res+=m[0]; }
     last=m.index+m[0].length; }
   return res+html.slice(last); }
-function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return; el.innerHTML=iiFix(html);
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
 function hl(s){ return '<span class="hl">'+s+'</span>'; }
 function hl2(s){ return '<span class="hl2">'+s+'</span>'; }
@@ -1455,9 +1539,9 @@ module('cvResidue',function(cv){
       var inC=Math.hypot(s.re-cx0,s.im-cy0)<R;
       var col=inC?'#c62828':'#90a4ae';
       dot(ctx,m.px(s.re),m.py(s.im),inC?7:5,col,'#fff');
-      tlabel(ctx,m.px(s.re)+10,m.py(s.im)-8,'z'+(i+1),col,'bold 12px Segoe UI');
-      if(inC){ sum+=s.res; insideTxt.push('z'+(i+1)); }
-      list.push('Res[f,z'+(i+1)+']='+fmt(s.res)+(inC?' (圈内)':' (圈外)'));
+      tlabel(ctx,m.px(s.re)+10,m.py(s.im)-8,'$z_'+(i+1)+'$',col,'bold 12px Segoe UI');
+      if(inC){ sum+=s.res; insideTxt.push('$z_'+(i+1)+'$'); }
+      list.push('$\\operatorname{Res}[f,z_'+(i+1)+']='+fmt(s.res)+'$'+(inC?'（圈内）':'（圈外）'));
     });
     ctx.restore();
     setRO('rsReadout',
@@ -1515,8 +1599,8 @@ module('cvExtract',function(cv){
     }
     tlabel(ctx,w-padR-12,y0+20,'n','#546e7a','italic 13px Georgia');
     tlabel(ctx,padL-36,y0-16,'cₙ','#546e7a','italic 13px Georgia');
-    tlabel(ctx,padL-26,padT-34,'f(z) = eᶻ / z³ 的洛朗系数 cₙ  (n = −5 … 5)','#37474f','bold 13px Segoe UI');
-    tlabel(ctx,padL-22,padT-13,'红色柱 = n = −1 项 (就是留数 c₋₁); 橙色柱 = 其它负幂项; 蓝色柱 = 非负幂项','#607d8b','12px Segoe UI');
+    tlabel(ctx,padL-26,padT-34,'$f(z)=\\dfrac{\\mathrm{e}^{z}}{z^{3}}$ 的洛朗系数 $c_n$　($n=-5\\cdots 5$)','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,padL-22,padT-13,'红柱 $=n=-1$ 项 (即留数 $c_{-1}$); 橙柱 = 其它负幂项; 蓝柱 = 非负幂项','#607d8b','12px Segoe UI');
     var txt;
     if(sel===-1){
       txt='选中的 $n='+hl('-1')+'$: $c_{-1}='+hl2(fmt(coef(-1)))+'$, 这正是 $f(z)=\\dfrac{\\mathrm{e}^z}{z^3}$ 在 $z=0$ 的<b>留数</b>.<br>'+
@@ -1537,8 +1621,10 @@ module('cvExtract',function(cv){
 module('cvRule',function(cv){
   var kind=0;
   var NAMES=['准则 1','准则 2','准则 3'];
-  var SUB=['一级极点','m 级极点','P/Q 型'];
-  var FORM=['Res = lim (z−z₀) f(z)','含 (m−1) 阶导数','Res = P(z₀) / Q′(z₀)'];
+  var SUB=['一级极点','$m$ 级极点','$f=P/Q$ 型'];
+  var FORM=['$\\operatorname{Res}[f(z),z_0]=\\lim\\limits_{z\\to z_0}(z-z_0)\\,f(z)$',
+            '$\\operatorname{Res}[f(z),z_0]=\\dfrac{1}{(m-1)!}\\lim\\limits_{z\\to z_0}\\dfrac{\\mathrm{d}^{m-1}}{\\mathrm{d}z^{m-1}}\\Big[(z-z_0)^m f(z)\\Big]$',
+            '$\\operatorname{Res}[f(z),z_0]=\\dfrac{P(z_0)}{Q\'(z_0)}$'];
   var COL=['#1976d2','#e65100','#2e7d32'];
   function fitText(ctx,txt,maxW,basePx,bold){
     var px=basePx;
@@ -1553,38 +1639,18 @@ module('cvRule',function(cv){
     ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.stroke();
   }
   function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
-    var topY=40, topW=Math.min(360,w*0.62), topH=52;
-    rbox(ctx,w/2-topW/2,topY,topW,topH,'#37474f',9);
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillStyle='#37474f'; ctx.font='bold 13px Segoe UI';
-    ctx.fillText('已知 z₀ 是极点 → 判断它的级', w/2, topY+topH/2);
-    var bw=Math.min((w-60)/3,200), bh=104;
-    var gap=(w-3*bw)/4;
-    var by=topY+topH+56;
-    var busY=topY+topH+28;
-    var cen=function(i){ return gap*(i+1)+bw*i+bw/2; };
-    ctx.strokeStyle='#cfd8dc'; ctx.lineWidth=1.8;
-    ctx.beginPath(); ctx.moveTo(w/2,topY+topH); ctx.lineTo(w/2,busY); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cen(0),busY); ctx.lineTo(cen(2),busY); ctx.stroke();
+    var el=document.getElementById('cvRule');
+    if(!el) return;
+    var html='<div class="rl-root">已知 $z_0$ 是极点 → 判断它的级</div><div class="rl-bus"></div><div class="rl-row">';
     for(var i=0;i<3;i++){
-      var bx=gap*(i+1)+bw*i;
-      var col=COL[i], act=(i===kind);
-      ctx.strokeStyle=act?col:'#cfd8dc'; ctx.lineWidth=act?2.2:1.4;
-      ctx.beginPath(); ctx.moveTo(cen(i),busY); ctx.lineTo(cen(i),by-6); ctx.stroke();
-      rbox(ctx,bx,by,bw,bh,col,9,act?3.4:1.6);
-      if(act){ ctx.fillStyle='rgba(25,118,210,.05)'; ctx.fillRect(bx+2,by+2,bw-4,bh-4); }
-      ctx.fillStyle=col; ctx.font='bold 14px Segoe UI'; ctx.textAlign='center';
-      ctx.fillText(NAMES[i],cen(i),by+20);
-      ctx.font='12px Segoe UI'; ctx.fillStyle='#546e7a';
-      ctx.fillText(SUB[i],cen(i),by+42);
-      var px=fitText(ctx,FORM[i],bw-16,12,false);
-      ctx.font=px+'px Segoe UI'; ctx.fillStyle='#455a64';
-      ctx.fillText(FORM[i],cen(i),by+70);
+      html+='<div class="rl-box'+(i===kind?' act':'')+'" style="--c:'+COL[i]+'">'+
+            '<div class="rl-name">'+NAMES[i]+'</div>'+
+            '<div class="rl-sub">'+SUB[i]+'</div>'+
+            '<div class="rl-form">'+FORM[i]+'</div></div>';
     }
-    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    html+='</div>';
+    el.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} }
     var out;
     if(kind===0){
       out='<b>情形:</b> $f(z)=\\dfrac{\\mathrm{e}^z}{z(z-1)^2}$, $z_0=0$ 是一级极点, 走 '+hl('准则 1')+'.<br>'+
@@ -1637,8 +1703,8 @@ module('cvInfRes',function(cv){
       ctx.font='bold 12px Segoe UI'; ctx.fillStyle=col;
       ctx.fillText((i===pick)?'？ 待求':'Res = '+fmt(d.res), valX, cy+5);
     }
-    tlabel(ctx,nameX,26,'f(z) = (2z+1) / [ z (z−1) ]  的诸奇点留数','#37474f','bold 13px Segoe UI');
-    tlabel(ctx,nameX,h-16,'定理 2.2: Res[f, z₁] + Res[f, z₂] + Res[f, ∞] = 0','#c62828','bold 12px Segoe UI');
+    xcap('capInfRes', '$f(z)=\\dfrac{2z+1}{z(z-1)}$ 的诸奇点留数');
+    xcap('capResSum', '定理 2.2：$\\operatorname{Res}[f,z_1]+\\operatorname{Res}[f,z_2]+\\operatorname{Res}[f,\\infty]=0$');
     var calc=-others, trueV=data[pick].res;
     var known=[];
     data.forEach(function(d,i){ if(i!==pick) known.push('$\\mathrm{Res}[f,'+d.tex+']='+fmt(d.res)+'$'); });
@@ -1663,11 +1729,11 @@ module('cvInfRes',function(cv){
 module('cvRoute',function(cv){
   var sel=0;
   var CASES=[
-    {f:'f(z) = eᶻ / z²',     sing:'z₀ = 0 (二级极点)',   meth:'准则 2',   res:'Res = 1'},
-    {f:'f(z) = z / (z²+1)',  sing:'z₀ = i (一级极点)',   meth:'准则 3',   res:'Res = 1/2'},
-    {f:'f(z) = z³ · e^(1/z)',sing:'z₀ = 0 (本性奇点)',   meth:'洛朗展开',  res:'Res = 1/24'}
+    {f:'$\\dfrac{\\mathrm{e}^{z}}{z^{2}}$',       sing:'$z_0=0$（二级极点）',  meth:'准则 2',  res:'$\\operatorname{Res}=1$'},
+    {f:'$\\dfrac{z}{z^{2}+1}$',                  sing:'$z_0=\\mathrm{i}$（一级极点）', meth:'准则 3',  res:'$\\operatorname{Res}=\\dfrac{1}{2}$'},
+    {f:'$z^{3}\\,\\mathrm{e}^{1/z}$',            sing:'$z_0=0$（本性奇点）',  meth:'洛朗展开', res:'$\\operatorname{Res}=\\dfrac{1}{24}$'}
   ];
-  var TIT=['f(z)','奇点类型','选用方法','留数结果'];
+  var TIT=['$f(z)$','奇点类型','选用方法','留数结果'];
   var COL=['#546e7a','#e65100','#1976d2','#2e7d32'];
   function fitText(ctx,txt,maxW,basePx,bold){
     var px=basePx;
@@ -1682,27 +1748,19 @@ module('cvRoute',function(cv){
     ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.stroke();
   }
   function draw(){
-    var f=fitCanvas(cv); if(!f) return;
-    var ctx=f.ctx,w=f.w,h=f.h;
-    ctx.clearRect(0,0,w,h);
     var c=CASES[sel];
+    var el=document.getElementById('cvRoute');
+    if(!el) return;
     var texts=[c.f, c.sing, c.meth, c.res];
-    var n=4, gap=Math.max(16,(w-40)/10);
-    var bw=(w-2*20-gap*(n-1))/n, bh=104;
-    var by=h/2-bh/2+8;
-    for(var i=0;i<n;i++){
-      var bx=20+i*(bw+gap);
-      var act=(i===2);
-      rbox(ctx,bx,by,bw,bh,COL[i],10,act?3.6:1.8);
-      var tpx=fitText(ctx,TIT[i],bw-14,11,false);
-      ctx.font=tpx+'px Segoe UI'; ctx.fillStyle='#90a4ae'; ctx.textAlign='center';
-      ctx.fillText(TIT[i],bx+bw/2,by+20);
-      var px=fitText(ctx,texts[i],bw-16,12,true);
-      ctx.font='bold '+px+'px Segoe UI'; ctx.fillStyle=COL[i];
-      ctx.fillText(texts[i],bx+bw/2,by+bh/2+14);
-      if(i<n-1) arrow(ctx,bx+bw+3,by+bh/2,bx+bw+gap-3,by+bh/2,'#b0bec5',1.8,9);
+    var html='<div class="rt-row">';
+    for(var i=0;i<4;i++){
+      html+='<div class="rt-box" style="--c:'+COL[i]+'"><div class="rt-tit">'+TIT[i]+'</div>'+
+            '<div class="rt-val">'+texts[i]+'</div></div>';
+      if(i<3) html+='<div class="rt-arrow">→</div>';
     }
-    ctx.textAlign='left';
+    html+='</div>';
+    el.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} }
     var out;
     if(sel===0){
       out='选定路线: 二级极点, 走 '+hl('准则 2')+'.<br>'+
@@ -1725,10 +1783,10 @@ module('cvRoute',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'留数的定义与定理', c:'#1976d2', leaves:['定义2.1: 负一次幂系数 $c_{-1}$','$\\operatorname{Res}[f,z_0]=c_{-1}$','逐项积分: 只留 $n=-1$ 项','定理2.1（留数定理）','$\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum\\operatorname{Res}$','可去奇点 → $\\operatorname{Res}=0$']},
-    {t:'函数在极点的留数', c:'#e65100', leaves:['准则1: 一级极点','$\\operatorname{Res}=\\lim\\limits_{z\\to z_0}(z-z_0)f(z)$','准则2: $m$ 级极点','含 $(m-1)$ 阶导数','准则3: $f=P/Q$ 型','$\\operatorname{Res}=\\frac{P(z_0)}{Q\'(z_0)}$']},
-    {t:'无穷远点的留数', c:'#c62828', leaves:['定义2.2: 定义里带负号','$\\operatorname{Res}[f,\\infty]=-c_{-1}$','定理2.2: 留数总和 $=0$','准则4: 含 $1/z$ 与 $1/z^2$','例2.4 / 例2.5','可去奇点也可能 $\\operatorname{Res}\\neq 0$']},
-    {t:'计算路线与综合', c:'#2e7d32', leaves:['可去 → $\\operatorname{Res}=0$','本性 → 洛朗展开','极点 → 准则 1 / 2 / 3','奇点多 → 改用 $\\infty$ 点','$\\oint_C f\\,\\mathrm{d}z=-2\\pi\\mathrm{i}\\,\\operatorname{Res}[f,\\infty]$','一句话: 局部决定整体']}
+    {t:'留数的定义与定理', c:'#1976d2', leaves:['定义2.1: 负一次幂系数 $c_{-1}$','$\\operatorname{Res}[f(z),z_0]=c_{-1}$','逐项积分: 只留 $n=-1$ 项','定理2.1（留数定理）','$\\oint_C f(z)\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f(z),z_k]$','可去奇点 → $\\operatorname{Res}[f(z),z_0]=0$']},
+    {t:'函数在极点的留数', c:'#e65100', leaves:['准则1: 一级极点','$\\operatorname{Res}[f(z),z_0]=\\lim\\limits_{z\\to z_0}(z-z_0)f(z)$','准则2: $m$ 级极点','$\\operatorname{Res}[f(z),z_0]=\\dfrac{1}{(m-1)!}\\lim\\limits_{z\\to z_0}\\dfrac{\\mathrm{d}^{m-1}}{\\mathrm{d}z^{m-1}}\\Big[(z-z_0)^m f(z)\\Big]$','准则3: $f=P/Q$ 型','$\\operatorname{Res}[f(z),z_0]=\\dfrac{P(z_0)}{Q\'(z_0)}$']},
+    {t:'无穷远点的留数', c:'#c62828', leaves:['定义2.2: 定义里带负号','$\\operatorname{Res}[f(z),\\infty]=-c_{-1}$','定理2.2: $\\sum_k\\operatorname{Res}[f(z),z_k]+\\operatorname{Res}[f(z),\\infty]=0$','准则4: $\\operatorname{Res}[f(z),\\infty]=-\\operatorname{Res}\\Big[f\\big(\\tfrac{1}{z}\\big)\\cdot\\tfrac{1}{z^2},0\\Big]$','例2.4 / 例2.5','$\\infty$ 处可去也可能 $\\operatorname{Res}[f(z),\\infty]\\neq 0$']},
+    {t:'计算路线与综合', c:'#2e7d32', leaves:['可去 → $\\operatorname{Res}[f(z),z_0]=0$','本性 → 洛朗展开','极点 → 准则 1 / 2 / 3','奇点多 → 改用 $\\infty$ 点','$\\oint_C f(z)\\,\\mathrm{d}z=-2\\pi\\mathrm{i}\\,\\operatorname{Res}[f(z),\\infty]$','一句话: 局部决定整体']}
   ];
   function build(){
     if(built) return;
@@ -1777,7 +1835,7 @@ module('cvSummary',function(cv){
   });
   var rb=document.getElementById('btnSumReset');
   if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
-  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 (留数 = c₋₁) → 定理 (∮ = 2πi Σ Res) → 极点三准则 (1 / 2 / 3) → 无穷远点 (准则 4 与留数和为零); 一句话: <b>闭路积分只由它围住的点决定</b>.');
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 ($c_{-1}=\\operatorname{Res}[f,z_0]$) → 定理 ($\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f,z_k]$) → 极点三准则 (准则 1 / 2 / 3) → 无穷远点 (准则 4 与留数和为零); 一句话: <b>闭路积分只由它围住的点决定</b>.');
   return {draw:draw};
 });
 
@@ -1802,7 +1860,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

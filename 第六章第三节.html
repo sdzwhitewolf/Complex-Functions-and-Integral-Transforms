@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -192,12 +193,20 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+.fig-caps { display: flex; gap: 12px; margin: 4px 0 2px; flex-wrap: wrap; }
+.fig-caps > .fc { flex: 1 1 0; min-width: 240px; font-size: .88em; font-weight: 600;
+  color: #37474f; line-height: 2.1; }
+.fig-caps > .fc:only-child { flex: 0 1 auto; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -410,7 +419,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第六章 第3节 几个初等函数所构成的映射</h1>
     <p>幂函数与角形域 &middot; 根式函数与缩小角形域 &middot; 指数函数与带形域 &middot; 对数函数与区域映射综合</p>
@@ -483,6 +492,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 角形域的张角被放大 $n$ 倍 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图是 $z$ 平面上以原点为顶点、张角 $\theta_0=60^\circ$ 的角形域; 右图是它在 $w=z^n$ 下的像, 张角为 $n\theta_0$. 拖动滑块改变 $n$, 观察张角如何被"放大". 同时留意右图标注的单叶性阈值 $\frac{2\pi}{n}$: 只要 $n\theta_0$ 不超过 $2\pi$, 映射在该角形域上就是单叶的.</div>
+<div class="fig-caps"><div class="fc" id="cvZnCap1"></div><div class="fc" id="cvZnCap2"></div></div>
 <canvas id="cvZn" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -556,6 +566,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 角形域张角的变化对比 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图是 $z$ 平面上的区域 $0&lt;\arg z&lt;2\pi$ (沿正实轴割开的平面, 红色为割痕); 右图是它在 $w=\sqrt[n]{z}$ (主值支) 下的像 —— 张角由 $2\pi$ 缩小为 $\frac{2\pi}{n}$. 拖动滑块改变 $n$: $n=2$ 时像为上半平面, $n$ 越大像域越"窄".</div>
+<div class="fig-caps"><div class="fc" id="cvRootCap1"></div></div>
 <canvas id="cvRoot" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -617,6 +628,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 带形域到角形域的网格映射 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">左图是 $z$ 平面上的带形域 $0&lt;\operatorname{Im}(z)&lt;a$, 网格由竖直线 $x=$ 常数 (蓝) 与水平线 $y=$ 常数 (橙) 组成; 右图是它们的像: <b>竖直线变成圆周 $|w|=\mathrm{e}^{x_0}$ (蓝), 水平线变成射线 $\arg w=y_0$ (橙)</b>. 拖动滑块改变带形域高度 $a$, 观察右图角形域张角 $a$ 的变化.</div>
+<div class="fig-caps"><div class="fc" id="cvExpCap1"></div><div class="fc" id="cvExpCap2"></div></div>
 <canvas id="cvExp" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -710,6 +722,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 分步映射链 (平移 → 旋转伸缩 → 指数) <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">一个红点沿着链条被"搬运": 先作 <b>平移</b> $z-a$, 再作 <b>旋转伸缩</b> $\xi=\frac{\pi\mathrm{i}}{b-a}(z-a)$ (带形域立起来), 最后作 <b>指数</b> $w=\mathrm{e}^{\xi}$ (压成上半平面). 拖动滑块改变带形域宽度 $b-a$, 观察链上各点如何相应变化.</div>
+<div class="fig-caps"><div class="fc" id="cvLogCap1"></div><div class="fc" id="cvLogCap2"></div><div class="fc" id="cvLogCap3"></div></div>
 <canvas id="cvLog" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1178,12 +1191,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1232,7 +1247,12 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1289,7 +1309,7 @@ module('cvZn',function(cv){
     dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
     tlabel(ctx,m1.px(0)+8,m1.py(0)+16,'O','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'z 平面: 角形域 0 '+LT+' arg z '+LT+' θ₀ = 60°','#37474f','bold 12.5px Segoe UI');
+    setCap('cvZnCap1', '$z$ 平面: 角形域 $0&lt;\\arg z&lt;\\theta_0=60^\\circ$');;
     // ---- 右: w 平面 ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,40);
@@ -1306,11 +1326,11 @@ module('cvZn',function(cv){
     dot(ctx,m2.px(0),m2.py(0),5,'#c62828','#fff');
     tlabel(ctx,m2.px(0)+8,m2.py(0)+16,'O','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,sx,26,'w 平面: 像的角形域 0 '+LT+' arg w '+LT+' nθ₀','#37474f','bold 12.5px Segoe UI');
+    setCap('cvZnCap2', '$w$ 平面: 像的角形域 $0&lt;\\arg w&lt;n\\theta_0$');;
     var thr=360/n;
     setRO('znReadout',
       '幂函数 $w=z^{'+n+'}$: 令 $z=r\\mathrm{e}^{\\mathrm{i}\\theta}$, 则 $w=r^{'+n+'}\\mathrm{e}^{\\mathrm{i}'+n+'\\theta}$ —— <b>模取 '+n+' 次幂、辐角扩大 '+n+' 倍</b>.<br>'+
-      hl('z 平面张角 $\\theta_0=60^\\circ$')+' &nbsp;&rarr;&nbsp; '+hl2('w 平面张角 $n\\theta_0='+(n*60)+'^\\circ$')+'.<br>'+
+      hl('$z$ 平面张角 $\\theta_0=60^\\circ$')+' &nbsp;&rarr;&nbsp; '+hl2('w 平面张角 $n\\theta_0='+(n*60)+'^\\circ$')+'.<br>'+
       '单叶性阈值 $\\frac{2\\pi}{n}='+fmt(thr,1)+'^\\circ$: 张角 $60^\\circ$ '+(60<=thr?'不超过':'超过')+'该阈值, 映射在此角形域上'+(60<=thr?'单叶':'不单叶')+'.<br>'+
       '共形性: $z\\neq 0$ 时 $f\'(z)='+n+'z^{'+(n-1)+'}\\neq 0$, 处处共形; 而 $z=0$ 处 $f\'(0)=0$, 不共形.');
   }
@@ -1350,7 +1370,7 @@ module('cvRoot',function(cv){
     dot(ctx,m1.px(0),m1.py(0),5,'#c62828','#fff');
     tlabel(ctx,m1.px(0)-6,m1.py(0)+17,'O','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,12,26,'z 平面: 区域 0 '+LT+' arg z '+LT+' 2π (正实轴为割痕)','#37474f','bold 12.5px Segoe UI');
+    setCap('cvRootCap1', '$z$ 平面: 区域 $0&lt;\\arg z&lt;2\\pi$ (正实轴为割痕)');;
     // ---- 右: 缩小后的角形域 ----
     var sx=halfW+24;
     ctx.save(); ctx.translate(sx,40);
@@ -1418,7 +1438,7 @@ module('cvExp',function(cv){
     tlabel(ctx,m1.px(1.3)-40,m1.py(0)+16,'y = 0','#e65100','bold 11.5px Segoe UI');
     dot(ctx,m1.px(-1.8)+2,m1.py(0),3,'#c62828');
     ctx.restore();
-    tlabel(ctx,12,26,'z 平面: 带形域 0 '+LT+' Im z '+LT+' a','#37474f','bold 12.5px Segoe UI');
+    setCap('cvExpCap1', '$z$ 平面: 带形域 $0&lt;\\operatorname{Im}z&lt;a$');;
     // ---- 右: w 平面的角形域 ----
     var sx=halfW+24, span=2.9, RB=2.2;
     ctx.save(); ctx.translate(sx,40);
@@ -1439,7 +1459,7 @@ module('cvExp',function(cv){
     tlabel(ctx,m2.px(ly*Math.cos(a))-34,m2.py(ly*Math.sin(a))-6,'arg w = a','#e65100','bold 11.5px Segoe UI');
     dot(ctx,m2.px(0),m2.py(0),4,'#c62828');
     ctx.restore();
-    tlabel(ctx,sx,26,'w 平面: 角形域 0 '+LT+' arg w '+LT+' a','#37474f','bold 12.5px Segoe UI');
+    setCap('cvExpCap2', '$w$ 平面: 角形域 $0&lt;\\arg w&lt;a$');;
     var aDeg=a*180/Math.PI;
     var full=(Math.abs(a-TAU)<1e-6);
     setRO('exReadout',
@@ -1477,7 +1497,7 @@ module('cvLog',function(cv){
     dot(ctx,m1.px(t*W),m1.py(cy),6,'#c62828','#fff');
     tlabel(ctx,m1.px(t*W)+8,m1.py(cy)-8,'z₀','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,4,26,'z 平面: 0 '+LT+' Re z '+LT+' '+fmt(W),'#37474f','bold 12px Segoe UI');
+    setCap('cvLogCap1', '$z$ 平面: $0&lt;\\operatorname{Re}z&lt;'+fmt(W)+'$');;
     // ---- 面板 2: ξ 平面 ----
     ctx.save(); ctx.translate(pw+gap,40);
     var m2=mapperEq(pw,H,-0.7,Math.PI+0.7,-0.7,Math.PI+0.7);
@@ -1490,7 +1510,7 @@ module('cvLog',function(cv){
     dot(ctx,m2.px(xiRe),m2.py(xiIm),6,'#c62828','#fff');
     tlabel(ctx,m2.px(xiRe)+8,m2.py(xiIm)-8,'ξ₀','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,pw+gap+4,26,'ξ 平面: 0 '+LT+' Im ξ '+LT+' π','#37474f','bold 12px Segoe UI');
+    setCap('cvLogCap2', '$\\xi$ 平面: $0&lt;\\operatorname{Im}\\xi&lt;\\pi$');;
     // ---- 面板 3: w 平面 ----
     ctx.save(); ctx.translate(2*(pw+gap),40);
     var m3=mapperEq(pw,H,-2.7,2.7,-1.7,2.5);
@@ -1502,7 +1522,7 @@ module('cvLog',function(cv){
     dot(ctx,m3.px(wRe),m3.py(wIm),6,'#c62828','#fff');
     tlabel(ctx,m3.px(wRe)+8,m3.py(wIm)-8,'w₀','#c62828','bold 12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,2*(pw+gap)+4,26,'w 平面: 上半平面 Im w '+GT+' 0','#37474f','bold 12px Segoe UI');
+    setCap('cvLogCap3', '$w$ 平面: 上半平面 $\\operatorname{Im}w&gt;0$');;
     setRO('lgReadout',
       '映射链: '+hl('① 平移 $z-a$')+' &rarr; '+hl('② 旋转伸缩 $\\xi=\\frac{\\pi\\mathrm{i}}{b-a}(z-a)$')+' &rarr; '+hl('③ 指数 $w=\\mathrm{e}^{\\xi}$')+'.<br>'+
       '当前带宽 $b-a='+fmt(W)+'$; 动点 $z_0='+fmt(t*W)+' + '+fmt(cy)+'\\mathrm{i}$ 沿链变为 '+
@@ -1602,7 +1622,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

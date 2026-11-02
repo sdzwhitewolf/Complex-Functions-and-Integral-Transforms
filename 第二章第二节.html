@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -216,6 +217,9 @@ mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -429,7 +433,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第二章 第2节 解析函数的充要条件</h1>
     <p>柯西—黎曼方程 &middot; 判别定理 &middot; 交互探索</p>
@@ -1384,12 +1388,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1438,7 +1444,8 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1532,16 +1539,16 @@ module('cvCR',function(cv){
 module('cvCheck',function(cv){
   var cur='z2';
   var FN={
-    z2:{lab:'f(z)=z²', u:'x² − y²', v:'2xy', ux:'2x', uy:'−2y', vx:'2y', vy:'2x',
+    z2:{lab:'f(z)=z²', labTex:'f(z)=z^2', u:'x² − y²', v:'2xy', ux:'2x', uy:'−2y', vx:'2y', vy:'2x',
       kind:'all', cond:'2x = 2x ✓ , &nbsp; −2y = −2y ✓',
       d:'四偏导连续, 且 C—R 方程<b>处处成立</b> ⇒ 在复平面内处处解析.'},
-    conj:{lab:'f(z)=z̄', u:'x', v:'−y', ux:'1', uy:'0', vx:'0', vy:'−1',
+    conj:{lab:'f(z)=z̄', labTex:'f(z)=\\bar z', u:'x', v:'−y', ux:'1', uy:'0', vx:'0', vy:'−1',
       kind:'none', cond:'1 = −1 ✗',
       d:'$u_x=1$ 而 $v_y=-1$, C—R 方程<b>处处不成立</b> ⇒ 处处不可导, 处处不解析.'},
-    abs:{lab:'f(z)=|z|²', u:'x² + y²', v:'0', ux:'2x', uy:'2y', vx:'0', vy:'0',
+    abs:{lab:'f(z)=|z|²', labTex:'f(z)=|z|^2', u:'x² + y²', v:'0', ux:'2x', uy:'2y', vx:'0', vy:'0',
       kind:'one', cond:'2x = 0 且 2y = 0 ⇒ x = y = 0',
       d:'仅当 $x=y=0$ 即 $z=0$ 时 C—R 成立 ⇒ <b>仅在 $z=0$ 可导</b>. 因邻域内不成立, 处处不解析.'},
-    zrez:{lab:'f(z)=z·Re z', u:'x²', v:'xy', ux:'2x', uy:'0', vx:'y', vy:'x',
+    zrez:{lab:'f(z)=z·Re z', labTex:'f(z)=z\\operatorname{Re}z', u:'x²', v:'xy', ux:'2x', uy:'0', vx:'y', vy:'x',
       kind:'one', cond:'2x = x 且 0 = −y ⇒ x = y = 0',
       d:'仅当 $x=y=0$ 时 C—R 成立 ⇒ <b>仅在 $z=0$ 可导</b>, 处处不解析.'}
   };
@@ -1590,7 +1597,7 @@ module('cvCheck',function(cv){
     ctx.font='bold 13px Segoe UI'; ctx.fillStyle=(o.kind==='all'?'#2e7d32':(o.kind==='none'?'#c62828':'#e65100'));
     ctx.fillText(o.kind==='all'?'结论: 处处解析 ✓':(o.kind==='none'?'结论: 处处不解析 ✗':'结论: 仅在一点可导'),tx,272);
     tlabel(ctx,10,h-12,'绿点: 满足 C—R 方程   灰点: 不满足','#78909c','12px Segoe UI');
-    setRO('ckReadout', hl2(o.lab)+' &nbsp;|&nbsp; '+o.d);
+    setRO('ckReadout', hl2('$'+o.labTex+'$')+' &nbsp;|&nbsp; '+o.d);
   }
   [['ckZ2','z2'],['ckConj','conj'],['ckAbs','abs'],['ckZrez','zrez']].forEach(function(p){
     var b=document.getElementById(p[0]); if(b) b.addEventListener('click',function(){ cur=p[1]; draw(); });
@@ -1771,11 +1778,11 @@ module('cvSummary',function(cv){
 module('cvConformal',function(cv){
   var cur='sq', scale=0.4;
   var MAPS={
-    sq:{lab:'w = z²', zr:[-1.35,1.35,-1.35,1.35], wr:[-2.1,2.1,-2.1,2.1],
+    sq:{lab:'w=z^2', zr:[-1.35,1.35,-1.35,1.35], wr:[-2.1,2.1,-2.1,2.1],
         f:function(z){ return cmul(z,z); }},
-    exp:{lab:'w = e^z', zr:[-1.2,1.2,-3.14,3.14], wr:[-3.6,3.6,-3.6,3.6],
+    exp:{lab:'w=\\mathrm{e}^z', zr:[-1.2,1.2,-3.14,3.14], wr:[-3.6,3.6,-3.6,3.6],
         f:function(z){ return cexp(Math.exp(z.re),z.im); }},
-    inv:{lab:'w = 1/z', zr:[0.35,1.8,-0.8,0.8], wr:[-3.4,3.4,-2.6,2.6],
+    inv:{lab:'w=\\dfrac{1}{z}', zr:[0.35,1.8,-0.8,0.8], wr:[-3.4,3.4,-2.6,2.6],
         f:function(z){ return cdiv(C(1,0),z); }}
   };
   function draw(){
@@ -1832,7 +1839,7 @@ module('cvConformal',function(cv){
     ctx.restore();
     tlabel(ctx,sx,26,'② w 平面: 像网格仍处处正交 (保角)','#c62828','bold 13px Segoe UI');
     setRO('cfReadout',
-      '映射 '+hl2(o.lab)+' 是解析函数, 因而在每个导数非零的点处都是<b>保角映射</b>:<br>'+
+      '映射 '+hl2('$'+o.lab+'$')+' 是解析函数, 因而在每个导数非零的点处都是<b>保角映射</b>:<br>'+
       '任意两条曲线的<b>夹角</b>经映射后保持不变 (大小与方向都保持).<br>'+
       '白色左图中互相垂直的网格线, 映射到右图后虽然弯曲、疏密变化, 但<b>仍然处处正交</b>.<br>'+
       '这就是黎曼在博士论文中把解析函数理解为"保角映射"的直观依据, 也是 C—R 方程的几何面貌.');
@@ -1865,7 +1872,7 @@ module('cvConformal',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

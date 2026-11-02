@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -198,12 +199,21 @@ input[type="range"] { width: 200px; vertical-align: middle; }
 /* 行内公式容器: inline-block 撑开行盒, 避免 displaystyle 公式与上下行相撞 */
 mjx-container[jax="SVG"]:not([display="true"]) { display: inline-block; }
 
+
+/* 画布图注(HTML+MathJax): 替代画布里写的长公式 */
+.xcap { font-size: .92em; font-weight: 600; color: #37474f; margin: 2px 0 6px; line-height: 1.6; }
+.xcap.r { color: #c62828; }
+.xcap mjx-container { margin: 0 !important; }
+
 .readout {
     background:#263238; color:#e0f2f1; font-family:'Consolas','Courier New',monospace;
     border-radius:8px; padding:14px 18px; margin:12px 0; font-size:.95em; line-height:2;
     overflow-x:auto; white-space:normal;
 }
 .readout b { color:#80cbc4; font-weight:normal; }
+.readout mjx-container[display="true"] { font-size:1.05em; margin:10px 0 !important; }
+.readout mjx-container[display="true"] > svg { overflow:visible; }
+
 .readout .hl { color:#ffcc80; }
 .readout .hl2 { color:#a5d6a7; }
 canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touch-action:none; }
@@ -416,7 +426,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <body>
 
 <div class="header">
-    <img class="header-logo" src="jlu-logo.png" alt="吉林大学" title="吉林大学">
+    <img class="header-logo" src="https://workbuddy-space-static.codebuddy.work/image/tsR7te1qyoYKkSuFKGQSE8.png" alt="吉林大学" title="吉林大学">
 
     <h1>第八章 第1节 拉普拉斯变换的概念</h1>
     <p>拉氏变换的定义 &middot; 与傅里叶变换的关系 &middot; 存在定理与收敛半平面 &middot; 典型例题与象函数</p>
@@ -553,6 +563,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="fig-caps">
 <div class="fc">$f(t)=u(t)$ (灰虚线) 与 $f(t)\mathrm{e}^{-\beta t}$ (蓝)</div>
 </div>
+<div class="xcap" id="capRel"></div>
 <canvas id="cvRelation" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -659,6 +670,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 不同 $f(t)$ 的象函数 $\left|F(s)\right|$ 在 $s$ 平面上的分布 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">拖动滑块切换原函数 $f(t)$, 图中用颜色深浅表示象函数的模 $\left|F(s)\right|$ 在 $s$ 平面上的大小 (越亮越大), 竖直虚线标出<b>收敛半平面</b>的边界 $\operatorname{Re}s=c$. 注意: $1,\ t^m,\ \sin kt,\ \cos kt$ 的边界都是 $\operatorname{Re}s=0$; $\mathrm{e}^{kt}$ 的边界随 $k$ 平移; 而 $\delta(t)$ 的象函数恒为 $1$, 处处有定义.</div>
+<div class="fig-caps"><div class="fc" id="cvExamplesCap1"></div></div>
 <canvas id="cvExamples" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -1201,12 +1213,14 @@ function axes(ctx,w,h,m,labelX,labelY){
   if(x0+6<w) ctx.fillText(labelY||'Im', x0+6, 16);
   // ticks
   ctx.font='11px Segoe UI'; ctx.fillStyle='rgba(84,110,122,.8)';
+  var step=1, cands=[1,2,5,10,20,50], s=m.s||20;
+  for(var ci=0;ci<cands.length;ci++){ step=cands[ci]; if(step*s>=26) break; }
   var lo=m.ix(0), hi=m.ix(w);
-  for(var x=Math.ceil(lo);x<=hi;x++){ if(x===0)continue;
+  for(var x=Math.ceil(lo/step)*step;x<=hi;x+=step){ if(x===0)continue;
     ctx.beginPath();ctx.moveTo(m.px(x),y0-4);ctx.lineTo(m.px(x),y0+4);ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(x),m.px(x)-4,y0+16); }
   lo=m.iy(h); hi=m.iy(0);
-  for(var y=Math.ceil(lo);y<=hi;y++){ if(y===0)continue;
+  for(var y=Math.ceil(lo/step)*step;y<=hi;y+=step){ if(y===0)continue;
     ctx.beginPath();ctx.moveTo(x0-4,m.py(y));ctx.lineTo(x0+4,m.py(y));ctx.strokeStyle='#546e7a';ctx.stroke();
     ctx.fillText(String(y),x0-22,m.py(y)+4); }
   ctx.restore();
@@ -1255,7 +1269,16 @@ function dsFix(h){
     return m;
   });
 }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function xcap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
+  if(el.getAttribute('data-h')===html) return;
+  el.setAttribute('data-h',html); el.innerHTML=html;
+  if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1401,7 +1424,7 @@ module('cvRelation',function(cv){
     ctx.stroke();
     dot(ctx,m2.px(0),m2.py(1/B),5,'#c62828','#fff');
     ctx.restore();
-    tlabel(ctx,sx,22,'频谱 |F(β+iω)|: 峰值 1/β 落在 ω=0','#37474f','bold 12.5px Segoe UI');
+    xcap('capRel', '频谱 $|F(\\beta+\\mathrm{i}\\omega)|$：峰值 $1/\\beta$ 落在 $\\omega=0$');
     setRO('relReadout',
       '$\\mathscr{F}\\big[f(t)u(t)\\mathrm{e}^{-\\beta t}\\big]=F(\\beta+\\mathrm{i}\\omega)$: 衰减指数 $\\beta='+fmt(B,2)+'$ 时, 频谱为 '+hl('$\\left|F(\\beta+\\mathrm{i}\\omega)\\right|=\\frac{1}{\\sqrt{\\beta^2+\\omega^2}}$')+', 峰值 $F('+fmt(B,2)+')='+fmt(1/B,3)+'$ 落在 $\\omega=0$.<br>'+
       '三步: '+hl2('乘衰减因子 $\\mathrm{e}^{-\\beta t}$ &rarr; 取傅氏变换 &rarr; 解析延拓到复变量 $s$')+'.<br>'+
@@ -1479,7 +1502,7 @@ module('cvExamples',function(cv){
       ctx.fillStyle='#ffeb3b'; ctx.font='bold 12.5px Segoe UI';
       ctx.fillText('全平面收敛', X(1.0), TOP+18);
     }
-    tlabel(ctx,L,24,'f(t)='+fn.plain+' 的象函数 |F(s)| 在 s 平面上的分布 (越亮越大)','#37474f','bold 12.5px Segoe UI');
+    setCap('cvExamplesCap1', '象函数 $|F(s)|$ 在 $s$ 平面上的分布 (越亮越大)');;
     var extra='';
     if(fn.c>-9){
       extra='收敛半平面为 '+hl('$\\operatorname{Re}s&gt;'+fmt(fn.c,0)+'$')+' (边界 $\\operatorname{Re}s='+fmt(fn.c,0)+'$ 用黄虚线标出).';
@@ -1633,7 +1656,7 @@ module('cvSummary',function(cv){
         var ex=div.querySelector('.quiz-explain');
         if(ex){ ex.style.display='block'; if(oi!==okIdx) ex.innerHTML='✗ 再想想. '+ex.innerHTML; }
         setRO('quizScore','<b>已完成 '+done+' / '+total+' 题 &nbsp;|&nbsp; 答对 '+right+' 题</b>'+
-          (done===total?(right===total?' &nbsp;<span style="color:#2e7d32">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#e65100">建议再复习对应知识点.</span>'):''));
+          (done===total?(right===total?' &nbsp;<span style="color:#a5d6a7">全部正确, 本节掌握得很好!</span>':' &nbsp;<span style="color:#ffcc80">建议再复习对应知识点.</span>'):''));
       });
     });
   });

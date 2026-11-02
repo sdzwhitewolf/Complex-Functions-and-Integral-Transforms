@@ -13,7 +13,8 @@ window.MathJax = {
     displayMath: [['$$', '$$'], ['\\[', '\\]']],
     processEscapes: true
   },
-  svg: { fontCache: 'global' }
+  svg: { fontCache: 'global', linebreaks: { automatic: false, width: '100000px' } },
+  chtml: { linebreaks: { automatic: false, width: '100000px' } }
 };
 </script>
 <script>
@@ -414,6 +415,10 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
     .header { padding:52px 16px 30px; }
     .header h1 { font-size:1.5em; letter-spacing:2px; } .header-logo { height:38px; top:10px; left:12px; }
 }
+.plot-wrap { position: relative; }
+.cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
+  white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
+.cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
 </style>
 </head>
 <body>
@@ -1345,7 +1350,49 @@ function dot(ctx,x,y,r,color,ringColor){
   ctx.fillStyle=color;ctx.fill();
   if(ringColor){ ctx.strokeStyle=ringColor;ctx.lineWidth=2;ctx.stroke(); }
 }
+function __cvWrap(cv){
+  if(cv.parentNode&&cv.parentNode.classList&&cv.parentNode.classList.contains('plot-wrap')) return cv.parentNode;
+  var d=document.createElement('div'); d.className='plot-wrap';
+  cv.parentNode.insertBefore(d,cv); d.appendChild(cv); return d;
+}
+function __cvLabel(cv,key,dx,dy,html,color,font){
+  if(!cv.id) cv.id='cvx'+(Math.random()*1e6|0);
+  var wrap=__cvWrap(cv);
+  var id='cvlbl_'+cv.id+'_'+key;
+  var sp=document.getElementById(id);
+  if(!sp){ sp=document.createElement('span'); sp.id=id; sp.className='cv-label'; wrap.appendChild(sp); }
+  sp.style.color=color;
+  sp.style.fontWeight=(font&&font.indexOf('bold')>=0)?'700':'400';
+  if(sp.dataset.h!==html){
+    sp.dataset.h=html; sp.innerHTML=html;
+    if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([sp]).catch(function(){}); }catch(e){} }
+  }
+  sp.dataset.cv=cv.id; sp.dataset.dx=dx; sp.dataset.dy=dy; sp.dataset.p='1';
+  __cvFix();
+}
+function __cvFix(){
+  if(window.__cvFixT) return;
+  window.__cvFixT=setInterval(function(){
+    var sps=document.querySelectorAll('.cv-label[data-p]');
+    for(var i=0;i<sps.length;i++){
+      var sp=sps[i], cv=document.getElementById(sp.dataset.cv);
+      if(!cv){ sp.parentNode.removeChild(sp); continue; }
+      var r=cv.getBoundingClientRect();
+      if(r.width<40) continue;
+      var k=cv.width/r.width||1;
+      sp.style.left=(+sp.dataset.dx)/k+'px';
+      sp.style.top=(+sp.dataset.dy)/k+'px';
+      delete sp.dataset.p;
+    }
+  },120);
+}
 function tlabel(ctx,x,y,text,color,font){
+  if(text.indexOf('$')>=0){
+    var _m=ctx.getTransform();
+    __cvLabel(ctx.canvas,'D'+Math.round(_m.a*x+_m.c*y+_m.e)+'_'+Math.round(_m.b*x+_m.d*y+_m.f),
+      _m.a*x+_m.c*y+_m.e,_m.b*x+_m.d*y+_m.f,text,color||'#455a64',font);
+    return;
+  }
   ctx.font=font||'bold 13px Segoe UI'; ctx.fillStyle=color||'#263238';
   ctx.fillText(text,x,y);
 }
@@ -1377,7 +1424,8 @@ function setCap(id,html){ var el=document.getElementById(id); if(!el) return;
   if(el.getAttribute('data-h')===html) return;
   el.setAttribute('data-h',html); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } }
-function setRO(id,html){ var el=document.getElementById(id); if(el){ html=dsFix(mjFixHL(html)); el.innerHTML=html;
+function iiFix(h){ return h.replace(/\$[^$]*\$/g,function(m){ return m.replace(/([0-9\)π])i(?![a-zA-Z])/g,'$1\\\\mathrm{i}'); }); }
+function setRO(id,html){ var el=document.getElementById(id); if(el){ html=iiFix(dsFix(mjFixHL(html))); el.innerHTML=html;
   if(window.MathJax&&window.MathJax.typesetPromise){ try{ window.MathJax.typesetPromise([el]).catch(function(){}); }catch(e){} } } }
 function mjFixHL(html){ var re=/(<span class="(hl|hl2)">)([\s\S]*?)(<\/span>)/g,res="",last=0,m,d=0,b=0;
   while((m=re.exec(html))!==null){ var seg=html.slice(last,m.index); res+=seg;
@@ -1435,7 +1483,7 @@ module('cvCauchyFormula',function(cv){
     ctx.beginPath(); ctx.arc(m1.px(0),m1.py(0),R*m1.s,0,TAU); ctx.stroke();
     dot(ctx,m1.px(z0.re),m1.py(z0.im),8,'#c62828','#fff');
     tlabel(ctx,m1.px(z0.re)+11,m1.py(z0.im)+19,'z₀','#c62828','bold 13px Georgia');
-    tlabel(ctx,m1.px(0)+18,m1.py(R+0.32),'C: |z| = '+fmt(R),'#1565c0','bold 13px Segoe UI');
+    tlabel(ctx,m1.px(0)+18,m1.py(R+0.32),'$C:\\ |z|='+fmt(R)+'$','#1565c0','bold 13px Segoe UI');
     ctx.restore();
     tlabel(ctx,12,26,'边界 C 上按 |f| 着色 (越深越大)','#37474f','bold 13px Segoe UI');
     // 数值积分
@@ -1523,7 +1571,7 @@ module('cvAverage',function(cv){
     arrow(ctx,ox,oy,m2.px(avg.re),m2.py(avg.im),'#e53935',3,12);
     dot(ctx,m2.px(real.re),m2.py(real.im),6,'#2e7d32','#fff');
     dot(ctx,m2.px(avg.re),m2.py(avg.im),7,'#e53935','#fff');
-    tlabel(ctx,m2.px(real.re)+9,m2.py(real.im)-10,'f(0) = 1','#2e7d32','bold 12px Segoe UI');
+    tlabel(ctx,m2.px(real.re)+9,m2.py(real.im)-10,'$f(0)=1$','#2e7d32','bold 12px Segoe UI');
     tlabel(ctx,m2.px(avg.re)+9,m2.py(avg.im)+20,'圆周均值','#e53935','bold 12px Segoe UI');
     ctx.restore();
     tlabel(ctx,sx,26,'圆周均值 vs 圆心值 f(0)','#37474f','bold 13px Segoe UI');
@@ -1601,14 +1649,14 @@ module('cvCompute',function(cv){
     ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#37474f';
     ctx.fillText('数值积分结果',16,20);
     ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#455a64';
-    ctx.fillText('Re = '+fmt(sum.re,4),16,52);
-    ctx.fillText('Im = '+fmt(sum.im,4),16,76);
+    tlabel(ctx,16,52,'$\\mathrm{Re}='+fmt(sum.re,4)+'$',ctx.fillStyle,ctx.font);
+    tlabel(ctx,16,76,'$\\mathrm{Im}='+fmt(sum.im,4)+'$',ctx.fillStyle,ctx.font);
     if(inside.length===0){
       ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#2e7d32';
-      ctx.fillText('∮ = 0  (柯西积分定理)',16,116);
+      tlabel(ctx,16,116,'$\\oint=0$ (柯西积分定理)',ctx.fillStyle,ctx.font);
     } else {
       ctx.font='bold 14px Segoe UI'; ctx.fillStyle='#c62828';
-      ctx.fillText('∮ = 2πi × Σ 留数',16,116);
+      tlabel(ctx,16,116,'$\\oint=2\\pi\\mathrm{i}\\times\\sum\\operatorname{Res}$',ctx.fillStyle,ctx.font);
       var acc=C(0,0);
       inside.forEach(function(p,i2){ acc=cadd(acc,p.val);
         ctx.font='13px Consolas, Segoe UI'; ctx.fillStyle='#546e7a';
@@ -1616,7 +1664,7 @@ module('cvCompute',function(cv){
       });
       var th=cdiv(cmul(C(0,TAU),acc), C(1,0));
       ctx.font='bold 13px Segoe UI'; ctx.fillStyle='#c62828';
-      ctx.fillText('理论值 ≈ '+fmt(th.re,4)+(th.im>=0?' + ':' - ')+fmt(Math.abs(th.im),4)+'i',16,144+inside.length*24+20);
+      tlabel(ctx,16,144+inside.length*24+20,'理论值 $\\approx '+fmt(th.re,4)+(th.im>=0?' + ':' - ')+fmt(Math.abs(th.im),4)+'\\mathrm{i}$',ctx.fillStyle,ctx.font);
     }
     ctx.restore();
     var thTxt;
@@ -1722,7 +1770,7 @@ module('cvPoisson',function(cv){
     ctx.setLineDash([]);
     tlabel(ctx,m1.px(0)+6,m1.py(0)+18,'O','#37474f','bold 12px Georgia');
     tlabel(ctx,m1.px(px)+9,m1.py(0)-10,'考察点','#c62828','bold 11px Segoe UI');
-    tlabel(ctx,m1.px(0)+18,m1.py(R+0.28),'|z|=R 边界','#1565c0','bold 12px Segoe UI');
+    tlabel(ctx,m1.px(0)+18,m1.py(R+0.28),'$|z|=R$ 边界','#1565c0','bold 12px Segoe UI');
     ctx.restore();
     setCap('cvPoissonCap1', '圆盘内的考察点 (距圆心 $'+fmt(r*R)+'$)');;
     // 右: 泊松核曲线
@@ -1745,9 +1793,9 @@ module('cvPoisson',function(cv){
     ctx.strokeStyle='#2e7d32'; ctx.setLineDash([7,5]); ctx.lineWidth=2;
     ctx.beginPath(); ctx.moveTo(m2.px(-0.3),m2.py(1)); ctx.lineTo(m2.px(TAU+0.3),m2.py(1)); ctx.stroke();
     ctx.setLineDash([]);
-    tlabel(ctx,m2.px(1.2),m2.py(1.12),'常数 1 (r=0 时的核)','#2e7d32','12px Segoe UI');
+    tlabel(ctx,m2.px(1.2),m2.py(1.12),'常数 $1$ ($r=0$ 时的核)','#2e7d32','12px Segoe UI');
     ctx.restore();
-    tlabel(ctx,sx,26,'泊松核 P(θ−φ) 随角度的变化','#37474f','bold 13px Segoe UI');
+    tlabel(ctx,sx,26,'泊松核 $P(\\theta-\\varphi)$ 随角度的变化','#37474f','bold 13px Segoe UI');
     function poch(ph){
       var num=R*R-r*r*R*R;
       var den=R*R-2*R*(r*R)*Math.cos(ph)+(r*R)*(r*R);

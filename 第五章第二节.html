@@ -444,6 +444,144 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 .cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
   white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
 .cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
+/* ===== RS-CSS-BEGIN ===== */
+.rslab {
+  --rs-ink: #1f2933; --rs-dim: #607d8b; --rs-line: #d8e3ef;
+  --rs-ac: #1565c0; --rs-acd: #0d47a1;
+  --rs-mono: "Consolas", "SF Mono", "Courier New", monospace;
+  color: var(--rs-ink);
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  font-size: 14.5px; line-height: 1.6;
+  background: #f7fafc; border: 1px solid #e2eaf2; border-radius: 10px;
+  padding: 14px 16px 16px; margin: 14px 0 4px;
+}
+.rslab button { font-family: inherit; font-size: 13px; cursor: pointer; }
+.rslab .bar {
+  display: grid; grid-template-columns: 1.1fr 1.1fr .9fr;
+  gap: 10px 14px; background: #fff; border: 1px solid var(--rs-line);
+  border-radius: 8px; padding: 11px 13px;
+}
+.rslab .fd { min-width: 0; }
+.rslab .fd > label {
+  display: block; font-size: 12px; color: var(--rs-dim);
+  font-weight: 600; margin-bottom: 3px; letter-spacing: .04em;
+}
+.rslab .fd .rw { display: flex; align-items: center; gap: 6px; }
+.rslab .tinynote {
+  font-size: 11.5px; color: var(--rs-dim); margin-top: 3px; line-height: 1.4;
+}
+.rslab select, .rslab input[type="text"], .rslab input[type="number"] {
+  font-family: inherit; font-size: 13.5px; padding: 5px 7px;
+  border: 1px solid var(--rs-line); border-radius: 6px;
+  background: #fff; color: var(--rs-ink); width: 100%; min-width: 0;
+}
+.rslab select:focus, .rslab input:focus { outline: 2px solid #c9d9f5; border-color: var(--rs-ac); }
+.rslab .btn {
+  border: 1px solid var(--rs-line); background: #fff; border-radius: 6px;
+  padding: 5px 11px; color: var(--rs-ink); transition: .12s; white-space: nowrap;
+}
+.rslab .btn:hover { border-color: var(--rs-ac); color: var(--rs-acd); background: #f6f9ff; }
+.rslab .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.rslab .cd {
+  background: #fff; border: 1px solid var(--rs-line);
+  border-radius: 8px; padding: 7px 12px; min-width: 0;
+}
+.rslab .cd .k { font-size: 11.5px; color: var(--rs-dim); letter-spacing: .05em; }
+.rslab .cd .v {
+  font-family: var(--rs-mono); font-size: 17px; font-weight: 700;
+  color: var(--rs-acd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rslab .cd .n {
+  font-size: 11.5px; color: var(--rs-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rslab .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.rslab figure {
+  margin: 0; background: #fff; border: 1px solid var(--rs-line);
+  border-radius: 8px; padding: 6px 8px 4px; min-width: 0;
+}
+.rslab figcaption {
+  font-size: 12px; color: var(--rs-dim); padding: 0 2px 3px;
+  display: flex; justify-content: space-between; gap: 8px;
+}
+.rslab figcaption b {
+  color: var(--rs-ink); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 0;
+}
+.rslab figcaption .hint { flex: 0 0 auto; max-width: 52%; }
+.rslab figcaption .hint {
+  font-family: var(--rs-mono); font-size: 11px; color: #93a2b2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.rslab canvas { width: 100%; display: block; border-radius: 6px; background: #fafcff; }
+.rslab .row2 {
+  display: flex; align-items: center; gap: 10px; margin-top: 10px;
+  background: #fff; border: 1px solid var(--rs-line); border-radius: 8px;
+  padding: 8px 12px; flex-wrap: wrap;
+}
+.rslab .row2 > label { font-size: 12.5px; color: var(--rs-dim); font-weight: 600; white-space: nowrap; }
+.rslab input[type="range"] {
+  flex: 1 1 150px; min-width: 110px; width: auto; height: 16px;
+  margin: 0; accent-color: var(--rs-ac); vertical-align: middle;
+}
+.rslab .badge {
+  font-family: var(--rs-mono); font-size: 12.5px; color: #fff;
+  background: var(--rs-ac); border-radius: 4px; padding: 1px 8px; white-space: nowrap;
+}
+.rslab .note2 { font-size: 12.5px; color: #546e7a; }
+.rslab table.rst {
+  width: 100%; border-collapse: collapse; margin-top: 10px;
+  font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--rs-line); table-layout: fixed;
+}
+.rslab table.rst th:nth-child(1), .rslab table.rst td:nth-child(1) { width: 17%; }
+.rslab table.rst th:nth-child(2), .rslab table.rst td:nth-child(2) { width: 25%; }
+.rslab table.rst th:nth-child(3), .rslab table.rst td:nth-child(3) { width: 24%; }
+.rslab table.rst th:nth-child(4), .rslab table.rst td:nth-child(4) { width: 15%; }
+.rslab table.rst th:nth-child(5), .rslab table.rst td:nth-child(5) { width: 11%; }
+.rslab table.rst th:nth-child(6), .rslab table.rst td:nth-child(6) { width: 8%; }
+.rslab table.rst th, .rslab table.rst td {
+  padding: 5px 9px; border-bottom: 1px solid #eef3f8;
+  text-align: right; font-family: var(--rs-mono); font-size: 12.5px;
+}
+.rslab table.rst th {
+  color: var(--rs-dim); font-weight: 600; font-size: 11.5px;
+  background: #f8fbfe; letter-spacing: .03em;
+}
+.rslab table.rst td:first-child, .rslab table.rst th:first-child,
+.rslab table.rst td:nth-child(2), .rslab table.rst th:nth-child(2) { text-align: left; }
+.rslab table.rst td:nth-child(2) { font-family: inherit; font-size: 12.5px; }
+.rslab table.rst tr:last-child td { border-bottom: 0; }
+.rslab table.rst tbody tr { cursor: pointer; }
+.rslab table.rst tbody tr:hover td { background: #f6f9ff; }
+.rslab table.rst tbody tr.on td { background: #e8f1fe; }
+.rslab table.rst tbody tr.on td:first-child { box-shadow: inset 3px 0 0 var(--rs-ac); }
+.rslab table.rst td.bad { color: #c62828; }
+.rslab table.rst td.ok { color: #2e7d32; }
+.rslab .concl {
+  margin-top: 10px; background: #fff; border: 1px solid var(--rs-line);
+  border-left: 4px solid var(--rs-ac); border-radius: 8px;
+  padding: 8px 12px; font-size: 13.5px; color: #37474f;
+}
+.rslab .concl .tag { color: var(--rs-dim); font-size: 12px; margin-right: 6px; }
+.rslab .concl .line { margin: 2px 0; }
+.rslab .warn { color: #c62828; }
+/* 模式切换：逐点求留数 / 留数定理 */
+.rslab .rstabs { display: flex; gap: 6px; margin: 0 0 10px; }
+.rslab .rs-tab {
+  padding: 6px 15px; border: 1px solid var(--rs-line); background: #f5f7fa;
+  border-radius: 8px; font-size: 13px; cursor: pointer; color: #607d8b;
+  font-family: inherit; transition: background .15s, color .15s;
+}
+.rslab .rs-tab:hover { background: #eceff1; }
+.rslab .rs-tab.on {
+  background: #e3f2fd; border-color: #1565c0; color: #0d47a1; font-weight: 600;
+}
+@media (max-width: 900px) {
+  .rslab .grid, .rslab .cards, .rslab .bar { grid-template-columns: 1fr; }
+  .rslab { font-size: 15px; }
+}
+/* ===== RS-CSS-END ===== */
 </style>
 </head>
 <body>
@@ -501,7 +639,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 其中由柯西积分定理,
 <div class="box-formula">$$\oint_C(z-z_0)^{n}\mathrm{d}z=\begin{cases}2\pi\mathrm{i},& n=-1,\\[4pt] 0,& n\neq-1.\end{cases}$$</div>
 也就是说, 除 $\oint_C(z-z_0)^{-1}\mathrm{d}z=2\pi\mathrm{i}$ 外, 其余各项积分均为 $0$, 从而
-<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\,c_{-1}.$$</div>
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}c_{-1}.$$</div>
 <span style="color:#c62828"><b>要义:</b></span> <b>积分看不见整个函数, 它只筛选出负一次幂项的系数.</b> 这个系数, 就是留数.
 </div>
 
@@ -554,7 +692,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="chart-container">
 <h3>交互: 留数定理 —— 闭曲线内外的奇点 <span class="tag-pill">核心交互</span></h3>
 <div class="chart-desc">闭曲线 $C$ 内有三个留数已知的奇点. 拖动圆心改变 $C$ 的位置, 或用滑块改变半径 $R$, 观察哪些奇点被"圈"进来, 以及积分值 $\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum\mathrm{Res}[f(z),z_k]$ 怎样随之跳变.</div>
-<div class="fig-caps"><div class="fc">留数定理: $\oint_C f(z)\,\mathrm{d}z = 2\pi\mathrm{i}\sum\limits_{k}\operatorname{Res}[f, z_k]$ (拖动圆心, 滑块改半径)</div></div>
+<div class="fig-caps"><div class="fc">留数定理: $\oint_C f(z)\mathrm{d}z = 2\pi\mathrm{i}\sum\limits_{k}\operatorname{Res}[f, z_k]$ (拖动圆心, 滑块改半径)</div></div>
 <canvas id="cvResidue" data-h="380"></canvas>
 <div class="control-panel">
 <div class="row">
@@ -614,9 +752,9 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 两端乘上 $(z-z_0)^m$, 得
 <div class="box-formula">$$(z-z_0)^m f(z)=c_{-m}+c_{-m+1}(z-z_0)+\cdots+c_{-1}(z-z_0)^{m-1}+c_0(z-z_0)^m+c_1(z-z_0)^{m+1}+\cdots$$</div>
 两边求 $m-1$ 阶导数, 得
-<div class="box-formula">$$\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!\,c_{-1}+(\text{含有 }(z-z_0)\text{ 的项}),$$</div>
+<div class="box-formula">$$\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!c_{-1}+(\text{含有 }(z-z_0)\text{ 的项}),$$</div>
 令 $z\to z_0$, 含 $(z-z_0)$ 的项趋于 $0$, 于是
-<div class="box-formula">$$\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!\,c_{-1},$$</div>
+<div class="box-formula">$$\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right]=(m-1)!c_{-1},$$</div>
 即
 <div class="box-formula">$$\mathrm{Res}[f(z),z_0]=c_{-1}=\dfrac{1}{(m-1)!}\lim\limits_{z\to z_0}\dfrac{\mathrm{d}^{m-1}}{\mathrm{d}z^{m-1}}\left[(z-z_0)^m f(z)\right].\qquad\blacksquare$$</div>
 </div>
@@ -707,6 +845,84 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 </div>
 </div>
 
+<!-- ===== RS-HTML-BEGIN ===== -->
+<div class="chart-container" id="rsLab" style="background:#fff;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="margin:0 0 6px;color:#0d47a1;font-size:1.15em;">交互: 留数实验台 —— 定义、三条准则、留数定理三路对照</h3>
+<div class="chart-desc" style="color:#546e7a;font-size:.88em;margin-bottom:10px;">
+上面三条准则回答「怎么手算」，这里回答「算出来到底是多少、为什么」。
+<b>留数计算</b>：选一个 $f(z)$，程序自动找出全部孤立奇点，逐点判类型、定阶数，
+再用 $\dfrac{1}{2\pi\mathrm{i}}\oint_{|z-a|=\rho}f(z)\mathrm{d}z$ 直接算留数，
+并把洛朗系数 $c_n$ 画出来 —— <b>留数就是 $c_{-1}$</b>。
+<b>留数定理</b>：拉动围道半径 $R$，看 $\dfrac{1}{2\pi\mathrm{i}}\oint_{|z|=R}f(z)\mathrm{d}z$
+怎样一个极点一个极点地往上跳。
+</div>
+
+<div class="rslab">
+  <div class="rstabs">
+    <button class="rs-tab on" type="button" data-mode="res">留数计算 f(z) → Res</button>
+    <button class="rs-tab" type="button" data-mode="thm">留数定理 ∮ f dz</button>
+  </div>
+
+  <div class="bar">
+    <div class="fd">
+      <label>函数 f(z)</label>
+      <select id="rsFn"></select>
+    </div>
+    <div class="fd">
+      <label>自定义 f(z)（变量用 z）</label>
+      <div class="rw">
+        <input type="text" id="rsExpr" placeholder="如 1/(z^3-z)" title="可直接粘贴上面的式子；方括号 [ ] 会按圆括号 ( ) 处理">
+        <button class="btn" id="rsApply" type="button">应用</button>
+      </div>
+      <div class="tinynote">可粘贴上面的式子：方括号 [ ] 按圆括号读，减号 − 也认，乘号可省略</div>
+    </div>
+    <div class="fd">
+      <label>选中奇点</label>
+      <select id="rsSel"></select>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="cd"><div class="k">围道 $|z|=R$ 内留数之和</div><div class="v" id="rsCSum">—</div><div class="n" id="rsCSumN">—</div></div>
+    <div class="cd"><div class="k">$\oint_{|z|=R}f(z)\mathrm{d}z/2\pi\mathrm{i}$（数值）</div><div class="v" id="rsCNum">—</div><div class="n" id="rsCNumN">—</div></div>
+    <div class="cd"><div class="k">$\operatorname{Res}[f(z),\infty]$</div><div class="v" id="rsCInf">—</div><div class="n" id="rsCInfN">—</div></div>
+  </div>
+
+  <div class="grid">
+    <figure>
+      <figcaption><b id="rsCapPlane">z 平面：奇点与小圆</b><span class="hint" id="rsHPlane">—</span></figcaption>
+      <canvas id="rsCvPlane" data-h="205"></canvas>
+    </figure>
+    <figure>
+      <figcaption><b id="rsCapB">洛朗系数 cₙ</b><span class="hint" id="rsHB">—</span></figcaption>
+      <canvas id="rsCvB" data-h="205"></canvas>
+    </figure>
+    <figure>
+      <figcaption><b id="rsCapC">阶数判据：|f| 随半径的幂次</b><span class="hint" id="rsHC">—</span></figcaption>
+      <canvas id="rsCvC" data-h="205"></canvas>
+    </figure>
+    <figure>
+      <figcaption><b id="rsCapD">数值留数的收敛</b><span class="hint" id="rsHD">—</span></figcaption>
+      <canvas id="rsCvD" data-h="205"></canvas>
+    </figure>
+  </div>
+
+  <div class="row2">
+    <label>围道半径 R</label>
+    <input type="range" id="rs2R" min="0.2" max="3" step="0.02" value="2">
+    <span class="badge" id="rs2RV">—</span>
+    <span class="note2" id="rsRNote">—</span>
+  </div>
+
+  <table class="rst" id="rsTbl">
+    <thead><tr><th>奇点 $z_k$</th><th>类型</th><th>$\operatorname{Res}$（数值）</th><th>精确值</th><th>偏差</th><th>在 R 内</th></tr></thead>
+    <tbody id="rsBody"></tbody>
+  </table>
+  <div class="concl" id="rsConcl"></div>
+</div>
+</div>
+<!-- ===== RS-HTML-END ===== -->
+
 </div><!-- /content2 -->
 
 <!-- ============ Tab 3: 无穷远点的留数 ============ -->
@@ -745,7 +961,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 设 $C$ 是围绕原点并包含 $z_1,z_2,\cdots,z_n$ 的正向简单闭曲线, 由留数定理,
 <div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k].$$</div>
 又由无穷远点留数的定义,
-<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=-2\pi\mathrm{i}\,\mathrm{Res}[f(z),\infty].$$</div>
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=-2\pi\mathrm{i}\mathrm{Res}[f(z),\infty].$$</div>
 两式比较, 即得
 <div class="box-formula">$$\mathrm{Res}[f(z),\infty]+\sum_{k=1}^{n}\mathrm{Res}[f(z),z_k]=0.\qquad\blacksquare$$</div>
 </div>
@@ -758,7 +974,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="title">准则 4</div>
 <div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].$$</div>
 <span style="color:#c62828"><b>注:</b></span> 定理 2.2 与准则 4 提供了计算函数沿闭曲线积分的又一种方法: 通过求无穷远点的留数来计算积分
-<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\,\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].$$</div>
+<div class="box-formula">$$\oint_C f(z)\mathrm{d}z=2\pi\mathrm{i}\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].$$</div>
 如果曲线 $C$ 内奇点的留数不容易求, 就可用这一方法简化计算.
 </div>
 
@@ -771,7 +987,7 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 <div class="res-label">【证】</div>
 取正向简单闭曲线 $C$ 为半径足够大的正向圆周 $|z|=\rho$, 使 $f(z)$ 在 $\rho\le|z|&lt;+\infty$ 内无奇点. 令 $z=\frac{1}{\xi}$ (即 $\xi=\frac{1}{z}$), 则 $\mathrm{d}z=-\frac{\mathrm{d}\xi}{\xi^2}$, 于是
 <div class="box-formula">$$\mathrm{Res}[f(z),\infty]=\dfrac{1}{2\pi\mathrm{i}}\oint_{C^-} f(z)\mathrm{d}z=-\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi|=\frac{1}{\rho}} f\!\left(\dfrac{1}{\xi}\right)\dfrac{\mathrm{d}\xi}{\xi^2}$$</div>
-<div class="box-formula">$$=-\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi|=\frac{1}{\rho}} f\!\left(\dfrac{1}{\xi}\right)\dfrac{1}{\xi^2}\,\mathrm{d}\xi=-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].\qquad\blacksquare$$</div>
+<div class="box-formula">$$=-\dfrac{1}{2\pi\mathrm{i}}\oint_{|\xi|=\frac{1}{\rho}} f\!\left(\dfrac{1}{\xi}\right)\dfrac{1}{\xi^2}\mathrm{d}\xi=-\mathrm{Res}\left[f\!\left(\dfrac{1}{z}\right)\cdot\dfrac{1}{z^2},0\right].\qquad\blacksquare$$</div>
 </div>
 </div>
 </div>
@@ -903,7 +1119,7 @@ $z=0$ 为被积函数 $f(z)=\frac{\mathrm{e}^z}{z^2}$ 的<b>二级极点</b>, �
 
 <div class="box-example">
 <div class="ex-label">综合例 3</div>
-计算 $\oint_{|z|=4}z^3\mathrm{e}^{1/z}\,\mathrm{d}z$.
+计算 $\oint_{|z|=4}z^3\mathrm{e}^{1/z}\mathrm{d}z$.
 <input type="checkbox" id="ans612" class="answer-toggle">
 <label for="ans612" class="answer-btn">显示解答</label>
 <div class="answer-body">
@@ -915,7 +1131,7 @@ $z^{-1}$ 项对应于 $3-n=-1$, 即 $n=4$, 故 $c_{-1}=\frac{1}{4!}=\frac{1}{24}
 <div class="box-formula">$$\oint_{|z|=4}z^3\mathrm{e}^{1/z}\mathrm{d}z=2\pi\mathrm{i}\cdot\dfrac{1}{24}=\dfrac{\pi\mathrm{i}}{12}.$$</div>
 <div class="res-label">【解法 2 · 借道无穷远点】</div>
 由准则 4, $f\!\left(\frac{1}{z}\right)\frac{1}{z^2}=\frac{1}{z^5}\mathrm{e}^{z}$, 其在 $z=0$ 的留数为 $\mathrm{e}^z$ 中 $z^4$ 项系数 $\frac{1}{4!}=\frac{1}{24}$, 故
-<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-\dfrac{1}{24},\qquad \oint_{|z|=4}f(z)\mathrm{d}z=-2\pi\mathrm{i}\,\mathrm{Res}[f(z),\infty]=\dfrac{\pi\mathrm{i}}{12}.$$</div>
+<div class="box-formula">$$\mathrm{Res}[f(z),\infty]=-\dfrac{1}{24},\qquad \oint_{|z|=4}f(z)\mathrm{d}z=-2\pi\mathrm{i}\mathrm{Res}[f(z),\infty]=\dfrac{\pi\mathrm{i}}{12}.$$</div>
 两种解法结果一致.
 </div>
 </div>
@@ -1145,7 +1361,7 @@ $z^{-1}$ 项对应于 $3-n=-1$, 即 $n=4$, 故 $c_{-1}=\frac{1}{4!}=\frac{1}{24}
 <h4>一个闭路积分, 只由它围住的点决定</h4>
 <p>留数定理最惊人的地方在于: 函数在曲线 $C$ 上的所有取值, 竟然被 $C$ 内有限个奇点处的留数"完全决定". 连续变化的整体量, 化归为离散的局部量.</p>
 <p>这正是复分析"局部确定整体"这一核心思想的又一次体现 —— 与上一节"孤立奇点由局部洛朗展开决定类型"是同一精神.</p>
-<div class="pc-math">$\oint_C f\,\mathrm{d}z=2\pi\mathrm{i}\sum_k\mathrm{Res}[f,z_k]$</div>
+<div class="pc-math">$\oint_C f\mathrm{d}z=2\pi\mathrm{i}\sum_k\mathrm{Res}[f,z_k]$</div>
 </div>
 
 <div class="philo-card">
@@ -1604,7 +1820,7 @@ module('cvExtract',function(cv){
     var txt;
     if(sel===-1){
       txt='选中的 $n='+hl('-1')+'$: $c_{-1}='+hl2(fmt(coef(-1)))+'$, 这正是 $f(z)=\\dfrac{\\mathrm{e}^z}{z^3}$ 在 $z=0$ 的<b>留数</b>.<br>'+
-          '沿闭曲线积分时, 只有这一项留下 $2\\pi\\mathrm{i}$ 的贡献: $\\oint_C f(z)\\mathrm{d}z=2\\pi\\mathrm{i}\\,c_{-1}$.';
+          '沿闭曲线积分时, 只有这一项留下 $2\\pi\\mathrm{i}$ 的贡献: $\\oint_C f(z)\\mathrm{d}z=2\\pi\\mathrm{i}c_{-1}$.';
     } else if(sel<0){
       txt='选中的 $n='+sel+'$: $c_{'+sel+'}='+hl2(fmt(coef(sel)))+'$ —— 它虽然是负幂项, 但不是 $n=-1$, 积分时会被消去.';
     } else {
@@ -1622,7 +1838,7 @@ module('cvRule',function(cv){
   var kind=0;
   var NAMES=['准则 1','准则 2','准则 3'];
   var SUB=['一级极点','$m$ 级极点','$f=P/Q$ 型'];
-  var FORM=['$\\operatorname{Res}[f(z),z_0]=\\lim\\limits_{z\\to z_0}(z-z_0)\\,f(z)$',
+  var FORM=['$\\operatorname{Res}[f(z),z_0]=\\lim\\limits_{z\\to z_0}(z-z_0)f(z)$',
             '$\\operatorname{Res}[f(z),z_0]=\\dfrac{1}{(m-1)!}\\lim\\limits_{z\\to z_0}\\dfrac{\\mathrm{d}^{m-1}}{\\mathrm{d}z^{m-1}}\\Big[(z-z_0)^m f(z)\\Big]$',
             '$\\operatorname{Res}[f(z),z_0]=\\dfrac{P(z_0)}{Q\'(z_0)}$'];
   var COL=['#1976d2','#e65100','#2e7d32'];
@@ -1731,7 +1947,7 @@ module('cvRoute',function(cv){
   var CASES=[
     {f:'$\\dfrac{\\mathrm{e}^{z}}{z^{2}}$',       sing:'$z_0=0$（二级极点）',  meth:'准则 2',  res:'$\\operatorname{Res}=1$'},
     {f:'$\\dfrac{z}{z^{2}+1}$',                  sing:'$z_0=\\mathrm{i}$（一级极点）', meth:'准则 3',  res:'$\\operatorname{Res}=\\dfrac{1}{2}$'},
-    {f:'$z^{3}\\,\\mathrm{e}^{1/z}$',            sing:'$z_0=0$（本性奇点）',  meth:'洛朗展开', res:'$\\operatorname{Res}=\\dfrac{1}{24}$'}
+    {f:'$z^{3}\\mathrm{e}^{1/z}$',            sing:'$z_0=0$（本性奇点）',  meth:'洛朗展开', res:'$\\operatorname{Res}=\\dfrac{1}{24}$'}
   ];
   var TIT=['$f(z)$','奇点类型','选用方法','留数结果'];
   var COL=['#546e7a','#e65100','#1976d2','#2e7d32'];
@@ -1783,10 +1999,10 @@ module('cvRoute',function(cv){
 module('cvSummary',function(cv){
   var stage=2, built=false;
   var cats=[
-    {t:'留数的定义与定理', c:'#1976d2', leaves:['定义2.1: 负一次幂系数 $c_{-1}$','$\\operatorname{Res}[f(z),z_0]=c_{-1}$','逐项积分: 只留 $n=-1$ 项','定理2.1（留数定理）','$\\oint_C f(z)\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f(z),z_k]$','可去奇点 → $\\operatorname{Res}[f(z),z_0]=0$']},
+    {t:'留数的定义与定理', c:'#1976d2', leaves:['定义2.1: 负一次幂系数 $c_{-1}$','$\\operatorname{Res}[f(z),z_0]=c_{-1}$','逐项积分: 只留 $n=-1$ 项','定理2.1（留数定理）','$\\oint_C f(z)\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f(z),z_k]$','可去奇点 → $\\operatorname{Res}[f(z),z_0]=0$']},
     {t:'函数在极点的留数', c:'#e65100', leaves:['准则1: 一级极点','$\\operatorname{Res}[f(z),z_0]=\\lim\\limits_{z\\to z_0}(z-z_0)f(z)$','准则2: $m$ 级极点','$\\operatorname{Res}[f(z),z_0]=\\dfrac{1}{(m-1)!}\\lim\\limits_{z\\to z_0}\\dfrac{\\mathrm{d}^{m-1}}{\\mathrm{d}z^{m-1}}\\Big[(z-z_0)^m f(z)\\Big]$','准则3: $f=P/Q$ 型','$\\operatorname{Res}[f(z),z_0]=\\dfrac{P(z_0)}{Q\'(z_0)}$']},
     {t:'无穷远点的留数', c:'#c62828', leaves:['定义2.2: 定义里带负号','$\\operatorname{Res}[f(z),\\infty]=-c_{-1}$','定理2.2: $\\sum_k\\operatorname{Res}[f(z),z_k]+\\operatorname{Res}[f(z),\\infty]=0$','准则4: $\\operatorname{Res}[f(z),\\infty]=-\\operatorname{Res}\\Big[f\\big(\\tfrac{1}{z}\\big)\\cdot\\tfrac{1}{z^2},0\\Big]$','例2.4 / 例2.5','$\\infty$ 处可去也可能 $\\operatorname{Res}[f(z),\\infty]\\neq 0$']},
-    {t:'计算路线与综合', c:'#2e7d32', leaves:['可去 → $\\operatorname{Res}[f(z),z_0]=0$','本性 → 洛朗展开','极点 → 准则 1 / 2 / 3','奇点多 → 改用 $\\infty$ 点','$\\oint_C f(z)\\,\\mathrm{d}z=-2\\pi\\mathrm{i}\\,\\operatorname{Res}[f(z),\\infty]$','一句话: 局部决定整体']}
+    {t:'计算路线与综合', c:'#2e7d32', leaves:['可去 → $\\operatorname{Res}[f(z),z_0]=0$','本性 → 洛朗展开','极点 → 准则 1 / 2 / 3','奇点多 → 改用 $\\infty$ 点','$\\oint_C f(z)\\mathrm{d}z=-2\\pi\\mathrm{i}\\operatorname{Res}[f(z),\\infty]$','一句话: 局部决定整体']}
   ];
   function build(){
     if(built) return;
@@ -1835,7 +2051,7 @@ module('cvSummary',function(cv){
   });
   var rb=document.getElementById('btnSumReset');
   if(rb) rb.addEventListener('click',function(){ stage=2; draw(); });
-  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 ($c_{-1}=\\operatorname{Res}[f,z_0]$) → 定理 ($\\oint_C f\\,\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f,z_k]$) → 极点三准则 (准则 1 / 2 / 3) → 无穷远点 (准则 4 与留数和为零); 一句话: <b>闭路积分只由它围住的点决定</b>.');
+  setRO('sumReadout', hl2('4 大板块')+' &nbsp;|&nbsp; 定义 ($c_{-1}=\\operatorname{Res}[f,z_0]$) → 定理 ($\\oint_C f\\mathrm{d}z=2\\pi\\mathrm{i}\\sum_k\\operatorname{Res}[f,z_k]$) → 极点三准则 (准则 1 / 2 / 3) → 无穷远点 (准则 4 与留数和为零); 一句话: <b>闭路积分只由它围住的点决定</b>.');
   return {draw:draw};
 });
 
@@ -1931,6 +2147,1512 @@ module('cvSummary',function(cv){
 
 })();
 
+</script>
+<script>
+/* ===== RS-JS-BEGIN ===== */
+(function () {
+'use strict';
+/* =====================================================================
+   留数计算 · 内核   RS  (v1.0)
+   ---------------------------------------------------------------------
+   纯 JavaScript，无依赖，浏览器与 node 均可用：
+       直接引入本文件                     →  window.RS
+       const RS = require('./rs-core.js');   →  node 里直接测
+
+   提供的能力
+       RS.compile(src)            复变表达式 → f(z)，z 为复数
+       RS.residueAt(f, a, rho)    留数 = (1/2πi)∮ f dz，梯形法 + 加密自检
+       RS.probe(f, a, rho)        奇点类型、阶数、留数、洛朗系数（一次给全）
+       RS.scan(f, box)            在矩形里自动找孤立奇点（找 |f| 的尖峰并细化）
+       RS.contour(f, c, R, N)     ∮_{|z-c|=R} f dz
+       RS.resInf(f, R)            Res[f,∞] = −(1/2πi)∮_{|z|=R} f dz
+       RS.PRESETS                 14 条典型函数（附精确留数，供对拍）
+
+   数学要点
+       · 留数就是洛朗系数 a_{-1}；沿圆周用梯形公式求
+             c_n = (1/(N ρ^n)) Σ_k f(a+ρe^{iθ_k}) e^{-inθ_k}
+         对解析函数是指数收敛的（周期梯形公式），取 n=-1 即留数。
+       · 阶数由 |f| 在三个同心圆上的增长幂次估计：|f| ~ Cρ^{-m}；
+         两次估计不一致 → 说明不是幂律增长，判为本性奇点。
+       · 圆内只有一个奇点时，围道积分才等于该点留数；判错会立刻在
+         多半径自检里暴露（数值随 ρ 变化）。
+   ===================================================================== */
+var RS = (function () {
+'use strict';
+
+/* ---------------------------------------------------------------
+   一、复数运算（全部用 {re, im} 表示，不做对象池优化，够快）
+   --------------------------------------------------------------- */
+function c(re, im) { return { re: re, im: im || 0 }; }
+function isC(v) { return v !== null && typeof v === 'object' && 're' in v; }
+function re(v) { return isC(v) ? v.re : v; }
+function im(v) { return isC(v) ? v.im : 0; }
+
+function add(a, b) { return c(a.re + b.re, a.im + b.im); }
+function sub(a, b) { return c(a.re - b.re, a.im - b.im); }
+function neg(a) { return c(-a.re, -a.im); }
+function mul(a, b) { return c(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re); }
+function scale(a, k) { return c(a.re * k, a.im * k); }
+function div(a, b) {
+    var d = b.re * b.re + b.im * b.im;
+    return c((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+function abs(a) { return Math.hypot(a.re, a.im); }
+function arg(a) { return Math.atan2(a.im, a.re); }
+function conj(a) { return c(a.re, -a.im); }
+function cexp(a) { var m = Math.exp(a.re); return c(m * Math.cos(a.im), m * Math.sin(a.im)); }
+function clog(a) { return c(Math.log(abs(a)), arg(a)); }
+function cpow(a, b) {
+    /* 整数指数走连乘：精确且避开主值分支；其余走 exp(b log a) */
+    if (Math.abs(b.im) < 1e-15 && Math.abs(b.re - Math.round(b.re)) < 1e-13 &&
+        Math.abs(Math.round(b.re)) <= 64) {
+        var n = Math.round(b.re), base, out;
+        if (n === 0) return c(1, 0);
+        base = n < 0 ? div(c(1, 0), a) : a;
+        n = Math.abs(n);
+        out = c(1, 0);
+        while (n > 0) {
+            if (n & 1) out = mul(out, base);
+            base = mul(base, base);
+            n >>= 1;
+        }
+        return out;
+    }
+    return cexp(mul(b, clog(a)));
+}
+function csqrt(a) { return cpow(a, c(0.5, 0)); }
+function csin(a) { return c(Math.sin(a.re) * Math.cosh(a.im), Math.cos(a.re) * Math.sinh(a.im)); }
+function ccos(a) { return c(Math.cos(a.re) * Math.cosh(a.im), -Math.sin(a.re) * Math.sinh(a.im)); }
+function ctan(a) { return div(csin(a), ccos(a)); }
+function csinh(a) { return c(Math.sinh(a.re) * Math.cos(a.im), Math.cosh(a.re) * Math.sin(a.im)); }
+function ccosh(a) { return c(Math.cosh(a.re) * Math.cos(a.im), Math.sinh(a.re) * Math.sin(a.im)); }
+function ctanh(a) { return div(csinh(a), ccosh(a)); }
+
+var FNS = {
+    exp: cexp, log: clog, ln: clog, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan,
+    sinh: csinh, cosh: ccosh, tanh: ctanh,
+    abs: function (a) { return c(abs(a), 0); },
+    conj: conj, arg: function (a) { return c(arg(a), 0); },
+    re: function (a) { return c(a.re, 0); },
+    im: function (a) { return c(a.im, 0); }
+};
+
+/* ---------------------------------------------------------------
+   二、表达式解析：递归下降，白名单函数，不碰 eval
+       expr  := term (('+'|'-') term)*
+       term  := unary (('*'|'/') unary | 隐式乘 unary)*
+       unary := ('-'|'+') unary | power
+       power := atom ('^' unary)?
+       atom  := 数字 | z | i | pi | e | 函数'(' expr ')' | '(' expr ')'
+   --------------------------------------------------------------- */
+/* 把人们实际会粘贴进来的写法归一化：
+     ① 全角字符（中文输入法下打的 （ ） ［ ］ ／ ＊ ０-９ 等）转半角；
+     ② 方括号、花括号一律当分组，等价于圆括号；
+     ③ 各种减号（− – — －）统一成 ASCII 的 -，乘除号统一成 * /。
+   下拉框里显示的 `1 / [z(z−1)(z−2)]` 直接复制进输入框，就是靠这一步才认的。 */
+function normalize(src) {
+    return String(src == null ? '' : src)
+        .replace(/[\uFF01-\uFF5E]/g, function (ch) {          /* 全角 ASCII → 半角 */
+            return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+        })
+        .replace(/[\u2010-\u2015\u2212]/g, '-')               /* ‐ ‑ ‒ – — ― − */
+        .replace(/[【〔〖]/g, '(').replace(/[】〕〗]/g, ')')
+        .replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')')
+        .replace(/[×·⋅∙]/g, '*').replace(/[÷∕]/g, '/')
+        .replace(/\u3000/g, ' ')
+        .replace(/π/g, 'pi')
+        .replace(/\*\*/g, '^')
+        .replace(/\s+/g, '');
+}
+
+function compile(src) {
+    var s = normalize(src);
+    if (!s) throw new Error('表达式为空');
+    var i = 0;
+
+    function ch() { return s.charAt(i); }
+    function bad(msg) { throw new Error(msg + '（位置 ' + (i + 1) + '）'); }
+
+    function num() {
+        var m = /^\d*\.?\d+(?:[eE][+-]?\d+)?/.exec(s.slice(i));
+        if (!m) bad('这里应是一个数字');
+        i += m[0].length;
+        return c(parseFloat(m[0]), 0);
+    }
+    function ident() {
+        var m = /^[A-Za-z][A-Za-z0-9_]*/.exec(s.slice(i));
+        if (!m) {
+            var k = ch();
+            if (k === '') bad('表达式到这里就结束了，后面还缺一个因子');
+            if (/[\[\]{}()]/.test(k)) bad('这里的 ' + k + ' 位置不对，检查一下括号是否配对');
+            bad('这里出现了不认识的字符 ' + k + '，应是一个数字、变量名或函数名');
+        }
+        i += m[0].length;
+        return m[0];
+    }
+    function startsAtom() {
+        var k = ch();
+        return /[0-9.(]/.test(k) || /[A-Za-z]/.test(k);
+    }
+
+    function parseExpr() {
+        var v = parseTerm();
+        for (;;) {
+            var k = ch();
+            if (k === '+') { i++; v = add(v, parseTerm()); }
+            else if (k === '-') { i++; v = sub(v, parseTerm()); }
+            else return v;
+        }
+    }
+    function parseTerm() {
+        var v = parseUnary();
+        for (;;) {
+            var k = ch();
+            if (k === '*') { i++; v = mul(v, parseUnary()); }
+            else if (k === '/') { i++; v = div(v, parseUnary()); }
+            else if (startsAtom()) { v = mul(v, parseUnary()); }   /* 2z、z(z-1)、2sin(z) */
+            else return v;
+        }
+    }
+    function parseUnary() {
+        if (ch() === '-') { i++; return neg(parseUnary()); }
+        if (ch() === '+') { i++; return parseUnary(); }
+        return parsePower();
+    }
+    function parsePower() {
+        var b = parseAtom();
+        if (ch() === '^') { i++; return cpow(b, parseUnary()); }
+        return b;
+    }
+    function parseAtom() {
+        if (ch() === '(') {
+            i++;
+            var v = parseExpr();
+            if (ch() === ')') i++; else bad('缺少右括号');
+            return v;
+        }
+        if (/[0-9.]/.test(ch())) return num();
+        var name = ident();
+        if (name === 'z') return c(GZ.re, GZ.im);
+        if (name === 'i' || name === 'I') return c(0, 1);
+        if (name === 'pi' || name === 'Pi') return c(Math.PI, 0);
+        if (name === 'e' || name === 'E') return c(Math.E, 0);
+        if (name === 'inf' || name === 'oo') throw new Error('表达式中不能出现无穷大');
+        if (!FNS[name]) throw new Error('未定义的函数或符号：' + name);
+        if (ch() !== '(') bad(name + ' 后面缺少括号');
+        i++;
+        var a = parseExpr();
+        if (ch() === ')') i++; else bad('缺少右括号');
+        return FNS[name](a);
+    }
+
+    /* 语法先在 z=0 上试跑一遍：即时抛错，避免把坏表达式留到计算阶段 */
+    var GZ = c(0, 0);
+    i = 0;
+    GZ = c(0, 0);
+    (function precheck() { parseExpr(); }());
+    if (i < s.length) bad('多余的字符：' + s.slice(i));
+
+    /* 每次调用重新走一遍解析（表达式短，成本可忽略），
+       这样解析进度 i 不会在多次调用间互相污染 */
+    return function (z) {
+        i = 0;
+        GZ = z || c(0, 0);
+        var v = parseExpr();
+        if (i < s.length) bad('多余的字符：' + s.slice(i));
+        return v;
+    };
+}
+
+/* ---------------------------------------------------------------
+   三、圆上的采样与洛朗系数（梯形公式）
+   --------------------------------------------------------------- */
+var TW = {};
+function twiddle(N) {
+    var t = TW[N];
+    if (t) return t;
+    t = { cos: new Float64Array(N), sin: new Float64Array(N) };
+    for (var k = 0; k < N; k++) {
+        t.cos[k] = Math.cos(2 * Math.PI * k / N);
+        t.sin[k] = Math.sin(2 * Math.PI * k / N);
+    }
+    TW[N] = t;
+    return t;
+}
+
+/* c_n = 1/(N ρ^n) Σ f(a+ρe^{iθ_k}) e^{-inθ_k}；n=-1 时就是留数 */
+function coef(f, a, rho, n, N) {
+    N = N || 256;
+    var t = twiddle(N), sr = 0, si = 0, k, v, ang, cs, sn, pr, pi;
+    for (k = 0; k < N; k++) {
+        v = f(c(a.re + rho * t.cos[k], a.im + rho * t.sin[k]));
+        if (!isFinite(v.re) || !isFinite(v.im)) return c(NaN, NaN);
+        ang = 2 * Math.PI * n * k / N;
+        cs = Math.cos(ang); sn = Math.sin(ang);
+        pr = v.re * cs + v.im * sn;      /* (vr + i vi)(cs − i sn) */
+        pi = v.im * cs - v.re * sn;
+        sr += pr; si += pi;
+    }
+    var k2 = Math.pow(rho, n);
+    return c(sr / N / k2, si / N / k2);
+}
+
+/* 留数：N 逐次加倍直到两次结果一致，返回 {val, N, err, hist} */
+function residueAt(f, a, rho, opt) {
+    opt = opt || {};
+    var tol = opt.tol || 1e-13;
+    var N = 128, prev = coef(f, a, rho, -1, N), cur, err, hist = [{ N: N, err: NaN }];
+    for (var k = 0; k < 5; k++) {
+        N *= 2;
+        cur = coef(f, a, rho, -1, N);
+        err = abs(sub(cur, prev));
+        hist.push({ N: N, err: err });
+        if (err <= tol * (1 + abs(cur))) { prev = cur; break; }
+        prev = cur;
+    }
+    return { val: prev, N: N, err: hist[hist.length - 1].err, hist: hist };
+}
+
+/* 圆上 |f| 的最大值（跳过 Inf/NaN，用作阶数探针） */
+function magMax(f, a, rho, N) {
+    N = N || 96;
+    var t = twiddle(N), m = 0, k, v;
+    for (k = 0; k < N; k++) {
+        v = f(c(a.re + rho * t.cos[k], a.im + rho * t.sin[k]));
+        var q = abs(v);
+        if (isFinite(q) && q > m) m = q;
+    }
+    return m;
+}
+
+/* ---------------------------------------------------------------
+   四、奇点类型与阶数
+       在 a 周围取同心圆，|f| 的最大值满足 |f| ~ C ρ^{-m}
+           s(ρ) = log(M(ρ/2)/M(ρ)) / log 2
+       理想情形 s 恒等于阶数 m。ρ 太大时光滑因子会污染斜率，所以
+       逐步缩小 ρ 直到两次斜率一致（|s1−s2| < 0.06）；若 ρ 一路
+       缩小仍不一致、而且斜率越来越大，说明 |f| 不服从幂律 —— 本性奇点。
+   --------------------------------------------------------------- */
+function orderProbe(f, a, rho0) {
+    var rho = rho0, m1, m2, m3, s1, s2, t;
+    function slope(x, y) {
+        if (!(x > 0) || !(y > 0)) return NaN;
+        return Math.log(y / x) / Math.LN2;
+    }
+    var rec = null;
+    for (t = 0; t < 7; t++) {
+        m1 = magMax(f, a, rho);
+        m2 = magMax(f, a, rho / 2);
+        m3 = magMax(f, a, rho / 4);
+        s1 = slope(m1, m2);
+        s2 = slope(m2, m3);
+        rec = { rho: rho, m1: m1, m2: m2, m3: m3, s1: s1, s2: s2, iters: t, stable: false };
+        if (!isFinite(s1) || !isFinite(s2)) break;
+        if (Math.abs(s1 - s2) < 0.06) { rec.stable = true; break; }
+        if (t >= 1 && Math.abs(s1 - s2) > 0.6) break;   /* 斜率在发散 → 本性 */
+        rho /= 2;
+    }
+    return rec;
+}
+
+/* 完整探针：类型、阶数、留数、收敛史 */
+function probe(f, a, rho, opt) {
+    opt = opt || {};
+    rho = rho || 0.4;
+    var o = orderProbe(f, a, Math.min(rho, 0.25));
+    var r = residueAt(f, a, rho, opt);
+    var out = {
+        at: a, rho: rho, res: r.val, resErr: r.err, N: r.N, hist: r.hist,
+        s1: o.s1, s2: o.s2, m1: o.m1, m2: o.m2, m3: o.m3,
+        sRho: o.rho, stable: o.stable,
+        order: 0, kind: 'unknown', label: '', law: ''
+    };
+    var s1 = o.s1, s2 = o.s2;
+    var nearInt = function (x) {
+        if (!isFinite(x)) return null;
+        var k = Math.round(x);
+        return Math.abs(x - k) < 0.12 ? k : null;
+    };
+    var k1 = nearInt(s1), k2 = nearInt(s2);
+
+    /* 直接取值判断“解析点 / 可去奇点” */
+    var v0 = f(a);
+    var finiteAtA = isFinite(v0.re) && isFinite(v0.im) && abs(v0) < 1e12;
+    var rad = '（探针半径 ' + fmt(o.rho) + '）';
+
+    var sAvg = 0.5 * (s1 + s2);
+    if (Math.abs(sAvg) < 0.12) {
+        out.order = 0;
+        if (finiteAtA) { out.kind = 'analytic'; out.label = '解析点'; }
+        else { out.kind = 'removable'; out.label = '可去奇点'; }
+        out.law = '三个同心圆上 |f| 基本不变（斜率 ' + fmt(s1) + '），主部为零' + rad;
+    } else if (sAvg < -0.3 && nearInt(-sAvg) !== null) {
+        /* |f| 随半径变小：这是零点而不是奇点 */
+        out.order = 0;
+        out.kind = 'analytic';
+        out.label = '解析点（' + Math.round(-sAvg) + ' 阶零点）';
+        out.law = '$|f|\\sim\\rho^{' + fmt(sAvg) + '}$：函数在此解析且取零值，留数为 0' + rad;
+    } else if (k1 !== null && k2 !== null && k1 === k2 && k1 > 0) {
+        out.order = k1;
+        out.kind = 'pole';
+        out.label = k1 + ' 阶极点';
+        out.law = '$|f|\\sim\\rho^{-' + k1 + '}$：斜率 ' + fmt(s1) + '、' + fmt(s2)
+            + ' 一致，主部最低次为 $(z-a)^{-'+k1+'}$' + rad;
+    } else if (o.stable && Math.abs(s1 - k1) > 0.12 && k1 === null) {
+        out.kind = 'branch';
+        out.label = '非整数幂次（分支型）';
+        out.law = '稳定斜率 ' + fmt(s1) + ' 不是整数，函数在此不单值，留数不存在' + rad;
+    } else {
+        out.kind = 'essential';
+        out.label = '本性奇点';
+        out.law = '|f| 不服从幂律：斜率 ' + fmt(s1) + ' → ' + fmt(s2)
+            + '，缩小半径并不收敛，主部有无穷多项';
+    }
+    return out;
+}
+
+function fmt(x) {
+    if (!isFinite(x)) return '—';
+    return Math.abs(x) >= 1e4 || (Math.abs(x) < 1e-3 && x !== 0) ? x.toExponential(2) : x.toFixed(3);
+}
+
+/* ---------------------------------------------------------------
+   五、自动扫描孤立奇点
+       在矩形网格上算 |f|，取“比四邻都高、且远高于中位数”的点作种子，
+       再用坐标下降把 |f| 推到最大（极点处发散），最后按距离去重。
+   --------------------------------------------------------------- */
+function scan(f, box, opt) {
+    opt = opt || {};
+    var nx = opt.n || 41, ny = opt.n || 41;
+    box = box || { x0: -3, x1: 3, y0: -3, y1: 3 };
+    var i, j, M = new Float64Array(nx * ny), vals = [], v;
+    for (j = 0; j < ny; j++) {
+        for (i = 0; i < nx; i++) {
+            var x = box.x0 + (box.x1 - box.x0) * i / (nx - 1);
+            var y = box.y0 + (box.y1 - box.y0) * j / (ny - 1);
+            v = abs(f(c(x, y)));
+            if (!isFinite(v)) v = 1e300;
+            M[j * nx + i] = v;
+            if (isFinite(v)) vals.push(v);
+        }
+    }
+    vals.sort(function (p, q) { return p - q; });
+    var med = vals[Math.floor(vals.length / 2)] || 1;
+    var thresh = (opt.thresh || 40) * med;
+    var seeds = [];
+    for (j = 1; j < ny - 1; j++) {
+        for (i = 1; i < nx - 1; i++) {
+            var m = M[j * nx + i];
+            if (m < thresh || m < 3) continue;
+            if (m >= M[j * nx + i - 1] && m >= M[j * nx + i + 1] &&
+                m >= M[(j - 1) * nx + i] && m >= M[(j + 1) * nx + i]) {
+                seeds.push({
+                    re: box.x0 + (box.x1 - box.x0) * i / (nx - 1),
+                    im: box.y0 + (box.y1 - box.y0) * j / (ny - 1)
+                });
+            }
+        }
+    }
+    /* 坐标下降细化 */
+    function refine(p) {
+        var h = (box.x1 - box.x0) / (nx - 1), cur = abs(f(p));
+        for (var it = 0; it < 140 && h > 1e-9; it++) {
+            var moved = false, best = cur, bp = null;
+            for (var a = -1; a <= 1; a++) {
+                for (var b = -1; b <= 1; b++) {
+                    if (!a && !b) continue;
+                    var q = c(p.re + a * h, p.im + b * h), qv = abs(f(q));
+                    if (isFinite(qv) && qv > best) { best = qv; bp = q; }
+                }
+            }
+            if (bp) { p = bp; cur = best; moved = true; }
+            if (!moved) h *= 0.4;
+        }
+        return { p: p, mag: cur };
+    }
+    var out = [];
+    seeds.forEach(function (s) {
+        var r = refine(c(s.re, s.im));
+        for (var k = 0; k < out.length; k++) {
+            if (Math.hypot(out[k].at.re - r.p.re, out[k].at.im - r.p.im) < 0.02) {
+                if (r.mag > out[k].mag) { out[k].at = r.p; out[k].mag = r.mag; }
+                return;
+            }
+        }
+        out.push({ at: r.p, mag: r.mag });
+    });
+    return out.sort(function (p, q) { return abs(p.at) - abs(q.at); });
+}
+
+/* ---------------------------------------------------------------
+   六、围道积分与无穷远点留数
+   --------------------------------------------------------------- */
+function contour(f, center, R, N) {
+    N = N || 512;
+    var t = twiddle(N), sr = 0, si = 0;
+    for (var k = 0; k < N; k++) {
+        var dz = c(-R * t.sin[k], R * t.cos[k]);       /* i R e^{iθ} */
+        var v = mul(f(c(center.re + R * t.cos[k], center.im + R * t.sin[k])), dz);
+        if (!isFinite(v.re) || !isFinite(v.im)) return c(NaN, NaN);
+        sr += v.re; si += v.im;
+    }
+    return c(sr * 2 * Math.PI / N, si * 2 * Math.PI / N);
+}
+
+/* ∮ / (2πi) —— 一个数，等于圆内留数之和 */
+function contourMean(f, center, R, N) {
+    var I = contour(f, center, R, N);
+    return c(I.im / (2 * Math.PI), -I.re / (2 * Math.PI));
+}
+
+/* Res[f,∞] = −(1/2πi)∮_{|z|=R} f dz = −contourMean
+   整函数（如 sin z/z）在大圆上振荡剧烈，梯形公式可能根本没收敛，
+   所以用两个 N 对拍：不一致就说明这个数不可信，返回 null。 */
+function resInf(f, R, N) {
+    N = N || 1024;
+    var a = contourMean(f, c(0, 0), R, N / 2);
+    var b = contourMean(f, c(0, 0), R, N);
+    var d = Math.hypot(a.re - b.re, a.im - b.im);
+    var scale = Math.max(1, Math.hypot(b.re, b.im));
+    if (!isFinite(b.re) || !isFinite(b.im) || d > 1e-6 * scale) return null;
+    return c(-b.re, -b.im);
+}
+
+/* ---------------------------------------------------------------
+   七、12 条典型函数（expVal 为精确留数，来自 sympy/洛朗展开，供对拍）
+   --------------------------------------------------------------- */
+var PRESETS = [
+    {
+        key: 'ex1', name: 'e^z / [z(z−1)²]', note: '讲义例 2.1：一级极点 + 二级极点',
+        src: 'exp(z)/(z*(z-1)^2)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: 1, im: 0, exp: '0', expVal: 0 }
+        ]
+    },
+    {
+        key: 'ex2', name: '(z − sin z) / z⁶', note: '讲义例 2.2：分母 6 次，实际只有 3 阶',
+        src: '(z-sin(z))/z^6',
+        poles: [{ re: 0, im: 0, exp: '−1/120', expVal: -1 / 120 }]
+    },
+    {
+        key: 'ex3', name: '1 / (z² + 1)', note: '一对共轭极点，留数纯虚',
+        src: '1/(z^2+1)',
+        poles: [
+            { re: 0, im: 1, exp: '−i/2', expVal: 0, expIm: -0.5 },
+            { re: 0, im: -1, exp: 'i/2', expVal: 0, expIm: 0.5 }
+        ]
+    },
+    {
+        key: 'ex4', name: '1 / [z(z−1)(z−2)]', note: '三个一级极点，留数和为 0',
+        src: '1/(z*(z-1)*(z-2))',
+        poles: [
+            { re: 0, im: 0, exp: '1/2', expVal: 0.5 },
+            { re: 1, im: 0, exp: '−1', expVal: -1 },
+            { re: 2, im: 0, exp: '1/2', expVal: 0.5 }
+        ]
+    },
+    {
+        key: 'ex5', name: 'e^(1/z)', note: '本性奇点：sympy.residue 给 0，实际是 1',
+        src: 'exp(1/z)',
+        poles: [{ re: 0, im: 0, exp: '1', expVal: 1 }]
+    },
+    {
+        key: 'ex6', name: 'sin z / z⁴', note: '三阶极点，留数 −1/6',
+        src: 'sin(z)/z^4',
+        poles: [{ re: 0, im: 0, exp: '−1/6', expVal: -1 / 6 }]
+    },
+    {
+        key: 'ex7', name: '1 / sin z', note: '无穷多个一级极点，Res = (−1)ⁿ',
+        src: '1/sin(z)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: Math.PI, im: 0, exp: '−1', expVal: -1 },
+            { re: -Math.PI, im: 0, exp: '−1', expVal: -1 }
+        ]
+    },
+    {
+        key: 'ex8', name: 'z² / (z² + 1)²', note: '二阶极点，需用导数公式',
+        src: 'z^2/(z^2+1)^2',
+        poles: [
+            { re: 0, im: 1, exp: '−i/4', expVal: 0, expIm: -0.25 },
+            { re: 0, im: -1, exp: 'i/4', expVal: 0, expIm: 0.25 }
+        ]
+    },
+    {
+        key: 'ex9', name: 'e^(1/(1−z))', note: '本性奇点，留数 −1（符号软件常算错）',
+        src: 'exp(1/(1-z))',
+        poles: [{ re: 1, im: 0, exp: '−1', expVal: -1 }]
+    },
+    {
+        key: 'ex10', name: 'cot z', note: '1/tan z，每个极点留数都是 1',
+        src: '1/tan(z)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: Math.PI, im: 0, exp: '1', expVal: 1 }
+        ]
+    },
+    {
+        key: 'ex11', name: '1 / (z⁴ − 1)', note: '四个一级极点，留数 z_k/4',
+        src: '1/(z^4-1)',
+        poles: [
+            { re: 1, im: 0, exp: '1/4', expVal: 0.25 },
+            { re: 0, im: 1, exp: 'i/4', expVal: 0, expIm: 0.25 },
+            { re: -1, im: 0, exp: '−1/4', expVal: -0.25 },
+            { re: 0, im: -1, exp: '−i/4', expVal: 0, expIm: -0.25 }
+        ]
+    },
+    {
+        key: 'ex12', name: '1 / (z sin z)', note: 'z=0 是二阶极点但留数为 0；nπ 处留数 (−1)ⁿ/(nπ)',
+        src: '1/(z*sin(z))',
+        poles: [
+            { re: 0, im: 0, exp: '0', expVal: 0 },
+            { re: Math.PI, im: 0, exp: '−1/π', expVal: -1 / Math.PI },
+            { re: -Math.PI, im: 0, exp: '1/π', expVal: 1 / Math.PI }
+        ]
+    },
+    {
+        key: 'ex13', name: 'sin z / z', note: '可去奇点：扫描找不到尖峰，靠指定点才能验证',
+        src: 'sin(z)/z',
+        poles: [{ re: 0, im: 0, exp: '0', expVal: 0, removable: true }]
+    },
+    {
+        key: 'ex14', name: '1 / (z³ − z)', note: '三个一级极点，留数 −1, 1/2, 1/2',
+        src: '1/(z^3-z)',
+        poles: [
+            { re: 0, im: 0, exp: '−1', expVal: -1 },
+            { re: 1, im: 0, exp: '1/2', expVal: 0.5 },
+            { re: -1, im: 0, exp: '1/2', expVal: 0.5 }
+        ]
+    }
+];
+
+return {
+    c: c, add: add, sub: sub, mul: mul, div: div, neg: neg, scale: scale,
+    abs: abs, arg: arg, conj: conj, exp: cexp, log: clog, pow: cpow, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan, compile: compile, normalize: normalize,
+    coef: coef, residueAt: residueAt, probe: probe, orderProbe: orderProbe,
+    scan: scan, contour: contour, contourMean: contourMean, resInf: resInf,
+    magMax: magMax, PRESETS: PRESETS
+};
+})();
+/* （node 里 require 本文件时用不到这行：本文件已被内联进页面） */
+
+
+/* ============================================================
+   一、绘图小工具
+   ============================================================ */
+function fitCv(cv) {
+    var h = parseInt(cv.dataset.h || '205', 10);
+    var w = cv.clientWidth || 420;
+    if (w < 40) return null;
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    cv.style.height = h + 'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+}
+function mkMap(w, h, pad, xr, yr) {
+    var iw = w - pad.l - pad.r, ih = h - pad.t - pad.b;
+    return {
+        box: { x: pad.l, y: pad.t, w: iw, h: ih },
+        X: function (x) { return pad.l + (x - xr[0]) / (xr[1] - xr[0]) * iw; },
+        Y: function (y) { return pad.t + ih - (y - yr[0]) / (yr[1] - yr[0]) * ih; },
+        xr: xr, yr: yr
+    };
+}
+function niceTicks(lo, hi, n) {
+    var span = hi - lo;
+    if (!(span > 0) || !isFinite(span)) return [lo];
+    var raw = span / n, mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+    var q = raw / mag;
+    var step = (q <= 1 ? 1 : q <= 2 ? 2 : q <= 5 ? 5 : 10) * mag;
+    var out = [];
+    for (var v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9 * step; v += step) {
+        out.push(Math.abs(v) < step * 1e-9 ? 0 : +v.toFixed(10));
+    }
+    return out;
+}
+function expTicks(lo, hi) {
+    var span = hi - lo, step = span <= 4 ? 1 : (span <= 10 ? 2 : 5), out = [];
+    for (var v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(v);
+    return out;
+}
+function fmtNum(v, d) {
+    if (!isFinite(v)) return '—';
+    var s = Math.abs(v) >= 1e5 || (Math.abs(v) < 1e-4 && v !== 0)
+        ? v.toExponential(1) : v.toFixed(d == null ? 3 : d);
+    return s.replace('-', '−');
+}
+function drawFrame(ctx, m, opt) {
+    opt = opt || {};
+    var b = m.box;
+    ctx.save();
+    ctx.strokeStyle = '#eaf1f8'; ctx.lineWidth = 1;
+    var xt = opt.xticks || niceTicks(m.xr[0], m.xr[1], opt.nx || 5);
+    var yt = opt.yticks || niceTicks(m.yr[0], m.yr[1], opt.ny || 4);
+    xt.forEach(function (x) {
+        var px = m.X(x);
+        ctx.beginPath(); ctx.moveTo(px, b.y); ctx.lineTo(px, b.y + b.h); ctx.stroke();
+    });
+    yt.forEach(function (y) {
+        var py = m.Y(y);
+        ctx.beginPath(); ctx.moveTo(b.x, py); ctx.lineTo(b.x + b.w, py); ctx.stroke();
+    });
+    ctx.strokeStyle = '#b0bec5'; ctx.lineWidth = 1.2;
+    var y0 = m.Y(Math.min(Math.max(0, m.yr[0]), m.yr[1]));
+    ctx.beginPath(); ctx.moveTo(b.x, y0); ctx.lineTo(b.x + b.w, y0); ctx.stroke();
+    if (m.xr[0] <= 0 && m.xr[1] >= 0) {
+        ctx.beginPath(); ctx.moveTo(m.X(0), b.y); ctx.lineTo(m.X(0), b.y + b.h); ctx.stroke();
+    }
+    ctx.fillStyle = '#78909c'; ctx.font = '11px Consolas, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    var lab = opt.xlab || function (v) { return String(v); };
+    xt.forEach(function (x) { ctx.fillText(lab(x), m.X(x), b.y + b.h + 3); });
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    var labY = opt.ylab || function (v) { return String(v); };
+    yt.forEach(function (y) {
+        var s = labY(y);
+        if (s === '') return;
+        ctx.fillText(s, b.x - 4, m.Y(y));
+    });
+    ctx.restore();
+}
+function dot(ctx, x, y, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.6; ctx.stroke(); }
+}
+
+/* ============================================================
+   二、状态
+   ============================================================ */
+var ST = {
+    mode: 'res',
+    preset: RS.PRESETS[0],
+    src: RS.PRESETS[0].src,
+    custom: false,
+    f: null,
+    poles: [],
+    sel: 0,
+    R: 2, Rmax: 4,
+    step: null,
+    inf: null, infNote: '',
+    curSum: null, curNum: null,
+    err: '',
+    box: { x0: -3.4, x1: 3.4, y0: -3.4, y1: 3.4 }
+};
+
+function cp(z) { return 'z = ' + cTxt(z); }
+function cTxt(z) {
+    var r = Math.abs(z.re) < 5e-10 ? 0 : z.re, i = Math.abs(z.im) < 5e-10 ? 0 : z.im;
+    if (i === 0) return fmtNum(r, 4);
+    if (r === 0) return (i > 0 ? '' : '−') + fmtNum(Math.abs(i), 4) + 'i';
+    return fmtNum(r, 4) + (i > 0 ? ' + ' : ' − ') + fmtNum(Math.abs(i), 4) + 'i';
+}
+function cTxtShort(z) {
+    var r = Math.abs(z.re) < 5e-10 ? 0 : z.re, i = Math.abs(z.im) < 5e-10 ? 0 : z.im;
+    function q(v) {
+        if (!isFinite(v)) return '—';
+        if (v === 0) return '0';
+        var a = Math.abs(v), s;
+        if (a >= 1e-4 && a < 1e5) {
+            s = v.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+        } else {
+            s = v.toExponential(2).replace(/\.?0+e/, 'e').replace(/e\+?/, 'e');
+        }
+        return s.replace('-', '−');
+    }
+    if (i === 0) return q(r);
+    if (r === 0) return (i > 0 ? '' : '−') + q(Math.abs(i)) + 'i';
+    return q(r) + (i > 0 ? '+' : '−') + q(Math.abs(i)) + 'i';
+}
+function nearestDist(a, pts) {
+    var d = Infinity;
+    for (var k = 0; k < pts.length; k++) {
+        var q = Math.hypot(pts[k].re - a.re, pts[k].im - a.im);
+        if (q > 1e-9 && q < d) d = q;
+    }
+    return d;
+}
+
+/* ============================================================
+   三、重建：找奇点 → 判类型 → 算留数 → 围道与阶梯
+   ============================================================ */
+function rebuild() {
+    ST.err = '';
+    ST.poles = [];
+    ST.sel = 0;
+    try {
+        ST.f = RS.compile(ST.src);
+    } catch (e) {
+        ST.err = '表达式无法解析：' + e.message
+            + '　（变量用 z，乘号可省略，分组请用圆括号；方括号 [ ] 会自动按圆括号读）';
+        ST.f = null;
+        return;
+    }
+    /* ① 预设给出的奇点 */
+    var given = (ST.preset && ST.preset.poles ? ST.preset.poles : []).map(function (p) {
+        return {
+            at: RS.c(p.re, p.im), exp: p.exp || '', expVal: p.expVal,
+            expIm: p.expIm || 0, given: true
+        };
+    });
+    /* ② 视野内自动扫描，补上预设没列的极点。
+       扫描窗固定 ±3.2：视野会随函数缩放，若用动态窗，换函数时可能扫漏。 */
+    var found = [];
+    var scanBox = { x0: -3.2, x1: 3.2, y0: -3.2, y1: 3.2 };
+    try { found = RS.scan(ST.f, scanBox, { n: 41 }); } catch (e) { found = []; }
+    found.forEach(function (fp) {
+        for (var k = 0; k < given.length; k++) {
+            if (Math.hypot(given[k].at.re - fp.at.re, given[k].at.im - fp.at.im) < 0.08) return;
+        }
+        given.push({ at: fp.at, exp: '', given: false });
+    });
+    if (!given.length) {
+        ST.err = '在视野内没找到孤立奇点（可能是整函数，或奇点在视野之外）。'
+            + '可以换一个函数，或选「sin z / z」看可去奇点。';
+        return;
+    }
+    /* ③ 逐点探针 */
+    var pts = given.map(function (g) { return g.at; });
+    given.forEach(function (g) {
+        var d = nearestDist(g.at, pts);
+        var rho = Math.min(0.4, Math.max(0.06, 0.35 * (isFinite(d) ? d : 1.5)));
+        g.rho = rho;
+        try { g.p = RS.probe(ST.f, g.at, rho); } catch (e) { g.p = null; }
+    });
+    /* 扫描出来的候选点里，|f| 的局部极大也可能是光滑起伏：只保留真正的奇点 */
+    ST.poles = given.filter(function (g) {
+        if (!g.p) return false;
+        if (g.given) return true;
+        return g.p.kind === 'pole' || g.p.kind === 'essential' || g.p.kind === 'branch';
+    });
+    ST.poles.sort(function (x, y) {
+        return Math.hypot(x.at.re, x.at.im) - Math.hypot(y.at.re, y.at.im);
+    });
+
+    /* ④ 视野：把最远的奇点也框进来 */
+    var far = 0;
+    ST.poles.forEach(function (g) { far = Math.max(far, Math.hypot(g.at.re, g.at.im)); });
+    var half = Math.max(2.2, far * 1.45 + 0.6);
+    ST.box = { x0: -half, x1: half, y0: -half, y1: half };
+    ST.Rmax = Math.max(1.4, far * 1.4 + 0.4);
+    if (!(ST.R > 0.2 && ST.R < ST.Rmax)) ST.R = ST.Rmax * 0.72;
+
+    /* ⑤ 无穷远点留数 */
+    ST.inf = null;
+    ST.infNote = '';
+    var Rbig = Math.max(20, far * 3 + 12);
+    try {
+        var ri = RS.resInf(ST.f, Rbig, 1024);
+        if (!isFinite(ri.re) || !isFinite(ri.im)) throw new Error('发散');
+        if (Math.hypot(ri.re, ri.im) > 1e6) throw new Error('发散');
+        ST.inf = ri;
+        if (Math.hypot(ri.re, ri.im) < 1e-9) ST.infNote = '（|z|→∞ 时 f 衰减得足够快）';
+        else ST.infNote = '= −(全部有限留数之和)';
+    } catch (e) {
+        ST.inf = null;
+        ST.infNote = '不适用：|z|→∞ 时 f 无界或增长过快';
+    }
+    if (!ST.inf && !ST.infNote) {
+        ST.infNote = '数值不可信：f 在大圆上振荡/无界，−∮ 不收敛';
+    }
+    computeStep();
+}
+
+function sumInside(R) {
+    var s = RS.c(0, 0), n = 0;
+    ST.poles.forEach(function (g) {
+        if (Math.hypot(g.at.re, g.at.im) < R) { s = RS.add(s, g.p.res); n++; }
+    });
+    return { sum: s, n: n };
+}
+
+function computeStep() {
+    var NR = 88, Rmax = ST.Rmax;
+    var st = { R: [], exRe: [], exIm: [], numRe: [], numIm: [], ok: [], dev: [], devR: [] };
+    for (var i = 1; i <= NR; i++) {
+        var R = Rmax * i / NR;
+        var inside = sumInside(R);
+        st.R.push(R);
+        st.exRe.push(inside.sum.re);
+        st.exIm.push(inside.sum.im);
+        var clear = true;
+        for (var k = 0; k < ST.poles.length; k++) {
+            if (Math.abs(Math.hypot(ST.poles[k].at.re, ST.poles[k].at.im) - R) < 0.07) clear = false;
+        }
+        var num = null;
+        if (clear) {
+            num = RS.contourMean(ST.f, RS.c(0, 0), R, 256);
+            if (!isFinite(num.re) || !isFinite(num.im)) num = null;
+        }
+        st.ok.push(!!num);
+        st.numRe.push(num ? num.re : NaN);
+        st.numIm.push(num ? num.im : NaN);
+        if (num) {
+            st.devR.push(R);
+            st.dev.push(Math.hypot(num.re - inside.sum.re, num.im - inside.sum.im));
+        }
+    }
+    ST.step = st;
+}
+
+/* ============================================================
+   四、四张图
+   ============================================================ */
+function scopeOf() {
+    var far = 0;
+    ST.poles.forEach(function (g) { far = Math.max(far, Math.hypot(g.at.re, g.at.im)); });
+    var pick = ST.poles[ST.sel];
+    var small = (ST.mode === 'res' && pick) ? Math.abs(pick.at.re) + pick.at.im * 0 + pick.rho * 2.2 : 0;
+    return Math.max(ST.mode === 'thm' ? ST.R * 1.12 : 0, far * 1.3, small, 1.4);
+}
+
+function drawPlane() {
+    var s = fitCv(document.getElementById('rsCvPlane'));
+    if (!s) return;
+    var sc = scopeOf();
+    var pad = { l: 30, r: 12, t: 10, b: 22 };
+    var ih = s.h - pad.t - pad.b, iw = s.w - pad.l - pad.r;
+    var ys = sc * ih / iw;
+    var m = mkMap(s.w, s.h, pad, [-sc, sc], [-ys, ys]);
+    var ctx = s.ctx;
+    var xt = niceTicks(-sc, sc, 4);
+    var step = xt.length > 1 ? xt[1] - xt[0] : sc / 2;
+    var yt = [];
+    for (var q = -Math.floor(ys / step); q <= Math.floor(ys / step); q++) yt.push(+(q * step).toFixed(10));
+    drawFrame(ctx, m, { xticks: xt, yticks: yt, nx: 4, ny: yt.length });
+
+    /* 围道 */
+    var cx = m.X(0), cy = m.Y(0), pr = m.X(sc) - m.X(0);
+    function circle(rpx, stroke, fill, dash, lw) {
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx, cy, rpx, 0, 2 * Math.PI);
+        if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+        if (stroke) {
+            ctx.setLineDash(dash || []);
+            ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.6; ctx.stroke();
+        }
+        ctx.restore();
+    }
+    if (ST.mode === 'thm') {
+        var rpx = ST.R / sc * pr;
+        circle(rpx, '#90caf9', 'rgba(21,101,192,.055)', [], 1.8);
+        /* 方向箭头 */
+        var ang = -Math.PI / 4;
+        var ax = cx + rpx * Math.cos(ang), ay = cy - rpx * Math.sin(ang);
+        ctx.save();
+        ctx.translate(ax, ay);
+        ctx.rotate(-ang - Math.PI / 2);
+        ctx.fillStyle = '#1565c0';
+        ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(4.5, 4); ctx.lineTo(-4.5, 4); ctx.closePath(); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = '#1565c0'; ctx.font = '11px Consolas, monospace';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        ctx.fillText('R = ' + fmtNum(ST.R, 2), cx + rpx * 0.72, cy - rpx * 0.72 - 2);
+    } else {
+        /* 选中奇点的小圆 */
+        var g = ST.poles[ST.sel];
+        if (g) {
+            var px = m.X(g.at.re), py = m.Y(g.at.im);
+            var rr = g.rho / sc * pr;
+            ctx.save();
+            ctx.beginPath(); ctx.arc(px, py, rr, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(198,40,40,.10)'; ctx.fill();
+            ctx.strokeStyle = '#c62828'; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.stroke();
+            ctx.restore();
+        }
+    }
+    /* 奇点 */
+    ST.poles.forEach(function (q, k) {
+        var px = m.X(q.at.re), py = m.Y(q.at.im);
+        var inside = Math.hypot(q.at.re, q.at.im) < ST.R;
+        var col = inside ? '#c62828' : '#78909c';
+        if (q.p.kind === 'removable' || q.p.kind === 'analytic') col = '#2e7d32';
+        if (k === ST.sel && ST.mode === 'res') {
+            dot(ctx, px, py, 8, 'rgba(21,101,192,.18)');
+        }
+        dot(ctx, px, py, 4.2, col, '#fff');
+        if (k === ST.sel) {
+            ctx.fillStyle = '#0d47a1'; ctx.font = '11px Consolas, monospace';
+            ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+            ctx.fillText(cTxtShort(q.at), px + 7, py - 5);
+        }
+    });
+    /* 图例 */
+    ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillStyle = '#c62828'; ctx.fillRect(6, 6, 8, 8);
+    ctx.fillStyle = '#607d8b'; ctx.fillText('围道内', 18, 5);
+    ctx.fillStyle = '#78909c'; ctx.fillRect(64, 6, 8, 8);
+    ctx.fillStyle = '#607d8b'; ctx.fillText('围道外', 76, 5);
+    document.getElementById('rsHPlane').textContent =
+        ST.mode === 'thm' ? '圆内 ' + sumInside(ST.R).n + ' 个奇点' : '共 ' + ST.poles.length + ' 个奇点';
+}
+
+/* 洛朗系数柱状图 */
+function drawLaurent() {
+    var s = fitCv(document.getElementById('rsCvB'));
+    if (!s) return;
+    var g = ST.poles[ST.sel];
+    if (!g) return;
+    var ctx = s.ctx, pad = { l: 34, r: 10, t: 12, b: 22 };
+    var m0 = g.p.order, nMin = -(m0 + 1), nMax = Math.max(3, Math.min(5, m0 + 2));
+    var cs = [];
+    for (var n = nMin; n <= nMax; n++) {
+        var v = RS.coef(ST.f, g.at, g.rho, n, 256);
+        var a = RS.abs(v);
+        if (a < 1e-12 * Math.max(1, RS.abs(g.p.res))) { v = RS.c(0, 0); a = 0; }   /* 数值零 */
+        cs.push({ n: n, v: v, a: a });
+    }
+    var lo = Infinity, hi = -Infinity;
+    cs.forEach(function (c) {
+        if (c.a > 0) {
+            var L = Math.log(c.a) / Math.LN10;
+            lo = Math.min(lo, L); hi = Math.max(hi, L);
+        }
+    });
+    if (!isFinite(lo)) { lo = -2; hi = 1; }
+    lo = Math.min(lo - 0.8, -0.6); hi = hi + 1.0;
+    var m = mkMap(s.w, s.h, pad, [nMin - 0.6, nMax + 0.6], [lo, hi]);
+    drawFrame(ctx, m, {
+        xticks: cs.map(function (c) { return c.n; }),
+        yticks: expTicks(lo, hi), nx: 5, ny: 4,
+        ylab: function (v) { return '1e' + v.toFixed(0); }
+    });
+    var bw = Math.min(26, m.box.w / cs.length * 0.6);
+    var y0 = m.box.y + m.box.h;      /* 对数轴上没有“0”，柱子从图底画起 */
+    cs.forEach(function (c) {
+        var px = m.X(c.n);
+        var isRes = (c.n === -1);
+        if (!(c.a > 0)) {
+            ctx.strokeStyle = isRes ? '#c62828' : '#b0bec5';
+            ctx.lineWidth = isRes ? 2 : 1.2;
+            ctx.beginPath(); ctx.moveTo(px - bw / 2, y0); ctx.lineTo(px + bw / 2, y0); ctx.stroke();
+            ctx.fillStyle = '#90a4ae'; ctx.font = '10px Consolas, monospace';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+            ctx.fillText('0', px, y0 + 2);
+            return;
+        }
+        var L = Math.log(c.a) / Math.LN10;
+        var py = m.Y(L);
+        ctx.fillStyle = isRes ? 'rgba(198,40,40,.85)' : (c.v.re >= 0 ? 'rgba(21,101,192,.55)' : 'rgba(142,36,170,.55)');
+        ctx.fillRect(px - bw / 2, py, bw, y0 - py);
+        if (isRes) {
+            ctx.strokeStyle = '#c62828'; ctx.lineWidth = 1.4;
+            ctx.strokeRect(px - bw / 2, py, bw, y0 - py);
+        }
+        ctx.fillStyle = isRes ? '#c62828' : '#546e7a';
+        ctx.font = (isRes ? 'bold ' : '') + '10px Consolas, monospace';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+        ctx.fillText(cTxtShort(c.v), px, py - 2);
+    });
+    ctx.fillStyle = '#37474f'; ctx.font = '10px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText('纵轴 log₁₀|cₙ|，红柱 = 留数', m.box.x + 2, m.box.y + m.box.h - 2);
+    document.getElementById('rsCapB').textContent = '洛朗系数 cₙ';
+    document.getElementById('rsHB').textContent = g.p.label + '，c₋₁ = ' + cTxtShort(g.p.res);
+}
+
+/* 阶数判据：|f| 对 ρ 的双对数斜率 */
+function drawSlope() {
+    var s = fitCv(document.getElementById('rsCvC'));
+    if (!s) return;
+    var g = ST.poles[ST.sel];
+    if (!g) return;
+    var ctx = s.ctx, pad = { l: 34, r: 10, t: 12, b: 22 };
+    var pts = [], k;
+    for (k = 0; k < 24; k++) {
+        var rho = g.rho * Math.pow(0.85, k);          /* 从大到小扫半径 */
+        var M = RS.magMax(ST.f, g.at, rho, 64);
+        if (M > 0 && isFinite(M)) pts.push({ L: Math.log(rho) / Math.LN10, M: Math.log(M) / Math.LN10 });
+    }
+    if (pts.length < 3) return;
+    pts.sort(function (a, b) { return a.L - b.L; });   /* 横轴从小到大 */
+    var lo = pts[0].L, hi = pts[pts.length - 1].L;
+    var ylo = Infinity, yhi = -Infinity;
+    pts.forEach(function (p) { ylo = Math.min(ylo, p.M); yhi = Math.max(yhi, p.M); });
+    var m = mkMap(s.w, s.h, pad, [lo - 0.15, hi + 0.15], [ylo - 0.6, yhi + 0.6]);
+    drawFrame(ctx, m, {
+        xticks: niceTicks(lo, hi, 4), yticks: niceTicks(ylo, yhi, 4),
+        xlab: function (v) { return fmtNum(Math.pow(10, v), 2); },
+        ylab: function (v) { return '1e' + v.toFixed(0); }
+    });
+    ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    pts.forEach(function (p, i) {
+        var px = m.X(p.L), py = m.Y(p.M);
+        if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+    });
+    ctx.stroke();
+    /* 斜率参考线 */
+    var sAvg = (g.p.s1 + g.p.s2) / 2;
+    if (isFinite(sAvg) && Math.abs(sAvg) < 8) {
+        var mid = pts[Math.floor(pts.length / 2)];
+        ctx.save();
+        ctx.setLineDash([4, 4]); ctx.strokeStyle = '#c62828'; ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        /* |f| ~ ρ^(−m)：双对数图上的斜率是 −m，不是 +m */
+        var p1 = { x: m.X(lo), y: m.Y(mid.M - sAvg * (lo - mid.L)) };
+        var p2 = { x: m.X(hi), y: m.Y(mid.M - sAvg * (hi - mid.L)) };
+        ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = '#c62828'; ctx.font = '10.5px Consolas, monospace';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        ctx.fillText('斜率 ≈ ' + sAvg.toFixed(2), m.box.x + 4, m.box.y + 2);
+    }
+    ctx.fillStyle = '#37474f'; ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillText('log|f| 对 log ρ', m.box.x + m.box.w - 2, m.box.y + 2);
+    document.getElementById('rsHC').textContent = '斜率 ' + (isFinite(g.p.s1) ? g.p.s1.toFixed(2) : '—')
+        + ' / ' + (isFinite(g.p.s2) ? g.p.s2.toFixed(2) : '—');
+}
+
+/* 数值收敛 */
+function drawConv() {
+    var s = fitCv(document.getElementById('rsCvD'));
+    if (!s) return;
+    var g = ST.poles[ST.sel];
+    if (!g) return;
+    var ctx = s.ctx, pad = { l: 36, r: 10, t: 12, b: 22 };
+    var hist = g.p.hist.filter(function (h) { return isFinite(h.err) && h.err > 0; });
+    var ref = RS.abs(g.p.res) || 1;
+    if (hist.length < 2 && g.p.hist.length >= 2) {
+        /* 第一次加密后差值为 0：画一条贴底的线，说明已经是机器精度 */
+        var pad0 = { l: 36, r: 10, t: 12, b: 22 };
+        var m0 = mkMap(s.w, s.h, pad0, [0, 1], [-17, -14]);
+        ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(m0.box.x, m0.Y(-16)); ctx.lineTo(m0.box.x + m0.box.w, m0.Y(-16)); ctx.stroke();
+        ctx.fillStyle = '#546e7a'; ctx.font = '11px "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText('从第一个 N 起差值就是 0（已到机器精度 1e−16）', s.w / 2, s.h / 2);
+        document.getElementById('rsHD').textContent = 'N = ' + g.p.N + '，Δ = 0';
+        return;
+    }
+    var xs = hist.map(function (h) { return Math.log(h.N) / Math.LN2; });
+    var ys = hist.map(function (h) { return Math.log(Math.max(h.err / ref, 1e-17)) / Math.LN10; });
+    var ylo = Math.min(-16, Math.min.apply(null, ys) - 0.5), yhi = Math.max(0, Math.max.apply(null, ys) + 0.5);
+    var m = mkMap(s.w, s.h, pad, [xs[0] - 0.2, xs[xs.length - 1] + 0.2], [ylo, yhi]);
+    drawFrame(ctx, m, {
+        xticks: hist.map(function (h) { return Math.log(h.N) / Math.LN2; }),
+        yticks: expTicks(ylo, yhi), nx: hist.length, ny: 4,
+        xlab: function (v) { return String(Math.round(Math.pow(2, v))); },
+        ylab: function (v) { return '1e' + v.toFixed(0); }
+    });
+    ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ys.forEach(function (y, i) {
+        var px = m.X(xs[i]), py = m.Y(y);
+        if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+    });
+    ctx.stroke();
+    ys.forEach(function (y, i) { dot(ctx, m.X(xs[i]), m.Y(y), 3.2, '#1565c0'); });
+    ctx.fillStyle = '#37474f'; ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('|ΔRes| / |Res|　纵轴 10 的幂', m.box.x + 2, m.box.y + 2);
+    document.getElementById('rsHD').textContent = 'N = ' + g.p.N + '，最后一次 Δ = ' + fmtNum(g.p.resErr, 2);
+}
+
+/* 阶梯图 */
+function drawStep() {
+    var s = fitCv(document.getElementById('rsCvB'));
+    if (!s) return;
+    var st = ST.step, ctx = s.ctx, pad = { l: 38, r: 10, t: 12, b: 22 };
+    var lo = 0, hi = 0, k;
+    for (k = 0; k < st.R.length; k++) {
+        lo = Math.min(lo, st.exRe[k], st.exIm[k]);
+        hi = Math.max(hi, st.exRe[k], st.exIm[k]);
+    }
+    var span = Math.max(0.5, hi - lo);
+    lo -= span * 0.18; hi += span * 0.18;
+    var m = mkMap(s.w, s.h, pad, [0, ST.Rmax], [lo, hi]);
+    drawFrame(ctx, m, { xticks: niceTicks(0, ST.Rmax, 4), yticks: niceTicks(lo, hi, 4), nx: 4, ny: 4 });
+    /* 极点竖线 */
+    ST.poles.forEach(function (g) {
+        var px = m.X(Math.hypot(g.at.re, g.at.im));
+        ctx.save();
+        ctx.setLineDash([2, 3]); ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(px, m.box.y); ctx.lineTo(px, m.box.y + m.box.h); ctx.stroke();
+        ctx.restore();
+    });
+    /* 解析阶梯 */
+    function stair(vals, color) {
+        ctx.strokeStyle = color; ctx.lineWidth = 2;
+        ctx.beginPath();
+        var prevY = m.Y(vals[0]);
+        ctx.moveTo(m.X(0), prevY);
+        for (var i = 1; i < vals.length; i++) {
+            var x = m.X(st.R[i]);
+            ctx.lineTo(x, prevY);
+            prevY = m.Y(vals[i]);
+            ctx.lineTo(x, prevY);
+        }
+        ctx.stroke();
+    }
+    stair(st.exRe, '#1565c0');
+    stair(st.exIm, '#8e24aa');
+    /* 数值点 */
+    for (var i = 0; i < st.R.length; i++) {
+        if (!st.ok[i]) continue;
+        dot(ctx, m.X(st.R[i]), m.Y(st.numRe[i]), 2.6, '#ef6c00');
+        dot(ctx, m.X(st.R[i]), m.Y(st.numIm[i]), 2.6, 'rgba(239,108,0,.55)');
+    }
+    ctx.fillStyle = '#37474f'; ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('蓝 Re　紫 Im　橙点 = 数值 ∮/2πi', m.box.x + 2, m.box.y + 1);
+    document.getElementById('rsCapB').textContent = '阶梯：ΣRes 随围道半径 R';
+    document.getElementById('rsHB').textContent = 'R 越过极点时跳 Res';
+}
+
+/* 偏差图 */
+function drawDev() {
+    var s = fitCv(document.getElementById('rsCvC'));
+    if (!s) return;
+    var st = ST.step, ctx = s.ctx, pad = { l: 36, r: 10, t: 12, b: 22 };
+    var pts = [];
+    for (var i = 0; i < st.devR.length; i++) {
+        /* 围道贴近极点时梯形公式本身就不准，这些点不算“算法误差”，剔掉 */
+        var near = false;
+        for (var k = 0; k < ST.poles.length; k++) {
+            if (Math.abs(Math.hypot(ST.poles[k].at.re, ST.poles[k].at.im) - st.devR[i]) < 0.16) near = true;
+        }
+        if (!near && st.dev[i] > 0) pts.push({ R: st.devR[i], v: st.dev[i] });
+    }
+    if (pts.length < 2) {
+        ctx.fillStyle = '#90a4ae'; ctx.font = '12px "Microsoft YaHei", sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('圆内没有奇点，两边都是 0', s.w / 2, s.h / 2);
+        document.getElementById('rsHC').textContent = '—';
+        return;
+    }
+    var ylo = Math.log(Math.min.apply(null, pts.map(function (p) { return p.v; }))) / Math.LN10 - 1;
+    var yhi = Math.log(Math.max.apply(null, pts.map(function (p) { return p.v; }))) / Math.LN10 + 1;
+    var m = mkMap(s.w, s.h, pad, [0, ST.Rmax], [ylo, yhi]);
+    drawFrame(ctx, m, {
+        xticks: niceTicks(0, ST.Rmax, 4), yticks: expTicks(ylo, yhi), nx: 4, ny: 4,
+        ylab: function (v) { return '1e' + v.toFixed(0); }
+    });
+    ctx.strokeStyle = '#c62828'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    pts.forEach(function (p, i) {
+        var px = m.X(p.R), py = m.Y(Math.log(p.v) / Math.LN10);
+        if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py);
+    });
+    ctx.stroke();
+    ctx.fillStyle = '#37474f'; ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('|∮/2πi − ΣRes|', m.box.x + 2, m.box.y + 1);
+    document.getElementById('rsHC').textContent = '最大 ' + fmtNum(Math.max.apply(null, pts.map(function (p) { return p.v; })), 2);
+}
+
+/* 留数条形图（含无穷远点） */
+function drawBars() {
+    var s = fitCv(document.getElementById('rsCvD'));
+    if (!s) return;
+    var ctx = s.ctx, pad = { l: 34, r: 10, t: 14, b: 26 };
+    var items = ST.poles.map(function (g) {
+        return { lab: cTxtShort(g.at), v: g.p.res, inf: false };
+    });
+    if (ST.inf) items.push({ lab: '∞', v: ST.inf, inf: true });
+    var lo = 0, hi = 0;
+    items.forEach(function (it) { lo = Math.min(lo, it.v.re); hi = Math.max(hi, it.v.re); });
+    var span = Math.max(0.6, hi - lo);
+    lo -= span * 0.15; hi += span * 0.15;
+    var m = mkMap(s.w, s.h, pad, [-0.5, items.length - 0.5], [lo, hi]);
+    drawFrame(ctx, m, {
+        xticks: items.map(function (it, i) { return i; }), yticks: niceTicks(lo, hi, 4), nx: items.length, ny: 4,
+        xlab: function (i) { return items[Math.round(i)] ? items[Math.round(i)].lab : ''; },
+        ylab: function (v) { return fmtNum(v, 1); }
+    });
+    var bw = Math.min(30, m.box.w / items.length * 0.55), y0 = m.Y(0);
+    items.forEach(function (it, i) {
+        var px = m.X(i), py = m.Y(it.v.re);
+        ctx.fillStyle = it.inf ? '#2e7d32' : (it.v.re >= 0 ? 'rgba(198,40,40,.8)' : 'rgba(21,101,192,.75)');
+        ctx.fillRect(px - bw / 2, Math.min(py, y0), bw, Math.abs(y0 - py));
+        ctx.fillStyle = '#37474f'; ctx.font = '9.5px Consolas, monospace';
+        ctx.textAlign = 'center'; ctx.textBaseline = py < y0 ? 'bottom' : 'top';
+        ctx.fillText(cTxtShort(it.v), px, py < y0 ? py - 2 : py + 2);
+    });
+    ctx.fillStyle = '#37474f'; ctx.font = '10.5px "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText('留数的实部：全部有限留数 + Res∞ = 0', m.box.x + 2, m.box.y + 1);
+    document.getElementById('rsCapD').textContent = '留数条形图（含无穷远点）';
+    document.getElementById('rsHD').textContent = '总和应恰为 0';
+}
+
+/* ============================================================
+   五、文字：卡片、表格、结论
+   ============================================================ */
+function fillCards() {
+    var inside = sumInside(ST.R);
+    ST.curSum = inside.sum;
+    ST.curNum = RS.contourMean(ST.f, RS.c(0, 0), ST.R, 512);
+    document.getElementById('rsCSum').textContent = cTxtShort(inside.sum);
+    document.getElementById('rsCSumN').textContent = 'R = ' + fmtNum(ST.R, 2) + ' 内有 ' + inside.n + ' 个奇点';
+    document.getElementById('rsCNum').textContent = cTxtShort(ST.curNum);
+    var dev = Math.hypot(ST.curNum.re - inside.sum.re, ST.curNum.im - inside.sum.im);
+    document.getElementById('rsCNumN').textContent = '与留数和相差 ' + fmtNum(dev, 2);
+    if (ST.inf) {
+        document.getElementById('rsCInf').textContent = cTxtShort(ST.inf);
+        document.getElementById('rsCInfN').textContent = ST.infNote;
+    } else {
+        document.getElementById('rsCInf').textContent = '—';
+        document.getElementById('rsCInfN').textContent = ST.infNote || '不可用';
+    }
+}
+
+function fillTable() {
+    var body = document.getElementById('rsBody');
+    var html = '';
+    ST.poles.forEach(function (g, k) {
+        var exact = g.exp || '—';
+        var dev = '—', cls = '';
+        if (g.expVal !== undefined && g.expVal !== null) {
+            var want = RS.c(g.expVal, g.expIm || 0);
+            var d = RS.abs(RS.sub(g.p.res, want));
+            dev = d < 1e-6 ? '<1e−6' : fmtNum(d, 2);
+            cls = d < 1e-6 ? 'ok' : 'bad';
+        }
+        var inside = Math.hypot(g.at.re, g.at.im) < ST.R;
+        html += '<tr data-i="' + k + '"' + (k === ST.sel && ST.mode === 'res' ? ' class="on"' : '') + '>'
+            + '<td>' + cTxt(g.at) + '</td>'
+            + '<td>' + g.p.label + '</td>'
+            + '<td>' + cTxtShort(g.p.res) + '</td>'
+            + '<td>' + exact + '</td>'
+            + '<td class="' + cls + '">' + dev + '</td>'
+            + '<td>' + (inside ? '●' : '○') + '</td>'
+            + '</tr>';
+    });
+    body.innerHTML = html;
+    Array.prototype.forEach.call(body.querySelectorAll('tr'), function (tr) {
+        tr.addEventListener('click', function () {
+            ST.sel = parseInt(tr.getAttribute('data-i'), 10);
+            syncSel();
+            draw();
+        });
+    });
+    document.getElementById('rsSel').innerHTML = ST.poles.map(function (g, k) {
+        return '<option value="' + k + '">z = ' + cTxtShort(g.at) + '（' + g.p.label + '）</option>';
+    }).join('');
+    document.getElementById('rsSel').value = String(ST.sel);
+}
+
+function fillConcl() {
+    var box = document.getElementById('rsConcl');
+    var lines = [];
+    var g = ST.poles[ST.sel];
+    if (ST.mode === 'res') {
+        if (g) {
+            lines.push('<span class="tag">选中点</span>' + cp(g.at) + '：' + g.p.label
+                + '，$\\operatorname{Res}[f(z),a]=$<b>' + cTxt(g.p.res) + '</b>'
+                + (g.exp ? '（精确值 ' + g.exp + '）' : ''));
+            lines.push('<span class="tag">判据</span>' + g.p.law + '。');
+            lines.push('<span class="tag">定义</span>$\\operatorname{Res}=c_{-1}=\\dfrac{1}{2\\pi\\mathrm{i}}\\oint_{|z-a|=\\rho}f(z)\\mathrm{d}z$，取 $\\rho=$ '
+                + fmtNum(g.rho, 3) + '，N = ' + g.p.N + ' 个等分点，梯形公式给出 '
+                + cTxt(g.p.res) + '，与加密到 N = ' + (g.p.N * 2) + ' 的结果相差 '
+                + fmtNum(g.p.resErr, 2) + '。');
+            var tips = {
+                pole: '此处是极点：留数也可以用准则 2 的导数公式算，两条路结果相同。',
+                removable: '可去奇点：主部为零，留数一定是 0 —— 但围道积分照样为 0，两者一致。',
+                essential: '本性奇点：主部有无穷多项，导数公式失效，只能回到 $a_{-1}$ 的定义。'
+                    + '这也解释了为什么 $\\mathrm{e}^{1/z}$ 在 0 的留数是 1，而有些符号软件会给 0。',
+                analytic: '该点根本不是奇点，留数按定义为 0。',
+                branch: '这里不是孤立奇点（分支点），函数不单值，洛朗展开不存在，留数无定义。'
+            };
+            lines.push('<span class="tag">要点</span>' + (tips[g.p.kind] || ''));
+        }
+    } else {
+        var inside = sumInside(ST.R);
+        lines.push('<span class="tag">围道</span>|z| = ' + fmtNum(ST.R, 2) + '，内部有 '
+            + inside.n + ' 个奇点，$\\sum\\operatorname{Res}=$<b>' + cTxt(inside.sum) + '</b>；'
+            + '数值 $\\oint f(z)\\mathrm{d}z/2\\pi\\mathrm{i}=$ ' + cTxt(ST.curNum) + '，两者相差 '
+            + fmtNum(Math.hypot(ST.curNum.re - inside.sum.re, ST.curNum.im - inside.sum.im), 2) + '。');
+        var next = null;
+        ST.poles.forEach(function (q) {
+            var r = Math.hypot(q.at.re, q.at.im);
+            if (r >= ST.R && (!next || r < Math.hypot(next.at.re, next.at.im))) next = q;
+        });
+        if (next) {
+            lines.push('<span class="tag">下一步</span>把 R 拉过 ' + fmtNum(Math.hypot(next.at.re, next.at.im), 2)
+                + '（即 ' + cTxt(next.at) + '），$\\oint f(z)\\mathrm{d}z/2\\pi\\mathrm{i}$ 会恰好跳 '
+                + cTxt(next.p.res) + ' —— 这就是留数定理：跳多少，留数就是多少。');
+        } else {
+            lines.push('<span class="tag">下一步</span>视野内的奇点已经全部被包住。');
+        }
+        lines.push('<span class="tag">总和</span>' + (ST.inf
+            ? '全部有限留数之和 + $\\operatorname{Res}[f(z),\\infty]=$ ' + cTxt(RS.add(sumAll(), ST.inf)) + '（定理 2.2：恒为 0）。'
+            : '无穷远点处 f 无界，$\\operatorname{Res}[f(z),\\infty]$ 不存在，定理 2.2 不适用。'));
+    }
+    box.innerHTML = lines.map(function (t) { return '<div class="line">' + t + '</div>'; }).join('');
+    typeset(box);
+}
+
+function sumAll() {
+    var s = RS.c(0, 0);
+    ST.poles.forEach(function (g) { s = RS.add(s, g.p.res); });
+    return s;
+}
+
+function typeset(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        try { window.MathJax.typesetPromise([el]).catch(function () { }); } catch (e) { }
+    }
+}
+
+function syncSel() {
+    document.getElementById('rsSel').value = String(ST.sel);
+    Array.prototype.forEach.call(document.querySelectorAll('#rsBody tr'), function (tr) {
+        tr.className = (parseInt(tr.getAttribute('data-i'), 10) === ST.sel && ST.mode === 'res') ? 'on' : '';
+    });
+}
+
+/* ============================================================
+   六、刷新与交互
+   ============================================================ */
+function draw() {
+    if (ST.err || !ST.f) return;
+    drawPlane();
+    if (ST.mode === 'res') { drawLaurent(); drawSlope(); drawConv(); }
+    else { drawStep(); drawDev(); drawBars(); }
+}
+
+function refresh(rebuildFirst) {
+    if (rebuildFirst) rebuild();
+    var hint = document.getElementById('rsRNote');
+    hint.textContent = '';
+    if (ST.err) {
+        document.getElementById('rsBody').innerHTML = '';
+        document.getElementById('rsConcl').innerHTML = '<span class="warn">' + ST.err + '</span>';
+        ['rsCSum', 'rsCNum', 'rsCInf'].forEach(function (id) { document.getElementById(id).textContent = '—'; });
+        ['rsCSumN', 'rsCNumN', 'rsCInfN', 'rsHPlane', 'rsHB', 'rsHC', 'rsHD'].forEach(function (id) {
+            document.getElementById(id).textContent = '—';
+        });
+        return;
+    }
+    if (ST.sel >= ST.poles.length) ST.sel = 0;
+    var rng = document.getElementById('rs2R');
+    rng.max = String(ST.Rmax.toFixed(2));
+    rng.value = String(ST.R.toFixed(2));
+    document.getElementById('rs2RV').textContent = 'R = ' + fmtNum(ST.R, 2);
+    if (ST.mode === 'thm') {
+        hint.textContent = '拖动看跳变：每越过一个极点，∮/2πi 跳该点的留数';
+    } else {
+        hint.textContent = '点表格行可切换选中奇点';
+    }
+    /* 模式相关标题 */
+    var capD = document.getElementById('rsCapD');
+    if (ST.mode === 'res') {
+        document.getElementById('rsCapPlane').textContent = 'z 平面：奇点与选中点的小圆';
+        capD.textContent = '数值留数的收敛';
+        document.getElementById('rsCapC').textContent = '阶数判据：|f| 随半径的幂次';
+    } else {
+        document.getElementById('rsCapPlane').textContent = 'z 平面：围道 |z| = R 与奇点';
+        document.getElementById('rsCapC').textContent = '数值 ∮/2πi 与 ΣRes 的偏差';
+        capD.textContent = '留数条形图（含无穷远点）';
+    }
+    fillTable();
+    fillCards();
+    fillConcl();
+    draw();
+}
+
+function setMode(m) {
+    ST.mode = m;
+    Array.prototype.forEach.call(document.querySelectorAll('#rsLab .rs-tab'), function (b) {
+        b.className = 'rs-tab' + (b.getAttribute('data-mode') === m ? ' on' : '');
+    });
+    refresh(false);
+}
+
+function applyCustom() {
+    var box = document.getElementById('rsExpr');
+    var raw = box.value;
+    if (!raw.trim()) return;
+    /* 先把方括号、全角括号、各种减号归一化成内核算术认得的写法，
+       再把归一化结果回填输入框——让用户看见"系统其实是这样读的"。 */
+    var t = RS.normalize(raw);
+    box.value = t;
+    ST.custom = true;
+    ST.preset = null;
+    ST.src = t;
+    ST.sel = 0;
+    refresh(true);
+}
+
+function selectPreset(key) {
+    var P = null;
+    RS.PRESETS.forEach(function (p) { if (p.key === key) P = p; });
+    if (!P) return;
+    ST.custom = false;
+    ST.preset = P;
+    ST.src = P.src;
+    ST.sel = 0;
+    /* 把预设的真实式子填进自定义框：想改一个系数就不必重新敲 */
+    document.getElementById('rsExpr').value = P.src;
+    refresh(true);
+}
+
+function bind() {
+    document.getElementById('rsFn').addEventListener('change', function () {
+        selectPreset(this.value);
+    });
+    document.getElementById('rsApply').addEventListener('click', applyCustom);
+    document.getElementById('rsExpr').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') applyCustom();
+    });
+    document.getElementById('rsSel').addEventListener('change', function () {
+        ST.sel = parseInt(this.value, 10) || 0;
+        syncSel();
+        refresh(false);
+    });
+    document.getElementById('rs2R').addEventListener('input', function () {
+        ST.R = parseFloat(this.value);
+        document.getElementById('rs2RV').textContent = 'R = ' + fmtNum(ST.R, 2);
+        fillCards();
+        fillTable();
+        fillConcl();
+        draw();
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#rsLab .rs-tab'), function (b) {
+        b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); });
+    });
+    /* 讲义里切页签、窗口缩放都要重画 */
+    window.addEventListener('resize', function () {
+        clearTimeout(bind._t);
+        bind._t = setTimeout(function () { draw(); }, 160);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'), function (r) {
+        r.addEventListener('change', function () {
+            setTimeout(function () { draw(); }, 260);
+        });
+    });
+}
+
+function start() {
+    var sel = document.getElementById('rsFn');
+    sel.innerHTML = RS.PRESETS.map(function (p) {
+        return '<option value="' + p.key + '">' + p.name + '　·　' + p.note + '</option>';
+    }).join('');
+    sel.value = ST.preset.key;
+    document.getElementById('rsExpr').value = ST.preset.src;
+    bind();
+    refresh(true);
+    if (window.RS_START_MODE === 'thm') setMode('thm');
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+} else {
+    setTimeout(start, 0);
+}
+})();
+/* ===== RS-JS-END ===== */
 </script>
 </body>
 </html>

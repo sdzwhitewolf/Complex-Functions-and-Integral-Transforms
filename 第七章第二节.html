@@ -428,6 +428,183 @@ canvas { width: 100%; display:block; border-radius:8px; background:#fafcff; touc
 .cv-label { position: absolute; transform: translate(0,-50%); font-size: 13px; line-height: 1.5;
   white-space: nowrap; pointer-events: none; z-index: 3; font-family: 'Segoe UI', sans-serif; }
 .cv-label mjx-container[jax="SVG"]:not([display="true"]) { margin: 0 !important; }
+/* ===================================================================
+   傅里叶变换数值实验台（第七章第二节 2.2 交互模块）
+   作用域全部限定在 .ftlab 内，避免与讲义原有样式冲突
+   =================================================================== */
+.ftlab {
+    --ft-ink: #1f2933; --ft-dim: #6b7c8f; --ft-line: #d9e2ea;
+    --ft-accent: #2f5fd0; --ft-accent-d: #1e4596;
+    --ft-mono: "Consolas", "SF Mono", "Courier New", monospace;
+    color: var(--ft-ink);
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    font-size: 15px; line-height: 1.55;
+    background: #f7fafc; border: 1px solid #e2eaf2; border-radius: 10px;
+    padding: 14px 16px 16px; margin: 14px 0 4px;
+}
+.ftlab button { font-family: inherit; font-size: 13.5px; cursor: pointer; }
+
+/* ---------- 顶部参数条 ---------- */
+.ftlab .bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(198px, 1fr));
+    gap: 10px 16px; background: #fff; border: 1px solid var(--ft-line);
+    border-radius: 8px; padding: 12px 14px;
+}
+.ftlab .fd { min-width: 0; }
+.ftlab .fd > label {
+    display: block; font-size: 12.5px; color: var(--ft-dim);
+    margin-bottom: 3px; font-weight: 600;
+}
+.ftlab .fd .rw { display: flex; align-items: center; gap: 7px; }
+.ftlab input[type="range"] {
+    width: 100%; flex: 1 1 auto; min-width: 0; height: 16px;
+    margin: 0; accent-color: var(--ft-accent);
+}
+.ftlab input[type="number"], .ftlab select {
+    font-family: var(--ft-mono); font-size: 13px; padding: 4px 6px;
+    border: 1px solid var(--ft-line); border-radius: 6px;
+    background: #fff; color: var(--ft-ink);
+}
+.ftlab input[type="number"] { width: 62px; flex: 0 0 62px; text-align: right; }
+.ftlab select { width: 100%; }
+.ftlab input[type="number"]:focus, .ftlab select:focus {
+    outline: 2px solid #c9d9f5; border-color: var(--ft-accent);
+}
+.ftlab .ftbtn {
+    flex: 1 1 0; border: 1px solid var(--ft-line); background: #fff;
+    border-radius: 6px; padding: 5px 10px; color: var(--ft-ink); transition: .12s;
+}
+.ftlab .ftbtn:hover {
+    border-color: var(--ft-accent); color: var(--ft-accent-d); background: #f6f9ff;
+}
+.ftlab .ftbtn.primary {
+    background: var(--ft-accent); border-color: var(--ft-accent); color: #fff;
+}
+.ftlab .ftbtn.primary:hover {
+    background: var(--ft-accent-d); border-color: var(--ft-accent-d); color: #fff;
+}
+.ftlab .ftbtn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---------- 三张结果卡 ---------- */
+.ftlab .cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-top: 10px;
+}
+.ftlab .cd {
+    background: #fff; border: 1px solid var(--ft-line);
+    border-radius: 8px; padding: 7px 12px; min-width: 0;
+}
+.ftlab .cd .k { font-size: 11.5px; color: var(--ft-dim); letter-spacing: .06em; }
+.ftlab .cd .v {
+    font-family: var(--ft-mono); font-size: 18px; font-weight: 700;
+    color: var(--ft-accent-d); white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ftlab .cd .n {
+    font-size: 12px; color: var(--ft-dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---------- 图例 ---------- */
+.ftlab .ftlegend {
+    display: flex; flex-wrap: wrap; gap: 6px 20px;
+    margin: 10px 2px 0; font-size: 12.5px; color: #455a64;
+}
+.ftlab .ftlegend span { display: inline-flex; align-items: center; gap: 6px; }
+.ftlab .ftlegend i {
+    width: 20px; height: 4px; border-radius: 2px; display: inline-block;
+}
+
+/* ---------- 2×2 图表 ---------- */
+.ftlab .grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 8px;
+}
+.ftlab figure {
+    margin: 0; background: #fff; border: 1px solid var(--ft-line);
+    border-radius: 8px; padding: 6px 8px 4px; min-width: 0;
+}
+.ftlab figcaption {
+    font-size: 12.5px; color: var(--ft-dim); padding: 0 2px 2px;
+    display: flex; justify-content: space-between; gap: 8px;
+}
+.ftlab figcaption b { color: var(--ft-ink); font-weight: 600; }
+.ftlab figcaption .hint { font-family: var(--ft-mono); font-size: 11.5px; color: #93a2b2; }
+.ftlab canvas {
+    width: 100%; display: block; border-radius: 6px; background: #fafcff;
+}
+
+/* ---------- 页签 ---------- */
+.ftlab .tabs {
+    background: #fff; border: 1px solid var(--ft-line);
+    border-radius: 8px; margin-top: 10px; display: flex; flex-direction: column;
+}
+.ftlab .tabbar {
+    display: flex; gap: 2px; padding: 6px 8px 0;
+    border-bottom: 1px solid var(--ft-line); flex-wrap: wrap;
+}
+.ftlab .tabbar button {
+    border: none; background: transparent; color: var(--ft-dim);
+    padding: 6px 14px; border-radius: 6px 6px 0 0; font-size: 13.5px;
+    border-bottom: 2px solid transparent;
+}
+.ftlab .tabbar button.on {
+    color: var(--ft-accent-d); border-bottom-color: var(--ft-accent); font-weight: 600;
+}
+.ftlab .tabbar button:hover { background: #f3f7fd; }
+/* 固定高度：四个页签切换时下方版式不跳动；内容超出则面板内滚动 */
+.ftlab .pane { display: none; padding: 10px 14px; height: 372px; overflow: auto; }
+.ftlab .pane.on { display: block; }
+.ftlab pre {
+    margin: 0; background: none; border: none; padding: 0;
+    font-family: var(--ft-mono); font-size: 13px; line-height: 1.65;
+    white-space: pre; color: #243040;
+}
+.ftlab pre.wrap { white-space: pre-wrap; line-height: 1.75; }
+
+/* ---------- 公式排版（纯 CSS，不依赖 MathJax）
+   注意：整行不能用 display:flex —— 一旦成为 flex 容器，行内 <sub>/<sup>
+   会变成 flex item，vertical-align 随之失效，上下标全部浮在同一基线上。
+   这里用 block 行 + inline-flex 的分式/求和限，两种机制各管网段。 ---------- */
+.ftlab .fx {
+    font-family: "Cambria Math", "Times New Roman", Georgia, serif;
+    font-size: 15.5px; display: grid; grid-template-columns: 1fr;
+    gap: 0; align-content: start;
+}
+.ftlab .fx .line { display: block; padding: 2px 0; line-height: 2.35; min-width: 0; }
+.ftlab .fx .tag {
+    font-family: "Microsoft YaHei", sans-serif; font-size: 12px; color: var(--ft-dim);
+    display: inline-block; min-width: 96px;
+}
+.ftlab .frac {
+    display: inline-flex; flex-direction: column; text-align: center;
+    vertical-align: middle; font-size: .86em; margin: 0 .18em; line-height: 1.18;
+}
+.ftlab .frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 .28em; }
+.ftlab .frac > span:last-child { padding: 0 .28em; }
+.ftlab .sumop { font-size: 1.5em; vertical-align: -.2em; margin-right: .02em; line-height: 1; }
+.ftlab .lim {
+    display: inline-flex; flex-direction: column; font-size: .72em;
+    line-height: 1.2; vertical-align: middle; margin: 0 .3em 0 .04em; text-align: center;
+}
+.ftlab .lim > span:first-child { margin-bottom: .1em; }
+.ftlab .lim > span:last-child { margin-top: .1em; }
+.ftlab .var { font-style: italic; }
+.ftlab .fnote {
+    color: var(--ft-dim); font-size: 12px; font-family: "Microsoft YaHei", sans-serif;
+    margin-left: 12px;
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 900px) {
+    .ftlab .grid { grid-template-columns: 1fr; }
+    .ftlab .cards { grid-template-columns: 1fr; }
+    .ftlab .fx .line { line-height: 2.1; }
+    /* 窄屏放不下 66 列的定宽表：允许换行，宁可不对齐也不横向裁切 */
+    .ftlab pre { white-space: pre-wrap; word-break: break-word; }
+    .ftlab .pane { height: 340px; }
+}
+
 </style>
 </head>
 <body>
@@ -584,7 +761,220 @@ $f(t)$ 称为 $F(\omega)$ 的<b>象原函数</b>.
 </div>
 </div>
 
-<div class="sec-title">2.2 两点说明</div>
+<div class="sec-title">2.2 交互实验台: 采样点上的傅里叶变换</div>
+
+<div class="chart-container">
+<h3>交互: 傅里叶变换数值实验台 <span class="tag-pill">核心交互</span></h3>
+<div class="chart-desc">
+把 $f(t)$ 按等间隔采成 $N$ 个点 $x_n$, 用定义式 DFT 或基 2 FFT 算出 $X_k$, 再画成<b>单边幅值谱</b> $A_k$;
+另外三张图是时域波形、对数谱 $20\lg A_k$ 与相位谱 $\arg X_k$. 图中淡蓝色的连续曲线, 是把窗内信号补零到 $8192$ 点后算出的<b>连续谱包络</b>;
+蓝色竖线是 $N$ 点变换的谱线 —— <b>谱线总是落在包络上</b>, 这正是"离散谱是对连续谱的采样"的图像.
+下面三个对照实验值得逐个拖动: <b>① 泄漏</b> (频率取 8 与 4.3 比较)、<b>② 加窗</b> (矩形窗换 Hann 窗)、<b>③ 补零</b> (谱线变密而包络不变).
+</div>
+
+<div class="ftlab" id="ftlab">
+
+<div class="bar">
+  <div class="fd">
+    <label for="ftSig">波形类型</label>
+    <select id="ftSig">
+      <option value="sine">正弦 sin(2πft)</option>
+      <option value="square">方波 sgn[sin(2πft)]</option>
+      <option value="saw">锯齿波</option>
+      <option value="tri">三角波</option>
+      <option value="gauss">高斯脉冲</option>
+      <option value="twin">双频叠加</option>
+      <option value="chirp">线性扫频</option>
+      <option value="impulse">单位冲激</option>
+      <option value="step">阶跃</option>
+    </select>
+  </div>
+  <div class="fd">
+    <label for="ftFreq">频率 f (Hz)</label>
+    <div class="rw">
+      <input type="range" id="ftFreqR" min="0.5" max="60" step="0.1" value="8">
+      <input type="number" id="ftFreq" min="0.1" max="200" step="0.1" value="8">
+    </div>
+  </div>
+  <div class="fd" id="ftFieldSigma" style="display:none">
+    <label for="ftSigma">脉宽 σ (s)</label>
+    <div class="rw">
+      <input type="range" id="ftSigmaR" min="0.01" max="0.5" step="0.005" value="0.08">
+      <input type="number" id="ftSigma" min="0.005" max="1" step="0.005" value="0.08">
+    </div>
+  </div>
+  <div class="fd">
+    <label for="ftN">采样点数 N</label>
+    <select id="ftN">
+      <option>32</option><option>64</option><option>100</option>
+      <option selected>128</option><option>256</option>
+      <option>512</option><option>1000</option><option>1024</option>
+    </select>
+  </div>
+  <div class="fd">
+    <label for="ftFs">采样率 f<sub>s</sub> (Hz)</label>
+    <div class="rw">
+      <input type="range" id="ftFsR" min="16" max="512" step="1" value="128">
+      <input type="number" id="ftFs" min="8" max="4096" step="1" value="128">
+    </div>
+  </div>
+  <div class="fd">
+    <label for="ftWin">窗函数</label>
+    <select id="ftWin">
+      <option value="rect">矩形窗 (不加窗)</option>
+      <option value="hann">Hann 窗</option>
+      <option value="hamming">Hamming 窗</option>
+      <option value="blackman">Blackman 窗</option>
+    </select>
+  </div>
+  <div class="fd">
+    <label for="ftPad">尾部补零点数</label>
+    <div class="rw">
+      <input type="range" id="ftPadR" min="0" max="1024" step="32" value="0">
+      <input type="number" id="ftPad" min="0" max="4096" step="32" value="0">
+    </div>
+  </div>
+  <div class="fd">
+    <label for="ftMethod">算法</label>
+    <select id="ftMethod">
+      <option value="auto">自动 (FFT / Bluestein)</option>
+      <option value="dft">定义式 DFT (对照)</option>
+    </select>
+  </div>
+  <div class="fd">
+    <label>操作</label>
+    <div class="rw">
+      <button class="ftbtn" id="ftBtnReset" type="button">恢复默认</button>
+      <button class="ftbtn primary" id="ftBtnBench" type="button">性能基准</button>
+    </div>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="cd"><div class="k">主峰频率</div><div class="v" id="ftCFreq">—</div><div class="n" id="ftCFreqNote">—</div></div>
+  <div class="cd"><div class="k">主峰幅值</div><div class="v" id="ftCAmp">—</div><div class="n" id="ftCAmpNote">—</div></div>
+  <div class="cd"><div class="k">算法与耗时</div><div class="v" id="ftCAlgo">—</div><div class="n" id="ftCAlgoNote">—</div></div>
+</div>
+
+<div class="ftlegend">
+  <span><i style="background:#2f5fd0"></i>N 点变换的谱线</span>
+  <span><i style="background:#9db8e8"></i>补零到 8192 点的连续谱包络</span>
+  <span><i style="background:#c99a4e"></i>窗函数 w[n]</span>
+</div>
+
+<div class="grid">
+  <figure>
+    <figcaption><b>时域波形</b><span class="hint" id="ftHWave">—</span></figcaption>
+    <canvas id="ftCvWave" data-h="210"></canvas>
+  </figure>
+  <figure>
+    <figcaption><b>单边幅值谱 $A_k$</b><span class="hint" id="ftHMag">—</span></figcaption>
+    <canvas id="ftCvMag" data-h="210"></canvas>
+  </figure>
+  <figure>
+    <figcaption><b>对数谱 $20\lg A_k$</b><span class="hint" id="ftHLog">—</span></figcaption>
+    <canvas id="ftCvLog" data-h="210"></canvas>
+  </figure>
+  <figure>
+    <figcaption><b>相位谱 $\arg X_k$</b><span class="hint" id="ftHPhase">—</span></figcaption>
+    <canvas id="ftCvPhase" data-h="210"></canvas>
+  </figure>
+</div>
+
+<div class="tabs">
+  <div class="tabbar" id="ftTabbar">
+    <button data-tab="report" class="on" type="button">结果报告</button>
+    <button data-tab="formula" type="button">公式与原理</button>
+    <button data-tab="json" type="button">输出数据</button>
+    <button data-tab="help" type="button">使用说明</button>
+  </div>
+
+  <div class="pane on" id="ft-tab-report"><pre id="ftReport"></pre></div>
+
+  <div class="pane" id="ft-tab-formula">
+    <div class="fx">
+      <div class="line">
+        <span class="tag">正变换</span>
+        $X_k=\sum\limits_{n=0}^{N-1}x_n\,\mathrm{e}^{-\mathrm{i}2\pi kn/N}$
+        <span class="fnote">$k=0,1,\dots,N-1$</span>
+      </div>
+      <div class="line">
+        <span class="tag">逆变换</span>
+        $x_n=\dfrac{1}{N}\sum\limits_{k=0}^{N-1}X_k\,\mathrm{e}^{\mathrm{i}2\pi kn/N}$
+        <span class="fnote">系数 $\tfrac{1}{N}$ 来自离散正交性</span>
+      </div>
+      <div class="line">
+        <span class="tag">奇偶分解</span>
+        $X_k=E_k+W_N^{\,k}O_k$ ，&nbsp; $X_{k+N/2}=E_k-W_N^{\,k}O_k$
+        <span class="fnote">$W_N=\mathrm{e}^{-\mathrm{i}2\pi/N}$ , 一次蝶形</span>
+      </div>
+      <div class="line">
+        <span class="tag">复杂度递推</span>
+        $T(N)=2\,T(N/2)+O(N)\ \Rightarrow\ T(N)=O(N\log_2 N)$
+        <span class="fnote">共 $(N/2)\log_2 N$ 个蝶形</span>
+      </div>
+      <div class="line">
+        <span class="tag">Bluestein 恒等式</span>
+        $nk=\dfrac{n^2+k^2-(n-k)^2}{2}$
+        <span class="fnote">补到 $M\ge 2N-1$ 后走三次 FFT , 任意 $N$ 皆为 $O(N\log N)$</span>
+      </div>
+      <div class="line">
+        <span class="tag">单边幅值谱</span>
+        $A_k=\dfrac{2\,|X_k|}{\sum\limits_{n} w_n}$ &nbsp;($k\neq 0,\ N/2$)
+        <span class="fnote">$k=0$ 与 $N/2$ 不加倍 ; 除以窗和消去加窗增益</span>
+      </div>
+      <div class="line">
+        <span class="tag">Parseval 定理</span>
+        $\sum\limits_{n=0}^{N-1}|x_n|^2=\dfrac{1}{N}\sum\limits_{k=0}^{N-1}|X_k|^2$
+        <span class="fnote">时域能量 = 频域能量 , 用于自洽校验</span>
+      </div>
+      <div class="line">
+        <span class="tag">Hann 窗</span>
+        $w_n=0.5-0.5\cos\dfrac{2\pi n}{N-1}$
+        <span class="fnote">主瓣加宽一倍 , 旁瓣 $-13\to-31$ dB</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane" id="ft-tab-json"><pre id="ftJson"></pre></div>
+
+  <div class="pane" id="ft-tab-help">
+    <pre class="wrap">【这个实验台在做什么】
+  把「傅里叶变换」从公式变成可以拖动的图。改任一参数, 下方四张图与三张
+  结果卡立刻同步重算。
+
+【三个最值得动手试的对照实验】
+  1. 泄漏: 波形选正弦, N = 64, 采样率 f_s = 64 Hz, 频率先填 8, 再填 4.3。
+     8 Hz 时能量集中在一根谱线上; 4.3 Hz 时能量散开到邻近许多根,
+     这叫频谱泄漏 —— 原因是截断后信号不再整周期, 补零消不掉泄漏。
+  2. 加窗: 在 4.3 Hz 的状态下把窗函数从「矩形窗」换成「Hann 窗」,
+     看对数谱的旁瓣从 −13 dB 掉到 −31 dB 左右, 代价是主瓣变宽。
+  3. 补零: N = 64、补零 192 点, 观察谱线变密 (频率栅格从 1 Hz 降到 0.25 Hz),
+     但包络形状不变 —— 补零只提高显示分辨率, 不增加真实信息。
+
+【图上两条曲线的关系】
+  淡蓝色连续曲线 = 窗内信号补零到 8192 点后的频谱 (连续谱包络)
+  蓝色竖线       = 当前 N 点变换的谱线
+  谱线总是落在包络上。换 N 或换补零, 只是换了采样位置。
+
+【算法说明】
+  N 是 2 的整数幂 → 基 2 Cooley–Tukey 迭代蝶形, O(N log N)
+  N 含奇因子 (如 100、1000) → 自动切换到 Bluestein Chirp–Z, 仍是 O(N log N)
+  选「定义式 DFT」→ 按定义双重循环, O(N²), 只在小 N 时启用,
+  用来和快速算法逐点比对, 报告里给出两者的最大偏差。
+
+【自洽校验】
+  报告中的三项校验若都是「通过」, 说明这条计算路径是对的:
+  变换值与定义式一致、逆变换重构误差 ~1e−15、Parseval 相对误差 ~1e−15。</pre>
+  </div>
+</div>
+
+</div><!-- /ftlab -->
+
+</div>
+
+
+<div class="sec-title">2.3 两点说明</div>
 
 <div class="box-key">
 <div class="title">存在条件: 绝对可积是常用的充分条件</div>
@@ -787,7 +1177,7 @@ $f(t)$ 称为 $F(\omega)$ 的<b>象原函数</b>.
 
 <div class="chart-container">
 <h3>本节知识结构树 <span class="tag-pill">核心交互</span></h3>
-<div class="chart-desc">本节主线: <b>傅里叶级数 (周期 T 有限)</b> → <b>周期 $T\to\infty$ 得到傅里叶积分定理</b> → <b>傅里叶变换与逆变换</b> → <b>连续频谱的物理意义</b> → <b>典型例题</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
+<div class="chart-desc">本节主线: <b>傅里叶级数 (周期 $T$ 有限)</b> → <b>周期 $T\to\infty$ 得到傅里叶积分定理</b> → <b>傅里叶变换与逆变换</b> → <b>连续频谱的物理意义</b> → <b>典型例题</b>. 点击"逐步展开"看知识如何逐层生长, 点击"显示全部"一次呈现.</div>
 <div id="cvSummary" class="kg-wrap"></div>
 <div class="control-panel">
 <div class="row">
@@ -1734,6 +2124,1214 @@ module('cvSummary',function(cv){
 
 })();
 
+</script>
+<script>
+/* =====================================================================
+   傅里叶变换数值实验台（第七章第二节 2.2 交互模块）
+   ---------------------------------------------------------------------
+   由 傅里叶变换-网页版.html 移植而来，全部逻辑封装在 IIFE 内，
+   元素 id 统一加 ft 前缀，样式全部限定在 .ftlab，不与讲义其它模块冲突。
+
+   代码结构：
+     1  复数数组与快速变换   fftRadix2 / ifftRadix2 / fftBluestein / dftDirect
+     2  窗函数               makeWindow
+     3  信号生成             makeSignal
+     4  频谱分析             analyze
+     5  绘图工具             setupCanvas / niceTicks / drawFrame / plotLine
+     6  四个图表             drawWave / drawMag / drawLog / drawPhase
+     7  结果卡与报告         renderCards / renderReport / renderJSON
+     8  性能基准             benchAvg / benchmark
+     9  主入口               readConfig / render / main
+   ===================================================================== */
+(function () {
+"use strict";
+
+var lab = document.getElementById("ftlab");
+if (!lab) return;                       // 本页没有该模块时直接退出
+
+var $ = function (id) { return document.getElementById(id); };
+
+/* =====================================================================
+   1. 复数数组与快速变换
+   ---------------------------------------------------------------------
+   复数统一拆成两个 Float64Array（实部/虚部），比 {re,im} 对象数组快很多，
+   也让蝶形运算只做实数乘法。
+   ===================================================================== */
+
+/** 判断 n 是否为 2 的整数幂 */
+function isPow2(n) { return (n & (n - 1)) === 0 && n > 0; }
+
+/**
+ * 基 2 Cooley–Tukey FFT（迭代版，原地）
+ * 步骤：① 位反转重排 ② 逐级蝶形，级长 len = 2,4,8,…,N
+ * 复杂度 O(N log N)：第 s 级做 N/2 个蝶形，共 log₂N 级
+ */
+function fftRadix2(re, im) {
+  const n = re.length;
+  // ① 位反转重排：把下标 i 与其二进制倒序交换
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      let t = re[i]; re[i] = re[j]; re[j] = t;
+      t = im[i]; im[i] = im[j]; im[j] = t;
+    }
+  }
+  // ② 蝶形：a[k]=u+v, a[k+len/2]=u−v，其中 v = a[k+len/2]·W_len^j
+  for (let len = 2; len <= n; len <<= 1) {
+    const half = len >> 1;
+    const ang = -2 * Math.PI / len;
+    const wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;                  // 旋转因子，逐 j 递推
+      for (let j = 0; j < half; j++) {
+        const ur = re[i + j], ui = im[i + j];
+        const xr = re[i + j + half], xi = im[i + j + half];
+        const vr = xr * cr - xi * ci;
+        const vi = xr * ci + xi * cr;
+        re[i + j] = ur + vr;  im[i + j] = ui + vi;
+        re[i + j + half] = ur - vr;  im[i + j + half] = ui - vi;
+        const t = cr * wr - ci * wi;
+        ci = cr * wi + ci * wr;  cr = t;
+      }
+    }
+  }
+}
+
+/** 基 2 逆变换：先共轭 → 正变换 → 再共轭 → 除以 N */
+function ifftRadix2(re, im) {
+  const n = re.length;
+  for (let i = 0; i < n; i++) im[i] = -im[i];
+  fftRadix2(re, im);
+  for (let i = 0; i < n; i++) { re[i] /= n; im[i] = -im[i] / n; }
+}
+
+/**
+ * Bluestein（Chirp–Z）算法：任意长度 DFT，含素数长度
+ * 利用 kn = (n² + k² − (n−k)²)/2 把 DFT 写成卷积：
+ *   X_k = c_k · Σ_n (x_n c_n) · conj(c_{k−n}),  c_k = e^{−iπk²/N}
+ * 卷积长度需 M ≥ 2N−1，补零后用三次 FFT 完成
+ */
+function fftBluestein(re, im) {
+  const n = re.length;
+  let m = 1; while (m < 2 * n - 1) m <<= 1;
+
+  // chirp 因子 c_k = exp(−iπk²/N)；k² 对 2N 取模保证 1e6 以内不丢精度
+  const cRe = new Float64Array(n), cIm = new Float64Array(n);
+  for (let k = 0; k < n; k++) {
+    const t = (k * k) % (2 * n);
+    const a = -Math.PI * t / n;
+    cRe[k] = Math.cos(a); cIm[k] = Math.sin(a);
+  }
+
+  const aRe = new Float64Array(m), aIm = new Float64Array(m);
+  const bRe = new Float64Array(m), bIm = new Float64Array(m);
+  for (let k = 0; k < n; k++) {
+    aRe[k] = re[k] * cRe[k] - im[k] * cIm[k];      // x_n · c_n
+    aIm[k] = re[k] * cIm[k] + im[k] * cRe[k];
+    bRe[k] = cRe[k]; bIm[k] = -cIm[k];             // conj(c_n)，正半轴
+    if (k) { bRe[m - k] = cRe[k]; bIm[m - k] = -cIm[k]; }  // 负半轴折回
+  }
+
+  fftRadix2(aRe, aIm);
+  fftRadix2(bRe, bIm);
+  for (let k = 0; k < m; k++) {                    // 频域相乘
+    const r = aRe[k] * bRe[k] - aIm[k] * bIm[k];
+    const i = aRe[k] * bIm[k] + aIm[k] * bRe[k];
+    aRe[k] = r; aIm[k] = i;
+  }
+  ifftRadix2(aRe, aIm);
+
+  const oRe = new Float64Array(n), oIm = new Float64Array(n);
+  for (let k = 0; k < n; k++) {
+    oRe[k] = aRe[k] * cRe[k] - aIm[k] * cIm[k];    // 再乘回 c_k
+    oIm[k] = aRe[k] * cIm[k] + aIm[k] * cRe[k];
+  }
+  return { re: oRe, im: oIm };
+}
+
+/** 定义式 DFT：双重循环，O(N²)，只作正确性基准 */
+function dftDirect(re, im) {
+  const n = re.length;
+  const oR = new Float64Array(n), oI = new Float64Array(n);
+  for (let k = 0; k < n; k++) {
+    let sr = 0, si = 0;
+    for (let t = 0; t < n; t++) {
+      const a = -2 * Math.PI * k * t / n;
+      const c = Math.cos(a), s = Math.sin(a);
+      sr += re[t] * c - im[t] * s;
+      si += re[t] * s + im[t] * c;
+    }
+    oR[k] = sr; oI[k] = si;
+  }
+  return { re: oR, im: oI };
+}
+
+/** 统一入口：按长度自动选算法 */
+function fftAuto(re, im, forceMethod) {
+  const n = re.length;
+  if (forceMethod === "dft") {
+    const d = dftDirect(re, im);
+    return { re: d.re, im: d.im, method: "dft", butterfl: n * n };
+  }
+  if (n === 1) return { re: Float64Array.from(re), im: Float64Array.from(im),
+                        method: "trivial", butterfl: 0 };
+  if (isPow2(n)) {
+    const r = Float64Array.from(re), i = Float64Array.from(im);
+    fftRadix2(r, i);
+    return { re: r, im: i, method: "radix2", butterfl: (n / 2) * Math.log2(n) };
+  }
+  const out = fftBluestein(re, im);
+  let m = 1; while (m < 2 * n - 1) m <<= 1;
+  return { re: out.re, im: out.im, method: "bluestein", butterfl: 3 * (m / 2) * Math.log2(m) };
+}
+
+/* =====================================================================
+   2. 窗函数
+   ---------------------------------------------------------------------
+   全部按 n = 0..N−1 定义（对称形式，分母 N−1），与教材一致。
+   矩形窗等价于不加窗。
+   ===================================================================== */
+const WINDOWS = {
+  rect:     { name: "矩形窗",   main: "2", side: "−13 dB", atten: "−21 dB" },
+  hann:     { name: "Hann 窗",  main: "4", side: "−31 dB", atten: "−44 dB" },
+  hamming:  { name: "Hamming 窗", main: "4", side: "−43 dB", atten: "−53 dB" },
+  blackman: { name: "Blackman 窗", main: "6", side: "−58 dB", atten: "−74 dB" }
+};
+
+function makeWindow(type, n) {
+  const w = new Float64Array(n);
+  const d = n > 1 ? n - 1 : 1;
+  for (let i = 0; i < n; i++) {
+    const x = 2 * Math.PI * i / d;
+    switch (type) {
+      case "hann":     w[i] = 0.5 - 0.5 * Math.cos(x); break;
+      case "hamming":  w[i] = 0.54 - 0.46 * Math.cos(x); break;
+      case "blackman": w[i] = 0.42 - 0.5 * Math.cos(x) + 0.08 * Math.cos(2 * x); break;
+      default:         w[i] = 1;
+    }
+  }
+  return w;
+}
+
+/* =====================================================================
+   3. 信号生成
+   ---------------------------------------------------------------------
+   每个信号返回 {x, desc, formula}。t = n/fs，总时长 T = N/fs。
+   ===================================================================== */
+const SIGNALS = {
+  sine:    { label: "正弦",     formula: "x[n] = sin(2πf·n/f_s)" },
+  square:  { label: "方波",     formula: "x[n] = sgn[sin(2πf·n/f_s)]" },
+  saw:     { label: "锯齿波",   formula: "x[n] = 2(ft − ⌊ft+0.5⌋)" },
+  tri:     { label: "三角波",   formula: "x[n] = (2/π)·arcsin[sin(2πf·n/f_s)]" },
+  gauss:   { label: "高斯脉冲", formula: "x(t) = exp[−(t−T/2)²/(2σ²)]" },
+  twin:    { label: "双频叠加", formula: "x[n] = sin(2πft) + 0.5·sin(2π·2.7ft)" },
+  chirp:   { label: "线性扫频", formula: "x(t) = sin[2π(f t + ½k t²)]，k = 3f/T" },
+  impulse: { label: "单位冲激", formula: "x[n] = 1（n = N/4），其余 0" },
+  step:    { label: "阶跃",     formula: "x[n] = 1（n ≥ N/2），其余 0" }
+};
+
+function makeSignal(type, n, fs, freq, sigma) {
+  const x = new Float64Array(n);
+  const T = n / fs;
+  for (let i = 0; i < n; i++) {
+    const t = i / fs;
+    let v = 0;
+    switch (type) {
+      case "sine":   v = Math.sin(2 * Math.PI * freq * t); break;
+      case "square": v = Math.sin(2 * Math.PI * freq * t) >= 0 ? 1 : -1; break;
+      case "saw": {
+        const p = freq * t;
+        v = 2 * (p - Math.floor(p + 0.5));
+        break;
+      }
+      case "tri":    v = (2 / Math.PI) * Math.asin(Math.sin(2 * Math.PI * freq * t)); break;
+      case "gauss":  v = Math.exp(-Math.pow(t - T / 2, 2) / (2 * sigma * sigma)); break;
+      case "twin":   v = Math.sin(2 * Math.PI * freq * t)
+                       + 0.5 * Math.sin(2 * Math.PI * 2.7 * freq * t); break;
+      case "chirp": {
+        const k = 3 * freq / T;
+        v = Math.sin(2 * Math.PI * (freq * t + 0.5 * k * t * t));
+        break;
+      }
+      case "impulse": v = (i === Math.floor(n / 4)) ? 1 : 0; break;
+      case "step":    v = (i >= Math.floor(n / 2)) ? 1 : 0; break;
+    }
+    x[i] = v;
+  }
+  return { x, T, formula: SIGNALS[type].formula };
+}
+
+/* =====================================================================
+   4. 频谱分析（主计算流程）
+   ---------------------------------------------------------------------
+   ① 生成信号 → ② 乘窗 → ③ 尾部补零到 M = N + pad
+   ④ 变换 → ⑤ 归一化成单边幅值谱 → ⑥ 找峰 → ⑦ 三项自洽校验
+   同时做一次 8192 点补零 FFT，得到连续谱包络用于作图。
+   ===================================================================== */
+function analyze(cfg) {
+  const t0 = performance.now();
+  const { n, fs, freq, sigType, winType, pad, method, sigma } = cfg;
+
+  // ① 信号与窗
+  const sig = makeSignal(sigType, n, fs, freq, sigma);
+  const w = makeWindow(winType, n);
+  let sumW = 0;
+  const xw = new Float64Array(n);
+  for (let i = 0; i < n; i++) { xw[i] = sig.x[i] * w[i]; sumW += w[i]; }
+
+  // ② 补零到 M
+  const M = n + pad;
+  const bufR = new Float64Array(M), bufI = new Float64Array(M);
+  bufR.set(xw);
+
+  // ③ 变换
+  const F = fftAuto(bufR, bufI, method === "dft" ? "dft" : "auto");
+  const tfft = performance.now() - t0;
+
+  // ④ 单边幅值谱：k=0 与 M/2 不加倍
+  const K = Math.floor(M / 2);
+  const amp = new Float64Array(K + 1);
+  const pha = new Float64Array(K + 1);
+  const freqs = new Float64Array(K + 1);
+  for (let k = 0; k <= K; k++) {
+    const r = F.re[k], i = F.im[k];
+    const mag = Math.hypot(r, i);
+    const isEdge = (k === 0) || (k === K && M % 2 === 0);
+    amp[k] = (isEdge ? 1 : 2) * mag / Math.max(sumW, 1e-12);
+    pha[k] = Math.atan2(i, r) * 180 / Math.PI;
+    freqs[k] = k * fs / M;
+  }
+
+  // ⑤ 连续谱包络：把 xw 补零到 8192 点再做一次 FFT
+  const M2 = 8192;
+  const eR = new Float64Array(M2), eI = new Float64Array(M2);
+  eR.set(xw.subarray(0, Math.min(n, M2)));
+  fftRadix2(eR, eI);
+  const envN = M2 / 2 + 1;
+  const env = new Float64Array(envN), envF = new Float64Array(envN);
+  for (let k = 0; k < envN; k++) {
+    const mag = Math.hypot(eR[k], eI[k]);
+    const isEdge = (k === 0) || (k === envN - 1);
+    env[k] = (isEdge ? 1 : 2) * mag / Math.max(sumW, 1e-12);
+    envF[k] = k * fs / M2;
+  }
+
+  // ⑥ 找峰：局部极大且超过最大值 8%
+  //    k = 0（直流）与 k = K（奈奎斯特端）也要参与判定：
+  //    高斯脉冲、阶跃这类低通信号的最高点就在 0 Hz，漏掉会把主峰误报成 1 Hz。
+  const peaks = [];
+  let maxAmp = 0;
+  for (let k = 0; k <= K; k++) maxAmp = Math.max(maxAmp, amp[k]);
+  for (let k = 0; k <= K; k++) {
+    // 内部点用「左不降、右严格降」，避免平坦谱（如冲激）把每一根都当成峰；
+    // 两端只比较存在的那一侧。
+    const okLeft  = (k === 0) || (amp[k] >= amp[k - 1]);
+    const okRight = (k === K) ? (amp[K] >= amp[K - 1]) : (amp[k] > amp[k + 1]);
+    if (okLeft && okRight && amp[k] > 0 && amp[k] >= 0.08 * maxAmp) {
+      peaks.push({ k, f: freqs[k], a: amp[k], rel: amp[k] / maxAmp, ph: pha[k] });
+    }
+  }
+  peaks.sort((p, q) => q.a - p.a);
+  const top = peaks.slice(0, 5);
+
+  // ⑦ 自洽校验
+  //   a) 与定义式 DFT 逐点比对（M ≤ 256 时才算：DFT 是 O(M²)，
+  //      再大就会拖慢拖动滑块时的实时重算）
+  let errFFT = null;
+  if (method !== "dft" && M <= 256) {
+    const D = dftDirect(bufR, bufI);
+    let mx = 0, sc = 1e-12;
+    for (let k = 0; k < M; k++) {
+      mx = Math.max(mx, Math.hypot(F.re[k] - D.re[k], F.im[k] - D.im[k]));
+      sc = Math.max(sc, Math.hypot(D.re[k], D.im[k]));
+    }
+    errFFT = mx / sc;
+  }
+  //   b) 逆变换重构误差：用 conj(FFT(conj X))/M 还原
+  //      只有在 M 是 2 的幂时才做（fftRadix2 的位反转重排要求长度是 2 的幂）
+  let errInv = null;
+  if (isPow2(M)) {
+    const iR = Float64Array.from(F.re);
+    const iI = new Float64Array(M);
+    for (let k = 0; k < M; k++) iI[k] = -F.im[k];   // 先共轭
+    fftRadix2(iR, iI);
+    errInv = 0;
+    for (let k = 0; k < M; k++) {
+      // conj(iR + i·iI)/M 的实部 iR/M，虚部 −iI/M
+      errInv = Math.max(errInv,
+        Math.hypot(iR[k] / M - bufR[k], -iI[k] / M - bufI[k]));
+    }
+  }
+  //   c) Parseval：Σ|x|² = (1/M)Σ|X|²
+  let eTime = 0, eFreq = 0;
+  for (let i = 0; i < M; i++) eTime += bufR[i] * bufR[i] + bufI[i] * bufI[i];
+  for (let k = 0; k < M; k++) eFreq += F.re[k] * F.re[k] + F.im[k] * F.im[k];
+  const errParseval = Math.abs(eTime - eFreq / M) / Math.max(eTime, 1e-12);
+
+  return {
+    cfg, sig, w, sumW, xw, M, K,
+    re: F.re, im: F.im, method: F.method, butterfl: F.butterfl,
+    amp, pha, freqs, env, envF,
+    peaks: top, maxAmp,
+    errFFT, errInv, errParseval, eTime, eFreq,
+    tFFT: tfft
+  };
+}
+
+/* =====================================================================
+   5. 绘图工具
+   ---------------------------------------------------------------------
+   所有图用 Canvas 2D 手绘：坐标框、网格、刻度、曲线、标注。
+   高度取 data-h，宽度取 clientWidth（与讲义其它模块一致）；
+   容器隐藏时 clientWidth = 0，此时返回 null 让调用者跳过绘制，
+   等页签切回来的那一刻再重画。
+   ===================================================================== */
+function setupCanvas(cv) {
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.clientWidth;
+  const H = parseInt(cv.getAttribute("data-h") || "200", 10);
+  if (!W || W < 60) return null;
+  cv.width = Math.round(W * dpr);
+  cv.height = Math.round(H * dpr);
+  cv.style.height = H + "px";
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  return { ctx, W, H };
+}
+
+/**
+ * 生成「好看」的刻度值：步长取 1/2/5×10^k。
+ * 档位阈值放宽到 1.5 / 3 / 7，否则像 2.1 这样的比值会直接跳到 5，
+ * 刻度从 5 个骤减到 2 个（对数谱的 −80…0 就只剩 0 和 −50）。
+ */
+function niceTicks(lo, hi, count) {
+  if (!(hi > lo)) return { ticks: [lo], step: 1 };
+  const raw = (hi - lo) / Math.max(1, count);
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const step = (norm <= 1.5 ? 1 : norm <= 3 ? 2 : norm <= 7 ? 5 : 10) * mag;
+  const s = Math.ceil(lo / step) * step;
+  const out = [];
+  for (let v = s; v <= hi + step * 1e-9; v += step) out.push(Math.abs(v) < step * 1e-9 ? 0 : v);
+  return { ticks: out, step };
+}
+
+/** 数值格式化：去掉多余的小数位 */
+function fx(v, d) {
+  if (!isFinite(v)) return "—";
+  d = (d === undefined) ? 2 : d;
+  const s = v.toFixed(d);
+  return s.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+}
+
+/** 绘制坐标框，返回像素映射函数 */
+function drawFrame(ctx, W, H, o) {
+  const pad = Object.assign({ l: 46, r: 12, t: 12, b: 30 }, o.pad || {});
+  const x0 = pad.l, x1 = W - pad.r, y0 = H - pad.b, y1 = pad.t;
+
+  const px = x => x0 + (x - o.xmin) / (o.xmax - o.xmin) * (x1 - x0);
+  const py = y => y0 - (y - o.ymin) / (o.ymax - o.ymin) * (y0 - y1);
+
+  // 网格
+  const xt = niceTicks(o.xmin, o.xmax, Math.max(3, Math.floor((x1 - x0) / 68)));
+  const yt = niceTicks(o.ymin, o.ymax, Math.max(3, Math.floor((y0 - y1) / 34)));
+  ctx.save();
+  ctx.strokeStyle = "#e6edf5"; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (const v of xt.ticks) { const X = Math.round(px(v)) + .5; ctx.moveTo(X, y1); ctx.lineTo(X, y0); }
+  for (const v of yt.ticks) { const Y = Math.round(py(v)) + .5; ctx.moveTo(x0, Y); ctx.lineTo(x1, Y); }
+  ctx.stroke();
+
+  // 坐标轴
+  ctx.strokeStyle = "#b3c1d0"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
+  // y = 0 基线
+  if (o.ymin < 0 && o.ymax > 0) {
+    ctx.strokeStyle = "#c4d0dd"; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(x0, py(0)); ctx.lineTo(x1, py(0)); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // 刻度与文字
+  ctx.fillStyle = "#7a8b9c";
+  ctx.font = '11px "Microsoft YaHei",sans-serif';
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (const v of xt.ticks) {
+    const X = px(v);
+    if (X < x0 - 1 || X > x1 + 1) continue;
+    ctx.strokeStyle = "#b3c1d0";
+    ctx.beginPath(); ctx.moveTo(X, y0); ctx.lineTo(X, y0 + 3); ctx.stroke();
+    ctx.fillText(fx(v, Math.abs(xt.step) < 0.1 ? 2 : (Math.abs(xt.step) < 1 ? 1 : 0)), X, y0 + 5);
+  }
+  ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  for (const v of yt.ticks) {
+    const Y = py(v);
+    if (Y < y1 - 1 || Y > y0 + 1) continue;
+    ctx.strokeStyle = "#b3c1d0";
+    ctx.beginPath(); ctx.moveTo(x0 - 3, Y); ctx.lineTo(x0, Y); ctx.stroke();
+    ctx.fillText(o.yfmt ? o.yfmt(v) : fx(v, Math.abs(yt.step) < 0.1 ? 2 : 1), x0 - 5, Y);
+  }
+
+  // 轴标题
+  ctx.fillStyle = "#6b7c8f";
+  ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+  if (o.xlabel) ctx.fillText(o.xlabel, (x0 + x1) / 2, H - 1);
+  if (o.ylabel) {
+    ctx.save();
+    ctx.translate(12, (y1 + y0) / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textBaseline = "middle"; ctx.fillText(o.ylabel, 0, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+  return { px, py, x0, x1, y0, y1 };
+}
+
+/** 折线绘制，points 为 [x,y] 数组，超出画布自动裁剪 */
+function plotLine(ctx, pts, color, lw, dash) {
+  if (pts.length < 2) return;
+  ctx.save();
+  ctx.strokeStyle = color; ctx.lineWidth = lw || 1.4;
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+  if (dash) ctx.setLineDash(dash);
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* =====================================================================
+   6. 四个图表
+   ===================================================================== */
+
+/** 时域波形：信号（实线） + 窗函数（虚线） */
+function drawWave(cv, R) {
+  const t = setupCanvas(cv); if (!t) return;
+  const { ctx, W, H } = t;
+  const { n, fs } = R.cfg;
+  const T = R.sig.T;
+
+  let amax = 0;
+  for (let i = 0; i < n; i++) amax = Math.max(amax, Math.abs(R.sig.x[i]));
+  amax = Math.max(amax, 0.1) * 1.18;
+
+  const f = drawFrame(ctx, W, H, {
+    xmin: 0, xmax: T, ymin: -amax, ymax: amax,
+    xlabel: "时间 t / s", ylabel: "幅度",
+    pad: { l: 42, r: 14, t: 10, b: 30 }
+  });
+
+  // 窗函数（缩放到幅度范围便于对照）
+  if (R.cfg.winType !== "rect") {
+    const pts = [];
+    for (let i = 0; i < n; i++) pts.push([f.px(i / fs), f.py(R.w[i] * amax * 0.92)]);
+    plotLine(ctx, pts, "#c99a4e", 1.1, [4, 3]);
+  }
+
+  // 信号
+  const pts = [];
+  for (let i = 0; i < n; i++) pts.push([f.px(i / fs), f.py(R.sig.x[i])]);
+  plotLine(ctx, pts, "#2f5fd0", 1.6);
+
+  // 点数不多时画出采样点
+  if (n <= 128) {
+    ctx.save(); ctx.fillStyle = "#1e4596";
+    for (let i = 0; i < n; i++) {
+      const r = n <= 48 ? 2.4 : 1.6;
+      ctx.beginPath();
+      ctx.arc(f.px(i / fs), f.py(R.sig.x[i]), r, 0, 6.2832);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // 图内只保留窗函数图例；N、T、f_s 等信息放在图标题右侧，避免压住波峰
+  if (R.cfg.winType !== "rect") {
+    ctx.save();
+    ctx.fillStyle = "#c99a4e";
+    ctx.font = '11px "Microsoft YaHei",sans-serif';
+    ctx.textAlign = "right"; ctx.textBaseline = "top";
+    ctx.fillText("虚线：窗 w[n]", f.x1 - 6, f.y1 + 3);
+    ctx.restore();
+  }
+}
+
+/** 单边幅值谱：连续包络（淡蓝填充） + 离散谱线（stem） */
+function drawMag(cv, R) {
+  const t = setupCanvas(cv); if (!t) return;
+  const { ctx, W, H } = t;
+  const fmax = R.cfg.fs / 2;
+
+  const ymax = Math.max(R.maxAmp * 1.16, 1e-6);
+  const f = drawFrame(ctx, W, H, {
+    xmin: 0, xmax: fmax, ymin: 0, ymax,
+    xlabel: "频率 f / Hz", ylabel: "幅值 A",
+    yfmt: v => fx(v, v < 1 ? 2 : 1),
+    pad: { l: 46, r: 14, t: 10, b: 30 }
+  });
+
+  // ① 包络：先把 4097 个点压到 W 列（每像素列取最大值，避免画 4000 条线）
+  const cols = Math.max(2, Math.floor(f.x1 - f.x0));
+  const bucket = new Float64Array(cols).fill(0);
+  for (let k = 0; k < R.env.length; k++) {
+    const X = f.px(R.envF[k]);
+    const idx = Math.round(X - f.x0);
+    if (idx >= 0 && idx < cols) bucket[idx] = Math.max(bucket[idx], R.env[k]);
+  }
+  const pts = [];
+  for (let i = 0; i < cols; i++) {
+    if (bucket[i] > 0) pts.push([f.x0 + i, f.py(Math.min(bucket[i], ymax))]);
+  }
+  if (pts.length > 1) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], f.y0);
+    for (const p of pts) ctx.lineTo(p[0], p[1]);
+    ctx.lineTo(pts[pts.length - 1][0], f.y0);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(157,184,232,0.30)";
+    ctx.fill();
+    ctx.restore();
+    plotLine(ctx, pts, "rgba(110,150,215,0.85)", 1.1);
+  }
+
+  // ② 谱线
+  ctx.save();
+  ctx.strokeStyle = "#2f5fd0"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
+  ctx.beginPath();
+  for (let k = 0; k < R.amp.length; k++) {
+    const a = R.amp[k];
+    if (a < ymax * 1e-4) continue;
+    const X = Math.round(f.px(R.freqs[k])) + .5;
+    if (X < f.x0 - 1 || X > f.x1 + 1) continue;
+    ctx.moveTo(X, f.y0); ctx.lineTo(X, f.py(Math.min(a, ymax)));
+  }
+  ctx.stroke();
+  // 谱线端点
+  ctx.fillStyle = "#1e4596";
+  for (let k = 0; k < R.amp.length; k++) {
+    const a = R.amp[k];
+    if (a < ymax * 0.02) continue;
+    const X = f.px(R.freqs[k]);
+    if (X < f.x0 - 1 || X > f.x1 + 1) continue;
+    ctx.beginPath(); ctx.arc(X, f.py(Math.min(a, ymax)), 2.1, 0, 6.2832); ctx.fill();
+  }
+  ctx.restore();
+
+  // ③ 主峰标注：优先放在峰尖下方，空间不够才上翻，避免与顶部文字挤在一起
+  if (R.peaks.length) {
+    const p = R.peaks[0];
+    const X = f.px(p.f), Y = f.py(Math.min(p.a, ymax));
+    const tx = Math.min(Math.max(X + 12, f.x0 + 4), f.x1 - 74);
+    let ty = Y + 14;
+    if (ty + 26 > f.y0) ty = Math.max(Y - 46, f.y1 + 4);
+    ctx.save();
+    ctx.strokeStyle = "#a86500"; ctx.lineWidth = 0.9;
+    ctx.beginPath(); ctx.moveTo(X, Y - 3); ctx.lineTo(tx + 4, ty + 4); ctx.stroke();
+    ctx.fillStyle = "#8a5200";
+    ctx.font = '11px "Microsoft YaHei",sans-serif';
+    ctx.textAlign = "left"; ctx.textBaseline = "top";
+    ctx.fillText("主峰 " + fx(p.f, 3) + " Hz", tx, ty);
+    ctx.fillText("A = " + fx(p.a, 3), tx, ty + 14);
+    ctx.restore();
+  }
+}
+
+/** 对数幅值谱：20·log10(A) */
+function drawLog(cv, R) {
+  const t = setupCanvas(cv); if (!t) return;
+  const { ctx, W, H } = t;
+  const fmax = R.cfg.fs / 2;
+
+  let top = -Infinity;
+  for (let k = 0; k < R.amp.length; k++) {
+    const db = 20 * Math.log10(Math.max(R.amp[k], 1e-12));
+    if (db > top) top = db;
+  }
+  if (!isFinite(top)) top = 0;
+  const floor = Math.max(top - 80, -140);
+
+  const f = drawFrame(ctx, W, H, {
+    xmin: 0, xmax: fmax, ymin: floor, ymax: top + 4,
+    xlabel: "频率 f / Hz", ylabel: "dB",
+    yfmt: v => fx(v, 0),
+    pad: { l: 46, r: 14, t: 10, b: 30 }
+  });
+
+  // 包络的 dB 曲线
+  const cols = Math.max(2, Math.floor(f.x1 - f.x0));
+  const bucket = new Float64Array(cols).fill(-Infinity);
+  for (let k = 0; k < R.env.length; k++) {
+    const X = f.px(R.envF[k]);
+    const idx = Math.round(X - f.x0);
+    if (idx >= 0 && idx < cols) {
+      const db = 20 * Math.log10(Math.max(R.env[k], 1e-12));
+      if (db > bucket[idx]) bucket[idx] = db;
+    }
+  }
+  const pts = [];
+  for (let i = 0; i < cols; i++) {
+    if (bucket[i] > floor) pts.push([f.x0 + i, f.py(Math.min(bucket[i], top + 4))]);
+  }
+  plotLine(ctx, pts, "rgba(110,150,215,0.75)", 1.0);
+
+  // 谱线
+  ctx.save();
+  ctx.strokeStyle = "#2f5fd0"; ctx.lineWidth = 1.4; ctx.lineCap = "round";
+  ctx.beginPath();
+  for (let k = 0; k < R.amp.length; k++) {
+    const db = 20 * Math.log10(Math.max(R.amp[k], 1e-12));
+    if (db < floor) continue;
+    const X = Math.round(f.px(R.freqs[k])) + .5;
+    if (X < f.x0 - 1 || X > f.x1 + 1) continue;
+    ctx.moveTo(X, f.y0); ctx.lineTo(X, f.py(db));
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // 参考线：当前窗函数的理论旁瓣电平（相对主瓣）
+  const sideTxt = WINDOWS[R.cfg.winType].side;                 // 形如 "−31 dB"
+  const sideDB = parseFloat(sideTxt.replace("−", "-").replace(/\s*dB/, ""));
+  const refDB = top + sideDB;                                   // sideDB 为负值
+  if (refDB > floor) {
+    const Y = f.py(refDB);
+    ctx.save();
+    ctx.strokeStyle = "#c9d3de"; ctx.setLineDash([2, 4]);
+    ctx.beginPath(); ctx.moveTo(f.x0, Y); ctx.lineTo(f.x1, Y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#9aa8b6";
+    ctx.font = '10px "Microsoft YaHei",sans-serif';
+    ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+    ctx.fillText(WINDOWS[R.cfg.winType].name + " 旁瓣 " + sideTxt, f.x1 - 4, Y - 2);
+    ctx.restore();
+  }
+}
+
+/** 相位谱：只画幅值超过峰值 1% 的点，避免零点附近的纯噪声 */
+function drawPhase(cv, R) {
+  const t = setupCanvas(cv); if (!t) return;
+  const { ctx, W, H } = t;
+  const fmax = R.cfg.fs / 2;
+  const gate = Math.max(R.maxAmp * 0.01, 1e-9);
+
+  const f = drawFrame(ctx, W, H, {
+    xmin: 0, xmax: fmax, ymin: -185, ymax: 185,
+    xlabel: "频率 f / Hz", ylabel: "arg / (°)",
+    yfmt: v => fx(v, 0),
+    pad: { l: 46, r: 14, t: 10, b: 30 }
+  });
+
+  // 零相位参考线
+  ctx.save();
+  ctx.strokeStyle = "#dde5ee"; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(f.x0, f.py(0)); ctx.lineTo(f.x1, f.py(0)); ctx.stroke();
+  ctx.restore();
+
+  let shown = 0;
+  ctx.save();
+  ctx.fillStyle = "#6b3fa0";
+  for (let k = 0; k < R.amp.length; k++) {
+    if (R.amp[k] < gate) continue;
+    const X = f.px(R.freqs[k]);
+    if (X < f.x0 - 1 || X > f.x1 + 1) continue;
+    ctx.beginPath();
+    ctx.arc(X, f.py(Math.max(-180, Math.min(180, R.pha[k]))), 2.0, 0, 6.2832);
+    ctx.fill();
+    shown++;
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.fillStyle = "#9aa8b6";
+  ctx.font = '11px "Microsoft YaHei",sans-serif';
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  ctx.fillText("只画 |X| > 1% 峰值的点（" + shown + " 个）", f.x0 + 6, f.y1 + 4);
+  ctx.restore();
+}
+
+/* =====================================================================
+   7. 结果卡与报告
+   ===================================================================== */
+function renderCards(R) {
+  const p = R.peaks[0];
+
+  if (p) {
+    $("ftCFreq").textContent = fx(p.f, 3) + " Hz";
+    $("ftCFreqNote").textContent = "占用第 " + p.k + " 根谱线，Δf = " + fx(R.cfg.fs / R.M, 3) + " Hz";
+    $("ftCAmp").textContent = fx(p.a, 4);
+    $("ftCAmpNote").textContent = "相对幅度 " + (p.rel * 100).toFixed(1) + " %，相位 "
+      + fx(p.ph, 1) + "°";
+  } else {
+    $("ftCFreq").textContent = "—";
+    $("ftCFreqNote").textContent = "未检出显著谱峰";
+    $("ftCAmp").textContent = "—";
+    $("ftCAmpNote").textContent = "—";
+  }
+
+  const mName = { radix2: "基 2 FFT", bluestein: "Bluestein", dft: "定义式 DFT", trivial: "单点" }[R.method] || R.method;
+  $("ftCAlgo").textContent = mName;
+  $("ftCAlgoNote").textContent = "N = " + R.M + "，" + Math.round(R.butterfl) + " 个运算单元，"
+    + fx(R.tFFT, 2) + " ms";
+}
+
+function renderReport(R) {
+  const L = [];
+  const push = (...a) => L.push(...a);
+  const rule = "─".repeat(66);
+
+  push("【一】输入参数");
+  push("  波形      : " + SIGNALS[R.cfg.sigType].label + "　" + R.sig.formula);
+  push("  频率 f    : " + fx(R.cfg.freq, 3) + " Hz");
+  push("  采样 N    : " + R.cfg.n + " 点　采样率 f_s = " + fx(R.cfg.fs, 0) + " Hz");
+  push("  时长 T    : " + fx(R.sig.T, 4) + " s　频率分辨率 Δf = " + fx(R.cfg.fs / R.M, 4) + " Hz");
+  push("  窗函数    : " + WINDOWS[R.cfg.winType].name
+    + "（主瓣宽 " + WINDOWS[R.cfg.winType].main + " bin，旁瓣 " + WINDOWS[R.cfg.winType].side + "）");
+  push("  补零      : " + R.cfg.pad + " 点　变换长度 M = " + R.M);
+  push("");
+  push("【二】算法");
+  const mName = { radix2: "基 2 Cooley–Tukey", bluestein: "Bluestein Chirp–Z", dft: "定义式 DFT", trivial: "—" }[R.method] || R.method;
+  push("  本次使用  : " + mName);
+  let reason;
+  if (R.method === "radix2") reason = "M = " + R.M + " 是 2 的整数幂，蝶形分解可直接二分";
+  else if (R.method === "bluestein") reason = "M = " + R.M + " 含奇因子，先化卷积再补到 2 的幂";
+  else if (R.method === "dft") reason = "按定义式逐点求和，用于正确性对照";
+  else reason = "单点输入";
+  push("  选择理由  : " + reason);
+  if (R.method === "dft") push("  复杂度    : O(M²) = " + (R.M * R.M) + " 次乘加");
+  else push("  复杂度    : O(M log M)，约 " + Math.round(R.butterfl) + " 次蝶形运算");
+  push("  实测耗时  : " + fx(R.tFFT, 2) + " ms（含信号生成与窗函数）");
+  push("");
+  push("【三】频谱");
+  push("  谱线数    : " + R.amp.length + "（0 到 f_s/2，含两端）");
+  push("  最大幅值  : " + fx(R.maxAmp, 5));
+  if (R.peaks.length) {
+    push("  序号  频率 f/Hz      幅值 A      相对幅度     相位/(°)");
+    for (let i = 0; i < R.peaks.length; i++) {
+      const q = R.peaks[i];
+      push("  " + String(i + 1).padEnd(5) + q.f.toFixed(3).padStart(11)
+        + q.a.toFixed(5).padStart(13) + (q.rel * 100).toFixed(1).padStart(12) + "%"
+        + q.ph.toFixed(1).padStart(12));
+    }
+  } else {
+    push("  未检出超过 8% 峰值的局部极大");
+  }
+  // 单边幅值谱在 k=0 不加倍、k≥1 加倍，低频段因此可能出现 A_1 > A_0 的「假峰」。
+  // 这不是算法错误，但最容易让人误判，必须点明。
+  if (R.K >= 2 && R.amp[0] > 0.4 * R.maxAmp && R.amp[1] > R.amp[0]) {
+    push("");
+    push("  注：单边幅值谱在 k=0（直流）处不加倍、k≥1 处加倍，故 0 Hz 分量强时会出现");
+    push("      A_1 > A_0。谱线位置没有错，只是直流与交流的归一化方式不同；");
+    push("      要公平比较，应把 A_0 乘 2（等价于改用双边谱）。");
+  }
+  push("");
+  push("【四】自洽校验");
+  const okFFT = R.errFFT !== null && R.errFFT < 1e-9;
+  let s1;
+  if (R.errFFT !== null) {
+    s1 = R.errFFT.toExponential(2) + (okFFT ? "　通过" : "　偏差偏大");
+  } else if (R.cfg.method === "dft") {
+    s1 = "本次直接使用定义式，无需比对";
+  } else {
+    s1 = "M > 256，为保持界面流畅已跳过（可选 DFT 模式逐点比对）";
+  }
+  push("  ① 变换值与定义式 DFT 的最大相对偏差 : " + s1);
+
+  let s2;
+  if (R.errInv !== null) {
+    s2 = R.errInv.toExponential(2) + (R.errInv < 1e-10 ? "　通过" : "　偏差偏大");
+  } else {
+    s2 = "M 非 2 的幂，基 2 逆变换不适用，此项由 ③ Parseval 代偿";
+  }
+  push("  ② 逆变换重构最大误差              : " + s2);
+
+  const okP = R.errParseval < 1e-10;
+  push("  ③ Parseval 相对误差                : "
+    + R.errParseval.toExponential(2) + (okP ? "　通过" : "　偏差偏大"));
+  push("  时域能量 Σ|x|² = " + R.eTime.toExponential(4)
+    + "，频域能量 (1/M)Σ|X|² = " + (R.eFreq / R.M).toExponential(4)
+    + "（两者应相等）");
+  push("");
+  push("【五】结论");
+  if (R.peaks.length && R.cfg.sigType === "sine") {
+    const p0 = R.peaks[0];
+    const bin = R.cfg.fs / R.M;
+    const cycles = R.cfg.freq * R.sig.T;              // 截断长度内跑了几个周期
+    const dev = Math.abs(p0.f - R.cfg.freq);
+    const whole = Math.abs(cycles - Math.round(cycles)) < 1e-6;
+    if (whole) {
+      push("  主峰位于 " + fx(p0.f, 3) + " Hz，设定频率 " + fx(R.cfg.freq, 3)
+        + " Hz，相差 " + fx(dev, 4) + " Hz。");
+      push("  该差值不超过一个栅格（Δf = " + fx(bin, 4) + " Hz），是同一根谱线的位置采样，");
+      push("  不是频率估计错误 —— 谱线只能落在格点上，真实频率落在两格之间时只能就近报。");
+      push("  幅值 " + fx(p0.a, 4) + "（理论值 1），偏差来自窗函数的幅度归一化。");
+      push("  信号在截断长度内正好跑了 " + fx(cycles, 2) + " 个周期，属整周期截断，泄漏最小。");
+    } else {
+      push("  信号在截断长度内跑了 " + fx(cycles, 2) + " 个周期，不是整数，故非整周期截断。");
+      push("  主峰位于 " + fx(p0.f, 3) + " Hz，幅值被压低到 " + fx(p0.a, 3)
+        + "（理论值 1），这就是频谱泄漏：");
+      push("  截断处的突变把能量扩散到邻近多根谱线，任何单根谱线的幅值都小于真实幅度。");
+      push("  对策：① 换成 Hann 窗，把旁瓣从 −13 dB 压到 −31 dB；");
+      push("        ② 调整 N 或 f，使 f·T 为整数；③ 补零只能加密栅格，消不掉泄漏。");
+    }
+  } else if (R.peaks.length) {
+    push("  主峰位于 " + fx(R.peaks[0].f, 3) + " Hz（幅值 " + fx(R.peaks[0].a, 3)
+      + "），共检出 " + R.peaks.length + " 个显著谱峰。");
+    if (R.cfg.sigType === "square") {
+      push("  方波只含奇次谐波，幅度按 1/k 衰减：依次为 "
+        + R.peaks.slice(0, 4).map(q => fx(q.f, 1)).join("、") + " Hz。");
+    } else if (R.cfg.sigType === "gauss") {
+      push("  高斯脉冲是低通信号，能量集中在 0 Hz 附近，高频按 exp(−2π²σ²f²) 快速衰减。");
+      push("  时域越窄（σ 越小）、频域越宽，这就是「时宽带宽积为常数」的直接体现。");
+      push("  把 σ 从 0.08 调到 0.04，可以看到谱线整体变宽一倍。");
+    } else if (R.cfg.sigType === "impulse") {
+      push("  冲激的频谱是常数，所有谱线幅值都等于 2/Σw，所以「主峰」本身没有意义。");
+      push("  时域单个尖峰 ↔ 频域完全平坦，这是对偶性最直接的例子。");
+    }
+  } else {
+    push("  当前参数下没有显著谱峰，请检查频率是否超过 f_s/2（奈奎斯特上限 "
+      + fx(R.cfg.fs / 2, 0) + " Hz）。");
+  }
+  push("");
+  push(rule);
+  push("复现方式：按上面的参数设置本实验台的控件即可，无需命令行。");
+
+  $("ftReport").textContent = L.join("\n");
+}
+
+function renderJSON(R) {
+  const o = {
+    input: {
+      signal: R.cfg.sigType, freq: R.cfg.freq, n: R.cfg.n, fs: R.cfg.fs,
+      window: R.cfg.winType, zeroPad: R.cfg.pad, method: R.cfg.method
+    },
+    algorithm: {
+      used: R.method, length: R.M, operations: Math.round(R.butterfl),
+      elapsedMs: +R.tFFT.toFixed(3)
+    },
+    spectrum: {
+      df: +(R.cfg.fs / R.M).toFixed(6), bins: R.amp.length,
+      maxAmp: +R.maxAmp.toFixed(6),
+      peaks: R.peaks.map(p => ({
+        freqHz: +p.f.toFixed(4), amp: +p.a.toFixed(6),
+        rel: +p.rel.toFixed(4), phaseDeg: +p.ph.toFixed(2), bin: p.k
+      }))
+    },
+    checks: {
+      vsDirectDft: R.errFFT === null ? null : +R.errFFT.toExponential(3),
+      inverseError: R.errInv === null ? null : +R.errInv.toExponential(3),
+      parsevalError: +R.errParseval.toExponential(3),
+      timeEnergy: +R.eTime.toExponential(6)
+    },
+    samples: (() => {
+      const step = Math.max(1, Math.floor(R.cfg.n / 16));
+      const out = [];
+      for (let i = 0; i < R.cfg.n; i += step) {
+        out.push([+(i / R.cfg.fs).toFixed(4), +R.sig.x[i].toFixed(6)]);
+      }
+      return out;
+    })()
+  };
+  $("ftJson").textContent = JSON.stringify(o, null, 2);
+}
+
+/* =====================================================================
+   8. 性能基准
+   ===================================================================== */
+
+/**
+ * 测一个函数单次执行的平均耗时（毫秒）。
+ *
+ * 浏览器为了防指纹追踪，会把 performance.now() 的精度限制在 0.1~1 ms。
+ * 一次 1024 点 FFT 只要几十微秒，直接计时几乎总是 0，算出来的加速比
+ * 就成了 Infinity。所以这里自适应地把函数重复执行若干次，再用总时长
+ * 除以次数 —— 相当于把计时精度放大了几万倍。
+ */
+function benchAvg(fn, minTotal) {
+  fn();                                     // 预热一次，触发 JIT
+  let reps = 1, best = Infinity;
+  for (let round = 0; round < 8; round++) {
+    const t0 = performance.now();
+    for (let i = 0; i < reps; i++) fn();
+    const dt = performance.now() - t0;
+    if (dt > 0) best = Math.min(best, dt / reps);
+    if (dt >= minTotal) break;              // 总时长够了，可以停
+    reps *= 4;
+    if (reps > 200000) break;               // 安全上限
+  }
+  return best;
+}
+
+/**
+ * 在浏览器里实测 O(N log N)：对 N = 128/256/512/1024 分别跑 FFT 与定义式 DFT，
+ * 输出「每 N log N 的耗时」—— 若这一列基本不变，就说明复杂度确是 O(N log N)。
+ */
+function benchmark() {
+  const btn = $("ftBtnBench");
+  btn.disabled = true;
+  btn.textContent = "计算中…";
+
+  // 让浏览器先把按钮状态画出来，再开始重计算
+  setTimeout(() => {
+    const rows = [];
+    const Ns = [128, 256, 512, 1024];
+    for (const n of Ns) {
+      const xr = new Float64Array(n), xi = new Float64Array(n);
+      for (let i = 0; i < n; i++) xr[i] = Math.sin(0.05 * i) + 0.1 * Math.cos(0.3 * i);
+
+      // FFT：重复多次求平均（单次只有几十微秒，直接测不出来）。
+      // 数组在循环外预分配，否则每次 new Float64Array 的分配与 GC 开销
+      // 会盖过 128 点 FFT 本身的几微秒，让 N 小的那一行严重偏高。
+      const tr = new Float64Array(n), ti = new Float64Array(n);
+      const tf = benchAvg(() => {
+        tr.set(xr);              // 只做一次内存拷贝，还原输入
+        fftRadix2(tr, ti);       // ti 会被整个写满，无需清零
+      }, 25);
+      // DFT：O(N²)，N=1024 时一次就要几十毫秒，重复次数自然降为 1
+      const td = benchAvg(() => {
+        dftDirect(xr, xi);
+      }, 25);
+      rows.push({ n, tf, td, speed: td / tf, unit: tf / (n * Math.log2(n)) });
+    }
+
+    const L = [];
+    L.push("【浏览器内实测】同一台机器，同一段随机信号，取多次运行的最小耗时");
+    L.push("");
+    L.push("     N      FFT / ms     DFT / ms     加速比      FFT/(N·log₂N)");
+    for (const r of rows) {
+      const fs4 = isFinite(r.tf) ? r.tf.toFixed(4) : "—";
+      const ds3 = isFinite(r.td) ? r.td.toFixed(3) : "—";
+      const sp = isFinite(r.speed) ? (r.speed.toFixed(2) + "×") : "—";
+      const un = isFinite(r.unit) ? r.unit.toExponential(3) : "—";
+      L.push("  " + String(r.n).padStart(5)
+        + fs4.padStart(13) + ds3.padStart(13)
+        + sp.padStart(12) + un.padStart(17));
+    }
+    L.push("");
+    const u = rows.map(r => r.unit).filter(v => isFinite(v) && v > 0);
+    const spread = u.length >= 2 ? (Math.max(...u) - Math.min(...u)) / Math.min(...u) : NaN;
+    const first = rows[0], last = rows[rows.length - 1];
+    L.push("  最后一列 = 单次变换耗时 ÷ (N·log₂N)。N 从 " + first.n + " 增到 "
+      + last.n + "，涨 " + (last.n / first.n).toFixed(0) + " 倍。");
+    if (isFinite(spread)) {
+      L.push("  该列从 " + Math.max(...u).toExponential(2) + " 降到 "
+        + Math.min(...u).toExponential(2) + "，相差 " + (spread * 100).toFixed(0) + "%；");
+      L.push("  随着 N 增大趋于稳定 —— 小 N 时函数调用与循环启动的固定开销占比大，");
+      L.push("  扣掉这部分，耗时主体确实按 N·log₂N 增长，而不是按 N²。");
+    }
+    if (isFinite(first.td) && isFinite(last.td) && first.td > 0) {
+      L.push("  反观 DFT 一列：N 同样涨 " + (last.n / first.n).toFixed(0) + " 倍，耗时却涨了 "
+        + (last.td / first.td).toFixed(1) + " 倍，接近 N² 的增长。");
+    }
+    const sps = rows.map(r => r.speed).filter(v => isFinite(v));
+    if (sps.length >= 2) {
+      L.push("  加速比随 N 上升（" + sps.map(v => v.toFixed(1)).join(" → ")
+        + "×），这正是 O(N log N) 相对 O(N²) 的收益。");
+    }
+    L.push("");
+    L.push("【注】浏览器把 performance.now() 的精度限制在 0.1~1 ms，单次 FFT 只有几十");
+    L.push("     微秒，所以上表用「重复执行若干次再取平均」的办法放大到可测区间。");
+    L.push("     结果只反映趋势，绝对值取决于本机 CPU 与浏览器实现。");
+
+    const pre = document.createElement("pre");
+    pre.textContent = L.join("\n");
+    pre.style.marginTop = "10px";
+    pre.style.borderTop = "1px dashed #d9e2ea";
+    pre.style.paddingTop = "10px";
+    const old = $("ftBenchOut");
+    if (old) old.remove();
+    pre.id = "ftBenchOut";
+    $("ftReport").parentNode.appendChild(pre);
+    // 先切到报告页再滚动 —— 页签隐藏时 scrollIntoView 不生效
+    switchTab("report");
+    pre.scrollIntoView({ block: "start" });
+
+    btn.disabled = false;
+    btn.textContent = "性能基准";
+  }, 40);
+}
+
+/* =====================================================================
+   9. 主入口
+   ===================================================================== */
+
+/** 从界面读取全部参数 */
+function readConfig() {
+  const num = (id, def, lo, hi) => {
+    const v = parseFloat($(id).value);
+    if (!isFinite(v)) return def;
+    return Math.min(hi, Math.max(lo, v));
+  };
+  return {
+    sigType: $("ftSig").value,
+    freq: num("ftFreq", 8, 0.1, 200),
+    n: parseInt($("ftN").value, 10) || 128,
+    fs: num("ftFs", 128, 8, 4096),
+    winType: $("ftWin").value,
+    pad: Math.max(0, parseInt($("ftPad").value, 10) || 0),
+    method: $("ftMethod").value,
+    sigma: num("ftSigma", 0.08, 0.005, 1)
+  };
+}
+
+let lastResult = null;
+
+/** 主渲染：算一次，然后刷新卡片、四张图、报告与 JSON */
+function render() {
+  const cfg = readConfig();
+  const R = analyze(cfg);
+  lastResult = R;
+
+  renderCards(R);
+  drawWave($("ftCvWave"), R);
+  drawMag($("ftCvMag"), R);
+  drawLog($("ftCvLog"), R);
+  drawPhase($("ftCvPhase"), R);
+
+  // 图注右侧的实时数值
+  $("ftHWave").innerHTML =
+    "N = " + cfg.n + " · T = " + fx(R.sig.T, 3) + " s · f<sub>s</sub> = " + fx(cfg.fs, 0) + " Hz";
+  $("ftHMag").textContent = "Δf = " + fx(cfg.fs / R.M, 3) + " Hz";
+  $("ftHLog").textContent = "窗：" + WINDOWS[cfg.winType].name;
+  $("ftHPhase").textContent = "门限 1% 峰值";
+
+  renderReport(R);
+  renderJSON(R);
+}
+
+/** 拖动滑块时用 rAF 节流，避免每个 input 事件都重画 */
+let rafPending = false;
+function requestRender() {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => { rafPending = false; render(); });
+}
+
+/** 页签切换（模块内） */
+function switchTab(name) {
+  lab.querySelectorAll("#ftTabbar button").forEach(b => b.classList.remove("on"));
+  lab.querySelectorAll(".pane").forEach(p => p.classList.remove("on"));
+  const btn = lab.querySelector('#ftTabbar button[data-tab="' + name + '"]');
+  if (btn) btn.classList.add("on");
+  const pane = $("ft-tab-" + name);
+  if (pane) pane.classList.add("on");
+}
+
+/** 主入口 */
+function main() {
+  const bindNumRange = (numId, rangeId, opts) => {
+    const nEl = $(numId);
+    const rEl = $(rangeId);
+    if (!rEl) return;
+    if (opts && opts.min !== undefined) { nEl.min = opts.min; rEl.min = opts.min; }
+    if (opts && opts.max !== undefined) { nEl.max = opts.max; rEl.max = opts.max; }
+
+    nEl.addEventListener("input", () => {
+      const v = parseFloat(nEl.value);
+      if (isFinite(v)) rEl.value = v;
+      requestRender();
+    });
+    rEl.addEventListener("input", () => {
+      nEl.value = rEl.value;
+      requestRender();
+    });
+  };
+
+  bindNumRange("ftFreq", "ftFreqR", { min: 0.1, max: 200 });
+  bindNumRange("ftFs", "ftFsR", { min: 8, max: 4096 });
+  bindNumRange("ftPad", "ftPadR", { min: 0, max: 4096 });
+  bindNumRange("ftSigma", "ftSigmaR", { min: 0.005, max: 1 });
+
+  // 频率上限跟着采样率走：最高只到奈奎斯特频率
+  const syncFreqMax = () => {
+    const nyq = Math.max(1, parseFloat($("ftFs").value) / 2);
+    const rEl = $("ftFreqR"), nEl = $("ftFreq");
+    rEl.max = Math.min(200, nyq * 0.95);
+    nEl.max = 200;
+    if (parseFloat(nEl.value) > nEl.max) { nEl.value = nEl.max; rEl.value = nEl.max; }
+    if (parseFloat(rEl.value) > parseFloat(rEl.max)) {
+      rEl.value = rEl.max; nEl.value = (+rEl.max).toFixed(1);
+    }
+  };
+  $("ftFs").addEventListener("input", syncFreqMax);
+  $("ftFsR").addEventListener("input", syncFreqMax);
+
+  // 选高斯脉冲时才显示 σ
+  const toggleSigma = () => {
+    $("ftFieldSigma").style.display = ($("ftSig").value === "gauss") ? "" : "none";
+  };
+
+  ["ftSig", "ftN", "ftWin", "ftMethod"].forEach(id => {
+    $(id).addEventListener("change", () => {
+      toggleSigma();
+      render();
+    });
+  });
+
+  // 自动算法模式下，DFT 选项会明显变慢，给个提示
+  $("ftMethod").addEventListener("change", e => {
+    const isDft = e.target.value === "dft";
+    const nSel = $("ftN");
+    if (isDft && parseInt(nSel.value, 10) > 512) {
+      nSel.value = "256";
+    }
+  });
+
+  // 复位
+  $("ftBtnReset").addEventListener("click", () => {
+    $("ftSig").value = "sine";
+    $("ftFreq").value = 8;
+    $("ftFreqR").value = 8;
+    $("ftN").value = "128";
+    $("ftFs").value = 128;
+    $("ftFsR").value = 128;
+    $("ftWin").value = "rect";
+    $("ftPad").value = 0;
+    $("ftPadR").value = 0;
+    $("ftMethod").value = "auto";
+    toggleSigma();
+    const old = $("ftBenchOut");
+    if (old) old.remove();
+    render();
+  });
+
+  $("ftBtnBench").addEventListener("click", benchmark);
+
+  // 页签切换
+  lab.querySelectorAll("#ftTabbar button").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  // 窗口尺寸变化：canvas 尺寸跟着变，重画一次
+  let rt = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => { if (lastResult) render(); }, 120);
+  });
+
+  // 讲义外层页签切到本节时，canvas 才有宽度，需要补画一次
+  const rail = document.querySelectorAll(".tab-radio");
+  Array.prototype.forEach.call(rail, function (r) {
+    r.addEventListener("change", function () {
+      setTimeout(function () { if (lastResult) render(); }, 80);
+    });
+  });
+
+  // 首次渲染（此时若本节页签未激活，宽度为 0，画布留给切回时补画）
+  toggleSigma();
+  syncFreqMax();
+  render();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", main);
+} else {
+  main();
+}
+
+})();
 </script>
 </body>
 </html>

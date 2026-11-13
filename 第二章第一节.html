@@ -608,6 +608,1109 @@ $$\lim\limits_{\Delta y\to 0}\frac{\Delta y}{\Delta x+\mathrm{i}\Delta y}=\lim\l
 </div>
 </div>
 
+<style>
+.anlab {
+  --an-ink: #1f2933; --an-dim: #607d8b; --an-line: #d8e3ef;
+  --an-ac: #1565c0; --an-acd: #0d47a1;
+  --an-mono: "Consolas", "SF Mono", "Courier New", monospace;
+  color: var(--an-ink);
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  font-size: 14.5px; line-height: 1.6;
+  background: #f7fafc; border: 1px solid #e2eaf2; border-radius: 10px;
+  padding: 14px 16px 16px; margin: 14px 0 4px;
+}
+.anlab button { font-family: inherit; font-size: 13px; cursor: pointer; }
+.anlab .bar {
+  display: grid; grid-template-columns: 1.1fr 1.1fr .9fr;
+  gap: 10px 14px; background: #fff; border: 1px solid var(--an-line);
+  border-radius: 8px; padding: 11px 13px;
+}
+.anlab .fd { min-width: 0; }
+.anlab .fd > label {
+  display: block; font-size: 12px; color: var(--an-dim);
+  font-weight: 600; margin-bottom: 3px; letter-spacing: .04em;
+}
+.anlab .fd .rw { display: flex; align-items: center; gap: 6px; }
+.anlab .tinynote {
+  font-size: 11.5px; color: var(--an-dim); margin-top: 3px; line-height: 1.4;
+}
+.anlab select, .anlab input[type="text"], .anlab input[type="number"] {
+  font-family: inherit; font-size: 13.5px; padding: 5px 7px;
+  border: 1px solid var(--an-line); border-radius: 6px;
+  background: #fff; color: var(--an-ink); width: 100%; min-width: 0;
+}
+.anlab select:focus, .anlab input:focus { outline: 2px solid #c9d9f5; border-color: var(--an-ac); }
+.anlab .btn {
+  border: 1px solid var(--an-line); background: #fff; border-radius: 6px;
+  padding: 5px 11px; color: var(--an-ink); transition: .12s; white-space: nowrap;
+}
+.anlab .btn:hover { border-color: var(--an-ac); color: var(--an-acd); background: #f6f9ff; }
+.anlab .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.anlab .cd {
+  background: #fff; border: 1px solid var(--an-line);
+  border-radius: 8px; padding: 7px 12px; min-width: 0;
+}
+.anlab .cd .k { font-size: 11.5px; color: var(--an-dim); letter-spacing: .05em; }
+.anlab .cd .v {
+  font-family: var(--an-mono); font-size: 17px; font-weight: 700;
+  color: var(--an-acd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.anlab .cd .n {
+  font-size: 11.5px; color: var(--an-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.anlab .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.anlab figure {
+  margin: 0; background: #fff; border: 1px solid var(--an-line);
+  border-radius: 8px; padding: 6px 8px 4px; min-width: 0;
+}
+.anlab figcaption {
+  font-size: 12px; color: var(--an-dim); padding: 0 2px 3px;
+  display: flex; justify-content: space-between; gap: 8px;
+}
+.anlab figcaption b {
+  color: var(--an-ink); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 0;
+}
+.anlab figcaption .hint { flex: 0 0 auto; max-width: 52%; }
+.anlab figcaption .hint {
+  font-family: var(--an-mono); font-size: 11px; color: #93a2b2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.anlab canvas { width: 100%; display: block; border-radius: 6px; background: #fafcff; }
+.anlab .row2 {
+  display: flex; align-items: center; gap: 10px; margin-top: 10px;
+  background: #fff; border: 1px solid var(--an-line); border-radius: 8px;
+  padding: 8px 12px; flex-wrap: wrap;
+}
+.anlab .row2 > label { font-size: 12.5px; color: var(--an-dim); font-weight: 600; white-space: nowrap; }
+.anlab input[type="range"] {
+  flex: 1 1 150px; min-width: 110px; width: auto; height: 16px;
+  margin: 0; accent-color: var(--an-ac); vertical-align: middle;
+}
+.anlab .badge {
+  font-family: var(--an-mono); font-size: 12.5px; color: #fff;
+  background: var(--an-ac); border-radius: 4px; padding: 1px 8px; white-space: nowrap;
+}
+.anlab .note2 { font-size: 12.5px; color: #546e7a; }
+.anlab table.ant {
+  width: 100%; border-collapse: collapse; margin-top: 10px;
+  font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--an-line); table-layout: fixed;
+}
+.anlab table.ant th:nth-child(1), .anlab table.ant td:nth-child(1) { width: 17%; }
+.anlab table.ant th:nth-child(2), .anlab table.ant td:nth-child(2) { width: 25%; }
+.anlab table.ant th:nth-child(3), .anlab table.ant td:nth-child(3) { width: 24%; }
+.anlab table.ant th:nth-child(4), .anlab table.ant td:nth-child(4) { width: 15%; }
+.anlab table.ant th:nth-child(5), .anlab table.ant td:nth-child(5) { width: 11%; }
+.anlab table.ant th:nth-child(6), .anlab table.ant td:nth-child(6) { width: 8%; }
+.anlab table.ant th, .anlab table.ant td {
+  padding: 5px 9px; border-bottom: 1px solid #eef3f8;
+  text-align: right; font-family: var(--an-mono); font-size: 12.5px;
+}
+.anlab table.ant th {
+  color: var(--an-dim); font-weight: 600; font-size: 11.5px;
+  background: #f8fbfe; letter-spacing: .03em;
+}
+.anlab table.ant td:first-child, .anlab table.ant th:first-child,
+.anlab table.ant td:nth-child(2), .anlab table.ant th:nth-child(2) { text-align: left; }
+.anlab table.ant td:nth-child(2) { font-family: inherit; font-size: 12.5px; }
+.anlab table.ant tr:last-child td { border-bottom: 0; }
+.anlab table.ant tbody tr { cursor: pointer; }
+.anlab table.ant tbody tr:hover td { background: #f6f9ff; }
+.anlab table.ant tbody tr.on td { background: #e8f1fe; }
+.anlab table.ant tbody tr.on td:first-child { box-shadow: inset 3px 0 0 var(--an-ac); }
+.anlab table.ant td.bad { color: #c62828; }
+.anlab table.ant td.ok { color: #2e7d32; }
+.anlab .concl {
+  margin-top: 10px; background: #fff; border: 1px solid var(--an-line);
+  border-left: 4px solid var(--an-ac); border-radius: 8px;
+  padding: 8px 12px; font-size: 13.5px; color: #37474f;
+}
+.anlab .concl .tag { color: var(--an-dim); font-size: 12px; margin-right: 6px; }
+.anlab .concl .line { margin: 2px 0; }
+.anlab .warn { color: #c62828; }
+/* 模式切换：逐点求留数 / 留数定理 */
+.anlab .antabs { display: flex; gap: 6px; margin: 0 0 10px; }
+.anlab .an-tab {
+  padding: 6px 15px; border: 1px solid var(--an-line); background: #f5f7fa;
+  border-radius: 8px; font-size: 13px; cursor: pointer; color: #607d8b;
+  font-family: inherit; transition: background .15s, color .15s;
+}
+.anlab .an-tab:hover { background: #eceff1; }
+.anlab .an-tab.on {
+  background: #e3f2fd; border-color: #1565c0; color: #0d47a1; font-weight: 600;
+}
+@media (max-width: 900px) {
+  .anlab .grid, .anlab .cards, .anlab .bar { grid-template-columns: 1fr; }
+  .anlab { font-size: 15px; }
+}
+</style>
+
+<div class="chart-container" id="anLab" style="background:#fff;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="margin:0 0 6px;color:#0d47a1;font-size:1.15em;">交互: 解析性实验台 —— 差商、C-R 方程、解析区域三路对照</h3>
+<div class="chart-desc" style="color:#546e7a;font-size:.88em;margin-bottom:10px;">
+判断一个点是否解析，看三件事：<b>差商是否收敛</b>（八个方向逼近同一个值），
+<b>C-R 方程是否成立</b>（$u_x=v_y$、$u_y=-v_x$），<b>邻域是否处处如此</b>（只在一点可微不算解析）。
+左边地图按逐点数值判定上色，<b>点图上任意位置</b>即可把它设为考察点；右边把八个方向的差商随 $h\to0$ 的轨迹画出来 ——
+<b>八条线收到同一点就是可微，散成一圈就是不可微</b>。
+</div>
+
+<div class="anlab">
+  <div class="bar">
+    <div class="fd">
+      <label>函数 f(z)</label>
+      <select id="anFn"></select>
+    </div>
+    <div class="fd">
+      <label>自定义 f(z)（变量用 z）</label>
+      <div class="rw">
+        <input type="text" id="anExpr" placeholder="如 z^2+1/(z-1)">
+        <button class="btn" id="anApply" type="button">应用</button>
+      </div>
+      <div class="tinynote">可粘贴上面的式子：方括号 [ ] 按圆括号读，减号 − 也认</div>
+    </div>
+    <div class="fd">
+      <label>考察点 z₀</label>
+      <select id="anSel"></select>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="cd">
+      <div class="k">z₀ 处的判定</div>
+      <div class="v" id="anCKind">—</div>
+      <div class="n" id="anCKindN">—</div>
+    </div>
+    <div class="cd">
+      <div class="k">差商均值（八向）</div>
+      <div class="v" id="anCDq">—</div>
+      <div class="n" id="anCDqN">—</div>
+    </div>
+    <div class="cd">
+      <div class="k">C-R 残差 |u_x−v_y| + |u_y+v_x|</div>
+      <div class="v" id="anCCr">—</div>
+      <div class="n" id="anCCrN">—</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <figure>
+      <figcaption><b id="anCapMap">解析性地图：绿 = 可微，红 = 不可微，深灰 = 无定义</b><span class="hint" id="anHMap">—</span></figcaption>
+      <canvas id="anCvMap" data-h="232"></canvas>
+    </figure>
+    <figure>
+      <figcaption><b id="anCapDq">八个方向的差商：大圈 → 小点，收进同一个就是可微</b><span class="hint" id="anHDq">—</span></figcaption>
+      <canvas id="anCvDq" data-h="232"></canvas>
+    </figure>
+  </div>
+
+  <table class="ant" id="anTbl">
+    <thead>
+      <tr><th>点 z₀</th><th>判定</th><th>差商偏离</th><th>C-R 残差</th><th>说明</th></tr>
+    </thead>
+    <tbody id="anBody"></tbody>
+  </table>
+
+  <div class="concl" id="anConcl"><span class="tag">结论</span><span class="line">—</span></div>
+  <div class="note2" id="anErr" style="margin-top:6px;"></div>
+</div>
+</div>
+
+<script>
+/* ===== AN-JS-BEGIN ===== */
+/* =====================================================================
+   an-core.js —— 解析区域实验台的数值内核（纯 JS，可在 node 里跑）
+
+   结构：
+     一、复数运算            （与 rs-core.js 同一套，保证两个实验台观感一致）
+     二、表达式解析          （递归下降 + 白名单函数，不碰 eval；含输入归一化）
+     三、差商与八个方向      （解析的原始定义：差商极限与逼近方向无关）
+     四、Cauchy–Riemann 残差 （u_x−v_y 与 u_y+v_x 的中心差分）
+     五、逐点判定与扫描      （可微 / 仅在一点可微 / 不解析 / 无定义）
+     六、预设函数            （12 条，附解析区域与示例点）
+
+   用法： node test-core.js   （跑对拍）
+   ===================================================================== */
+var AN = (function () {
+'use strict';
+
+/* ---------------------------------------------------------------
+   一、复数运算（全部用 {re, im} 表示，不做对象池优化，够快）
+   --------------------------------------------------------------- */
+function c(re, im) { return { re: re, im: im || 0 }; }
+function isC(v) { return v !== null && typeof v === 'object' && 're' in v; }
+function re(v) { return isC(v) ? v.re : v; }
+function im(v) { return isC(v) ? v.im : 0; }
+
+function add(a, b) { return c(a.re + b.re, a.im + b.im); }
+function sub(a, b) { return c(a.re - b.re, a.im - b.im); }
+function neg(a) { return c(-a.re, -a.im); }
+function mul(a, b) { return c(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re); }
+function scale(a, k) { return c(a.re * k, a.im * k); }
+function div(a, b) {
+    var d = b.re * b.re + b.im * b.im;
+    return c((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+function abs(a) { return Math.hypot(a.re, a.im); }
+function arg(a) { return Math.atan2(a.im, a.re); }
+function conj(a) { return c(a.re, -a.im); }
+function cexp(a) { var m = Math.exp(a.re); return c(m * Math.cos(a.im), m * Math.sin(a.im)); }
+function clog(a) { return c(Math.log(abs(a)), arg(a)); }
+function cpow(a, b) {
+    /* 整数指数走连乘：精确且避开主值分支；其余走 exp(b log a) */
+    if (Math.abs(b.im) < 1e-15 && Math.abs(b.re - Math.round(b.re)) < 1e-13 &&
+        Math.abs(Math.round(b.re)) <= 64) {
+        var n = Math.round(b.re), base, out;
+        if (n === 0) return c(1, 0);
+        base = n < 0 ? div(c(1, 0), a) : a;
+        n = Math.abs(n);
+        out = c(1, 0);
+        while (n > 0) {
+            if (n & 1) out = mul(out, base);
+            base = mul(base, base);
+            n >>= 1;
+        }
+        return out;
+    }
+    return cexp(mul(b, clog(a)));
+}
+function csqrt(a) { return cpow(a, c(0.5, 0)); }
+function csin(a) { return c(Math.sin(a.re) * Math.cosh(a.im), Math.cos(a.re) * Math.sinh(a.im)); }
+function ccos(a) { return c(Math.cos(a.re) * Math.cosh(a.im), -Math.sin(a.re) * Math.sinh(a.im)); }
+function ctan(a) { return div(csin(a), ccos(a)); }
+function csinh(a) { return c(Math.sinh(a.re) * Math.cos(a.im), Math.cosh(a.re) * Math.sin(a.im)); }
+function ccosh(a) { return c(Math.cosh(a.re) * Math.cos(a.im), Math.sinh(a.re) * Math.sin(a.im)); }
+function ctanh(a) { return div(csinh(a), ccosh(a)); }
+
+var FNS = {
+    exp: cexp, log: clog, ln: clog, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan,
+    sinh: csinh, cosh: ccosh, tanh: ctanh,
+    abs: function (a) { return c(abs(a), 0); },
+    conj: conj, arg: function (a) { return c(arg(a), 0); },
+    re: function (a) { return c(a.re, 0); },
+    im: function (a) { return c(a.im, 0); }
+};
+
+/* ---------------------------------------------------------------
+   二、表达式解析：递归下降，白名单函数，不碰 eval
+       expr  := term (('+'|'-') term)*
+       term  := unary (('*'|'/') unary | 隐式乘 unary)*
+       unary := ('-'|'+') unary | power
+       power := atom ('^' unary)?
+       atom  := 数字 | z | i | pi | e | 函数'(' expr ')' | '(' expr ')'
+   --------------------------------------------------------------- */
+/* 把人们实际会粘贴进来的写法归一化：
+     ① 全角字符（中文输入法下打的 （ ） ［ ］ ／ ＊ ０-９ 等）转半角；
+     ② 方括号、花括号一律当分组，等价于圆括号；
+     ③ 各种减号（− – — －）统一成 ASCII 的 -，乘除号统一成 * /。
+   下拉框里显示的 `1 / [z(z−1)(z−2)]` 直接复制进输入框，就是靠这一步才认的。 */
+function normalize(src) {
+    return String(src == null ? '' : src)
+        .replace(/[\uFF01-\uFF5E]/g, function (ch) {          /* 全角 ASCII → 半角 */
+            return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+        })
+        .replace(/[\u2010-\u2015\u2212]/g, '-')               /* ‐ ‑ ‒ – — ― − */
+        .replace(/[【〔〖]/g, '(').replace(/[】〕〗]/g, ')')
+        .replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')')
+        .replace(/[×·⋅∙]/g, '*').replace(/[÷∕]/g, '/')
+        .replace(/\u3000/g, ' ')
+        .replace(/π/g, 'pi')
+        .replace(/\*\*/g, '^')
+        .replace(/\s+/g, '');
+}
+
+function compile(src) {
+    var s = normalize(src);
+    if (!s) throw new Error('表达式为空');
+    var i = 0;
+
+    function ch() { return s.charAt(i); }
+    function bad(msg) { throw new Error(msg + '（位置 ' + (i + 1) + '）'); }
+
+    function num() {
+        var m = /^\d*\.?\d+(?:[eE][+-]?\d+)?/.exec(s.slice(i));
+        if (!m) bad('这里应是一个数字');
+        i += m[0].length;
+        return c(parseFloat(m[0]), 0);
+    }
+    function ident() {
+        var m = /^[A-Za-z][A-Za-z0-9_]*/.exec(s.slice(i));
+        if (!m) {
+            var k = ch();
+            if (k === '') bad('表达式到这里就结束了，后面还缺一个因子');
+            if (/[\[\]{}()]/.test(k)) bad('这里的 ' + k + ' 位置不对，检查一下括号是否配对');
+            bad('这里出现了不认识的字符 ' + k + '，应是一个数字、变量名或函数名');
+        }
+        i += m[0].length;
+        return m[0];
+    }
+    function startsAtom() {
+        var k = ch();
+        return /[0-9.(]/.test(k) || /[A-Za-z]/.test(k);
+    }
+
+    function parseExpr() {
+        var v = parseTerm();
+        for (;;) {
+            var k = ch();
+            if (k === '+') { i++; v = add(v, parseTerm()); }
+            else if (k === '-') { i++; v = sub(v, parseTerm()); }
+            else return v;
+        }
+    }
+    function parseTerm() {
+        var v = parseUnary();
+        for (;;) {
+            var k = ch();
+            if (k === '*') { i++; v = mul(v, parseUnary()); }
+            else if (k === '/') { i++; v = div(v, parseUnary()); }
+            else if (startsAtom()) { v = mul(v, parseUnary()); }   /* 2z、z(z-1)、2sin(z) */
+            else return v;
+        }
+    }
+    function parseUnary() {
+        if (ch() === '-') { i++; return neg(parseUnary()); }
+        if (ch() === '+') { i++; return parseUnary(); }
+        return parsePower();
+    }
+    function parsePower() {
+        var b = parseAtom();
+        if (ch() === '^') { i++; return cpow(b, parseUnary()); }
+        return b;
+    }
+    function parseAtom() {
+        if (ch() === '(') {
+            i++;
+            var v = parseExpr();
+            if (ch() === ')') i++; else bad('缺少右括号');
+            return v;
+        }
+        if (/[0-9.]/.test(ch())) return num();
+        var name = ident();
+        if (name === 'z') return c(GZ.re, GZ.im);
+        if (name === 'i' || name === 'I') return c(0, 1);
+        if (name === 'pi' || name === 'Pi') return c(Math.PI, 0);
+        if (name === 'e' || name === 'E') return c(Math.E, 0);
+        if (name === 'inf' || name === 'oo') throw new Error('表达式中不能出现无穷大');
+        if (!FNS[name] && FNS[name.toLowerCase()]) name = name.toLowerCase();
+        if (!FNS[name]) throw new Error('未定义的函数或符号：' + name);
+        if (ch() !== '(') bad(name + ' 后面缺少括号');
+        i++;
+        var a = parseExpr();
+        if (ch() === ')') i++; else bad('缺少右括号');
+        return FNS[name](a);
+    }
+
+    /* 语法先在 z=0 上试跑一遍：即时抛错，避免把坏表达式留到计算阶段 */
+    var GZ = c(0, 0);
+    i = 0;
+    GZ = c(0, 0);
+    (function precheck() { parseExpr(); }());
+    if (i < s.length) bad('多余的字符：' + s.slice(i));
+
+    /* 每次调用重新走一遍解析（表达式短，成本可忽略），
+       这样解析进度 i 不会在多次调用间互相污染 */
+    return function (z) {
+        i = 0;
+        GZ = z || c(0, 0);
+        var v = parseExpr();
+        if (i < s.length) bad('多余的字符：' + s.slice(i));
+        return v;
+    };
+}
+
+/* ---------------------------------------------------------------
+   三、差商与八个方向：解析 = 差商极限存在，且与逼近方向无关
+   --------------------------------------------------------------- */
+var NDIR = 8;
+var HS = [1e-2, 1e-3, 1e-4, 1e-5];      /* 差商用的步长序列（几何递减） */
+
+function dirUnit(k) {
+    var th = 2 * Math.PI * k / NDIR;
+    return c(Math.cos(th), Math.sin(th));
+}
+
+/* (f(z + h e^{iθ}) − f(z)) / (h e^{iθ}) */
+function dq(f, z, h, k) {
+    var dz = scale(dirUnit(k), h);
+    return div(sub(f(add(z, dz)), f(z)), dz);
+}
+
+/* 八个方向的差商：均值、围绕均值的最大偏离、相对偏离 */
+function spreadAt(f, z, h) {
+    var sum = c(0, 0), vs = [];
+    for (var k = 0; k < NDIR; k++) {
+        var v = dq(f, z, h, k);
+        if (!isFinite(v.re) || !isFinite(v.im)) return null;
+        vs.push(v);
+        sum = add(sum, v);
+    }
+    var m = scale(sum, 1 / NDIR), dev = 0;
+    for (var j = 0; j < vs.length; j++) dev = Math.max(dev, abs(sub(vs[j], m)));
+    return { mean: m, dev: dev, vs: vs };
+}
+
+function finiteAt(f, z) {
+    var v = f(z);
+    return isFinite(v.re) && isFinite(v.im);
+}
+
+/* ---------------------------------------------------------------
+   四、Cauchy–Riemann 残差（中心差分）
+     fx = (f(z+h) − f(z−h)) / 2h = u_x + i v_x
+     fy = (f(z+ih) − f(z−ih)) / 2ih = v_y − i u_y
+     于是  u_x − v_y = Re fx − Re fy
+           u_y + v_x = Im fx − Im fy
+   --------------------------------------------------------------- */
+function crResidual(f, z, h) {
+    h = h || 1e-5;
+    var fx = div(sub(f(add(z, c(h, 0))), f(sub(z, c(h, 0)))), c(2 * h, 0));
+    var fy = div(sub(f(add(z, c(0, h))), f(sub(z, c(0, h)))), c(0, 2 * h));
+    return {
+        a: fx.re - fy.re,           /* u_x − v_y */
+        b: fx.im - fy.im,           /* u_y + v_x */
+        fx: fx, fy: fy,
+        norm: Math.hypot(fx.re - fy.re, fx.im - fy.im)
+    };
+}
+
+/* ---------------------------------------------------------------
+   五、逐点判定
+   可微的判据看的是「八个方向差商的绝对偏离 dev 是否随 h → 0 而消失」：
+     可微   dev = O(h) → 0        （|z|² 在 0 处：dev ≈ h，判"可微"，导数 0）
+     不可微 dev 不随 h 缩小       （Im z 处处：差商 = sinθ·e^{−iθ}，dev 稳定在 O(1)）
+   用相对量会误判 |z|² 在 0 的情形（分子分母同步趋零），所以只看绝对值。
+   --------------------------------------------------------------- */
+function diffProbe(f, z) {
+    if (!finiteAt(f, z)) return { kind: 'undef', rows: [], dev: Infinity, rel: Infinity };
+    var rows = [], ok = true;
+    for (var i = 0; i < HS.length; i++) {
+        var s = spreadAt(f, z, HS[i]);
+        if (!s) { ok = false; break; }
+        rows.push({ h: HS[i], dev: s.dev, mean: s.mean, vs: s.vs });
+    }
+    if (!ok || rows.length < 3) return { kind: 'none', rows: rows, dev: Infinity, rel: Infinity };
+    var d0 = rows[0].dev, dN = rows[rows.length - 1].dev;
+    /* 判「趋于 0」：h 每缩小 10 倍，dev 也应缩小约 10 倍（四个 h 共缩小 1000 倍）。
+       只看绝对阈值会放过 |f''| 大的点——1/(z(z−1)) 在离极点 0.12 处 dev 也有 6e−3。 */
+    var settled = dN < 0.05 && dN < d0 * 0.06;
+    var last = rows[rows.length - 1];
+    var rel = last.dev / Math.max(abs(last.mean), 1e-12);
+    return { kind: settled ? 'diff' : 'none', rows: rows, dev: dN, rel: rel, last: last };
+}
+
+/* 邻域是否也可微 → 区分「解析」与「仅在一点可微」 */
+function neighborsDiff(f, z, r) {
+    r = r || 0.02;
+    var pts = [c(z.re + r, z.im), c(z.re - r, z.im), c(z.re, z.im + r), c(z.re, z.im - r)];
+    var n = 0;
+    for (var i = 0; i < pts.length; i++) {
+        var p = diffProbe(f, pts[i]);
+        if (p.kind === 'diff') n++;
+    }
+    return n;
+}
+
+/* 可去奇点：本点 0/0 或未定义，但邻域有界且处处可微（如 sin z / z 在 0）。
+   注意不能只看"邻域值不大"——极点附近 |f| ~ 1/h，用 h=1e-3 采样也只有 1000，
+   会被误判成可去。判据取两个半径上 |f| 的比值：极点会随半径缩小放大 10 倍，
+   可去奇点几乎不变。 */
+function maxMagAround(f, z, r) {
+    var m = 0, pts = [c(z.re + r, z.im), c(z.re - r, z.im),
+                      c(z.re, z.im + r), c(z.re, z.im - r)];
+    for (var i = 0; i < pts.length; i++) {
+        var v = f(pts[i]);
+        if (!isFinite(v.re) || !isFinite(v.im)) return Infinity;
+        m = Math.max(m, abs(v));
+    }
+    return m;
+}
+
+function removableAt(f, z) {
+    var m1 = maxMagAround(f, z, 1e-3), m2 = maxMagAround(f, z, 1e-4);
+    if (!isFinite(m1) || !isFinite(m2)) return false;
+    return m2 < 1e3 && m2 < m1 * 2;
+}
+
+function judge(f, z) {
+    var p = diffProbe(f, z);
+    if (p.kind === 'undef') {
+        if (removableAt(f, z)) {
+            return { kind: 'removable', note: '本点未定义（0/0 型），但邻域有界且处处可微 → 可去奇点，补充定义后解析', probe: p };
+        }
+        return { kind: 'undef', note: '该点无定义（|f| 发散或为 NaN）', probe: p };
+    }
+    if (p.kind === 'diff') {
+        var nb = neighborsDiff(f, z);
+        return {
+            kind: nb >= 2 ? 'analytic' : 'point',
+            neighbors: nb,
+            note: nb >= 2
+                ? '八个方向的差商收敛到同一个值，邻域也如此'
+                : '八个方向差商收敛到同一点，但邻域内发散 → 只在这一点可微，不构成解析区域',
+            probe: p
+        };
+    }
+    return { kind: 'none', note: '八个方向的差商不收敛到同一点，差商极限不存在', probe: p };
+}
+
+/* 快速版：只判「是否可微」，供地图扫描用（省调用次数）。
+   判据不能只看 dev 的绝对值：dev ≈ h·|f''|/2，|f''| 大的地方（如 1/(z−a) 靠近 a）
+   即使可微也会有 1e−3 量级的偏离。关键是它随 h 缩小而等比缩小。 */
+function quickDiff(f, z) {
+    if (!finiteAt(f, z)) return false;
+    var s1 = spreadAt(f, z, 1e-4), s2 = spreadAt(f, z, 1e-5);
+    if (!s1 || !s2) return false;
+    return s2.dev < 0.1 && s2.dev < s1.dev * 0.3;
+}
+
+/* 视野内的解析性地图：返回 n×n 网格，每格 {x, y, ok(可微), def(有定义)} */
+function mapScan(f, box, n) {
+    n = n || 42;
+    var out = [], dx = (box.x1 - box.x0) / (n - 1), dy = (box.y1 - box.y0) / (n - 1);
+    for (var j = 0; j < n; j++) {
+        var row = [];
+        for (var i = 0; i < n; i++) {
+            var z = c(box.x0 + i * dx, box.y0 + j * dy);
+            var def = finiteAt(f, z);
+            row.push({ x: z.re, y: z.im, ok: def && quickDiff(f, z), def: def });
+        }
+        out.push(row);
+    }
+    return out;
+}
+
+/* 地图统计：可微点占比，用于「结论」一句话 */
+function mapStats(grid) {
+    var tot = 0, ok = 0, def = 0;
+    grid.forEach(function (row) {
+        row.forEach(function (g) { tot++; if (g.def) def++; if (g.ok) ok++; });
+    });
+    return { total: tot, analytic: ok, defined: def, ratio: ok / Math.max(tot, 1) };
+}
+
+/* ---------------------------------------------------------------
+   六、预设函数（每条都给解析区域与一个值得看的点）
+   --------------------------------------------------------------- */
+var PRESETS = [
+    {
+        key: 'ex1', src: 'z^2+2*z', name: 'z² + 2z', note: '整函数：整个复平面解析',
+        region: '整个复平面 C（整函数）', pts: [[1, 0], [0, 0], [0, 1.5]]
+    },
+    {
+        key: 'ex2', src: '1/(z^2+1)', name: '1/(z²+1)', note: '两个一级极点 ±i',
+        region: 'C \\ {i, −i}（挖去两个极点）', pts: [[1, 0], [0, 1], [0, 1.02]]
+    },
+    {
+        key: 'ex3', src: 'Im(z)', name: 'Im z', note: '处处连续，处处不可微',
+        region: '空集：任何开集上都不解析', pts: [[0.5, 0.5], [1, -0.5], [-1, 1]]
+    },
+    {
+        key: 'ex4', src: 'abs(z)^2', name: '|z|²', note: '只在 z=0 可微，不解析',
+        region: '空集（z=0 可微，但任何邻域内都不处处可微）', pts: [[0, 0], [1, 0], [0, 1]]
+    },
+    {
+        key: 'ex5', src: 'conj(z)', name: 'z̄（共轭）', note: '处处不可微',
+        region: '空集', pts: [[1, 1], [-1, 0.5], [0, 0]]
+    },
+    {
+        key: 'ex6', src: 'exp(1/z)', name: 'e^{1/z}', note: '本性奇点 0',
+        region: 'C \\ {0}', pts: [[1, 0], [0, 0], [0.3, 0.3]]
+    },
+    {
+        key: 'ex7', src: '1/sin(z)', name: '1/sin z', note: '极点 nπ 上不解析',
+        region: 'C \\ {nπ : n ∈ Z}', pts: [[1, 1], [0, 0], [3.14, 0]]
+    },
+    {
+        key: 'ex8', src: 'log(z)', name: 'log z（主值）', note: '分支点 0，负实轴是割线',
+        region: 'C \\ (−∞,0]（沿负实轴取主值支）', pts: [[1, 1], [-1, 0.5], [-1, -0.5]]
+    },
+    {
+        key: 'ex9', src: 'z*conj(z)+z^2', name: '|z|² + z²', note: '只在 z=0 可微',
+        region: '空集（z=0 可微）', pts: [[0, 0], [1, 1]]
+    },
+    {
+        key: 'ex10', src: 're(z)^2+im(z)', name: 'x² + y（Re²+Im）', note: '实部虚部混合，几乎处处不可微',
+        region: '空集', pts: [[0.3, 0.4], [1, 1]]
+    },
+    {
+        key: 'ex11', src: 'sin(z)/z', name: 'sin z / z', note: '可去奇点：0/0，补充定义后整函数',
+        region: 'C \\ {0}；0 是可去奇点，补充定义 f(0)=1 后成为整函数', pts: [[0, 0], [1, 0], [2, 0]]
+    },
+    {
+        key: 'ex12', src: 'z/(z^2+1)', name: 'z/(z²+1)', note: '两个极点，留数各 1/2',
+        region: 'C \\ {i, −i}', pts: [[2, 0], [0, 1], [0.5, 0]]
+    }
+];
+
+/* ---------------------------------------------------------------
+   七、导出
+   --------------------------------------------------------------- */
+return {
+    c: c, add: add, sub: sub, mul: mul, div: div, neg: neg, scale: scale,
+    abs: abs, arg: arg, conj: conj, exp: cexp, log: clog, pow: cpow, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan, compile: compile, normalize: normalize,
+    dq: dq, spreadAt: spreadAt, crResidual: crResidual, diffProbe: diffProbe,
+    judge: judge, quickDiff: quickDiff, mapScan: mapScan, mapStats: mapStats,
+    finiteAt: finiteAt, PRESETS: PRESETS
+};
+})();
+if (typeof module === 'object' && module.exports) module.exports = AN;
+
+
+(function () {
+  'use strict';
+  var M = Math;
+  var BOX = { x0: -2.4, x1: 2.4, y0: -2.4, y1: 2.4 };
+  var ST = { preset: null, src: '', f: null, sel: null, pts: [], grid: null, res: null, rows: [] };
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- 数字格式 ---------- */
+  function q(x) {
+    if (!isFinite(x)) return '—';
+    if (x === 0) return '0';
+    var a = M.abs(x);
+    if (a < 1e-4 || a >= 1e5) {
+      var s = x.toExponential(2).replace(/\.?0+e/, 'e').replace('e+', 'e');
+      return s.replace('-', '−');
+    }
+    return String(M.round(x * 1000) / 1000).replace('-', '−');
+  }
+  function fmtC(v) {
+    if (!v || !isFinite(v.re) || !isFinite(v.im)) return '—';
+    var r = M.abs(v.re) < 1e-12 ? 0 : v.re, i = M.abs(v.im) < 1e-12 ? 0 : v.im;
+    if (i === 0) return q(r);
+    if (r === 0) return (i > 0 ? '' : '−') + q(M.abs(i)) + 'i';
+    return q(r) + (i > 0 ? '+' : '−') + q(M.abs(i)) + 'i';
+  }
+
+  var KIND = {
+    analytic:  { t: '解析',       cls: 'ok' },
+    point:     { t: '仅在一点可微', cls: 'warn' },
+    removable: { t: '可去奇点',    cls: 'warn' },
+    none:      { t: '不可微',     cls: 'bad' },
+    undef:     { t: '无定义',     cls: 'bad' }
+  };
+
+  /* ---------- 重建 ---------- */
+  function rebuild(keepSel) {
+    $('anErr').textContent = '';
+    try {
+      ST.f = AN.compile(ST.src);
+    } catch (e) {
+      ST.f = null;
+      ST.rows = [];
+      $('anErr').innerHTML = '<span class="warn">表达式无法解析：' + e.message + '</span>　（变量用 z，乘号可省略，分组用圆括号）';
+      fillCards(); fillTable(); fillConcl(); drawMap(); drawDq();
+      return;
+    }
+    ST.grid = AN.mapScan(ST.f, BOX, 41);
+    ST.pts = buildPoints(keepSel);
+    if (!keepSel || !ST.sel) ST.sel = ST.pts[0].at;
+    ST.rows = ST.pts.map(function (p) {
+      var j = AN.judge(ST.f, p.at);
+      return { at: p.at, label: p.label, kind: j.kind, note: j.note, probe: j.probe };
+    });
+    syncSel();
+    fillCards(); fillTable(); fillConcl(); drawMap(); drawDq();
+  }
+
+  /* 表格/下拉里的点：预设推荐点 + 从地图里挑出的"定义但不可微"的点（去重）
+     只挑「局部平缓」的不可微点：极点周围 f 变化剧烈，那里被判不可微只是
+     数值假象（|f| 太大、差商不稳），列进表格会误导读者以为那里是解析性边界。 */
+  function smoothAt(g) {
+    var f = ST.f, z = AN.c(g.x, g.y), m0 = AN.abs(f(z));
+    if (!isFinite(m0) || m0 > 1e2) return false;
+    var hs = [[0.05, 0], [-0.05, 0], [0, 0.05], [0, -0.05]];
+    for (var i = 0; i < hs.length; i++) {
+      var v = f(AN.c(g.x + hs[i][0], g.y + hs[i][1]));
+      if (!isFinite(v.re) || !isFinite(v.im)) return false;
+      var m1 = AN.abs(v);
+      if (m1 > m0 * 3 + 1 || m1 < m0 / 3 - 1) return false;
+    }
+    return true;
+  }
+
+  function buildPoints(keepSel) {
+    var out = [];
+    var rec = (ST.preset && (ST.preset.pts || (ST.preset.pt ? [ST.preset.pt] : []))) || [];
+    rec.forEach(function (pt, i) {
+      out.push({ at: AN.c(pt[0], pt[1]), label: rec.length > 1 ? '推荐点 ' + (i + 1) : '推荐点' });
+    });
+    var cand = [], g = ST.grid, n = g.length;
+    for (var j = 1; j < n - 1; j++) {
+      for (var i = 1; i < n - 1; i++) {
+        var a = g[j][i];
+        if (!a.def || a.ok) continue;
+        if (!smoothAt(a)) continue;
+        cand.push(a);
+      }
+    }
+    /* 按到原点的距离排序，取前几个，彼此间隔 0.25 以上 */
+    cand.sort(function (p, q2) { return M.hypot(p.x, p.y) - M.hypot(q2.x, q2.y); });
+    var picked = [];
+    for (var k = 0; k < cand.length && picked.length < 4; k++) {
+      var c0 = cand[k], far = true;
+      for (var m = 0; m < picked.length; m++) {
+        if (M.hypot(picked[m].x - c0.x, picked[m].y - c0.y) < 0.25) { far = false; break; }
+      }
+      if (far) picked.push(c0);
+    }
+    picked.forEach(function (p, idx) {
+      out.push({ at: AN.c(p.x, p.y), label: '扫描点 ' + (idx + 1) });
+    });
+    if (!out.length) {
+      /* 既没有推荐点也没有不可微的扫描点：取离原点最近的可微点，
+         不要硬塞原点 —— 原点可能正好是极点，一打开就显示"无定义"会让人误会。 */
+      var best = null, bd = Infinity;
+      g.forEach(function (row) {
+        row.forEach(function (q) {
+          if (!q.def || !q.ok) return;
+          var d = Math.hypot(q.x, q.y);
+          if (d < bd) { bd = d; best = q; }
+        });
+      });
+      out.push(best ? { at: AN.c(best.x, best.y), label: '视野内可微点' }
+                     : { at: AN.c(0, 0), label: '原点' });
+    }
+    return out;
+  }
+
+  function syncSel() {
+    var sel = $('anSel');
+    sel.innerHTML = ST.pts.map(function (p, i) {
+      return '<option value="' + i + '">z = ' + fmtC(p.at) + '（' + p.label + '）</option>';
+    }).join('');
+    var idx = 0;
+    for (var i = 0; i < ST.pts.length; i++) {
+      if (M.hypot(ST.pts[i].at.re - ST.sel.re, ST.pts[i].at.im - ST.sel.im) < 1e-9) { idx = i; break; }
+    }
+    sel.value = String(idx);
+  }
+
+  function fillCards() {
+    var row = curRow();
+    if (!row) {
+      ['anCKind', 'anCDq', 'anCCr'].forEach(function (id) { $(id).textContent = '—'; });
+      $('anCKindN').textContent = $('anCDqN').textContent = $('anCCrN').textContent = '—';
+      return;
+    }
+    var k = KIND[row.kind] || { t: row.kind, cls: '' };
+    $('anCKind').textContent = k.t;
+    $('anCKind').className = 'v ' + (k.cls === 'bad' ? 'warn' : '');
+    $('anCKindN').textContent = row.note;
+    var p = row.probe || {};
+    var last = p.last;
+    $('anCDq').textContent = last ? fmtC(last.mean) : '—';
+    $('anCDqN').textContent = p.dev !== undefined && isFinite(p.dev)
+      ? '八向最大偏离 ' + q(p.dev) + '（h = 1e−5）'
+      : '差商发散，无极限';
+    var cr = AN.crResidual(ST.f, row.at, 1e-5);
+    var nrm = M.hypot(cr.a, cr.b);
+    $('anCCr').textContent = q(nrm);
+    $('anCCrN').textContent = 'u_x−v_y = ' + q(cr.a) + '，u_y+v_x = ' + q(cr.b);
+  }
+
+  function curRow() {
+    if (!ST.rows.length || !ST.sel) return null;
+    for (var i = 0; i < ST.rows.length; i++) {
+      if (M.hypot(ST.rows[i].at.re - ST.sel.re, ST.rows[i].at.im - ST.sel.im) < 1e-9) return ST.rows[i];
+    }
+    return null;
+  }
+
+  function fillTable() {
+    var body = $('anBody');
+    if (!ST.rows.length) {
+      body.innerHTML = '<tr><td colspan="5" style="text-align:left;color:#93a2b2">—</td></tr>';
+      return;
+    }
+    body.innerHTML = ST.rows.map(function (r, i) {
+      var k = KIND[r.kind] || { t: r.kind, cls: '' };
+      var p = r.probe || {};
+      var dev = (p.dev !== undefined && isFinite(p.dev)) ? q(p.dev) : '∞';
+      var cr = AN.crResidual(ST.f, r.at, 1e-5);
+      var on = ST.sel && M.hypot(r.at.re - ST.sel.re, r.at.im - ST.sel.im) < 1e-9 ? ' class="on"' : '';
+      return '<tr data-i="' + i + '"' + on + '>'
+        + '<td>' + fmtC(r.at) + '</td>'
+        + '<td class="' + k.cls + '">' + k.t + '</td>'
+        + '<td>' + dev + '</td>'
+        + '<td>' + q(M.hypot(cr.a, cr.b)) + '</td>'
+        + '<td style="text-align:left;font-family:inherit;font-size:12px;color:#607d8b">'
+        + (r.kind === 'analytic' ? '差商八向同一极限' :
+           r.kind === 'point' ? '邻域内不可微 → 不构成解析区域' :
+           r.kind === 'removable' ? '补充定义后解析' :
+           r.kind === 'none' ? '差商随方向分裂' : '|f| 发散') + '</td>'
+        + '</tr>';
+    }).join('');
+    Array.prototype.forEach.call(body.querySelectorAll('tr'), function (tr) {
+      tr.addEventListener('click', function () {
+        var i = +tr.getAttribute('data-i');
+        ST.sel = ST.rows[i].at;
+        syncSel(); fillCards(); fillTable(); fillConcl(); drawMap(); drawDq();
+      });
+    });
+  }
+
+  function fillConcl() {
+    var box = $('anConcl');
+    if (!ST.f) { box.querySelector('.line').textContent = '表达式无法解析，暂无结论。'; return; }
+    var st = AN.mapStats(ST.grid);
+    var txt = (ST.preset ? '【' + ST.preset.note + '】解析区域：' + ST.preset.region + '。' : '');
+    txt += '视野内 ' + (st.ratio * 100).toFixed(0) + '% 的点可微（' + st.analytic + ' / ' + st.total + ' 格），'
+      + '绿色区域即数值意义上的解析区域；红色处差商随方向分裂，灰色处无定义。';
+    box.querySelector('.line').innerHTML = txt.replace(/(C \\\\ \{[^}]*\})/g, '<b>$1</b>');
+  }
+
+  /* ---------- 画布助手 ---------- */
+  function setup(cv, h) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.parentNode.clientWidth - 16;
+    cv.width = w * dpr; cv.height = h * dpr;
+    cv.style.height = h + 'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  /* ---------- 图 A：解析性地图 ---------- */
+  function drawMap() {
+    var cv = $('anCvMap');
+    if (!cv) return;
+    var H = 232, S = setup(cv, H), ctx = S.ctx, W = S.w;
+    var pad = 24;
+    var X = function (x) { return pad + (x - BOX.x0) / (BOX.x1 - BOX.x0) * (W - 2 * pad); };
+    var Y = function (y) { return H - pad - (y - BOX.y0) / (BOX.y1 - BOX.y0) * (H - 2 * pad); };
+
+    if (!ST.grid) {
+      ctx.fillStyle = '#93a2b2'; ctx.font = '13px "Microsoft YaHei"';
+      ctx.fillText('—', W / 2 - 8, H / 2); return;
+    }
+    var n = ST.grid.length;
+    var cw = (W - 2 * pad) / (n - 1), ch = (H - 2 * pad) / (n - 1);
+    for (var j = 0; j < n; j++) {
+      for (var i = 0; i < n; i++) {
+        var g = ST.grid[j][i];
+        ctx.fillStyle = !g.def ? '#4a5568' : (g.ok ? '#7fc99b' : '#e5736f');
+        ctx.globalAlpha = g.def ? (g.ok ? 0.55 : 0.45) : 0.22;
+        ctx.fillRect(X(g.x) - cw / 2, Y(g.y) - ch / 2, cw + 0.9, ch + 0.9);
+      }
+    }
+    ctx.globalAlpha = 1;
+    /* 坐标轴 */
+    ctx.strokeStyle = '#c7d6e5'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, Y(0)); ctx.lineTo(W - pad, Y(0));
+    ctx.moveTo(X(0), pad); ctx.lineTo(X(0), H - pad); ctx.stroke();
+    ctx.fillStyle = '#93a2b2'; ctx.font = '11px Consolas';
+    ctx.fillText('−2', X(-2) - 6, Y(0) + 13);
+    ctx.fillText('2', X(2) - 4, Y(0) + 13);
+    ctx.fillText('2i', X(0) + 5, Y(2) + 4);
+    ctx.fillText('−2i', X(0) + 5, Y(-2) - 2);
+
+    /* 表里的点 */
+    ST.rows.forEach(function (r) {
+      var px = X(r.at.re), py = Y(r.at.im);
+      var k = r.kind;
+      var col = (k === 'analytic') ? '#1b5e20' : (k === 'point' || k === 'removable') ? '#e65100' : '#b71c1c';
+      ctx.beginPath(); ctx.arc(px, py, 3.2, 0, 2 * M.PI);
+      ctx.fillStyle = col; ctx.fill();
+    });
+    /* 选中点 */
+    if (ST.sel) {
+      var sx = X(ST.sel.re), sy = Y(ST.sel.im);
+      ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(sx, sy, 7, 0, 2 * M.PI); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(sx - 11, sy); ctx.lineTo(sx - 8, sy);
+      ctx.moveTo(sx + 8, sy); ctx.lineTo(sx + 11, sy);
+      ctx.moveTo(sx, sy - 11); ctx.lineTo(sx, sy - 8);
+      ctx.moveTo(sx, sy + 8); ctx.lineTo(sx, sy + 11);
+      ctx.stroke();
+    }
+    var st = AN.mapStats(ST.grid);
+    $('anHMap').textContent = '可微 ' + (st.ratio * 100).toFixed(0) + '% · 41×41 网格';
+  }
+
+  /* ---------- 图 B：八方向差商轨迹 ---------- */
+  function drawDq() {
+    var cv = $('anCvDq');
+    if (!cv) return;
+    var H = 232, S = setup(cv, H), ctx = S.ctx, W = S.w;
+    var pad = 26;
+    var row = curRow();
+    if (!row || !row.probe || !row.probe.rows || !row.probe.rows.length) {
+      ctx.fillStyle = '#93a2b2'; ctx.font = '13px "Microsoft YaHei"';
+      ctx.fillText('该点无定义，差商无处可算', W / 2 - 80, H / 2);
+      $('anHDq').textContent = '—';
+      return;
+    }
+    var rows = row.probe.rows;
+    /* 定范围：把所有差商的实虚部放进来，按 5%–95% 分位裁剪，避免个别爆点压扁整体 */
+    var xs = [], ys = [];
+    rows.forEach(function (r) {
+      r.vs.forEach(function (v) { if (isFinite(v.re) && isFinite(v.im)) { xs.push(v.re); ys.push(v.im); } });
+    });
+    if (!xs.length) { ctx.fillStyle = '#93a2b2'; ctx.fillText('—', W / 2, H / 2); return; }
+    function pct(a, p) { a.sort(function (u, v) { return u - v; }); return a[M.min(a.length - 1, M.max(0, M.floor(a.length * p)))]; }
+    var x0 = pct(xs.slice(), 0.02), x1 = pct(xs.slice(), 0.98);
+    var y0 = pct(ys.slice(), 0.02), y1 = pct(ys.slice(), 0.98);
+    var rawSpan = M.max(x1 - x0, y1 - y0, 1e-12);
+    /* 八向差商几乎重合时（可微函数），若按实际范围铺满画布，1e−9 的浮点噪声
+       会被放大成"明显分裂"，与事实相反。给一个下限，并在图注里标明放大倍数。 */
+    var lastRows = rows[rows.length - 1];
+    var mAbs = 0;
+    lastRows.vs.forEach(function (v) { mAbs = M.max(mAbs, M.hypot(v.re, v.im)); });
+    var floorSpan = 1e-3 * M.max(1, mAbs);
+    var span = M.max(rawSpan * 1.35, floorSpan * 1.35);
+    var zoomK = span / (rawSpan * 1.35);
+    var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    x0 = cx - span / 2; x1 = cx + span / 2;
+    y0 = cy - span / 2; y1 = cy + span / 2;
+    var X = function (x) { return pad + (x - x0) / (x1 - x0) * (W - 2 * pad); };
+    var Y = function (y) { return H - pad - (y - y0) / (y1 - y0) * (H - 2 * pad); };
+
+    ctx.strokeStyle = '#e3ecf5'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, Y(0)); ctx.lineTo(W - pad, Y(0));
+    ctx.moveTo(X(0), pad); ctx.lineTo(X(0), H - pad); ctx.stroke();
+
+    /* 八个方向，每个方向一条折线：h 从大到小 */
+    var COL = ['#1565c0', '#c62828', '#2e7d32', '#6a1b9a', '#ef6c00', '#00838f', '#5d4037', '#455a64'];
+    var lastVals = [];
+    for (var k = 0; k < 8; k++) {
+      ctx.beginPath();
+      var pts = [];
+      for (var i = 0; i < rows.length; i++) {
+        var v = rows[i].vs[k];
+        if (!isFinite(v.re) || !isFinite(v.im)) continue;
+        pts.push(v);
+        var px = X(v.re), py = Y(v.im);
+        if (pts.length === 1) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = COL[k % COL.length]; ctx.lineWidth = 1.4;
+      ctx.globalAlpha = 0.45; ctx.stroke(); ctx.globalAlpha = 1;
+      /* 末点（h 最小）画圆，并标角度 */
+      if (pts.length) {
+        var lv = pts[pts.length - 1];
+        lastVals.push(lv);
+        ctx.beginPath(); ctx.arc(X(lv.re), Y(lv.im), 2.4, 0, 2 * M.PI);
+        ctx.fillStyle = COL[k % COL.length]; ctx.fill();
+      }
+    }
+    /* 起点（h 最大）画空心圈，看得出每一步往哪收 */
+    rows[0].vs.forEach(function (v, k) {
+      if (!isFinite(v.re) || !isFinite(v.im)) return;
+      ctx.beginPath(); ctx.arc(X(v.re), Y(v.im), 4.2, 0, 2 * M.PI);
+      ctx.strokeStyle = COL[k % COL.length]; ctx.lineWidth = 1.1;
+      ctx.globalAlpha = 0.8; ctx.stroke(); ctx.globalAlpha = 1;
+    });
+    /* 均值点 */
+    if (lastVals.length) {
+      var s = AN.c(0, 0);
+      lastVals.forEach(function (v) { s = AN.add(s, v); });
+      var m = AN.scale(s, 1 / lastVals.length);
+      ctx.strokeStyle = '#111'; ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(X(m.re) - 5, Y(m.im)); ctx.lineTo(X(m.re) + 5, Y(m.im));
+      ctx.moveTo(X(m.re), Y(m.im) - 5); ctx.lineTo(X(m.re), Y(m.im) + 5);
+      ctx.stroke();
+    }
+    var kind = KIND[row.kind] || { t: row.kind };
+    $('anHDq').textContent = 'h: 1e−2 → 1e−5 · ' + kind.t
+      + (zoomK > 3 ? ' · 显示放大 ×' + (zoomK < 1e4 ? zoomK.toFixed(0) : zoomK.toExponential(0)) : '');
+  }
+
+  /* ---------- 交互 ---------- */
+  function selectPreset(key) {
+    var P = null;
+    AN.PRESETS.forEach(function (p) { if (p.key === key) P = p; });
+    if (!P) return;
+    ST.preset = P;
+    ST.src = P.src;
+    var pt0 = (P.pts && P.pts[0]) || P.pt || [0, 0];
+    ST.sel = AN.c(pt0[0], pt0[1]);
+    $('anExpr').value = P.src;
+    rebuild(true);
+  }
+
+  function applyCustom() {
+    var raw = $('anExpr').value;
+    if (!raw.trim()) return;
+    var t = AN.normalize(raw);
+    $('anExpr').value = t;
+    ST.preset = null;
+    ST.src = t;
+    ST.sel = null;
+    rebuild(false);
+  }
+
+  function bind() {
+    $('anFn').addEventListener('change', function () { selectPreset(this.value); });
+    $('anApply').addEventListener('click', applyCustom);
+    $('anExpr').addEventListener('keydown', function (e) { if (e.key === 'Enter') applyCustom(); });
+    $('anSel').addEventListener('change', function () {
+      var i = parseInt(this.value, 10) || 0;
+      ST.sel = ST.pts[i].at;
+      fillCards(); fillTable(); fillConcl(); drawMap(); drawDq();
+    });
+    $('anCvMap').addEventListener('click', function (ev) {
+      if (!ST.grid) return;
+      var r = this.getBoundingClientRect();
+      var pad = 24, W = r.width, H = r.height;
+      var x = BOX.x0 + (ev.clientX - r.left - pad) / (W - 2 * pad) * (BOX.x1 - BOX.x0);
+      var y = BOX.y0 + (H - pad - (ev.clientY - r.top)) / (H - 2 * pad) * (BOX.y1 - BOX.y0);
+      var z = AN.c(x, y);
+      /* 点到的位置不在表里就追加一行，方便"随手点" */
+      var i, found = -1;
+      for (i = 0; i < ST.rows.length; i++) {
+        if (M.hypot(ST.rows[i].at.re - x, ST.rows[i].at.im - y) < 0.02) { found = i; break; }
+      }
+      if (found < 0) {
+        var j = AN.judge(ST.f, z);
+        ST.rows.push({ at: z, label: '手选', kind: j.kind, note: j.note, probe: j.probe });
+        ST.pts.push({ at: z, label: '手选' });
+        found = ST.rows.length - 1;
+      }
+      ST.sel = ST.rows[found].at;
+      syncSel(); $('anSel').value = String(found);
+      fillCards(); fillTable(); fillConcl(); drawMap(); drawDq();
+    });
+    window.addEventListener('resize', function () {
+      clearTimeout(bind._t);
+      bind._t = setTimeout(function () { drawMap(); drawDq(); }, 160);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'), function (r) {
+      r.addEventListener('change', function () { setTimeout(function () { drawMap(); drawDq(); }, 260); });
+    });
+  }
+
+  function start() {
+    var sel = $('anFn');
+    sel.innerHTML = AN.PRESETS.map(function (p) {
+      return '<option value="' + p.key + '">' + p.name + '　·　' + p.note + '</option>';
+    }).join('');
+    ST.preset = AN.PRESETS[0];
+    ST.src = ST.preset.src;
+    var p0 = (ST.preset.pts && ST.preset.pts[0]) || ST.preset.pt || [0, 0];
+    ST.sel = AN.c(p0[0], p0[1]);
+    $('anExpr').value = ST.src;
+    bind();
+    rebuild(true);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    setTimeout(start, 0);
+  }
+})();
+/* ===== AN-JS-END ===== */
+</script>
+
+
 <div class="box-example">
 <div class="ex-label">例 1.3</div>
 问 $f(z)=x+2y\mathrm{i}$ 是否可导?
@@ -1881,7 +2984,7 @@ module('cvHarmonic',function(cv){
       }
     }
     xcap('capHarm', '$f(z)=z^{2}$：$u=x^{2}-y^{2}$（蓝），$v=xy$（绿）');
-    tlabel(ctx,12,h-14,'两条等值线在交点处互相垂直 → ∇u·∇v = 0','#546e7a','12px Segoe UI');
+    tlabel(ctx,12,h-14,'两条等值线在交点处互相垂直 → $\\nabla u\\cdot\\nabla v=0$','#546e7a','12px Segoe UI');
     setRO('hmReadout',
       "取 $u=c$ 时的等值线 $x^2-y^2="+hl(fmt(c))+"$ (深蓝曲线)<br>"+
       "它与任一条 $v=k$ 的等值线 $2xy=k$ 的交点处, 两曲线<b>切线互相垂直</b>:<br>"+

@@ -524,6 +524,1317 @@ $$=\iint_G(-v_x-u_y)\mathrm{d}\sigma+\mathrm{i}\iint_G(u_x-v_y)\mathrm{d}\sigma=
 </div>
 </div>
 
+<style>
+.cilab {
+  --ci-ink: #1f2933; --ci-dim: #607d8b; --ci-line: #d8e3ef;
+  --ci-ac: #1565c0; --ci-acd: #0d47a1;
+  --ci-mono: "Consolas", "SF Mono", "Courier New", monospace;
+  color: var(--ci-ink);
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  font-size: 14.5px; line-height: 1.6;
+  background: #f7fafc; border: 1px solid #e2eaf2; border-radius: 10px;
+  padding: 14px 16px 16px; margin: 14px 0 4px;
+}
+.cilab button { font-family: inherit; font-size: 13px; cursor: pointer; }
+.cilab .bar {
+  display: grid; grid-template-columns: 1.1fr 1.1fr .9fr;
+  gap: 10px 14px; background: #fff; border: 1px solid var(--ci-line);
+  border-radius: 8px; padding: 11px 13px;
+}
+.cilab .fd { min-width: 0; }
+.cilab .fd > label {
+  display: block; font-size: 12px; color: var(--ci-dim);
+  font-weight: 600; margin-bottom: 3px; letter-spacing: .04em;
+}
+.cilab .fd .rw { display: flex; align-items: center; gap: 6px; }
+.cilab .tinynote {
+  font-size: 11.5px; color: var(--ci-dim); margin-top: 3px; line-height: 1.4;
+}
+.cilab select, .cilab input[type="text"], .cilab input[type="number"] {
+  font-family: inherit; font-size: 13.5px; padding: 5px 7px;
+  border: 1px solid var(--ci-line); border-radius: 6px;
+  background: #fff; color: var(--ci-ink); width: 100%; min-width: 0;
+}
+.cilab select:focus, .cilab input:focus { outline: 2px solid #c9d9f5; border-color: var(--ci-ac); }
+.cilab .btn {
+  border: 1px solid var(--ci-line); background: #fff; border-radius: 6px;
+  padding: 5px 11px; color: var(--ci-ink); transition: .12s; white-space: nowrap;
+}
+.cilab .btn:hover { border-color: var(--ci-ac); color: var(--ci-acd); background: #f6f9ff; }
+.cilab .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.cilab .cd {
+  background: #fff; border: 1px solid var(--ci-line);
+  border-radius: 8px; padding: 7px 12px; min-width: 0;
+}
+.cilab .cd .k { font-size: 11.5px; color: var(--ci-dim); letter-spacing: .05em; }
+.cilab .cd .v {
+  font-family: var(--ci-mono); font-size: 17px; font-weight: 700;
+  color: var(--ci-acd); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cilab .cd .n {
+  font-size: 11.5px; color: var(--ci-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cilab .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.cilab figure {
+  margin: 0; background: #fff; border: 1px solid var(--ci-line);
+  border-radius: 8px; padding: 6px 8px 4px; min-width: 0;
+}
+.cilab figcaption {
+  font-size: 12px; color: var(--ci-dim); padding: 0 2px 3px;
+  display: flex; justify-content: space-between; gap: 8px;
+}
+.cilab figcaption b {
+  color: var(--ci-ink); font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 0;
+}
+.cilab figcaption .hint { flex: 0 0 auto; max-width: 52%; }
+.cilab figcaption .hint {
+  font-family: var(--ci-mono); font-size: 11px; color: #93a2b2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.cilab canvas { width: 100%; display: block; border-radius: 6px; background: #fafcff; }
+.cilab .row2 {
+  display: flex; align-items: center; gap: 10px; margin-top: 10px;
+  background: #fff; border: 1px solid var(--ci-line); border-radius: 8px;
+  padding: 8px 12px; flex-wrap: wrap;
+}
+.cilab .row2 > label { font-size: 12.5px; color: var(--ci-dim); font-weight: 600; white-space: nowrap; }
+.cilab input[type="range"] {
+  flex: 1 1 150px; min-width: 110px; width: auto; height: 16px;
+  margin: 0; accent-color: var(--ci-ac); vertical-align: middle;
+}
+.cilab .badge {
+  font-family: var(--ci-mono); font-size: 12.5px; color: #fff;
+  background: var(--ci-ac); border-radius: 4px; padding: 1px 8px; white-space: nowrap;
+}
+.cilab .note2 { font-size: 12.5px; color: #546e7a; }
+.cilab table.cit {
+  width: 100%; border-collapse: collapse; margin-top: 10px;
+  font-size: 13px; background: #fff; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--ci-line); table-layout: fixed;
+}
+.cilab table.cit th:nth-child(1), .cilab table.cit td:nth-child(1) { width: 17%; }
+.cilab table.cit th:nth-child(2), .cilab table.cit td:nth-child(2) { width: 25%; }
+.cilab table.cit th:nth-child(3), .cilab table.cit td:nth-child(3) { width: 24%; }
+.cilab table.cit th:nth-child(4), .cilab table.cit td:nth-child(4) { width: 15%; }
+.cilab table.cit th:nth-child(5), .cilab table.cit td:nth-child(5) { width: 11%; }
+.cilab table.cit th:nth-child(6), .cilab table.cit td:nth-child(6) { width: 8%; }
+.cilab table.cit th, .cilab table.cit td {
+  padding: 5px 9px; border-bottom: 1px solid #eef3f8;
+  text-align: right; font-family: var(--ci-mono); font-size: 12.5px;
+}
+.cilab table.cit th {
+  color: var(--ci-dim); font-weight: 600; font-size: 11.5px;
+  background: #f8fbfe; letter-spacing: .03em;
+}
+.cilab table.cit td:first-child, .cilab table.cit th:first-child,
+.cilab table.cit td:nth-child(2), .cilab table.cit th:nth-child(2) { text-align: left; }
+.cilab table.cit td:nth-child(2) { font-family: inherit; font-size: 12.5px; }
+.cilab table.cit tr:last-child td { border-bottom: 0; }
+.cilab table.cit tbody tr { cursor: pointer; }
+.cilab table.cit tbody tr:hover td { background: #f6f9ff; }
+.cilab table.cit tbody tr.on td { background: #e8f1fe; }
+.cilab table.cit tbody tr.on td:first-child { box-shadow: inset 3px 0 0 var(--ci-ac); }
+.cilab table.cit td.bad { color: #c62828; }
+.cilab table.cit td.ok { color: #2e7d32; }
+.cilab .concl {
+  margin-top: 10px; background: #fff; border: 1px solid var(--ci-line);
+  border-left: 4px solid var(--ci-ac); border-radius: 8px;
+  padding: 8px 12px; font-size: 13.5px; color: #37474f;
+}
+.cilab .concl .tag { color: var(--ci-dim); font-size: 12px; margin-right: 6px; }
+.cilab .concl .line { margin: 2px 0; }
+.cilab .warn { color: #c62828; }
+/* 模式切换：逐点求留数 / 留数定理 */
+.cilab .citabs { display: flex; gap: 6px; margin: 0 0 10px; }
+.cilab .an-tab {
+  padding: 6px 15px; border: 1px solid var(--ci-line); background: #f5f7fa;
+  border-radius: 8px; font-size: 13px; cursor: pointer; color: #607d8b;
+  font-family: inherit; transition: background .15s, color .15s;
+}
+.cilab .an-tab:hover { background: #eceff1; }
+.cilab .an-tab.on {
+  background: #e3f2fd; border-color: #1565c0; color: #0d47a1; font-weight: 600;
+}
+@media (max-width: 900px) {
+  .cilab .grid, .cilab .cards, .cilab .bar { grid-template-columns: 1fr; }
+  .cilab { font-size: 15px; }
+}
+</style>
+
+<div class="chart-container" id="ciLab" style="background:#fff;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="margin:0 0 6px;color:#0d47a1;font-size:1.15em;">交互: 复积分实验台 —— 数值 $\oint$、$2\pi\mathrm{i}\sum\operatorname{Res}$、累积轨迹三路对照</h3>
+<div class="chart-desc" style="color:#546e7a;font-size:.88em;margin-bottom:10px;">
+同一个积分算两遍：<b>沿路径直接参数化积分</b> $\oint_C f(z)\,\mathrm{d}z$，与<b>留数定理</b> $2\pi\mathrm{i}\sum\operatorname{Res}$。
+两者相等，是柯西积分定理与留数定理的实验版本。右边那条曲线是<b>累积积分</b>
+$\int_0^t f(z(\tau))z'(\tau)\,\mathrm{d}\tau$：闭合路径若内部无奇点，曲线<b>回到起点</b>（积分为 0）；
+内部有奇点，终点与起点<b>差一个 $2\pi\mathrm{i}\operatorname{Res}$</b>。拖动半径，看它怎样一跳一跳地拉开。
+</div>
+
+<div class="cilab">
+  <div class="bar">
+    <div class="fd">
+      <label>被积函数 f(z)</label>
+      <select id="ciFn"></select>
+    </div>
+    <div class="fd">
+      <label>自定义 f(z)（变量用 z）</label>
+      <div class="rw">
+        <input type="text" id="ciExpr" placeholder="如 1/(z^2+1)">
+        <button class="btn" id="ciApply" type="button">应用</button>
+      </div>
+      <div class="tinynote">可粘贴上面的式子：方括号 [ ] 按圆括号读，减号 − 也认</div>
+    </div>
+    <div class="fd">
+      <label>路径类型</label>
+      <select id="ciPath">
+        <option value="circle">圆周 |z−c| = R（正向）</option>
+        <option value="triangle">三角形折线（正向）</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row2">
+    <label>圆心 c</label>
+    <input type="text" id="ciCenter" value="0" style="width:96px;flex:0 0 96px">
+    <label>半径 R</label>
+    <input type="range" id="ciR" min="0.2" max="3.2" step="0.02" value="1.4">
+    <span class="badge" id="ciRV">R = 1.40</span>
+    <button class="btn" id="ciDir" type="button">方向：逆时针</button>
+  </div>
+
+  <div class="cards">
+    <div class="cd">
+      <div class="k">$\oint_C f(z)\,\mathrm{d}z$（数值）</div>
+      <div class="v" id="ciCNum">—</div>
+      <div class="n" id="ciCNumN">—</div>
+    </div>
+    <div class="cd">
+      <div class="k">$2\pi\mathrm{i}\sum\operatorname{Res}$（留数定理）</div>
+      <div class="v" id="ciCRes">—</div>
+      <div class="n" id="ciCResN">—</div>
+    </div>
+    <div class="cd">
+      <div class="k">偏差 |数值 − 留数定理|</div>
+      <div class="v" id="ciCDev">—</div>
+      <div class="n" id="ciCDevN">—</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <figure>
+      <figcaption><b id="ciCapPath">积分路径与奇点</b><span class="hint" id="ciHPath">—</span></figcaption>
+      <canvas id="ciCvPath" data-h="228"></canvas>
+    </figure>
+    <figure>
+      <figcaption><b id="ciCapCum">累积积分轨迹：回到原点 ⇔ 积分为 0</b><span class="hint" id="ciHCum">—</span></figcaption>
+      <canvas id="ciCvCum" data-h="228"></canvas>
+    </figure>
+  </div>
+
+  <table class="cit" id="ciTbl">
+    <thead>
+      <tr><th>奇点 $a$</th><th>类型</th><th>$\operatorname{Res}$（数值）</th><th>$2\pi\mathrm{i}\operatorname{Res}$</th><th>在围道内</th></tr>
+    </thead>
+    <tbody id="ciBody"></tbody>
+  </table>
+
+  <div class="concl" id="ciConcl"><span class="tag">结论</span><span class="line">—</span></div>
+  <div class="note2" id="ciErr" style="margin-top:6px;"></div>
+</div>
+</div>
+
+<script>
+/* ===== CI-JS-BEGIN ===== */
+/* =====================================================================
+   ci-core.js —— 复积分实验台的数值内核（纯 JS，可在 node 里跑）
+
+   一~六节沿用留数内核：复数运算、表达式解析、洛朗系数、奇点判定、扫描、围道
+   七、积分路径（圆 / 三角形折线）
+   八、沿路径积分与累积轨迹（$\int_0^t f(z(\tau))z'(\tau)\,\mathrm{d}\tau$ 的平面轨迹）
+   九、圆内留数之和（扫描 + 梯形法）
+   十、导出
+
+   用法： node test-core.js
+   ===================================================================== */
+var CI = (function () {
+'use strict';
+
+/* ---------------------------------------------------------------
+   一、复数运算（全部用 {re, im} 表示，不做对象池优化，够快）
+   --------------------------------------------------------------- */
+function c(re, im) { return { re: re, im: im || 0 }; }
+function isC(v) { return v !== null && typeof v === 'object' && 're' in v; }
+function re(v) { return isC(v) ? v.re : v; }
+function im(v) { return isC(v) ? v.im : 0; }
+
+function add(a, b) { return c(a.re + b.re, a.im + b.im); }
+function sub(a, b) { return c(a.re - b.re, a.im - b.im); }
+function neg(a) { return c(-a.re, -a.im); }
+function mul(a, b) { return c(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re); }
+function scale(a, k) { return c(a.re * k, a.im * k); }
+function div(a, b) {
+    var d = b.re * b.re + b.im * b.im;
+    return c((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+function abs(a) { return Math.hypot(a.re, a.im); }
+function arg(a) { return Math.atan2(a.im, a.re); }
+function conj(a) { return c(a.re, -a.im); }
+function cexp(a) { var m = Math.exp(a.re); return c(m * Math.cos(a.im), m * Math.sin(a.im)); }
+function clog(a) { return c(Math.log(abs(a)), arg(a)); }
+function cpow(a, b) {
+    /* 整数指数走连乘：精确且避开主值分支；其余走 exp(b log a) */
+    if (Math.abs(b.im) < 1e-15 && Math.abs(b.re - Math.round(b.re)) < 1e-13 &&
+        Math.abs(Math.round(b.re)) <= 64) {
+        var n = Math.round(b.re), base, out;
+        if (n === 0) return c(1, 0);
+        base = n < 0 ? div(c(1, 0), a) : a;
+        n = Math.abs(n);
+        out = c(1, 0);
+        while (n > 0) {
+            if (n & 1) out = mul(out, base);
+            base = mul(base, base);
+            n >>= 1;
+        }
+        return out;
+    }
+    return cexp(mul(b, clog(a)));
+}
+function csqrt(a) { return cpow(a, c(0.5, 0)); }
+function csin(a) { return c(Math.sin(a.re) * Math.cosh(a.im), Math.cos(a.re) * Math.sinh(a.im)); }
+function ccos(a) { return c(Math.cos(a.re) * Math.cosh(a.im), -Math.sin(a.re) * Math.sinh(a.im)); }
+function ctan(a) { return div(csin(a), ccos(a)); }
+function csinh(a) { return c(Math.sinh(a.re) * Math.cos(a.im), Math.cosh(a.re) * Math.sin(a.im)); }
+function ccosh(a) { return c(Math.cosh(a.re) * Math.cos(a.im), Math.sinh(a.re) * Math.sin(a.im)); }
+function ctanh(a) { return div(csinh(a), ccosh(a)); }
+
+var FNS = {
+    exp: cexp, log: clog, ln: clog, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan,
+    sinh: csinh, cosh: ccosh, tanh: ctanh,
+    abs: function (a) { return c(abs(a), 0); },
+    conj: conj, arg: function (a) { return c(arg(a), 0); },
+    re: function (a) { return c(a.re, 0); },
+    im: function (a) { return c(a.im, 0); }
+};
+
+/* ---------------------------------------------------------------
+   二、表达式解析：递归下降，白名单函数，不碰 eval
+       expr  := term (('+'|'-') term)*
+       term  := unary (('*'|'/') unary | 隐式乘 unary)*
+       unary := ('-'|'+') unary | power
+       power := atom ('^' unary)?
+       atom  := 数字 | z | i | pi | e | 函数'(' expr ')' | '(' expr ')'
+   --------------------------------------------------------------- */
+/* 把人们实际会粘贴进来的写法归一化：
+     ① 全角字符（中文输入法下打的 （ ） ［ ］ ／ ＊ ０-９ 等）转半角；
+     ② 方括号、花括号一律当分组，等价于圆括号；
+     ③ 各种减号（− – — －）统一成 ASCII 的 -，乘除号统一成 * /。
+   下拉框里显示的 `1 / [z(z−1)(z−2)]` 直接复制进输入框，就是靠这一步才认的。 */
+function normalize(src) {
+    return String(src == null ? '' : src)
+        .replace(/[\uFF01-\uFF5E]/g, function (ch) {          /* 全角 ASCII → 半角 */
+            return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0);
+        })
+        .replace(/[\u2010-\u2015\u2212]/g, '-')               /* ‐ ‑ ‒ – — ― − */
+        .replace(/[【〔〖]/g, '(').replace(/[】〕〗]/g, ')')
+        .replace(/[\[\{]/g, '(').replace(/[\]\}]/g, ')')
+        .replace(/[×·⋅∙]/g, '*').replace(/[÷∕]/g, '/')
+        .replace(/\u3000/g, ' ')
+        .replace(/π/g, 'pi')
+        .replace(/\*\*/g, '^')
+        .replace(/\s+/g, '');
+}
+
+function compile(src) {
+    var s = normalize(src);
+    if (!s) throw new Error('表达式为空');
+    var i = 0;
+
+    function ch() { return s.charAt(i); }
+    function bad(msg) { throw new Error(msg + '（位置 ' + (i + 1) + '）'); }
+
+    function num() {
+        var m = /^\d*\.?\d+(?:[eE][+-]?\d+)?/.exec(s.slice(i));
+        if (!m) bad('这里应是一个数字');
+        i += m[0].length;
+        return c(parseFloat(m[0]), 0);
+    }
+    function ident() {
+        var m = /^[A-Za-z][A-Za-z0-9_]*/.exec(s.slice(i));
+        if (!m) {
+            var k = ch();
+            if (k === '') bad('表达式到这里就结束了，后面还缺一个因子');
+            if (/[\[\]{}()]/.test(k)) bad('这里的 ' + k + ' 位置不对，检查一下括号是否配对');
+            bad('这里出现了不认识的字符 ' + k + '，应是一个数字、变量名或函数名');
+        }
+        i += m[0].length;
+        return m[0];
+    }
+    function startsAtom() {
+        var k = ch();
+        return /[0-9.(]/.test(k) || /[A-Za-z]/.test(k);
+    }
+
+    function parseExpr() {
+        var v = parseTerm();
+        for (;;) {
+            var k = ch();
+            if (k === '+') { i++; v = add(v, parseTerm()); }
+            else if (k === '-') { i++; v = sub(v, parseTerm()); }
+            else return v;
+        }
+    }
+    function parseTerm() {
+        var v = parseUnary();
+        for (;;) {
+            var k = ch();
+            if (k === '*') { i++; v = mul(v, parseUnary()); }
+            else if (k === '/') { i++; v = div(v, parseUnary()); }
+            else if (startsAtom()) { v = mul(v, parseUnary()); }   /* 2z、z(z-1)、2sin(z) */
+            else return v;
+        }
+    }
+    function parseUnary() {
+        if (ch() === '-') { i++; return neg(parseUnary()); }
+        if (ch() === '+') { i++; return parseUnary(); }
+        return parsePower();
+    }
+    function parsePower() {
+        var b = parseAtom();
+        if (ch() === '^') { i++; return cpow(b, parseUnary()); }
+        return b;
+    }
+    function parseAtom() {
+        if (ch() === '(') {
+            i++;
+            var v = parseExpr();
+            if (ch() === ')') i++; else bad('缺少右括号');
+            return v;
+        }
+        if (/[0-9.]/.test(ch())) return num();
+        var name = ident();
+        if (name === 'z') return c(GZ.re, GZ.im);
+        if (name === 'i' || name === 'I') return c(0, 1);
+        if (name === 'pi' || name === 'Pi') return c(Math.PI, 0);
+        if (name === 'e' || name === 'E') return c(Math.E, 0);
+        if (name === 'inf' || name === 'oo') throw new Error('表达式中不能出现无穷大');
+        if (!FNS[name] && FNS[name.toLowerCase()]) name = name.toLowerCase();
+        if (!FNS[name]) throw new Error('未定义的函数或符号：' + name);
+        if (ch() !== '(') bad(name + ' 后面缺少括号');
+        i++;
+        var a = parseExpr();
+        if (ch() === ')') i++; else bad('缺少右括号');
+        return FNS[name](a);
+    }
+
+    /* 语法先在 z=0 上试跑一遍：即时抛错，避免把坏表达式留到计算阶段 */
+    var GZ = c(0, 0);
+    i = 0;
+    GZ = c(0, 0);
+    (function precheck() { parseExpr(); }());
+    if (i < s.length) bad('多余的字符：' + s.slice(i));
+
+    /* 每次调用重新走一遍解析（表达式短，成本可忽略），
+       这样解析进度 i 不会在多次调用间互相污染 */
+    return function (z) {
+        i = 0;
+        GZ = z || c(0, 0);
+        var v = parseExpr();
+        if (i < s.length) bad('多余的字符：' + s.slice(i));
+        return v;
+    };
+}
+
+/* ---------------------------------------------------------------
+   三、圆上的采样与洛朗系数（梯形公式）
+   --------------------------------------------------------------- */
+var TW = {};
+function twiddle(N) {
+    var t = TW[N];
+    if (t) return t;
+    t = { cos: new Float64Array(N), sin: new Float64Array(N) };
+    for (var k = 0; k < N; k++) {
+        t.cos[k] = Math.cos(2 * Math.PI * k / N);
+        t.sin[k] = Math.sin(2 * Math.PI * k / N);
+    }
+    TW[N] = t;
+    return t;
+}
+
+/* c_n = 1/(N ρ^n) Σ f(a+ρe^{iθ_k}) e^{-inθ_k}；n=-1 时就是留数 */
+function coef(f, a, rho, n, N) {
+    N = N || 256;
+    var t = twiddle(N), sr = 0, si = 0, k, v, ang, cs, sn, pr, pi;
+    for (k = 0; k < N; k++) {
+        v = f(c(a.re + rho * t.cos[k], a.im + rho * t.sin[k]));
+        if (!isFinite(v.re) || !isFinite(v.im)) return c(NaN, NaN);
+        ang = 2 * Math.PI * n * k / N;
+        cs = Math.cos(ang); sn = Math.sin(ang);
+        pr = v.re * cs + v.im * sn;      /* (vr + i vi)(cs − i sn) */
+        pi = v.im * cs - v.re * sn;
+        sr += pr; si += pi;
+    }
+    var k2 = Math.pow(rho, n);
+    return c(sr / N / k2, si / N / k2);
+}
+
+/* 留数：N 逐次加倍直到两次结果一致，返回 {val, N, err, hist} */
+function residueAt(f, a, rho, opt) {
+    opt = opt || {};
+    var tol = opt.tol || 1e-13;
+    var N = 128, prev = coef(f, a, rho, -1, N), cur, err, hist = [{ N: N, err: NaN }];
+    for (var k = 0; k < 5; k++) {
+        N *= 2;
+        cur = coef(f, a, rho, -1, N);
+        err = abs(sub(cur, prev));
+        hist.push({ N: N, err: err });
+        if (err <= tol * (1 + abs(cur))) { prev = cur; break; }
+        prev = cur;
+    }
+    return { val: prev, N: N, err: hist[hist.length - 1].err, hist: hist };
+}
+
+/* 圆上 |f| 的最大值（跳过 Inf/NaN，用作阶数探针） */
+function magMax(f, a, rho, N) {
+    N = N || 96;
+    var t = twiddle(N), m = 0, k, v;
+    for (k = 0; k < N; k++) {
+        v = f(c(a.re + rho * t.cos[k], a.im + rho * t.sin[k]));
+        var q = abs(v);
+        if (isFinite(q) && q > m) m = q;
+    }
+    return m;
+}
+
+/* ---------------------------------------------------------------
+   四、奇点类型与阶数
+       在 a 周围取同心圆，|f| 的最大值满足 |f| ~ C ρ^{-m}
+           s(ρ) = log(M(ρ/2)/M(ρ)) / log 2
+       理想情形 s 恒等于阶数 m。ρ 太大时光滑因子会污染斜率，所以
+       逐步缩小 ρ 直到两次斜率一致（|s1−s2| < 0.06）；若 ρ 一路
+       缩小仍不一致、而且斜率越来越大，说明 |f| 不服从幂律 —— 本性奇点。
+   --------------------------------------------------------------- */
+function orderProbe(f, a, rho0) {
+    var rho = rho0, m1, m2, m3, s1, s2, t;
+    function slope(x, y) {
+        if (!(x > 0) || !(y > 0)) return NaN;
+        return Math.log(y / x) / Math.LN2;
+    }
+    var rec = null;
+    for (t = 0; t < 7; t++) {
+        m1 = magMax(f, a, rho);
+        m2 = magMax(f, a, rho / 2);
+        m3 = magMax(f, a, rho / 4);
+        s1 = slope(m1, m2);
+        s2 = slope(m2, m3);
+        rec = { rho: rho, m1: m1, m2: m2, m3: m3, s1: s1, s2: s2, iters: t, stable: false };
+        if (!isFinite(s1) || !isFinite(s2)) break;
+        if (Math.abs(s1 - s2) < 0.06) { rec.stable = true; break; }
+        if (t >= 1 && Math.abs(s1 - s2) > 0.6) break;   /* 斜率在发散 → 本性 */
+        rho /= 2;
+    }
+    return rec;
+}
+
+/* 完整探针：类型、阶数、留数、收敛史 */
+function probe(f, a, rho, opt) {
+    opt = opt || {};
+    rho = rho || 0.4;
+    var o = orderProbe(f, a, Math.min(rho, 0.25));
+    var r = residueAt(f, a, rho, opt);
+    var out = {
+        at: a, rho: rho, res: r.val, resErr: r.err, N: r.N, hist: r.hist,
+        s1: o.s1, s2: o.s2, m1: o.m1, m2: o.m2, m3: o.m3,
+        sRho: o.rho, stable: o.stable,
+        order: 0, kind: 'unknown', label: '', law: ''
+    };
+    var s1 = o.s1, s2 = o.s2;
+    var nearInt = function (x) {
+        if (!isFinite(x)) return null;
+        var k = Math.round(x);
+        return Math.abs(x - k) < 0.12 ? k : null;
+    };
+    var k1 = nearInt(s1), k2 = nearInt(s2);
+
+    /* 直接取值判断“解析点 / 可去奇点” */
+    var v0 = f(a);
+    var finiteAtA = isFinite(v0.re) && isFinite(v0.im) && abs(v0) < 1e12;
+    var rad = '（探针半径 ' + fmt(o.rho) + '）';
+
+    var sAvg = 0.5 * (s1 + s2);
+    if (Math.abs(sAvg) < 0.12) {
+        out.order = 0;
+        if (finiteAtA) { out.kind = 'analytic'; out.label = '解析点'; }
+        else { out.kind = 'removable'; out.label = '可去奇点'; }
+        out.law = '三个同心圆上 |f| 基本不变（斜率 ' + fmt(s1) + '），主部为零' + rad;
+    } else if (sAvg < -0.3 && nearInt(-sAvg) !== null) {
+        /* |f| 随半径变小：这是零点而不是奇点 */
+        out.order = 0;
+        out.kind = 'analytic';
+        out.label = '解析点（' + Math.round(-sAvg) + ' 阶零点）';
+        out.law = '|f| ~ ρ^(' + fmt(sAvg) + ')：函数在此解析且取零值，留数为 0' + rad;
+    } else if (k1 !== null && k2 !== null && k1 === k2 && k1 > 0) {
+        out.order = k1;
+        out.kind = 'pole';
+        out.label = k1 + ' 阶极点';
+        out.law = '|f| ~ ρ^(−' + k1 + ')：斜率 ' + fmt(s1) + '、' + fmt(s2)
+            + ' 一致，主部最低次为 (z−a)^(−' + k1 + ')' + rad;
+    } else if (o.stable && Math.abs(s1 - k1) > 0.12 && k1 === null) {
+        out.kind = 'branch';
+        out.label = '非整数幂次（分支型）';
+        out.law = '稳定斜率 ' + fmt(s1) + ' 不是整数，函数在此不单值，留数不存在' + rad;
+    } else {
+        out.kind = 'essential';
+        out.label = '本性奇点';
+        out.law = '|f| 不服从幂律：斜率 ' + fmt(s1) + ' → ' + fmt(s2)
+            + '，缩小半径并不收敛，主部有无穷多项';
+    }
+    return out;
+}
+
+function fmt(x) {
+    if (!isFinite(x)) return '—';
+    return Math.abs(x) >= 1e4 || (Math.abs(x) < 1e-3 && x !== 0) ? x.toExponential(2) : x.toFixed(3);
+}
+
+/* ---------------------------------------------------------------
+   五、自动扫描孤立奇点
+       在矩形网格上算 |f|，取“比四邻都高、且远高于中位数”的点作种子，
+       再用坐标下降把 |f| 推到最大（极点处发散），最后按距离去重。
+   --------------------------------------------------------------- */
+function scan(f, box, opt) {
+    opt = opt || {};
+    var nx = opt.n || 41, ny = opt.n || 41;
+    box = box || { x0: -3, x1: 3, y0: -3, y1: 3 };
+    var i, j, M = new Float64Array(nx * ny), vals = [], v;
+    for (j = 0; j < ny; j++) {
+        for (i = 0; i < nx; i++) {
+            var x = box.x0 + (box.x1 - box.x0) * i / (nx - 1);
+            var y = box.y0 + (box.y1 - box.y0) * j / (ny - 1);
+            v = abs(f(c(x, y)));
+            if (!isFinite(v)) v = 1e300;
+            M[j * nx + i] = v;
+            if (isFinite(v)) vals.push(v);
+        }
+    }
+    vals.sort(function (p, q) { return p - q; });
+    var med = vals[Math.floor(vals.length / 2)] || 1;
+    var thresh = (opt.thresh || 40) * med;
+    var seeds = [];
+    for (j = 1; j < ny - 1; j++) {
+        for (i = 1; i < nx - 1; i++) {
+            var m = M[j * nx + i];
+            if (m < thresh || m < 3) continue;
+            if (m >= M[j * nx + i - 1] && m >= M[j * nx + i + 1] &&
+                m >= M[(j - 1) * nx + i] && m >= M[(j + 1) * nx + i]) {
+                seeds.push({
+                    re: box.x0 + (box.x1 - box.x0) * i / (nx - 1),
+                    im: box.y0 + (box.y1 - box.y0) * j / (ny - 1)
+                });
+            }
+        }
+    }
+    /* 坐标下降细化 */
+    function refine(p) {
+        var h = (box.x1 - box.x0) / (nx - 1), cur = abs(f(p));
+        for (var it = 0; it < 140 && h > 1e-9; it++) {
+            var moved = false, best = cur, bp = null;
+            for (var a = -1; a <= 1; a++) {
+                for (var b = -1; b <= 1; b++) {
+                    if (!a && !b) continue;
+                    var q = c(p.re + a * h, p.im + b * h), qv = abs(f(q));
+                    if (isFinite(qv) && qv > best) { best = qv; bp = q; }
+                }
+            }
+            if (bp) { p = bp; cur = best; moved = true; }
+            if (!moved) h *= 0.4;
+        }
+        return { p: p, mag: cur };
+    }
+    var out = [];
+    seeds.forEach(function (s) {
+        var r = refine(c(s.re, s.im));
+        for (var k = 0; k < out.length; k++) {
+            if (Math.hypot(out[k].at.re - r.p.re, out[k].at.im - r.p.im) < 0.02) {
+                if (r.mag > out[k].mag) { out[k].at = r.p; out[k].mag = r.mag; }
+                return;
+            }
+        }
+        out.push({ at: r.p, mag: r.mag });
+    });
+    return out.sort(function (p, q) { return abs(p.at) - abs(q.at); });
+}
+
+/* ---------------------------------------------------------------
+   六、围道积分与无穷远点留数
+   --------------------------------------------------------------- */
+function contour(f, center, R, N) {
+    N = N || 512;
+    var t = twiddle(N), sr = 0, si = 0;
+    for (var k = 0; k < N; k++) {
+        var dz = c(-R * t.sin[k], R * t.cos[k]);       /* i R e^{iθ} */
+        var v = mul(f(c(center.re + R * t.cos[k], center.im + R * t.sin[k])), dz);
+        if (!isFinite(v.re) || !isFinite(v.im)) return c(NaN, NaN);
+        sr += v.re; si += v.im;
+    }
+    return c(sr * 2 * Math.PI / N, si * 2 * Math.PI / N);
+}
+
+/* ∮ / (2πi) —— 一个数，等于圆内留数之和 */
+function contourMean(f, center, R, N) {
+    var I = contour(f, center, R, N);
+    return c(I.im / (2 * Math.PI), -I.re / (2 * Math.PI));
+}
+
+/* Res[f,∞] = −(1/2πi)∮_{|z|=R} f dz = −contourMean
+   整函数（如 sin z/z）在大圆上振荡剧烈，梯形公式可能根本没收敛，
+   所以用两个 N 对拍：不一致就说明这个数不可信，返回 null。 */
+function resInf(f, R, N) {
+    N = N || 1024;
+    var a = contourMean(f, c(0, 0), R, N / 2);
+    var b = contourMean(f, c(0, 0), R, N);
+    var d = Math.hypot(a.re - b.re, a.im - b.im);
+    var scale = Math.max(1, Math.hypot(b.re, b.im));
+    if (!isFinite(b.re) || !isFinite(b.im) || d > 1e-6 * scale) return null;
+    return c(-b.re, -b.im);
+}
+
+/* ---------------------------------------------------------------
+   七、12 条典型函数（expVal 为精确留数，来自 sympy/洛朗展开，供对拍）
+   --------------------------------------------------------------- */
+var PRESETS = [
+    {
+        key: 'ex1', name: 'e^z / [z(z−1)²]', note: '讲义例 2.1：一级极点 + 二级极点',
+        src: 'exp(z)/(z*(z-1)^2)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: 1, im: 0, exp: '0', expVal: 0 }
+        ]
+    },
+    {
+        key: 'ex2', name: '(z − sin z) / z⁶', note: '讲义例 2.2：分母 6 次，实际只有 3 阶',
+        src: '(z-sin(z))/z^6',
+        poles: [{ re: 0, im: 0, exp: '−1/120', expVal: -1 / 120 }]
+    },
+    {
+        key: 'ex3', name: '1 / (z² + 1)', note: '一对共轭极点，留数纯虚',
+        src: '1/(z^2+1)',
+        poles: [
+            { re: 0, im: 1, exp: '−i/2', expVal: 0, expIm: -0.5 },
+            { re: 0, im: -1, exp: 'i/2', expVal: 0, expIm: 0.5 }
+        ]
+    },
+    {
+        key: 'ex4', name: '1 / [z(z−1)(z−2)]', note: '三个一级极点，留数和为 0',
+        src: '1/(z*(z-1)*(z-2))',
+        poles: [
+            { re: 0, im: 0, exp: '1/2', expVal: 0.5 },
+            { re: 1, im: 0, exp: '−1', expVal: -1 },
+            { re: 2, im: 0, exp: '1/2', expVal: 0.5 }
+        ]
+    },
+    {
+        key: 'ex5', name: 'e^(1/z)', note: '本性奇点：sympy.residue 给 0，实际是 1',
+        src: 'exp(1/z)',
+        poles: [{ re: 0, im: 0, exp: '1', expVal: 1 }]
+    },
+    {
+        key: 'ex6', name: 'sin z / z⁴', note: '三阶极点，留数 −1/6',
+        src: 'sin(z)/z^4',
+        poles: [{ re: 0, im: 0, exp: '−1/6', expVal: -1 / 6 }]
+    },
+    {
+        key: 'ex7', name: '1 / sin z', note: '无穷多个一级极点，Res = (−1)ⁿ',
+        src: '1/sin(z)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: Math.PI, im: 0, exp: '−1', expVal: -1 },
+            { re: -Math.PI, im: 0, exp: '−1', expVal: -1 }
+        ]
+    },
+    {
+        key: 'ex8', name: 'z² / (z² + 1)²', note: '二阶极点，需用导数公式',
+        src: 'z^2/(z^2+1)^2',
+        poles: [
+            { re: 0, im: 1, exp: '−i/4', expVal: 0, expIm: -0.25 },
+            { re: 0, im: -1, exp: 'i/4', expVal: 0, expIm: 0.25 }
+        ]
+    },
+    {
+        key: 'ex9', name: 'e^(1/(1−z))', note: '本性奇点，留数 −1（符号软件常算错）',
+        src: 'exp(1/(1-z))',
+        poles: [{ re: 1, im: 0, exp: '−1', expVal: -1 }]
+    },
+    {
+        key: 'ex10', name: 'cot z', note: '1/tan z，每个极点留数都是 1',
+        src: '1/tan(z)',
+        poles: [
+            { re: 0, im: 0, exp: '1', expVal: 1 },
+            { re: Math.PI, im: 0, exp: '1', expVal: 1 }
+        ]
+    },
+    {
+        key: 'ex11', name: '1 / (z⁴ − 1)', note: '四个一级极点，留数 z_k/4',
+        src: '1/(z^4-1)',
+        poles: [
+            { re: 1, im: 0, exp: '1/4', expVal: 0.25 },
+            { re: 0, im: 1, exp: 'i/4', expVal: 0, expIm: 0.25 },
+            { re: -1, im: 0, exp: '−1/4', expVal: -0.25 },
+            { re: 0, im: -1, exp: '−i/4', expVal: 0, expIm: -0.25 }
+        ]
+    },
+    {
+        key: 'ex12', name: '1 / (z sin z)', note: 'z=0 是二阶极点但留数为 0；nπ 处留数 (−1)ⁿ/(nπ)',
+        src: '1/(z*sin(z))',
+        poles: [
+            { re: 0, im: 0, exp: '0', expVal: 0 },
+            { re: Math.PI, im: 0, exp: '−1/π', expVal: -1 / Math.PI },
+            { re: -Math.PI, im: 0, exp: '1/π', expVal: 1 / Math.PI }
+        ]
+    },
+    {
+        key: 'ex13', name: 'sin z / z', note: '可去奇点：扫描找不到尖峰，靠指定点才能验证',
+        src: 'sin(z)/z',
+        poles: [{ re: 0, im: 0, exp: '0', expVal: 0, removable: true }]
+    },
+    {
+        key: 'ex14', name: '1 / (z³ − z)', note: '三个一级极点，留数 −1, 1/2, 1/2',
+        src: '1/(z^3-z)',
+        poles: [
+            { re: 0, im: 0, exp: '−1', expVal: -1 },
+            { re: 1, im: 0, exp: '1/2', expVal: 0.5 },
+            { re: -1, im: 0, exp: '1/2', expVal: 0.5 }
+        ]
+    }
+];
+
+/* ---------------------------------------------------------------
+   七、积分路径（圆 / 三角形折线）
+   路径统一表示成 {kind, closed, pts:[{x,y}], n}，pts 首尾相接
+   --------------------------------------------------------------- */
+function pathCircle(center, R, dir, N) {
+    N = N || 480;
+    var pts = [], sgn = dir === 'cw' ? -1 : 1, d = 2 * Math.PI / N;
+    for (var k = 0; k <= N; k++) {
+        var th = sgn * d * k;
+        /* 每段直接带上解析的 dz = i R e^{iθ} dθ：用相邻点差分只有 O(h²) 精度，
+           1/z 在 |z|=1.4 上会停在 1e−4 的误差上，用解析 dz 才能到 1e−15。 */
+        var tm = th + sgn * d / 2;          /* 本段中点 */
+        pts.push({
+            x: center.re + R * Math.cos(th), y: center.im + R * Math.sin(th),
+            mx: center.re + R * Math.cos(tm), my: center.im + R * Math.sin(tm),
+            dx: -sgn * R * Math.sin(tm) * d, dy: sgn * R * Math.cos(tm) * d
+        });
+    }
+    return { kind: 'circle', closed: true, pts: pts, n: N, R: R, center: center, dir: dir || 'ccw' };
+}
+
+function pathTriangle(A, B, C, dir, N) {
+    N = N || 480;
+    var v = [A, B, C], pts = [], n1 = Math.floor(N / 3);
+    var order = dir === 'cw' ? [0, 2, 1] : [0, 1, 2];
+    for (var e = 0; e < 3; e++) {
+        var p = v[order[e]], q = v[order[(e + 1) % 3]];
+        for (var k = 0; k < n1; k++) {
+            var t = k / n1;
+            pts.push({ x: p.re + (q.re - p.re) * t, y: p.im + (q.im - p.im) * t });
+        }
+    }
+    pts.push({ x: v[order[0]].re, y: v[order[0]].im });
+    return { kind: 'triangle', closed: true, pts: pts, n: pts.length - 1, dir: dir || 'ccw' };
+}
+
+/* ---------------------------------------------------------------
+   八、沿路径积分 + 累积轨迹
+   累积轨迹 ∫_0^t f(z(τ))z'(τ)dτ 是理解「闭合路径积分为 0 / 等于 2πiΣRes」
+   最直观的一张图：轨迹回到起点 ⇔ 积分为 0；不回到起点 ⇔ 差一个 2πi·Res。
+   --------------------------------------------------------------- */
+/* 三点 Gauss–Legendre 在 [0,1] 上的节点与权重（∫₀¹ g(t)dt ≈ Σ w g(τ)）
+   节点 = 1/2 ± (1/2)√(3/5) 与 1/2 —— 注意 √(3/5) = √0.6，不是 √0.3。 */
+var GL_T = [0.5 - Math.sqrt(0.6) / 2, 0.5, 0.5 + Math.sqrt(0.6) / 2];
+var GL_W = [5 / 18, 8 / 18, 5 / 18];
+
+function integratePath(f, path) {
+    var P = path.pts, N = P.length - 1;
+    var acc = c(0, 0), cum = [{ x: 0, y: 0 }];
+    var broke = false;
+    for (var k = 0; k < N; k++) {
+        var a = c(P[k].x, P[k].y), b = c(P[k + 1].x, P[k + 1].y);
+        var fa = f(a), fb = f(b);
+        if (!isFinite(fa.re) || !isFinite(fa.im) || !isFinite(fb.re) || !isFinite(fb.im)) {
+            broke = true;
+            break;
+        }
+        var seg;
+        if (P[k].dx !== undefined) {
+            /* 中点法：f 取段中点、dz 取中点的解析值。梯形配左端点的 dz 会有
+               半个步长的相位偏差，实部抵不干净（1/z 上表现为 4e−2 的假实部）。 */
+            seg = mul(f(c(P[k].mx, P[k].my)), c(P[k].dx, P[k].dy));
+        } else {
+            /* 直线段用三点 Gauss–Legendre（误差 O(h⁵)）。直线段的梯形公式只有
+               O(h²)：整函数 sin z 在边长 3 的三角形上取 480 段仍有 1e−4 残差，
+               会被误读成"数值与留数定理不一致"。 */
+            var dx = b.re - a.re, dy = b.im - a.im;
+            seg = c(0, 0);
+            for (var g = 0; g < 3; g++) {
+                var t = GL_T[g];
+                var v = f(c(a.re + t * dx, a.im + t * dy));
+                if (!isFinite(v.re) || !isFinite(v.im)) { broke = true; break; }
+                seg = add(seg, scale(v, GL_W[g]));
+            }
+            if (broke) break;
+            seg = mul(seg, c(dx, dy));
+        }
+        if (!isFinite(seg.re) || !isFinite(seg.im)) { broke = true; break; }
+        acc = add(acc, seg);
+        cum.push({ x: acc.re, y: acc.im });
+    }
+    return { val: acc, cum: cum, ok: !broke };
+}
+
+/* 圆内全部孤立奇点与留数之和（数值扫描 + 梯形法留数） */
+function resInside(f, center, R) {
+    var box = {
+        x0: center.re - R * 1.15, x1: center.re + R * 1.15,
+        y0: center.im - R * 1.15, y1: center.im + R * 1.15
+    };
+    var cand = [];
+    /* 网格取 81×81、种子阈值降到 10×中位数：41×41 时步长 0.08，离极点 0.04 的
+       格点上 |f| 只有 1/(2·0.04)=12.5，低于 40×median 的默认阈值，±i 处的极点
+       就被整片漏掉（表现为"围道内像没有奇点"）。降低阈值在数学上是安全的：
+       由最大模原理，|f| 在解析点附近不会有内部极大，能爬上去的只能是奇点。 */
+    try { cand = scan(f, box, { n: 81, thresh: 10 }); } catch (e) { cand = []; }
+    var list = [], sum = c(0, 0);
+    cand.forEach(function (p) {
+        var d = Math.hypot(p.at.re - center.re, p.at.im - center.im);
+        var r;
+        try { r = residueAt(f, p.at, Math.min(0.12, Math.max(0.05, 0.25 * Math.min(d, 1)))); } catch (e) { return; }
+        if (!r || !isFinite(r.val.re) || !isFinite(r.val.im)) return;
+        /* 顺带判个类型（一级 / 二级极点、本性奇点……），表格里要显示 */
+        var label = '孤立奇点';
+        try {
+            var pr = probe(f, p.at, 0.4);
+            if (pr && pr.label) label = pr.label;
+        } catch (e) { }
+        list.push({ at: p.at, res: r.val, dist: d, inside: d < R, label: label });
+        if (d < R) sum = add(sum, r.val);
+    });
+    list.sort(function (a, b) { return a.dist - b.dist; });
+    return { list: list, sum: sum };
+}
+
+/* ---------------------------------------------------------------
+   九、预设（每条给一个值得看的围道）
+   --------------------------------------------------------------- */
+var CI_PRESETS = [
+    {
+        key: 'ex1', src: '1/z', name: '1/z', note: '基线：Res = 1，∮ = 2πi',
+        center: [0, 0], R: 1.4, path: 'circle'
+    },
+    {
+        key: 'ex2', src: '1/(z-2)', name: '1/(z−2)', note: '奇点在围道外：∮ = 0；拖 R 过 2 突然跳成 2πi',
+        center: [0, 0], R: 1.2, path: 'circle'
+    },
+    {
+        key: 'ex3', src: '1/(z*(z-1)*(z-2))', name: '1/[z(z−1)(z−2)]', note: '三个极点：R 过 1 跳一次、过 2 再跳一次（πi → −πi → 0）',
+        center: [0, 0], R: 1.5, path: 'circle'
+    },
+    {
+        key: 'ex4', src: 'exp(z)/(z*(z-1)^2)', name: 'e^z/[z(z−1)²]', note: '一级 + 二级极点同在一个围道里',
+        center: [0.5, 0], R: 1.4, path: 'circle'
+    },
+    {
+        key: 'ex5', src: 'exp(z)/(z-1)^2', name: 'e^z/(z−1)²', note: '二级极点：留数要算导数，Res = e',
+        center: [0, 0], R: 1.6, path: 'circle'
+    },
+    {
+        key: 'ex6', src: 'sin(z)/z^4', name: 'sin z / z⁴', note: '三阶极点：展开后 c₋₁ = −1/6',
+        center: [0, 0], R: 1.3, path: 'circle'
+    },
+    {
+        key: 'ex7', src: 'exp(1/z)', name: 'e^{1/z}', note: '本性奇点，留数 1（留数定理照样成立）',
+        center: [0, 0], R: 1.3, path: 'circle'
+    },
+    {
+        key: 'ex8', src: '1/(z^2+1)', name: '1/(z²+1)', note: '反例：两个极点都在里面，留数 ±i/2 相消，∮ 仍为 0',
+        center: [0, 0], R: 1.4, path: 'circle'
+    }
+];
+
+/* ---------------------------------------------------------------
+   十、导出（保留留数内核的能力，供页面复用）
+   --------------------------------------------------------------- */
+return {
+    c: c, add: add, sub: sub, mul: mul, div: div, neg: neg, scale: scale,
+    abs: abs, arg: arg, conj: conj, exp: cexp, log: clog, pow: cpow, sqrt: csqrt,
+    sin: csin, cos: ccos, tan: ctan, compile: compile, normalize: normalize,
+    coef: coef, residueAt: residueAt, probe: probe, scan: scan,
+    contour: contour, contourMean: contourMean, resInf: resInf, magMax: magMax,
+    pathCircle: pathCircle, pathTriangle: pathTriangle,
+    integratePath: integratePath, resInside: resInside,
+    PRESETS: CI_PRESETS
+};
+})();
+if (typeof module === 'object' && module.exports) module.exports = CI;
+
+
+(function () {
+  'use strict';
+  var M = Math;
+  var ST = { preset: null, src: '', f: null, center: null, R: 1.4, kind: 'circle', dir: 'ccw', res: null, integ: null };
+
+  function $(id) { return document.getElementById(id); }
+  function q(x) {
+    if (!isFinite(x)) return '—';
+    if (x === 0) return '0';
+    var a = M.abs(x);
+    if (a < 1e-4 || a >= 1e5) return x.toExponential(2).replace(/\.?0+e/, 'e').replace('e+', 'e').replace('-', '−');
+    return String(M.round(x * 1000) / 1000).replace('-', '−');
+  }
+  function fmtC(v) {
+    if (!v || !isFinite(v.re) || !isFinite(v.im)) return '—';
+    /* 1e−9 以下按 0 显示：极点定位与留数都带 1e−10 量级的数值噪声，
+       直接显示会变成 "3.45e−10+3.45e−10i" 这种看着像 bug 的字符串。 */
+    var r = M.abs(v.re) < 1e-9 ? 0 : v.re, i = M.abs(v.im) < 1e-9 ? 0 : v.im;
+    if (i === 0) return q(r);
+    if (r === 0) return (i > 0 ? '' : '−') + q(M.abs(i)) + 'i';
+    return q(r) + (i > 0 ? '+' : '−') + q(M.abs(i)) + 'i';
+  }
+  function twoPiRes(sum) { return { re: -2 * M.PI * sum.im, im: 2 * M.PI * sum.re }; }
+  /* 留数定理的约定是正向（逆时针）围道；顺时针整体取负 */
+  function refVal() {
+    var s = twoPiRes((ST.res && ST.res.sum) || { re: 0, im: 0 });
+    return ST.dir === 'cw' ? { re: -s.re, im: -s.im } : s;
+  }
+  /* 围道几乎穿过某个奇点：这时候数值积分本身不可信，得说清楚原因 */
+  function nearPole() {
+    var list = (ST.res && ST.res.list) || [];
+    for (var i = 0; i < list.length; i++) {
+      if (M.abs(list[i].dist - ST.R) < 0.06) return list[i];
+    }
+    return null;
+  }
+
+  function makePath() {
+    if (ST.kind === 'triangle') {
+      var c0 = ST.center, R = ST.R;
+      return CI.pathTriangle(
+        CI.c(c0.re - R * 0.95, c0.im - R * 0.55),
+        CI.c(c0.re + R * 0.95, c0.im - R * 0.55),
+        CI.c(c0.re, c0.im + R * 0.95), ST.dir, 480);
+    }
+    return CI.pathCircle(ST.center, ST.R, ST.dir, 480);
+  }
+
+  function rebuild() {
+    $('ciErr').textContent = '';
+    try {
+      ST.f = CI.compile(ST.src);
+    } catch (e) {
+      ST.f = null; ST.res = null; ST.integ = null;
+      $('ciErr').innerHTML = '<span class="warn">表达式无法解析：' + e.message + '</span>　（变量用 z，乘号可省略，分组用圆括号）';
+      fill(); drawPath(); drawCum(); return;
+    }
+    var path = makePath();
+    ST.integ = CI.integratePath(ST.f, path);
+    ST.res = CI.resInside(ST.f, ST.center, ST.R);
+    ST.path = path;
+    fill(); drawPath(); drawCum();
+  }
+
+  function fill() {
+    var num = $('ciCNum'), res = $('ciCRes'), dev = $('ciCDev');
+    if (!ST.f) {
+      [num, res, dev].forEach(function (el) { el.textContent = '—'; });
+      $('ciCNumN').textContent = $('ciCResN').textContent = $('ciCDevN').textContent = '—';
+      fillTable(); fillConcl(); return;
+    }
+    var v = ST.integ.val, ref = refVal(), np = nearPole();
+    num.textContent = fmtC(v);
+    num.className = 'v' + (ST.integ.ok ? '' : ' warn');
+    $('ciCNumN').textContent = ST.integ.ok
+      ? '沿路径 ' + ST.path.n + ' 段积分' + (ST.res.list.length ? '' : '（内部无奇点）')
+      : '路径上有奇点，积分发散';
+
+    res.textContent = fmtC(ref);
+    $('ciCResN').textContent = ST.res.list.filter(function (p) { return p.inside; }).length
+      + ' 个奇点在围道内，ΣRes = ' + fmtC(ST.res.sum)
+      + (ST.dir === 'cw' ? '（顺时针：取 −2πi·ΣRes）' : '');
+
+    var d = M.hypot(v.re - ref.re, v.im - ref.im);
+    dev.textContent = ST.integ.ok ? q(d) : '—';
+    $('ciCDevN').textContent = !ST.integ.ok ? '数值失效'
+      : np ? '围道贴着奇点 ' + fmtC(np.at) + '，数值不可信'
+      : (d < 1e-9 ? '两者一致到机器精度'
+        : (d < 1e-4 ? '一致（数值离散误差内）' : '不一致：检查路径与奇点'));
+    fillTable(); fillConcl();
+  }
+
+  function fillTable() {
+    var body = $('ciBody');
+    var list = (ST.res && ST.res.list) || [];
+    if (!list.length) {
+      body.innerHTML = '<tr><td colspan="5" style="text-align:left;color:#93a2b2">围道内没有孤立奇点（柯西积分定理：积分为 0）</td></tr>';
+      return;
+    }
+    body.innerHTML = list.map(function (p) {
+      var t = p.inside ? '是' : '否';
+      return '<tr class="' + (p.inside ? 'on' : '') + '">'
+        + '<td>' + fmtC(p.at) + '</td>'
+        + '<td>' + (p.label || '孤立奇点') + '</td>'
+        + '<td>' + fmtC(p.res) + '</td>'
+        + '<td>' + fmtC({ re: -2 * M.PI * p.res.im, im: 2 * M.PI * p.res.re }) + '</td>'
+        + '<td class="' + (p.inside ? 'ok' : '') + '">' + t + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  function fillConcl() {
+    var line = $('ciConcl').querySelector('.line');
+    if (!ST.f) { line.textContent = '表达式无法解析，暂无结论。'; return; }
+    var ins = ST.res.list.filter(function (p) { return p.inside; });
+    var v = ST.integ.val, okNum = ST.integ.ok, ref = refVal(), np = nearPole();
+    var dirWord = ST.dir === 'cw' ? '顺时针' : '逆时针';
+    var txt = '';
+    if (!ins.length) {
+      txt = '围道内部没有奇点，$f$ 在围道及其内部解析 → 由<b>柯西积分定理</b>，'
+        + '$\\oint_C f(z)\\,\\mathrm{d}z=0$。右边累积轨迹应闭合回到起点，数值给出 '
+        + (okNum ? q(M.hypot(v.re, v.im)) : '—') + '。';
+    } else {
+      txt = '围道内有 ' + ins.length + ' 个奇点，$\\sum\\operatorname{Res}=$ ' + fmtC(ST.res.sum)
+        + ' → 由<b>留数定理</b>，' + dirWord + '绕行时 $\\oint_C f(z)\\,\\mathrm{d}z=$ '
+        + (ST.dir === 'cw' ? '−' : '') + '$2\\pi\\mathrm{i}\\sum\\operatorname{Res}=$ ' + fmtC(ref)
+        + '；数值积分给出 ' + (okNum ? fmtC(v) : '发散') + '。'
+        + '累积轨迹的终点与起点之差正是这个值。';
+      if (Math.hypot(ref.re, ref.im) < 1e-12) {
+        txt += ' 注意：这里围道内<b>确实有</b>奇点，只是各点留数正好相消 —— '
+          + '所以反过来由 $\\oint_C f(z)\\,\\mathrm{d}z=0$ <b>不能</b>推出内部处处解析。';
+      }
+    }
+    if (np && okNum) {
+      txt += ' <span class="warn">围道与奇点 ' + fmtC(np.at) + ' 的距离只有 '
+        + q(M.abs(np.dist - ST.R)) + '，数值积分在这里不可信（积分本身确实发散）。</span>';
+    }
+    line.innerHTML = txt;
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      try { window.MathJax.typesetPromise([line]).catch(function () { }); } catch (e) { }
+    }
+  }
+
+  /* ---------- 画布 ---------- */
+  function setup(cv, h) {
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.parentNode.clientWidth - 16;
+    cv.width = w * dpr; cv.height = h * dpr;
+    cv.style.height = h + 'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  function drawPath() {
+    var cv = $('ciCvPath');
+    if (!cv) return;
+    var H = 228, S = setup(cv, H), ctx = S.ctx, W = S.w, pad = 12;
+    var R = ST.R * 1.45, c0 = ST.center;
+    /* X、Y 必须同一个比例，否则圆周会被画成椭圆——这张图的核心就是"圆"，
+       比例失真等于把结论画错。取正方形取景框再居中。 */
+    var side = M.min(W - 2 * pad, H - 2 * pad);
+    var ox = pad + (W - 2 * pad - side) / 2, oy = pad + (H - 2 * pad - side) / 2;
+    var X = function (x) { return ox + (x - (c0.re - R)) / (2 * R) * side; };
+    var Y = function (y) { return oy + side - (y - (c0.im - R)) / (2 * R) * side; };
+
+    ctx.strokeStyle = '#e3ecf5'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ox, Y(c0.im)); ctx.lineTo(ox + side, Y(c0.im));
+    ctx.moveTo(X(c0.re), oy); ctx.lineTo(X(c0.re), oy + side); ctx.stroke();
+    ctx.fillStyle = '#b0bec5'; ctx.font = '10px "Microsoft YaHei"';
+    ctx.fillText('Re', ox + side - 14, Y(c0.im) - 4);
+    ctx.fillText('Im', X(c0.re) + 4, oy + 10);
+
+    if (!ST.path) { ctx.fillStyle = '#93a2b2'; ctx.font = '13px "Microsoft YaHei"'; ctx.fillText('—', W / 2, H / 2); return; }
+    var P = ST.path.pts;
+    ctx.beginPath();
+    for (var k = 0; k < P.length; k++) {
+      var px = X(P[k].x), py = Y(P[k].y);
+      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 2.2; ctx.stroke();
+    /* 方向箭头 */
+    var mid = Math.floor(P.length * 0.25);
+    var a0 = P[mid - 2], a1 = P[mid + 2];
+    if (a1) {
+      var ang = M.atan2(Y(a1.y) - Y(a0.y), X(a1.x) - X(a0.x));
+      ctx.save(); ctx.translate(X(a1.x), Y(a1.y)); ctx.rotate(ang);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-9, -4.5); ctx.lineTo(-9, 4.5);
+      ctx.closePath(); ctx.fillStyle = '#1565c0'; ctx.fill(); ctx.restore();
+    }
+    /* 奇点 */
+    (ST.res ? ST.res.list : []).forEach(function (p) {
+      var inside = p.inside;
+      ctx.beginPath(); ctx.arc(X(p.at.re), Y(p.at.im), 4.5, 0, 2 * M.PI);
+      ctx.fillStyle = inside ? '#c62828' : '#b0bec5'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
+      if (!inside) {
+        ctx.strokeStyle = '#90a4ae'; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(X(p.at.re) - 7, Y(p.at.im) - 7); ctx.lineTo(X(p.at.re) + 7, Y(p.at.im) + 7);
+        ctx.moveTo(X(p.at.re) + 7, Y(p.at.im) - 7); ctx.lineTo(X(p.at.re) - 7, Y(p.at.im) + 7);
+        ctx.stroke();
+      }
+    });
+    $('ciHPath').textContent = (ST.kind === 'circle' ? '圆' : '三角形') + ' · '
+      + (ST.dir === 'ccw' ? '逆时针' : '顺时针') + ' · 内部 ' +
+      ((ST.res ? ST.res.list.filter(function (p) { return p.inside; }).length : 0)) + ' 个奇点';
+  }
+
+  function drawCum() {
+    var cv = $('ciCvCum');
+    if (!cv) return;
+    var H = 228, S = setup(cv, H), ctx = S.ctx, W = S.w, pad = 12;
+    if (!ST.integ || !ST.integ.cum.length) {
+      ctx.fillStyle = '#93a2b2'; ctx.font = '13px "Microsoft YaHei"';
+      ctx.fillText('—', W / 2, H / 2); $('ciHCum').textContent = '—'; return;
+    }
+    var cum = ST.integ.cum, xs = [], ys = [];
+    cum.forEach(function (p) { xs.push(p.x); ys.push(p.y); });
+    xs.push(0); ys.push(0);
+    var x0 = M.min.apply(null, xs), x1 = M.max.apply(null, xs);
+    var y0 = M.min.apply(null, ys), y1 = M.max.apply(null, ys);
+    var span = M.max(x1 - x0, y1 - y0, 1e-9) * 1.35;
+    var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    x0 = cx - span / 2; x1 = cx + span / 2; y0 = cy - span / 2; y1 = cy + span / 2;
+    /* 这张图是复平面上的轨迹，两个轴必须同比例，否则"回到起点 / 差一个 2πi"
+       的几何关系会被拉伸变形。 */
+    var side = M.min(W - 2 * pad, H - 2 * pad);
+    var ox = pad + (W - 2 * pad - side) / 2, oy = pad + (H - 2 * pad - side) / 2;
+    var X = function (x) { return ox + (x - x0) / (x1 - x0) * side; };
+    var Y = function (y) { return oy + side - (y - y0) / (y1 - y0) * side; };
+
+    ctx.strokeStyle = '#e3ecf5'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ox, Y(0)); ctx.lineTo(ox + side, Y(0));
+    ctx.moveTo(X(0), oy); ctx.lineTo(X(0), oy + side); ctx.stroke();
+    ctx.fillStyle = '#b0bec5'; ctx.font = '10px "Microsoft YaHei"';
+    ctx.fillText('Re', ox + side - 14, Y(0) - 4);
+    ctx.fillText('Im', X(0) + 4, oy + 10);
+
+    ctx.beginPath();
+    cum.forEach(function (p, i) {
+      if (i === 0) ctx.moveTo(X(p.x), Y(p.y)); else ctx.lineTo(X(p.x), Y(p.y));
+    });
+    ctx.strokeStyle = '#1565c0'; ctx.lineWidth = 2; ctx.stroke();
+
+    /* 起点 */
+    ctx.beginPath(); ctx.arc(X(0), Y(0), 4, 0, 2 * M.PI);
+    ctx.fillStyle = '#2e7d32'; ctx.fill();
+    /* 终点 */
+    var end = cum[cum.length - 1];
+    ctx.beginPath(); ctx.arc(X(end.x), Y(end.y), 4.5, 0, 2 * M.PI);
+    ctx.strokeStyle = '#c62828'; ctx.lineWidth = 2; ctx.stroke();
+    /* 终点与起点的落差箭头 */
+    if (M.hypot(end.x, end.y) > 1e-9) {
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(end.x), Y(end.y));
+      ctx.strokeStyle = '#c62828'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    var gap = M.hypot(end.x, end.y);
+    $('ciHCum').textContent = gap < 1e-9 ? '终点回到起点（积分为 0）'
+      : '终点落差 ' + q(gap) + ' = |2πi·ΣRes|';
+  }
+
+  /* ---------- 交互 ---------- */
+  function selectPreset(key) {
+    var P = null;
+    CI.PRESETS.forEach(function (p) { if (p.key === key) P = p; });
+    if (!P) return;
+    ST.preset = P;
+    ST.src = P.src;
+    ST.center = CI.c(P.center[0], P.center[1]);
+    ST.R = P.R;
+    ST.kind = P.path || 'circle';
+    $('ciExpr').value = P.src;
+    $('ciCenter').value = (P.center[0] === 0 && P.center[1] === 0) ? '0'
+      : (P.center[1] === 0 ? String(P.center[0]) : P.center[0] + '+' + P.center[1] + 'i');
+    $('ciR').value = String(P.R);
+    $('ciRV').textContent = 'R = ' + P.R.toFixed(2);
+    $('ciPath').value = ST.kind;
+    rebuild();
+  }
+
+  function applyCustom() {
+    var raw = $('ciExpr').value;
+    if (!raw.trim()) return;
+    var t = CI.normalize(raw);
+    $('ciExpr').value = t;
+    ST.preset = null;
+    ST.src = t;
+    rebuild();
+  }
+
+  function readCenter() {
+    var txt = $('ciCenter').value.trim();
+    if (!txt) { ST.center = CI.c(0, 0); return true; }
+    try {
+      var f = CI.compile(txt);   /* 直接编译：i 本身就是虚数单位，1+i、pi*I/2 都能写 */
+      var v = f(CI.c(0, 0));
+      if (!isFinite(v.re) || !isFinite(v.im)) return false;
+      ST.center = v; return true;
+    } catch (e) { return false; }
+  }
+
+  function bind() {
+    $('ciFn').addEventListener('change', function () { selectPreset(this.value); });
+    $('ciApply').addEventListener('click', applyCustom);
+    $('ciExpr').addEventListener('keydown', function (e) { if (e.key === 'Enter') applyCustom(); });
+    $('ciR').addEventListener('input', function () {
+      ST.R = parseFloat(this.value);
+      $('ciRV').textContent = 'R = ' + ST.R.toFixed(2);
+      rebuild();
+    });
+    $('ciCenter').addEventListener('change', function () {
+      if (!readCenter()) {
+        $('ciErr').innerHTML = '<span class="warn">圆心写不出来（试试 0、1、i、1+i）</span>';
+        return;
+      }
+      rebuild();
+    });
+    $('ciPath').addEventListener('change', function () { ST.kind = this.value; rebuild(); });
+    $('ciDir').addEventListener('click', function () {
+      ST.dir = ST.dir === 'ccw' ? 'cw' : 'ccw';
+      this.textContent = '方向：' + (ST.dir === 'ccw' ? '逆时针' : '顺时针');
+      rebuild();
+    });
+    window.addEventListener('resize', function () {
+      clearTimeout(bind._t);
+      bind._t = setTimeout(function () { drawPath(); drawCum(); }, 160);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.tab-radio'), function (r) {
+      r.addEventListener('change', function () { setTimeout(function () { drawPath(); drawCum(); }, 260); });
+    });
+  }
+
+  function start() {
+    var sel = $('ciFn');
+    sel.innerHTML = CI.PRESETS.map(function (p) {
+      return '<option value="' + p.key + '">' + p.name + '　·　' + p.note + '</option>';
+    }).join('');
+    bind();
+    selectPreset(CI.PRESETS[0].key);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    setTimeout(start, 0);
+  }
+})();
+/* ===== CI-JS-END ===== */
+</script>
+
+
 </div><!-- /content1 -->
 
 <!-- ============ Tab 2: 积分与路径无关 ============ -->
